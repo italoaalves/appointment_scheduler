@@ -1,0 +1,20 @@
+<h1>Appointments</h1>
+
+<%= link_to "New Appointment", new_appointment_path %>
+
+<hr>
+
+<% if @appointments.any? %>
+  <ul>
+    <% @appointments.each do |appointment| %>
+      <li>
+        <strong>Status:</strong> <%= appointment.status %><br>
+        <strong>Requested at:</strong> <%= appointment.requested_at %><br>
+        <strong>Client:</strong> <%= appointment.client.name %>
+      </li>
+      <hr>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No appointments found.</p>
+<% end %>

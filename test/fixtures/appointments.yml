@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  client: one
+  managed_by: one
+  requested_at: 2026-02-21 15:35:04
+  scheduled_at: 2026-02-21 15:35:04
+  rescheduled_from: 2026-02-21 15:35:04
+  status: 1
+  client_notes: MyText
+  admin_notes: MyText
+
+two:
+  client: two
+  managed_by: two
+  requested_at: 2026-02-21 15:35:04
+  scheduled_at: 2026-02-21 15:35:04
+  rescheduled_from: 2026-02-21 15:35:04
+  status: 1
+  client_notes: MyText
+  admin_notes: MyText
