@@ -23,6 +23,21 @@
   </head>
 
   <body>
+    <% if user_signed_in? %>
+      <div style="padding: 10px; background: #f5f5f5; display: flex; justify-content: space-between;">
+        <div>
+          Logged in as <%= current_user.email %>
+        </div>
+
+        <div>
+          <%= button_to "Log out",
+                        destroy_user_session_path,
+                        method: :delete,
+                        data: { turbo: false },
+                        style: "background:#e74c3c;color:white;border:none;padding:6px 12px;border-radius:4px;" %>
+        </div>
+      </div>
+    <% end %>
     <%= yield %>
   </body>
 </html>

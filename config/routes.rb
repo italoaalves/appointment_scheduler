@@ -1,13 +1,17 @@
 Rails.application.routes.draw do
   devise_for :users
-  
-  root "appointments#index"
+  root "dashboard#index"
 
-  resources :appointments, only: [:index, :new, :create, :show]
+  resources :appointments, only: [:index, :new, :create, :show, :destroy]
 
   namespace :admin do
-    resources :appointments, only: [:index, :update]
-  end
+    resources :appointments do
+      member do
+        patch :approve
+        patch :deny
+      end
+    end
 
-  resources :notifications, only: [:index, :update]
+    resources :users
+  end
 end

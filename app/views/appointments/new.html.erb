@@ -1,0 +1,16 @@
+<h1>Request Appointment</h1>
+
+<%= form_with model: @appointment do |form| %>
+
+  <div>
+    <%= form.label :scheduled_at %><br>
+    <%= form.datetime_select :scheduled_at %>
+  </div>
+
+  <br>
+
+  <%= form.submit "Request" %>
+
+<% end %>
+
+<%= link_to "Back", appointments_path %>

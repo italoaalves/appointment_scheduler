@@ -1,6 +1,5 @@
 class Appointment < ApplicationRecord
-  belongs_to :client, class_name: "User"
-  belongs_to :managed_by, class_name: "User", optional: true
+  belongs_to :user
 
   enum :status, {
     requested: 0,

@@ -1,6 +1,5 @@
 class User < ApplicationRecord
-  has_many :appointments, foreign_key: :client_id
-  has_many :managed_appointments, class_name: "Appointment", foreign_key: :managed_by_id
+  has_many :appointments, foreign_key: :user_id
   has_many :notifications, dependent: :destroy
 
   has_many :sent_messages, class_name: "Message", foreign_key: :sender_id

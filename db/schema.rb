@@ -15,18 +15,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_21_183756) do
   enable_extension "pg_catalog.plpgsql"
 
   create_table "appointments", force: :cascade do |t|
-    t.bigint "client_id", null: false
-    t.bigint "managed_by_id"
+    t.bigint "user_id", null: false
     t.datetime "requested_at"
     t.datetime "scheduled_at"
     t.datetime "rescheduled_from"
     t.integer "status", default: 0, null: false
-    t.text "client_notes"
-    t.text "admin_notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["client_id"], name: "index_appointments_on_client_id"
-    t.index ["managed_by_id"], name: "index_appointments_on_managed_by_id"
+    t.index ["user_id"], name: "index_appointments_on_user_id"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -72,8 +68,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_21_183756) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "appointments", "users", column: "client_id"
-  add_foreign_key "appointments", "users", column: "managed_by_id"
+  add_foreign_key "appointments", "users"
   add_foreign_key "messages", "users", column: "recipient_id"
   add_foreign_key "messages", "users", column: "sender_id"
   add_foreign_key "notifications", "users"

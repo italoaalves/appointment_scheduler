@@ -1,0 +1,30 @@
+<h1>All Appointments</h1>
+
+<p>
+  <%= link_to "New Appointment", new_admin_appointment_path %> |
+  <%= link_to "Manage Users", admin_users_path %>
+</p>
+
+<hr>
+
+<table border="1">
+  <tr>
+    <th>User</th>
+    <th>Date</th>
+    <th>Status</th>
+    <th>Actions</th>
+  </tr>
+
+  <% @appointments.each do |appointment| %>
+    <tr>
+      <td><%= appointment.scheduled_at %></td>
+      <td><%= appointment.status %></td>
+      <td>
+        <%= link_to "Approve", approve_admin_appointment_path(appointment), method: :patch %> |
+        <%= link_to "Deny", deny_admin_appointment_path(appointment), method: :patch %> |
+        <%= link_to "Edit", edit_admin_appointment_path(appointment) %> |
+        <%= link_to "Delete", admin_appointment_path(appointment), method: :delete %>
+      </td>
+    </tr>
+  <% end %>
+</table>

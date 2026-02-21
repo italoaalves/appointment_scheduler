@@ -41,27 +41,22 @@ client2 = User.create!(
 # ---- APPOINTMENTS ----
 
 Appointment.create!(
-  client: client1,
+  user: client1,
   requested_at: 2.days.from_now,
   status: :requested,
-  client_notes: "General consultation"
 )
 
 Appointment.create!(
-  client: client1,
+  user: client1,
   requested_at: 5.days.from_now,
   scheduled_at: 5.days.from_now,
   status: :confirmed,
-  managed_by: admin,
-  client_notes: "Follow-up visit"
 )
 
 Appointment.create!(
-  client: client2,
+  user: client2,
   requested_at: 3.days.from_now,
   status: :denied,
-  managed_by: admin,
-  client_notes: "Urgent visit"
 )
 
 puts "✅ Seed completed!"
