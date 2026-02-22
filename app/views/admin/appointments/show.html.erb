@@ -1,0 +1,72 @@
+<div class="space-y-4">
+  <header class="flex items-center justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
+        <%= t("admin.appointments.show.title") %>
+      </h1>
+      <p class="mt-1 text-xs text-slate-600">
+        <%= t("admin.appointments.show.subtitle") %>
+      </p>
+    </div>
+    <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-800">
+      <%= @appointment.status.humanize %>
+    </span>
+  </header>
+
+  <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <dl class="space-y-3 text-sm">
+      <div class="flex justify-between gap-4">
+        <dt class="font-medium text-slate-700"><%= t("admin.appointments.show.client") %></dt>
+        <dd class="text-slate-900">
+          <%= @appointment.user.name.presence || @appointment.user.email %>
+        </dd>
+      </div>
+      <div class="flex justify-between gap-4">
+        <dt class="font-medium text-slate-700"><%= t("admin.appointments.show.scheduled_for") %></dt>
+        <dd class="text-slate-900">
+          <%= @appointment.scheduled_at&.strftime("%B %d, %Y at %l:%M %p") || "—" %>
+        </dd>
+      </div>
+      <div class="flex justify-between gap-4">
+        <dt class="font-medium text-slate-700"><%= t("admin.appointments.show.requested_at") %></dt>
+        <dd class="text-slate-900">
+          <%= @appointment.requested_at&.strftime("%B %d, %Y") || "—" %>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-3">
+    <%= link_to t("admin.appointments.show.edit_reschedule"),
+                edit_admin_appointment_path(@appointment),
+                class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
+    <%= link_to t("admin.appointments.show.back_to_appointments"),
+                admin_appointments_path,
+                class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
+
+    <% if @appointment.requested? %>
+      <%= button_to t("admin.appointments.index.approve"),
+                    approve_admin_appointment_path(@appointment),
+                    method: :patch,
+                    class: "inline-flex items-center rounded-md bg-emerald-500 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-emerald-600" %>
+      <%= button_to t("admin.appointments.index.deny"),
+                    deny_admin_appointment_path(@appointment),
+                    method: :patch,
+                    class: "inline-flex items-center rounded-md bg-red-500 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-red-600" %>
+    <% end %>
+
+    <% if @appointment.requested? || @appointment.confirmed? %>
+      <%= button_to t("admin.appointments.index.cancel"),
+                    cancel_admin_appointment_path(@appointment),
+                    method: :patch,
+                    data: { turbo_confirm: t("admin.appointments.index.cancel_confirm") },
+                    class: "inline-flex items-center rounded-md bg-amber-500 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-amber-600" %>
+    <% end %>
+
+    <%= button_to t("admin.appointments.index.delete"),
+                  admin_appointment_path(@appointment),
+                  method: :delete,
+                  data: { turbo_confirm: t("admin.appointments.index.delete_confirm") },
+                  class: "inline-flex items-center rounded-md bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-900" %>
+  </div>
+</div>

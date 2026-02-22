@@ -6,5 +6,7 @@
  * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
  * depending on specificity.
  *
- * Consider organizing styles into separate files for maintainability.
+ * Tailwind CSS (loaded via CDN in the layout) now provides most layout and component styles.
+ * Use this file only for very small overrides or utilities that don't fit well as Tailwind classes.
  */
+

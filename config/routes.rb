@@ -2,13 +2,20 @@ Rails.application.routes.draw do
   devise_for :users
   root "dashboard#index"
 
-  resources :appointments, only: [:index, :new, :create, :show, :destroy]
+  post "/locale", to: "locales#update", as: :locale
+
+  resources :appointments, only: [ :index, :new, :create, :show, :destroy ] do
+    member do
+      patch :cancel
+    end
+  end
 
   namespace :admin do
     resources :appointments do
       member do
         patch :approve
         patch :deny
+        patch :cancel
       end
     end
 

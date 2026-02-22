@@ -1,27 +1,66 @@
-<h1>Users</h1>
+<div class="space-y-4">
+  <div class="flex items-center justify-between gap-2">
+    <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
+      <%= t("admin.users.index.title") %>
+    </h1>
+    <div class="flex flex-wrap items-center gap-2">
+      <%= link_to t("admin.users.index.new_button"),
+                  new_admin_user_path,
+                  class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
+      <%= link_to t("admin.users.index.all_appointments"),
+                  admin_appointments_path,
+                  class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
+    </div>
+  </div>
 
-<p>
-  <%= link_to "New User", new_admin_user_path %> |
-  <%= link_to "Back to Appointments", admin_appointments_path %>
-</p>
-
-<hr>
-
-<table border="1">
-  <tr>
-    <th>Email</th>
-    <th>Role</th>
-    <th>Actions</th>
-  </tr>
-
-  <% @users.each do |user| %>
-    <tr>
-      <td><%= user.email %></td>
-      <td><%= user.role %></td>
-      <td>
-        <%= link_to "Edit", edit_admin_user_path(user) %> |
-        <%= link_to "Delete", admin_user_path(user), method: :delete %>
-      </td>
-    </tr>
+  <% if @users.any? %>
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead class="bg-slate-50">
+          <tr>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <%= t("admin.users.index.table.email") %>
+            </th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <%= t("admin.users.index.table.name") %>
+            </th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <%= t("admin.users.index.table.role") %>
+            </th>
+            <th scope="col" class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <%= t("admin.users.index.table.actions") %>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <% @users.each do |user| %>
+            <tr class="hover:bg-slate-50">
+              <td class="px-4 py-2 align-top text-slate-900"><%= user.email %></td>
+              <td class="px-4 py-2 align-top text-slate-700"><%= user.name.presence || "—" %></td>
+              <td class="px-4 py-2 align-top text-slate-700"><%= user.role.humanize %></td>
+              <td class="px-4 py-2 align-top">
+                <div class="flex flex-wrap justify-end gap-1">
+                  <%= link_to t("admin.users.index.view"),
+                              admin_user_path(user),
+                              class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
+                  <%= link_to t("admin.users.index.edit"),
+                              edit_admin_user_path(user),
+                              class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
+                  <%= button_to t("admin.users.index.delete"),
+                                admin_user_path(user),
+                                method: :delete,
+                                data: { turbo_confirm: t("admin.users.index.delete_confirm") },
+                                class: "inline-flex items-center rounded-md bg-slate-700 px-2.5 py-1 text-xs font-semibold text-white hover:bg-slate-900" %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-sm text-slate-600">
+      <%= t("admin.users.index.empty") %>
+    </div>
   <% end %>
-</table>
+</div>

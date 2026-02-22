@@ -1,6 +1,6 @@
 class Admin::AppointmentsController < ApplicationController
   before_action :require_admin
-  before_action :set_appointment, only: [:show, :edit, :update, :destroy, :approve, :deny]
+  before_action :set_appointment, only: [ :show, :edit, :update, :destroy, :approve, :deny, :cancel ]
 
   def index
     @appointments = Appointment.all
@@ -15,9 +15,10 @@ class Admin::AppointmentsController < ApplicationController
 
   def create
     @appointment = Appointment.new(appointment_params)
+    @appointment.requested_at ||= Time.current if @appointment.requested?
 
     if @appointment.save
-      redirect_to admin_appointments_path
+      redirect_to admin_appointment_path(@appointment), notice: "Appointment created."
     else
       render :new
     end
@@ -40,13 +41,18 @@ class Admin::AppointmentsController < ApplicationController
   end
 
   def approve
-    @appointment.update(status: "approved")
-    redirect_to admin_appointments_path
+    @appointment.update(status: :confirmed)
+    redirect_to admin_appointments_path, notice: "Appointment confirmed."
   end
 
   def deny
-    @appointment.update(status: "denied")
-    redirect_to admin_appointments_path
+    @appointment.update(status: :denied)
+    redirect_to admin_appointments_path, notice: "Appointment denied."
+  end
+
+  def cancel
+    @appointment.update(status: :cancelled)
+    redirect_to admin_appointments_path, notice: "Appointment cancelled."
   end
 
   private

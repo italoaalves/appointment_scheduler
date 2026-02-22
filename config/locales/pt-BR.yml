@@ -1,0 +1,152 @@
+pt-BR:
+  layout:
+    app_name: "Agendador de Consultas"
+    nav:
+      my_appointments: "Minhas consultas"
+      request_appointment: "Agendar consulta"
+      all_appointments: "Todas as consultas"
+      clients: "Clientes"
+      logout: "Sair"
+      language:
+        en: "EN"
+        pt: "PT"
+
+  dashboard:
+    title: "Painel"
+    admin_subtitle: "Gerencie consultas e contas de clientes do seu workspace."
+    client_subtitle: "Veja suas consultas futuras e solicite novos horários."
+    admin:
+      appointments_title: "Consultas"
+      appointments_body: "Revise, aprove, cancele ou reagende qualquer consulta."
+      appointments_cta: "Ver todas as consultas"
+      clients_title: "Clientes"
+      clients_body: "Crie, edite ou remova clientes e veja o histórico deles."
+      clients_cta: "Gerenciar clientes"
+    client:
+      my_appointments_title: "Minhas consultas"
+      my_appointments_body: "Revise o status e detalhes de todos os seus pedidos."
+      my_appointments_cta: "Ver consultas"
+      new_request_title: "Novo pedido"
+      new_request_body: "Solicite uma nova consulta no horário desejado."
+      new_request_cta: "Agendar consulta"
+
+  appointments:
+    index:
+      title: "Minhas consultas"
+      request_button: "Agendar consulta"
+      empty_body: "Você ainda não tem nenhuma consulta."
+      empty_cta: "Agendar a primeira consulta"
+      time_to_be_scheduled: "Horário a definir"
+      requested_prefix: "Solicitado em"
+      requested_recently: "recentemente"
+    show:
+      title: "Detalhes da consulta"
+      subtitle: "Veja o status da sua consulta e o horário."
+      scheduled_for: "Agendada para"
+      requested_at: "Solicitada em"
+      to_be_scheduled: "A definir"
+      back: "Voltar para consultas"
+      cancel: "Cancelar consulta"
+      cancel_confirm: "Cancelar esta consulta?"
+      remove_request: "Remover pedido"
+      remove_request_confirm: "Remover este pedido de consulta?"
+    new:
+      title: "Agendar consulta"
+      subtitle: "Escolha a data e horário desejados. Você será avisado quando for confirmada."
+      preferred_datetime: "Data e horário preferidos"
+      submit: "Agendar consulta"
+      back: "Voltar para consultas"
+
+  admin:
+    appointments:
+      index:
+        title: "Todas as consultas"
+        new_button: "Nova consulta"
+        manage_clients: "Gerenciar clientes"
+        table:
+          client: "Cliente"
+          scheduled: "Agendada"
+          status: "Status"
+          actions: "Ações"
+        empty: "Nenhuma consulta ainda. Quando os clientes começarem a solicitar, elas aparecerão aqui."
+        view: "Ver"
+        edit: "Editar"
+        approve: "Aprovar"
+        deny: "Rejeitar"
+        cancel: "Cancelar"
+        cancel_confirm: "Cancelar esta consulta?"
+        delete: "Excluir"
+        delete_confirm: "Excluir esta consulta permanentemente?"
+      show:
+        title: "Consulta"
+        subtitle: "Visão administrativa da consulta selecionada."
+        client: "Cliente"
+        scheduled_for: "Agendada para"
+        requested_at: "Solicitada em"
+        edit_reschedule: "Editar / reagendar"
+        back_to_appointments: "Voltar para consultas"
+      new:
+        title: "Nova consulta"
+        subtitle: "Crie uma consulta em nome de um cliente e defina o status inicial."
+        client_label: "Cliente"
+        client_prompt: "Selecione o cliente"
+        scheduled_for: "Agendada para"
+        status_label: "Status"
+        submit: "Criar consulta"
+        back_to_appointments: "Voltar para consultas"
+      edit:
+        title: "Editar consulta"
+        subtitle: "Reagende, altere o cliente ou atualize o status."
+        client_label: "Cliente"
+        scheduled_for: "Agendada para"
+        status_label: "Status"
+        submit: "Atualizar consulta"
+        back_to_appointment: "Voltar para consulta"
+        all_appointments: "Todas as consultas"
+
+    users:
+      index:
+        title: "Clientes"
+        new_button: "Novo cliente"
+        all_appointments: "Todas as consultas"
+        table:
+          email: "E-mail"
+          name: "Nome"
+          role: "Função"
+          actions: "Ações"
+        view: "Ver"
+        edit: "Editar"
+        delete: "Excluir"
+        delete_confirm: "Excluir este usuário permanentemente?"
+        empty: "Nenhum cliente ainda. Crie o primeiro cliente para começar a atribuir consultas."
+      show:
+        title: "Cliente"
+        subtitle: "Veja os detalhes do cliente e o histórico de consultas."
+        email: "E-mail"
+        name: "Nome"
+        phone: "Telefone"
+        edit_client: "Editar cliente"
+        all_clients: "Todos os clientes"
+        delete_client: "Excluir cliente"
+        delete_client_confirm: "Excluir este usuário e suas consultas permanentemente?"
+        appointments_title: "Consultas"
+        no_appointments: "Nenhuma consulta para este cliente ainda."
+        status_prefix: "Status:"
+      new:
+        title: "Novo cliente"
+        subtitle: "Crie uma conta de cliente que poderá solicitar e gerenciar consultas."
+        phone_label: "Telefone"
+        password_label: "Senha"
+        password_confirmation_label: "Confirmação de senha"
+        submit: "Criar cliente"
+        back_to_clients: "Voltar para clientes"
+      edit:
+        title: "Editar cliente"
+        subtitle: "Atualize os dados de contato, função ou redefina a senha."
+        phone_label: "Telefone"
+        password_label: "Nova senha (deixe em branco para manter a atual)"
+        password_confirmation_label: "Confirmação de senha"
+        submit: "Atualizar cliente"
+        back_to_client: "Voltar para cliente"
+        all_clients: "Todos os clientes"
+

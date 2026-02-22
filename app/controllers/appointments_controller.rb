@@ -1,6 +1,6 @@
 class AppointmentsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_appointment, only: [:show, :destroy]
+  before_action :set_appointment, only: [ :show, :destroy, :cancel ]
 
   def index
     @appointments = current_user.appointments
@@ -15,7 +15,8 @@ class AppointmentsController < ApplicationController
 
   def create
     @appointment = current_user.appointments.new(appointment_params)
-    @appointment.status = "pending"
+    @appointment.status = "requested"
+    @appointment.requested_at = Time.now
 
     if @appointment.save
       redirect_to appointments_path
@@ -26,7 +27,12 @@ class AppointmentsController < ApplicationController
 
   def destroy
     @appointment.destroy
-    redirect_to appointments_path
+    redirect_to appointments_path, notice: "Appointment removed."
+  end
+
+  def cancel
+    @appointment.update(status: :cancelled)
+    redirect_to appointments_path, notice: "Appointment cancelled."
   end
 
   private

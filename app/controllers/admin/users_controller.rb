@@ -1,6 +1,6 @@
 class Admin::UsersController < ApplicationController
   before_action :require_admin
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :set_user, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @users = User.all
@@ -17,7 +17,7 @@ class Admin::UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      redirect_to admin_users_path
+      redirect_to admin_user_path(@user), notice: "Client created."
     else
       render :new
     end
@@ -27,8 +27,11 @@ class Admin::UsersController < ApplicationController
   end
 
   def update
-    if @user.update(user_params)
-      redirect_to admin_users_path
+    p = user_params
+    p.delete(:password) if p[:password].blank?
+    p.delete(:password_confirmation) if p[:password_confirmation].blank?
+    if @user.update(p)
+      redirect_to admin_users_path, notice: "Client updated."
     else
       render :edit
     end
@@ -46,7 +49,7 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :password, :role)
+    params.require(:user).permit(:email, :name, :phone_number, :role, :password, :password_confirmation)
   end
 
   def require_admin
