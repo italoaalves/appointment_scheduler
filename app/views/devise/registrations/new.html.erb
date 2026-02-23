@@ -1,0 +1,46 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50">
+  <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold text-center mb-6">
+      <%= t("devise.registrations.title") %>
+    </h2>
+
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+      <% if f.object.respond_to?(:name) %>
+        <div class="mb-4">
+          <%= f.label :name, t("devise.registrations.name"), class: "block text-sm font-medium text-gray-700" %>
+          <%= f.text_field :name,
+                class: "mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:border-indigo-500" %>
+        </div>
+      <% end %>
+
+      <div class="mb-4">
+        <%= f.label :email, t("devise.registrations.email"), class: "block text-sm font-medium text-gray-700" %>
+        <%= f.email_field :email,
+              class: "mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:border-indigo-500" %>
+      </div>
+
+      <div class="mb-4">
+        <%= f.label :password, t("devise.registrations.password"), class: "block text-sm font-medium text-gray-700" %>
+        <%= f.password_field :password, autocomplete: "new-password",
+              class: "mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:border-indigo-500" %>
+      </div>
+
+      <div class="mb-6">
+        <%= f.label :password_confirmation, t("devise.registrations.password_confirmation"),
+                    class: "block text-sm font-medium text-gray-700" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password",
+              class: "mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:border-indigo-500" %>
+      </div>
+
+      <div>
+        <%= f.submit t("devise.registrations.sign_up_button"), class: "w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700" %>
+      </div>
+    <% end %>
+
+    <p class="mt-6 text-center text-sm text-gray-600">
+      <%= t("devise.registrations.already_account") %>
+      <%= link_to t("devise.registrations.sign_in_link"), new_session_path(resource_name),
+                  class: "text-indigo-600 hover:underline" %>
+    </p>
+  </div>
+</div>

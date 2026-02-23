@@ -1,0 +1,40 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50">
+  <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold text-center mb-6">
+      <%= t("devise.sessions.title") %>
+    </h2>
+
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+      <div class="mb-4">
+        <%= f.label :email, t("devise.sessions.email"), class: "block text-sm font-medium text-gray-700" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email",
+              class: "mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:border-indigo-500" %>
+      </div>
+
+      <div class="mb-4">
+        <%= f.label :password, t("devise.sessions.password"), class: "block text-sm font-medium text-gray-700" %>
+        <%= f.password_field :password, autocomplete: "current-password",
+              class: "mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:border-indigo-500" %>
+      </div>
+
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center">
+          <%= f.check_box :remember_me, class: "h-4 w-4 text-indigo-600" %>
+          <%= f.label :remember_me, t("devise.sessions.remember_me"), class: "ml-2 block text-sm text-gray-900" %>
+        </div>
+        <%= link_to t("devise.sessions.forgot_password_link"), new_password_path(resource_name),
+                    class: "text-sm text-indigo-600 hover:underline" %>
+      </div>
+
+      <div>
+        <%= f.submit t("devise.sessions.sign_in_button"), class: "w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700" %>
+      </div>
+    <% end %>
+
+    <p class="mt-6 text-center text-sm text-gray-600">
+      <%= t("devise.sessions.no_account") %>
+      <%= link_to t("devise.sessions.sign_up_link"), new_registration_path(resource_name),
+                  class: "text-indigo-600 hover:underline" %>
+    </p>
+  </div>
+</div>

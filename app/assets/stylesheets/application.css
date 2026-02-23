@@ -9,4 +9,6 @@
  * Tailwind CSS (loaded via CDN in the layout) now provides most layout and component styles.
  * Use this file only for very small overrides or utilities that don't fit well as Tailwind classes.
  */
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
