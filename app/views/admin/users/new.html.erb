@@ -33,15 +33,6 @@
                                  class: "mt-1 block w-full max-w-sm rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
       </div>
 
-      <div>
-        <%= form.label :role,
-                       class: "block text-sm font-medium text-slate-700" %>
-        <%= form.select :role,
-                        User.roles.keys.map { |r| [r.humanize, r] },
-                        {},
-                        class: "mt-1 block w-full max-w-sm rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
-      </div>
-
       <div class="grid gap-4 sm:grid-cols-2">
         <div>
           <%= form.label :password,
@@ -62,7 +53,7 @@
       <div class="flex flex-wrap gap-3">
         <%= form.submit t("admin.users.new.submit"),
                         class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
-        <%= link_to t("admin.users.new.back_to_clients"),
+        <%= link_to t("admin.users.new.back_to_team"),
                     admin_users_path,
                     class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
       </div>

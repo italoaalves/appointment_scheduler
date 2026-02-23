@@ -1,5 +1,6 @@
 class AppointmentsController < ApplicationController
   before_action :authenticate_user!
+  before_action :redirect_tenant_staff_to_admin
   before_action :set_appointment, only: [ :show, :destroy, :cancel ]
 
   def index
@@ -39,6 +40,10 @@ class AppointmentsController < ApplicationController
 
   def set_appointment
     @appointment = current_user.appointments.find(params[:id])
+  end
+
+  def redirect_tenant_staff_to_admin
+    redirect_to admin_appointments_path if tenant_staff?
   end
 
   def appointment_params

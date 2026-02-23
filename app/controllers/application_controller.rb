@@ -4,7 +4,17 @@ class ApplicationController < ActionController::Base
 
   before_action :set_locale
 
+  helper_method :current_tenant, :tenant_staff?
+
   private
+
+  def current_tenant
+    @current_tenant ||= current_user&.space
+  end
+
+  def tenant_staff?
+    current_user&.manager? || current_user&.secretary?
+  end
 
   def set_locale
     session_locale = session[:locale]

@@ -1,71 +1,70 @@
-class Admin::AppointmentsController < ApplicationController
-  before_action :require_admin
-  before_action :set_appointment, only: [ :show, :edit, :update, :destroy, :approve, :deny, :cancel ]
+# frozen_string_literal: true
 
-  def index
-    @appointments = Appointment.all
-  end
+module Admin
+  class AppointmentsController < Admin::BaseController
+    before_action :set_appointment, only: [ :show, :edit, :update, :destroy, :approve, :deny, :cancel ]
 
-  def show
-  end
-
-  def new
-    @appointment = Appointment.new
-  end
-
-  def create
-    @appointment = Appointment.new(appointment_params)
-    @appointment.requested_at ||= Time.current if @appointment.requested?
-
-    if @appointment.save
-      redirect_to admin_appointment_path(@appointment), notice: "Appointment created."
-    else
-      render :new
+    def index
+      @appointments = current_tenant.appointments.includes(:client, :user).order(scheduled_at: :desc, created_at: :desc)
     end
-  end
 
-  def edit
-  end
-
-  def update
-    if @appointment.update(appointment_params)
-      redirect_to admin_appointments_path
-    else
-      render :edit
+    def show
     end
-  end
 
-  def destroy
-    @appointment.destroy
-    redirect_to admin_appointments_path
-  end
+    def new
+      @appointment = current_user.appointments.build
+    end
 
-  def approve
-    @appointment.update(status: :confirmed)
-    redirect_to admin_appointments_path, notice: "Appointment confirmed."
-  end
+    def create
+      @appointment = current_user.appointments.build(appointment_params)
+      @appointment.requested_at ||= Time.current if @appointment.requested?
 
-  def deny
-    @appointment.update(status: :denied)
-    redirect_to admin_appointments_path, notice: "Appointment denied."
-  end
+      if @appointment.save
+        redirect_to admin_appointment_path(@appointment), notice: t("admin.appointments.create.notice")
+      else
+        render :new
+      end
+    end
 
-  def cancel
-    @appointment.update(status: :cancelled)
-    redirect_to admin_appointments_path, notice: "Appointment cancelled."
-  end
+    def edit
+    end
 
-  private
+    def update
+      if @appointment.update(appointment_params)
+        redirect_to admin_appointments_path, notice: t("admin.appointments.update.notice")
+      else
+        render :edit
+      end
+    end
 
-  def set_appointment
-    @appointment = Appointment.find(params[:id])
-  end
+    def destroy
+      @appointment.destroy
+      redirect_to admin_appointments_path, notice: t("admin.appointments.destroy.notice")
+    end
 
-  def appointment_params
-    params.require(:appointment).permit(:user_id, :scheduled_at, :status)
-  end
+    def approve
+      @appointment.update(status: :confirmed)
+      redirect_to admin_appointments_path, notice: t("admin.appointments.approve.notice")
+    end
 
-  def require_admin
-    redirect_to root_path unless current_user.admin?
+    def deny
+      @appointment.update(status: :denied)
+      redirect_to admin_appointments_path, notice: t("admin.appointments.deny.notice")
+    end
+
+    def cancel
+      @appointment.update(status: :cancelled)
+      redirect_to admin_appointments_path, notice: t("admin.appointments.cancel.notice")
+    end
+
+    private
+
+    def set_appointment
+      @appointment = current_tenant.appointments.find(params[:id])
+    end
+
+    def appointment_params
+      params.require(:appointment).permit(:client_id, :scheduled_at, :status)
+    end
   end
 end

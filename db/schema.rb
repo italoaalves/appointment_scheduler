@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_21_183756) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_23_120040) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,7 +22,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_21_183756) do
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "client_id"
+    t.index ["client_id"], name: "index_appointments_on_client_id"
     t.index ["user_id"], name: "index_appointments_on_user_id"
+  end
+
+  create_table "clients", force: :cascade do |t|
+    t.bigint "space_id", null: false
+    t.string "name", null: false
+    t.string "phone"
+    t.string "address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["space_id"], name: "index_clients_on_space_id"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -53,6 +65,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_21_183756) do
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
+  create_table "spaces", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "timezone"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -60,16 +79,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_21_183756) do
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
     t.string "name"
-    t.integer "role", default: 0, null: false
+    t.integer "role", default: 1, null: false
     t.string "phone_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "space_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["space_id"], name: "index_users_on_space_id"
   end
 
+  add_foreign_key "appointments", "clients"
   add_foreign_key "appointments", "users"
+  add_foreign_key "clients", "spaces"
   add_foreign_key "messages", "users", column: "recipient_id"
   add_foreign_key "messages", "users", column: "sender_id"
   add_foreign_key "notifications", "users"
+  add_foreign_key "users", "spaces"
 end

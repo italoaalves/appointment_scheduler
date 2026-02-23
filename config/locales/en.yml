@@ -35,6 +35,8 @@ en:
       request_appointment: "Request appointment"
       all_appointments: "All appointments"
       clients: "Clients"
+      team: "Team"
+      dashboard: "Dashboard"
       logout: "Log out"
       language:
         en: "EN"
@@ -42,7 +44,9 @@ en:
 
   dashboard:
     title: "Dashboard"
-    admin_subtitle: "Manage appointments and client accounts across your workspace."
+    admin_subtitle: "SaaS admin area. Tenant management can be added here."
+    tenant_subtitle: "Manage appointments and clients for your space."
+    saas_admin_message: "You are signed in as a platform administrator. Tenant management features can be added here."
     client_subtitle: "See your upcoming appointments and request new time slots."
     admin:
       appointments_title: "Appointments"
@@ -87,7 +91,20 @@ en:
       back: "Back to appointments"
 
   admin:
+    unauthorized: "You are not allowed to access this area."
     appointments:
+      create:
+        notice: "Appointment created."
+      update:
+        notice: "Appointment updated."
+      destroy:
+        notice: "Appointment deleted."
+      approve:
+        notice: "Appointment confirmed."
+      deny:
+        notice: "Appointment denied."
+      cancel:
+        notice: "Appointment cancelled."
       index:
         title: "All appointments"
         new_button: "New appointment"
@@ -133,10 +150,71 @@ en:
         back_to_appointment: "Back to appointment"
         all_appointments: "All appointments"
 
-    users:
+    clients:
+      create:
+        notice: "Client created."
+      update:
+        notice: "Client updated."
+      destroy:
+        notice: "Client deleted."
       index:
         title: "Clients"
         new_button: "New client"
+        all_appointments: "All appointments"
+        table:
+          name: "Name"
+          phone: "Phone"
+          actions: "Actions"
+        view: "View"
+        edit: "Edit"
+        delete: "Delete"
+        delete_confirm: "Permanently delete this client?"
+        empty: "No clients yet. Add clients to assign appointments."
+      show:
+        title: "Client"
+        subtitle: "View client details and appointment history."
+        name: "Name"
+        phone: "Phone"
+        address: "Address"
+        edit_client: "Edit client"
+        all_clients: "All clients"
+        delete_client: "Delete client"
+        delete_client_confirm: "Permanently delete this client?"
+        appointments_title: "Appointments"
+        no_appointments: "No appointments for this client yet."
+        status_prefix: "Status:"
+      new:
+        title: "New client"
+        subtitle: "Add a client to your space (name, phone, address)."
+        name_label: "Name"
+        phone_label: "Phone"
+        address_label: "Address"
+        submit: "Create client"
+        back_to_clients: "Back to clients"
+      edit:
+        title: "Edit client"
+        subtitle: "Update client details."
+        name_label: "Name"
+        phone_label: "Phone"
+        address_label: "Address"
+        submit: "Update client"
+        back_to_client: "Back to client"
+        all_clients: "All clients"
+
+    users:
+      create:
+        notice: "Team member added."
+      update:
+        notice: "Team member updated."
+      destroy:
+        notice: "Team member removed."
+      manager_only: "Only the manager can add or edit team members."
+      roles:
+        manager: "Manager"
+        secretary: "Secretary"
+      index:
+        title: "Team"
+        new_button: "Invite team member"
         all_appointments: "All appointments"
         table:
           email: "Email"
@@ -147,35 +225,35 @@ en:
         edit: "Edit"
         delete: "Delete"
         delete_confirm: "Permanently delete this user?"
-        empty: "No clients yet. Create the first client to start assigning appointments."
+        empty: "No team members yet. Invite a secretary to get started."
       show:
-        title: "Client"
-        subtitle: "View client details and their appointment history."
+        title: "Team member"
+        subtitle: "View team member details and their appointments."
         email: "Email"
         name: "Name"
         phone: "Phone"
-        edit_client: "Edit client"
-        all_clients: "All clients"
-        delete_client: "Delete client"
-        delete_client_confirm: "Permanently delete this user and their appointments?"
+        edit_team_member: "Edit team member"
+        all_team: "All team"
+        delete_team_member: "Remove team member"
+        delete_team_member_confirm: "Permanently remove this user and their appointments?"
         appointments_title: "Appointments"
-        no_appointments: "No appointments for this client yet."
+        no_appointments: "No appointments for this user yet."
         status_prefix: "Status:"
       new:
-        title: "New client"
-        subtitle: "Create a client account that can request and manage appointments."
+        title: "Invite team member"
+        subtitle: "Add a secretary to your space. They will receive login details."
         phone_label: "Phone"
         password_label: "Password"
         password_confirmation_label: "Password confirmation"
-        submit: "Create client"
-        back_to_clients: "Back to clients"
+        submit: "Create team member"
+        back_to_team: "Back to team"
       edit:
-        title: "Edit client"
-        subtitle: "Update contact details, role, or reset the password."
+        title: "Edit team member"
+        subtitle: "Update contact details or role."
         phone_label: "Phone"
         password_label: "New password (leave blank to keep current)"
         password_confirmation_label: "Password confirmation"
-        submit: "Update client"
-        back_to_client: "Back to client"
-        all_clients: "All clients"
+        submit: "Update team member"
+        back_to_client: "Back to team member"
+        all_team: "All team"
         

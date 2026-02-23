@@ -1,5 +1,7 @@
 class User < ApplicationRecord
-  has_many :appointments, foreign_key: :user_id
+  belongs_to :space, optional: true
+
+  has_many :appointments, foreign_key: :user_id, dependent: :destroy
   has_many :notifications, dependent: :destroy
 
   has_many :sent_messages, class_name: "Message", foreign_key: :sender_id
@@ -10,5 +12,17 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-         enum :role, { client: 0, admin: 1 }
+  enum :role, { admin: 0, manager: 1, secretary: 2 }
+
+  after_create :ensure_space_for_manager
+
+  private
+
+  def ensure_space_for_manager
+    return unless manager? && space_id.nil?
+
+    created_space = Space.create!(name: name.presence || email)
+    update_column(:space_id, created_space.id)
+  end
 end
+

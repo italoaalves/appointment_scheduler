@@ -18,7 +18,7 @@
       <div class="flex justify-between gap-4">
         <dt class="font-medium text-slate-700"><%= t("admin.appointments.show.client") %></dt>
         <dd class="text-slate-900">
-          <%= @appointment.user.name.presence || @appointment.user.email %>
+          <%= @appointment.client&.name || "—" %>
         </dd>
       </div>
       <div class="flex justify-between gap-4">

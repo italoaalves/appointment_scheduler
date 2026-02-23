@@ -6,6 +6,8 @@ pt-BR:
       request_appointment: "Agendar consulta"
       all_appointments: "Todas as consultas"
       clients: "Clientes"
+      team: "Equipe"
+      dashboard: "Painel"
       logout: "Sair"
       language:
         en: "EN"
@@ -13,7 +15,9 @@ pt-BR:
 
   dashboard:
     title: "Painel"
-    admin_subtitle: "Gerencie consultas e contas de clientes do seu workspace."
+    admin_subtitle: "Área de administração da plataforma. Gestão de inquilinos pode ser adicionada aqui."
+    tenant_subtitle: "Gerencie consultas e clientes do seu espaço."
+    saas_admin_message: "Você está conectado como administrador da plataforma. Recursos de gestão de inquilinos podem ser adicionados aqui."
     client_subtitle: "Veja suas consultas futuras e solicite novos horários."
     admin:
       appointments_title: "Consultas"
@@ -58,7 +62,20 @@ pt-BR:
       back: "Voltar para consultas"
 
   admin:
+    unauthorized: "Você não tem permissão para acessar esta área."
     appointments:
+      create:
+        notice: "Consulta criada."
+      update:
+        notice: "Consulta atualizada."
+      destroy:
+        notice: "Consulta excluída."
+      approve:
+        notice: "Consulta confirmada."
+      deny:
+        notice: "Consulta rejeitada."
+      cancel:
+        notice: "Consulta cancelada."
       index:
         title: "Todas as consultas"
         new_button: "Nova consulta"
@@ -104,10 +121,71 @@ pt-BR:
         back_to_appointment: "Voltar para consulta"
         all_appointments: "Todas as consultas"
 
-    users:
+    clients:
+      create:
+        notice: "Cliente criado."
+      update:
+        notice: "Cliente atualizado."
+      destroy:
+        notice: "Cliente excluído."
       index:
         title: "Clientes"
         new_button: "Novo cliente"
+        all_appointments: "Todas as consultas"
+        table:
+          name: "Nome"
+          phone: "Telefone"
+          actions: "Ações"
+        view: "Ver"
+        edit: "Editar"
+        delete: "Excluir"
+        delete_confirm: "Excluir este cliente permanentemente?"
+        empty: "Nenhum cliente ainda. Adicione clientes para atribuir consultas."
+      show:
+        title: "Cliente"
+        subtitle: "Veja os detalhes e o histórico de consultas do cliente."
+        name: "Nome"
+        phone: "Telefone"
+        address: "Endereço"
+        edit_client: "Editar cliente"
+        all_clients: "Todos os clientes"
+        delete_client: "Excluir cliente"
+        delete_client_confirm: "Excluir este cliente permanentemente?"
+        appointments_title: "Consultas"
+        no_appointments: "Nenhuma consulta para este cliente ainda."
+        status_prefix: "Status:"
+      new:
+        title: "Novo cliente"
+        subtitle: "Adicione um cliente ao seu espaço (nome, telefone, endereço)."
+        name_label: "Nome"
+        phone_label: "Telefone"
+        address_label: "Endereço"
+        submit: "Criar cliente"
+        back_to_clients: "Voltar para clientes"
+      edit:
+        title: "Editar cliente"
+        subtitle: "Atualize os dados do cliente."
+        name_label: "Nome"
+        phone_label: "Telefone"
+        address_label: "Endereço"
+        submit: "Atualizar cliente"
+        back_to_client: "Voltar para cliente"
+        all_clients: "Todos os clientes"
+
+    users:
+      create:
+        notice: "Membro da equipe adicionado."
+      update:
+        notice: "Membro da equipe atualizado."
+      destroy:
+        notice: "Membro da equipe removido."
+      manager_only: "Apenas o gerente pode adicionar ou editar membros da equipe."
+      roles:
+        manager: "Gerente"
+        secretary: "Secretário"
+      index:
+        title: "Equipe"
+        new_button: "Convidar membro"
         all_appointments: "Todas as consultas"
         table:
           email: "E-mail"
@@ -118,35 +196,35 @@ pt-BR:
         edit: "Editar"
         delete: "Excluir"
         delete_confirm: "Excluir este usuário permanentemente?"
-        empty: "Nenhum cliente ainda. Crie o primeiro cliente para começar a atribuir consultas."
+        empty: "Nenhum membro na equipe ainda. Convide um secretário para começar."
       show:
-        title: "Cliente"
-        subtitle: "Veja os detalhes do cliente e o histórico de consultas."
+        title: "Membro da equipe"
+        subtitle: "Veja os detalhes e as consultas deste usuário."
         email: "E-mail"
         name: "Nome"
         phone: "Telefone"
-        edit_client: "Editar cliente"
-        all_clients: "Todos os clientes"
-        delete_client: "Excluir cliente"
-        delete_client_confirm: "Excluir este usuário e suas consultas permanentemente?"
+        edit_team_member: "Editar membro"
+        all_team: "Toda a equipe"
+        delete_team_member: "Remover membro"
+        delete_team_member_confirm: "Remover este usuário e suas consultas permanentemente?"
         appointments_title: "Consultas"
-        no_appointments: "Nenhuma consulta para este cliente ainda."
+        no_appointments: "Nenhuma consulta para este usuário ainda."
         status_prefix: "Status:"
       new:
-        title: "Novo cliente"
-        subtitle: "Crie uma conta de cliente que poderá solicitar e gerenciar consultas."
+        title: "Convidar membro"
+        subtitle: "Adicione um secretário ao seu espaço. Eles receberão os dados de acesso."
         phone_label: "Telefone"
         password_label: "Senha"
         password_confirmation_label: "Confirmação de senha"
-        submit: "Criar cliente"
-        back_to_clients: "Voltar para clientes"
+        submit: "Criar membro"
+        back_to_team: "Voltar para equipe"
       edit:
-        title: "Editar cliente"
-        subtitle: "Atualize os dados de contato, função ou redefina a senha."
+        title: "Editar membro"
+        subtitle: "Atualize os dados de contato ou a função."
         phone_label: "Telefone"
         password_label: "Nova senha (deixe em branco para manter a atual)"
         password_confirmation_label: "Confirmação de senha"
-        submit: "Atualizar cliente"
-        back_to_client: "Voltar para cliente"
-        all_clients: "Todos os clientes"
+        submit: "Atualizar membro"
+        back_to_client: "Voltar para membro"
+        all_team: "Toda a equipe"
 

@@ -2,58 +2,53 @@
   <header class="flex items-center justify-between gap-3">
     <div>
       <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
-        <%= t("admin.users.show.title") %>
+        <%= t("admin.clients.show.title") %>
       </h1>
       <p class="mt-1 text-xs text-slate-600">
-        <%= t("admin.users.show.subtitle") %>
+        <%= t("admin.clients.show.subtitle") %>
       </p>
     </div>
-    <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-800">
-      <%= @user.role.humanize %>
-    </span>
   </header>
 
   <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
     <dl class="space-y-3 text-sm">
       <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("admin.users.show.email") %></dt>
-        <dd class="text-slate-900"><%= @user.email %></dd>
+        <dt class="font-medium text-slate-700"><%= t("admin.clients.show.name") %></dt>
+        <dd class="text-slate-900"><%= @client.name %></dd>
       </div>
       <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("admin.users.show.name") %></dt>
-        <dd class="text-slate-900"><%= @user.name.presence || "—" %></dd>
+        <dt class="font-medium text-slate-700"><%= t("admin.clients.show.phone") %></dt>
+        <dd class="text-slate-900"><%= @client.phone.presence || "—" %></dd>
       </div>
       <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("admin.users.show.phone") %></dt>
-        <dd class="text-slate-900"><%= @user.phone_number.presence || "—" %></dd>
+        <dt class="font-medium text-slate-700"><%= t("admin.clients.show.address") %></dt>
+        <dd class="text-slate-900"><%= @client.address.presence || "—" %></dd>
       </div>
     </dl>
   </div>
 
   <div class="flex flex-wrap gap-3">
-    <% if current_user.manager? %>
-      <%= link_to t("admin.users.show.edit_team_member"),
-                  edit_admin_user_path(@user),
-                  class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
-      <%= button_to t("admin.users.show.delete_team_member"),
-                    admin_user_path(@user),
-                    method: :delete,
-                    data: { turbo_confirm: t("admin.users.show.delete_team_member_confirm") },
-                    class: "inline-flex items-center rounded-md bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-900" %>
-    <% end %>
-    <%= link_to t("admin.users.show.all_team"),
-                admin_users_path,
+    <%= link_to t("admin.clients.show.edit_client"),
+                edit_admin_client_path(@client),
+                class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
+    <%= link_to t("admin.clients.show.all_clients"),
+                admin_clients_path,
                 class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
+    <%= button_to t("admin.clients.show.delete_client"),
+                  admin_client_path(@client),
+                  method: :delete,
+                  data: { turbo_confirm: t("admin.clients.show.delete_client_confirm") },
+                  class: "inline-flex items-center rounded-md bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-900" %>
   </div>
 
   <section class="space-y-3">
     <h2 class="text-sm font-semibold text-slate-900">
-      <%= t("admin.users.show.appointments_title") %>
+      <%= t("admin.clients.show.appointments_title") %>
     </h2>
 
-    <% if @user.appointments.any? %>
+    <% if @client.appointments.any? %>
       <ul class="space-y-2">
-        <% @user.appointments.each do |appointment| %>
+        <% @client.appointments.each do |appointment| %>
           <li class="rounded-lg border border-slate-200 bg-white p-3 text-sm shadow-sm">
             <div class="flex items-start justify-between gap-3">
               <div>
@@ -61,7 +56,7 @@
                   <%= appointment.scheduled_at&.strftime("%B %d, %Y at %l:%M %p") || "—" %>
                 </p>
                 <p class="mt-0.5 text-xs text-slate-500">
-                  <%= t("admin.users.show.status_prefix") %> <%= appointment.status.humanize %>
+                  <%= t("admin.clients.show.status_prefix") %> <%= appointment.status.humanize %>
                 </p>
               </div>
               <%= link_to t("admin.appointments.index.view"),
@@ -73,7 +68,7 @@
       </ul>
     <% else %>
       <p class="text-sm text-slate-600">
-        <%= t("admin.users.show.no_appointments") %>
+        <%= t("admin.clients.show.no_appointments") %>
       </p>
     <% end %>
   </section>
