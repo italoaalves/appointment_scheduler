@@ -4,6 +4,10 @@ Rails.application.routes.draw do
 
   post "/locale", to: "locales#update", as: :locale
 
+  get "book/:token", to: "booking#show", as: :book
+  get "book/:token/slots", to: "booking#slots", as: :book_slots
+  post "book/:token", to: "booking#create"
+
   resources :appointments, only: [ :index, :new, :create, :show, :destroy ] do
     member do
       patch :cancel
@@ -11,6 +15,8 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
+    resource :space, only: [ :edit, :update ], controller: "space"
+
     resources :appointments do
       member do
         patch :approve
@@ -20,6 +26,7 @@ Rails.application.routes.draw do
     end
 
     resources :clients
+    resources :scheduling_links
     resources :users
   end
 

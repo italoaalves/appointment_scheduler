@@ -43,23 +43,23 @@ secretary = User.create!(
   space_id: space.id
 )
 
-# ---- CLIENTS (soft entity, belong to space) ----
+# ---- CLIENTS (belong to space) ----
 client1 = space.clients.create!(name: "John Client", phone: "+5511888888888", address: "Rua A, 1")
 client2 = space.clients.create!(name: "Mary Client", phone: "+5511777777777", address: "Rua B, 2")
 
-# ---- APPOINTMENTS (user = tenant staff, client = space client) ----
-manager.appointments.create!(
+# ---- APPOINTMENTS (belong to space and client) ----
+space.appointments.create!(
   client: client1,
   requested_at: 2.days.from_now,
   status: :requested
 )
-manager.appointments.create!(
+space.appointments.create!(
   client: client1,
   requested_at: 5.days.from_now,
   scheduled_at: 5.days.from_now,
   status: :confirmed
 )
-secretary.appointments.create!(
+space.appointments.create!(
   client: client2,
   requested_at: 3.days.from_now,
   status: :denied

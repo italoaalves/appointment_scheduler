@@ -1,8 +1,8 @@
 class Appointment < ApplicationRecord
-  belongs_to :user
+  belongs_to :space
   belongs_to :client, optional: true
 
-  validate :client_belongs_to_user_space, if: :client_id?
+  validate :client_belongs_to_space, if: :client_id?
 
   enum :status, {
     requested: 0,
@@ -14,10 +14,10 @@ class Appointment < ApplicationRecord
 
   private
 
-  def client_belongs_to_user_space
-    return unless user&.space_id && client_id.present?
+  def client_belongs_to_space
+    return unless space_id.present? && client_id.present?
 
-    unless user.space.client_ids.include?(client_id)
+    unless space.client_ids.include?(client_id)
       errors.add(:client_id, :invalid)
     end
   end

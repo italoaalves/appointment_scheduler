@@ -6,8 +6,10 @@ pt-BR:
       request_appointment: "Agendar consulta"
       all_appointments: "Todas as consultas"
       clients: "Clientes"
+      booking_links: "Links de agendamento"
       team: "Equipe"
       dashboard: "Painel"
+      space: "Espaço"
       tenants: "Inquilinos"
       platform_users: "Usuários"
       logout: "Sair"
@@ -44,6 +46,8 @@ pt-BR:
       new_request_cta: "Agendar consulta"
 
   appointments:
+    no_client: "Nenhuma conta de cliente vinculada. Use o link de agendamento para marcar uma consulta."
+    not_found: "Consulta não encontrada."
     index:
       title: "Minhas consultas"
       request_button: "Agendar consulta"
@@ -236,6 +240,118 @@ pt-BR:
         submit: "Atualizar membro"
         back_to_client: "Voltar para membro"
         all_team: "Toda a equipe"
+
+    space:
+      update:
+        notice: "Espaço atualizado."
+      no_space: "Você não tem um espaço para gerenciar."
+      edit:
+        title: "Configurações do espaço"
+        subtitle: "Gerencie os dados do seu negócio, contato e redes sociais."
+        basic_info: "Informações básicas"
+        name_label: "Nome do espaço"
+        business_type_label: "Tipo de negócio"
+        business_type_placeholder: "ex: Clínica odontológica, Salão, Academia"
+        contact: "Contato"
+        address_label: "Endereço"
+        phone_label: "Telefone"
+        email_label: "E-mail"
+        business_hours_label: "Horário de funcionamento"
+        business_hours_placeholder: "ex: Seg–Sex 9h–17h, Sáb 10h–14h"
+        socials: "Redes sociais"
+        instagram_label: "Instagram"
+        facebook_label: "Facebook"
+        scheduling: "Agendamento"
+        slot_duration_label: "Duração do horário"
+        minutes: "minutos"
+        timezone_label: "Fuso horário"
+        submit: "Salvar"
+        back_to_appointments: "Voltar para consultas"
+
+    scheduling_links:
+      create:
+        notice: "Link de agendamento criado."
+      update:
+        notice: "Link de agendamento atualizado."
+      destroy:
+        notice: "Link de agendamento excluído."
+      types:
+        permanent: "Permanente (nunca expira)"
+        single_use: "Uso único (expira)"
+      index:
+        title: "Links de agendamento"
+        new_button: "Novo link"
+        back_to_appointments: "Consultas"
+        table:
+          name: "Nome"
+          type: "Tipo"
+          status: "Status"
+          actions: "Ações"
+        active: "Ativo"
+        inactive: "Inativo"
+        view: "Ver"
+        edit: "Editar"
+        delete: "Excluir"
+        delete_confirm: "Excluir este link de agendamento?"
+        empty: "Nenhum link ainda. Crie um para que clientes agendem sem fazer login."
+      show:
+        untitled: "Link de agendamento"
+        active: "Ativo"
+        inactive: "Inativo"
+        edit: "Editar"
+        back: "Voltar para links"
+        booking_url: "URL de agendamento"
+        copy_hint: "Compartilhe este link com clientes. Não precisa fazer login."
+        copy: "Copiar"
+        copied: "Copiado!"
+        type: "Tipo"
+        expires_at: "Expira em"
+        used_at: "Usado em"
+        not_used: "Não usado"
+        open_link: "Abrir link"
+      new:
+        title: "Novo link de agendamento"
+        subtitle: "Crie um link para clientes verem horários disponíveis e agendarem consultas."
+        name_label: "Nome (opcional)"
+        name_placeholder: "ex: Novos pacientes, Dr. Silva"
+        link_type_label: "Tipo de link"
+        expires_at_label: "Expira em"
+        submit: "Criar link"
+        back: "Voltar para links"
+      edit:
+        title: "Editar link de agendamento"
+        subtitle: "Altere o tipo ou a expiração do link."
+        name_label: "Nome (opcional)"
+        name_placeholder: "ex: Novos pacientes"
+        link_type_label: "Tipo de link"
+        expires_at_label: "Expira em"
+        submit: "Salvar"
+        back: "Voltar para link"
+
+  booking:
+    choose_date: "Escolha uma data"
+    choose_time: "Escolha um horário"
+    choose_time_prompt: "Escolha um horário:"
+    loading_slots: "Carregando horários disponíveis..."
+    no_slots: "Nenhum horário disponível nesta data."
+    your_details: "Seus dados"
+    name_label: "Nome"
+    name_placeholder: "Seu nome"
+    phone_label: "Telefone"
+    phone_placeholder: "Seu telefone"
+    email_label: "E-mail"
+    email_placeholder: "seu@email.com"
+    address_label: "Endereço (opcional)"
+    address_placeholder: "Seu endereço"
+    submit: "Solicitar consulta"
+    create:
+      success: "Sua solicitação foi enviada. Entraremos em contato para confirmar."
+    invalid:
+      title: "Link inválido"
+      body: "Este link não existe ou foi removido."
+    expired:
+      title: "Link expirado"
+      body: "Este link expirou ou já foi utilizado."
 
   platform:
     unauthorized: "Você não tem permissão para acessar a área da plataforma."

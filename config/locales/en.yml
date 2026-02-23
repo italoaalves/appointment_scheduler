@@ -35,8 +35,10 @@ en:
       request_appointment: "Request appointment"
       all_appointments: "All appointments"
       clients: "Clients"
+      booking_links: "Booking links"
       team: "Team"
       dashboard: "Dashboard"
+      space: "Space"
       tenants: "Tenants"
       platform_users: "Users"
       logout: "Log out"
@@ -73,6 +75,8 @@ en:
       new_request_cta: "Request appointment"
 
   appointments:
+    no_client: "No client account linked. Please use the booking link to schedule an appointment."
+    not_found: "Appointment not found."
     index:
       title: "My appointments"
       request_button: "Request appointment"
@@ -265,6 +269,118 @@ en:
         submit: "Update team member"
         back_to_client: "Back to team member"
         all_team: "All team"
+
+    space:
+      update:
+        notice: "Space updated."
+      no_space: "You don't have a space to manage."
+      edit:
+        title: "Space settings"
+        subtitle: "Manage your business details, contact information, and social links."
+        basic_info: "Basic information"
+        name_label: "Space name"
+        business_type_label: "Type of business"
+        business_type_placeholder: "e.g. Dental clinic, Salon, Gym"
+        contact: "Contact"
+        address_label: "Address"
+        phone_label: "Phone"
+        email_label: "Email"
+        business_hours_label: "Business hours"
+        business_hours_placeholder: "e.g. Mon–Fri 9am–5pm, Sat 10am–2pm"
+        socials: "Social media"
+        instagram_label: "Instagram"
+        facebook_label: "Facebook"
+        scheduling: "Scheduling"
+        slot_duration_label: "Slot duration"
+        minutes: "minutes"
+        timezone_label: "Timezone"
+        submit: "Save"
+        back_to_appointments: "Back to appointments"
+
+    scheduling_links:
+      create:
+        notice: "Booking link created."
+      update:
+        notice: "Booking link updated."
+      destroy:
+        notice: "Booking link deleted."
+      types:
+        permanent: "Permanent (never expires)"
+        single_use: "Single use (expires)"
+      index:
+        title: "Booking links"
+        new_button: "New link"
+        back_to_appointments: "Appointments"
+        table:
+          name: "Name"
+          type: "Type"
+          status: "Status"
+          actions: "Actions"
+        active: "Active"
+        inactive: "Inactive"
+        view: "View"
+        edit: "Edit"
+        delete: "Delete"
+        delete_confirm: "Delete this booking link?"
+        empty: "No booking links yet. Create one to let clients schedule appointments without logging in."
+      show:
+        untitled: "Booking link"
+        active: "Active"
+        inactive: "Inactive"
+        edit: "Edit"
+        back: "Back to links"
+        booking_url: "Booking URL"
+        copy_hint: "Share this link with clients. No login required."
+        copy: "Copy"
+        copied: "Copied!"
+        type: "Type"
+        expires_at: "Expires at"
+        used_at: "Used at"
+        not_used: "Not used"
+        open_link: "Open link"
+      new:
+        title: "New booking link"
+        subtitle: "Create a link clients can use to see available slots and book an appointment."
+        name_label: "Name (optional)"
+        name_placeholder: "e.g. New patients, Dr. Smith"
+        link_type_label: "Link type"
+        expires_at_label: "Expires at"
+        submit: "Create link"
+        back: "Back to links"
+      edit:
+        title: "Edit booking link"
+        subtitle: "Change link type or expiration."
+        name_label: "Name (optional)"
+        name_placeholder: "e.g. New patients"
+        link_type_label: "Link type"
+        expires_at_label: "Expires at"
+        submit: "Save"
+        back: "Back to link"
+
+  booking:
+    choose_date: "Choose a date"
+    choose_time: "Choose a time"
+    choose_time_prompt: "Choose a time:"
+    loading_slots: "Loading available times..."
+    no_slots: "No available slots for this date."
+    your_details: "Your details"
+    name_label: "Name"
+    name_placeholder: "Your name"
+    phone_label: "Phone"
+    phone_placeholder: "Your phone number"
+    email_label: "Email"
+    email_placeholder: "your@email.com"
+    address_label: "Address (optional)"
+    address_placeholder: "Your address"
+    submit: "Request appointment"
+    create:
+      success: "Your appointment request has been submitted. We'll contact you to confirm."
+    invalid:
+      title: "Invalid link"
+      body: "This booking link doesn't exist or has been removed."
+    expired:
+      title: "Link expired"
+      body: "This booking link has expired or has already been used."
 
   platform:
     unauthorized: "You are not allowed to access the platform area."

@@ -11,7 +11,7 @@ class ClientTest < ActiveSupport::TestCase
   test "requires name" do
     client = Client.new(space: spaces(:one), name: nil)
     assert_not client.valid?
-    assert_includes client.errors[:name], "can't be blank"
+    assert_includes client.errors[:name], I18n.t("errors.messages.blank")
   end
 
   test "valid with name only" do

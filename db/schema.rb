@@ -10,12 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_23_120040) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_23_170100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "appointments", force: :cascade do |t|
-    t.bigint "user_id", null: false
     t.datetime "requested_at"
     t.datetime "scheduled_at"
     t.datetime "rescheduled_from"
@@ -23,8 +22,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_23_120040) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "client_id"
+    t.bigint "space_id", null: false
     t.index ["client_id"], name: "index_appointments_on_client_id"
-    t.index ["user_id"], name: "index_appointments_on_user_id"
+    t.index ["space_id"], name: "index_appointments_on_space_id"
   end
 
   create_table "clients", force: :cascade do |t|
@@ -34,7 +34,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_23_120040) do
     t.string "address"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "email"
+    t.bigint "user_id"
     t.index ["space_id"], name: "index_clients_on_space_id"
+    t.index ["user_id"], name: "index_clients_on_user_id"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -65,11 +68,33 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_23_120040) do
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
+  create_table "scheduling_links", force: :cascade do |t|
+    t.bigint "space_id", null: false
+    t.string "token", null: false
+    t.integer "link_type", default: 0, null: false
+    t.datetime "expires_at"
+    t.datetime "used_at"
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["space_id"], name: "index_scheduling_links_on_space_id"
+    t.index ["token"], name: "index_scheduling_links_on_token", unique: true
+  end
+
   create_table "spaces", force: :cascade do |t|
     t.string "name", null: false
     t.string "timezone"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "business_type"
+    t.text "address"
+    t.string "phone"
+    t.string "email"
+    t.text "business_hours"
+    t.string "instagram_url"
+    t.string "facebook_url"
+    t.integer "slot_duration_minutes", default: 30, null: false
+    t.jsonb "business_hours_schedule", default: {}
   end
 
   create_table "users", force: :cascade do |t|
@@ -90,10 +115,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_23_120040) do
   end
 
   add_foreign_key "appointments", "clients"
-  add_foreign_key "appointments", "users"
+  add_foreign_key "appointments", "spaces"
   add_foreign_key "clients", "spaces"
+  add_foreign_key "clients", "users"
   add_foreign_key "messages", "users", column: "recipient_id"
   add_foreign_key "messages", "users", column: "sender_id"
   add_foreign_key "notifications", "users"
+  add_foreign_key "scheduling_links", "spaces"
   add_foreign_key "users", "spaces"
 end

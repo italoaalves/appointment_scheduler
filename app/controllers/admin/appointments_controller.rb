@@ -5,18 +5,18 @@ module Admin
     before_action :set_appointment, only: [ :show, :edit, :update, :destroy, :approve, :deny, :cancel ]
 
     def index
-      @appointments = current_tenant.appointments.includes(:client, :user).order(scheduled_at: :desc, created_at: :desc)
+      @appointments = current_tenant.appointments.includes(:client).order(scheduled_at: :desc, created_at: :desc)
     end
 
     def show
     end
 
     def new
-      @appointment = current_user.appointments.build
+      @appointment = current_tenant.appointments.build
     end
 
     def create
-      @appointment = current_user.appointments.build(appointment_params)
+      @appointment = current_tenant.appointments.build(appointment_params)
       @appointment.requested_at ||= Time.current if @appointment.requested?
 
       if @appointment.save

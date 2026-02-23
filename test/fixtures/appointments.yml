@@ -1,14 +1,16 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  user: one
+  space: one
+  client: one
   requested_at: 2026-02-21 15:35:04
   scheduled_at: 2026-02-21 15:35:04
   rescheduled_from: 2026-02-21 15:35:04
   status: 1
 
 two:
-  user: two
+  space: one
+  client: two
   requested_at: 2026-02-21 15:35:04
   scheduled_at: 2026-02-21 15:35:04
   rescheduled_from: 2026-02-21 15:35:04

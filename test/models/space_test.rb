@@ -15,7 +15,7 @@ class SpaceTest < ActiveSupport::TestCase
     assert_includes space.clients, clients(:two)
   end
 
-  test "has many appointments through users" do
+  test "has many appointments" do
     space = spaces(:one)
     assert space.appointments.any?
     assert space.appointments.include?(appointments(:one))
