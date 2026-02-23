@@ -1,0 +1,7 @@
+one:
+  name: "Main Clinic"
+  timezone: "America/Sao_Paulo"
+
+two:
+  name: "Second Space"
+  timezone: "UTC"

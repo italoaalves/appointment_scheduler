@@ -1,0 +1,17 @@
+one:
+  space: one
+  name: "John Client"
+  phone: "+5511888888888"
+  address: "Rua A, 1"
+
+two:
+  space: one
+  name: "Mary Client"
+  phone: "+5511777777777"
+  address: "Rua B, 2"
+
+other_space_client:
+  space: two
+  name: "Other Space Client"
+  phone: "+5511666666666"
+  address: "Rua C, 3"

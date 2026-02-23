@@ -37,6 +37,8 @@ en:
       clients: "Clients"
       team: "Team"
       dashboard: "Dashboard"
+      tenants: "Tenants"
+      platform_users: "Users"
       logout: "Log out"
       language:
         en: "EN"
@@ -46,7 +48,14 @@ en:
     title: "Dashboard"
     admin_subtitle: "SaaS admin area. Tenant management can be added here."
     tenant_subtitle: "Manage appointments and clients for your space."
-    saas_admin_message: "You are signed in as a platform administrator. Tenant management features can be added here."
+    platform_admin_message: "Manage tenants and users across the platform."
+    platform:
+      tenants_title: "Tenants"
+      tenants_body: "View and manage all tenant spaces, with client and team statistics."
+      tenants_cta: "Manage tenants"
+      users_title: "Users"
+      users_body: "Create, edit, or remove users and assign them to spaces."
+      users_cta: "Manage users"
     client_subtitle: "See your upcoming appointments and request new time slots."
     admin:
       appointments_title: "Appointments"
@@ -256,4 +265,109 @@ en:
         submit: "Update team member"
         back_to_client: "Back to team member"
         all_team: "All team"
+
+  platform:
+    unauthorized: "You are not allowed to access the platform area."
+    spaces:
+      create:
+        notice: "Space created."
+      update:
+        notice: "Space updated."
+      destroy:
+        notice: "Space deleted."
+      index:
+        title: "Tenants"
+        new_button: "New space"
+        table:
+          name: "Name"
+          clients: "Clients"
+          team_size: "Team size"
+          actions: "Actions"
+        view: "View"
+        edit: "Edit"
+        manage_users: "Manage users"
+        delete: "Delete"
+        delete_confirm: "Permanently delete this space and all its data?"
+        empty: "No spaces yet. Create the first tenant space."
+      show:
+        title: "Space"
+        subtitle: "Tenant details and statistics."
+        name: "Name"
+        timezone: "Timezone"
+        clients_count: "Clients"
+        team_size: "Team size"
+        edit: "Edit"
+        manage_users: "Manage users"
+        back: "Back to tenants"
+      new:
+        title: "New space"
+        subtitle: "Create a new tenant space."
+        name_label: "Name"
+        timezone_label: "Timezone"
+        submit: "Create space"
+        back: "Back to tenants"
+      edit:
+        title: "Edit space"
+        subtitle: "Update tenant space details."
+        name_label: "Name"
+        timezone_label: "Timezone"
+        submit: "Update space"
+        back: "Back to space"
+        all_spaces: "All tenants"
+
+    users:
+      create:
+        notice: "User created."
+      update:
+        notice: "User updated."
+      destroy:
+        notice: "User deleted."
+      index:
+        title: "Users"
+        new_button: "New user"
+        all_spaces: "All tenants"
+        filtered_by_space: "Filtered by: %{space}"
+        table:
+          email: "Email"
+          name: "Name"
+          role: "Role"
+          space: "Space"
+          actions: "Actions"
+        view: "View"
+        edit: "Edit"
+        delete: "Delete"
+        delete_confirm: "Permanently delete this user?"
+        empty: "No users yet."
+      show:
+        title: "User"
+        subtitle: "User details and space assignment."
+        email: "Email"
+        name: "Name"
+        phone: "Phone"
+        space: "Space"
+        edit: "Edit"
+        back: "Back to users"
+        delete: "Delete"
+        delete_confirm: "Permanently delete this user?"
+      new:
+        title: "New user"
+        subtitle: "Create a user and assign to a space."
+        phone_label: "Phone"
+        password_label: "Password"
+        password_confirmation_label: "Password confirmation"
+        space_label: "Space"
+        no_space: "—"
+        submit: "Create user"
+        back: "Back to users"
+      edit:
+        title: "Edit user"
+        subtitle: "Update user details and space assignment."
+        phone_label: "Phone"
+        password_label: "New password (leave blank to keep current)"
+        password_confirmation_label: "Password confirmation"
+        space_label: "Space"
+        no_space: "—"
+        submit: "Update user"
+        back: "Back to user"
+        all_users: "All users"
         

@@ -35,7 +35,8 @@
                   <%= link_to t("layout.nav.clients"), admin_clients_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
                   <%= link_to t("layout.nav.team"), admin_users_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
                 <% elsif current_user.admin? %>
-                  <%= link_to t("layout.nav.dashboard"), root_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
+                  <%= link_to t("layout.nav.tenants"), platform_spaces_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
+                  <%= link_to t("layout.nav.platform_users"), platform_users_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
                 <% else %>
                   <%= link_to t("layout.nav.my_appointments"), appointments_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
                   <%= link_to t("layout.nav.request_appointment"), new_appointment_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
@@ -84,7 +85,8 @@
                 <%= link_to t("layout.nav.clients"), admin_clients_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
                 <%= link_to t("layout.nav.team"), admin_users_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
               <% elsif current_user.admin? %>
-                <%= link_to t("layout.nav.dashboard"), root_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+                <%= link_to t("layout.nav.tenants"), platform_spaces_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+                <%= link_to t("layout.nav.platform_users"), platform_users_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
               <% else %>
                 <%= link_to t("layout.nav.my_appointments"), appointments_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
                 <%= link_to t("layout.nav.request_appointment"), new_appointment_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>

@@ -8,6 +8,8 @@ pt-BR:
       clients: "Clientes"
       team: "Equipe"
       dashboard: "Painel"
+      tenants: "Inquilinos"
+      platform_users: "Usuários"
       logout: "Sair"
       language:
         en: "EN"
@@ -17,7 +19,14 @@ pt-BR:
     title: "Painel"
     admin_subtitle: "Área de administração da plataforma. Gestão de inquilinos pode ser adicionada aqui."
     tenant_subtitle: "Gerencie consultas e clientes do seu espaço."
-    saas_admin_message: "Você está conectado como administrador da plataforma. Recursos de gestão de inquilinos podem ser adicionados aqui."
+    platform_admin_message: "Gerencie inquilinos e usuários em toda a plataforma."
+    platform:
+      tenants_title: "Inquilinos"
+      tenants_body: "Visualize e gerencie todos os espaços de inquilinos, com estatísticas de clientes e equipe."
+      tenants_cta: "Gerenciar inquilinos"
+      users_title: "Usuários"
+      users_body: "Crie, edite ou remova usuários e atribua-os a espaços."
+      users_cta: "Gerenciar usuários"
     client_subtitle: "Veja suas consultas futuras e solicite novos horários."
     admin:
       appointments_title: "Consultas"
@@ -227,4 +236,109 @@ pt-BR:
         submit: "Atualizar membro"
         back_to_client: "Voltar para membro"
         all_team: "Toda a equipe"
+
+  platform:
+    unauthorized: "Você não tem permissão para acessar a área da plataforma."
+    spaces:
+      create:
+        notice: "Espaço criado."
+      update:
+        notice: "Espaço atualizado."
+      destroy:
+        notice: "Espaço excluído."
+      index:
+        title: "Inquilinos"
+        new_button: "Novo espaço"
+        table:
+          name: "Nome"
+          clients: "Clientes"
+          team_size: "Tamanho da equipe"
+          actions: "Ações"
+        view: "Ver"
+        edit: "Editar"
+        manage_users: "Gerenciar usuários"
+        delete: "Excluir"
+        delete_confirm: "Excluir este espaço e todos os dados permanentemente?"
+        empty: "Nenhum espaço ainda. Crie o primeiro inquilino."
+      show:
+        title: "Espaço"
+        subtitle: "Detalhes e estatísticas do inquilino."
+        name: "Nome"
+        timezone: "Fuso horário"
+        clients_count: "Clientes"
+        team_size: "Tamanho da equipe"
+        edit: "Editar"
+        manage_users: "Gerenciar usuários"
+        back: "Voltar para inquilinos"
+      new:
+        title: "Novo espaço"
+        subtitle: "Crie um novo espaço de inquilino."
+        name_label: "Nome"
+        timezone_label: "Fuso horário"
+        submit: "Criar espaço"
+        back: "Voltar para inquilinos"
+      edit:
+        title: "Editar espaço"
+        subtitle: "Atualize os detalhes do espaço."
+        name_label: "Nome"
+        timezone_label: "Fuso horário"
+        submit: "Atualizar espaço"
+        back: "Voltar para espaço"
+        all_spaces: "Todos os inquilinos"
+
+    users:
+      create:
+        notice: "Usuário criado."
+      update:
+        notice: "Usuário atualizado."
+      destroy:
+        notice: "Usuário excluído."
+      index:
+        title: "Usuários"
+        new_button: "Novo usuário"
+        all_spaces: "Todos os inquilinos"
+        filtered_by_space: "Filtrado por: %{space}"
+        table:
+          email: "E-mail"
+          name: "Nome"
+          role: "Função"
+          space: "Espaço"
+          actions: "Ações"
+        view: "Ver"
+        edit: "Editar"
+        delete: "Excluir"
+        delete_confirm: "Excluir este usuário permanentemente?"
+        empty: "Nenhum usuário ainda."
+      show:
+        title: "Usuário"
+        subtitle: "Detalhes e atribuição de espaço."
+        email: "E-mail"
+        name: "Nome"
+        phone: "Telefone"
+        space: "Espaço"
+        edit: "Editar"
+        back: "Voltar para usuários"
+        delete: "Excluir"
+        delete_confirm: "Excluir este usuário permanentemente?"
+      new:
+        title: "Novo usuário"
+        subtitle: "Crie um usuário e atribua a um espaço."
+        phone_label: "Telefone"
+        password_label: "Senha"
+        password_confirmation_label: "Confirmação de senha"
+        space_label: "Espaço"
+        no_space: "—"
+        submit: "Criar usuário"
+        back: "Voltar para usuários"
+      edit:
+        title: "Editar usuário"
+        subtitle: "Atualize os detalhes e a atribuição de espaço."
+        phone_label: "Telefone"
+        password_label: "Nova senha (deixe em branco para manter a atual)"
+        password_confirmation_label: "Confirmação de senha"
+        space_label: "Espaço"
+        no_space: "—"
+        submit: "Atualizar usuário"
+        back: "Voltar para usuário"
+        all_users: "Todos os usuários"
 

@@ -22,4 +22,9 @@ Rails.application.routes.draw do
     resources :clients
     resources :users
   end
+
+  namespace :platform do
+    resources :spaces
+    resources :users
+  end
 end

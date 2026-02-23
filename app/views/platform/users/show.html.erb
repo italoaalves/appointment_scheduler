@@ -1,0 +1,50 @@
+<div class="space-y-6">
+  <header class="flex items-center justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
+        <%= t("platform.users.show.title") %>
+      </h1>
+      <p class="mt-1 text-xs text-slate-600">
+        <%= t("platform.users.show.subtitle") %>
+      </p>
+    </div>
+    <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-800">
+      <%= @user.role.humanize %>
+    </span>
+  </header>
+
+  <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <dl class="space-y-3 text-sm">
+      <div class="flex justify-between gap-4">
+        <dt class="font-medium text-slate-700"><%= t("platform.users.show.email") %></dt>
+        <dd class="text-slate-900"><%= @user.email %></dd>
+      </div>
+      <div class="flex justify-between gap-4">
+        <dt class="font-medium text-slate-700"><%= t("platform.users.show.name") %></dt>
+        <dd class="text-slate-900"><%= @user.name.presence || "—" %></dd>
+      </div>
+      <div class="flex justify-between gap-4">
+        <dt class="font-medium text-slate-700"><%= t("platform.users.show.phone") %></dt>
+        <dd class="text-slate-900"><%= @user.phone_number.presence || "—" %></dd>
+      </div>
+      <div class="flex justify-between gap-4">
+        <dt class="font-medium text-slate-700"><%= t("platform.users.show.space") %></dt>
+        <dd class="text-slate-900"><%= @user.space&.name || "—" %></dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="flex flex-wrap gap-3">
+    <%= link_to t("platform.users.show.edit"),
+                edit_platform_user_path(@user),
+                class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
+    <%= link_to t("platform.users.show.back"),
+                platform_users_path,
+                class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
+    <%= button_to t("platform.users.show.delete"),
+                  platform_user_path(@user),
+                  method: :delete,
+                  data: { turbo_confirm: t("platform.users.show.delete_confirm") },
+                  class: "inline-flex items-center rounded-md bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-900" %>
+  </div>
+</div>
