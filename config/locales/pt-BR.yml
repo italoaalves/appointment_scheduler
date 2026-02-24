@@ -2,6 +2,10 @@ pt-BR:
   activerecord:
     errors:
       models:
+        appointment:
+          attributes:
+            base:
+              slot_already_booked: "Outra consulta já está confirmada para este horário"
         personalized_scheduling_link:
           attributes:
             slug:

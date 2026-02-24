@@ -31,6 +31,10 @@ en:
   activerecord:
     errors:
       models:
+        appointment:
+          attributes:
+            base:
+              slot_already_booked: "Another appointment is already confirmed for this time slot"
         personalized_scheduling_link:
           attributes:
             slug:

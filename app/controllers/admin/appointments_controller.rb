@@ -18,7 +18,7 @@ module Admin
       @appointments = current_tenant.appointments
                                    .pending
                                    .includes(:customer, :space)
-                                   .order(requested_at: :desc, created_at: :desc)
+                                   .order(updated_at: :desc)
                                    .page(params[:page]).per(20)
     end
 
@@ -59,8 +59,12 @@ module Admin
     end
 
     def confirm
-      @appointment.update(status: :confirmed)
-      redirect_to admin_appointments_path, notice: t("admin.appointments.confirm.notice")
+      if @appointment.update(status: :confirmed)
+        redirect_to admin_appointments_path, notice: t("admin.appointments.confirm.notice")
+      else
+        redirect_back fallback_location: admin_appointments_path,
+                      alert: @appointment.errors.full_messages.to_sentence
+      end
     end
 
     def cancel

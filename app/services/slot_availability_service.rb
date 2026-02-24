@@ -38,7 +38,7 @@ class SlotAvailabilityService
 
     booked_starts = @space.appointments
                           .where(scheduled_at: @from_date..@to_date.end_of_day)
-                          .where(status: [ :pending, :confirmed ])
+                          .where(status: [ :pending, :confirmed, :rescheduled ])
                           .pluck(:scheduled_at)
                           .map do |t|
       st = t.in_time_zone(tz)

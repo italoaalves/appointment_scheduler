@@ -5,6 +5,7 @@ class Appointment < ApplicationRecord
   before_validation :set_duration_from_space, on: :create
 
   validate :customer_belongs_to_space, if: :customer_id?
+  validate :no_double_booking, if: :requires_slot_validation?
 
   def effective_duration_minutes
     duration_minutes.presence || space&.slot_duration_minutes || 30
@@ -37,6 +38,28 @@ class Appointment < ApplicationRecord
 
     unless space.customer_ids.include?(customer_id)
       errors.add(:customer_id, :invalid)
+    end
+  end
+
+  def requires_slot_validation?
+    (confirmed? || rescheduled?) && scheduled_at.present?
+  end
+
+  def no_double_booking
+    return unless space_id.present? && scheduled_at.present?
+
+    my_end = scheduled_at + effective_duration_minutes.minutes
+    overlapping = space.appointments
+                       .where(status: [ :confirmed, :rescheduled ])
+                       .where.not(id: id)
+                       .where.not(scheduled_at: nil)
+
+      overlapping.find_each do |other|
+      other_end = other.scheduled_at + other.effective_duration_minutes.minutes
+      if scheduled_at < other_end && other.scheduled_at < my_end
+        errors.add(:base, :slot_already_booked)
+        break
+      end
     end
   end
 end
