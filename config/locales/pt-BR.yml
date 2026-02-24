@@ -12,6 +12,9 @@ pt-BR:
               change_limit_reached: "não pode ser alterado: limite de 3 alterações atingido"
               change_too_soon: "ainda não pode ser alterado: aguarde 14 dias desde a última alteração"
     attributes:
+      user:
+        system_role:
+          super_admin: "Super administrador"
       appointment:
         status:
           pending: "Pendente"

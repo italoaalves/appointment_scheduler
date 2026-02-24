@@ -15,7 +15,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  enum :role, { admin: 0, manager: 1, secretary: 2 }
+  enum :role, { manager: 0, secretary: 1 }
+  enum :system_role, { super_admin: 0 }, prefix: false
 
   after_create :ensure_space_for_manager
   after_create :ensure_user_preference

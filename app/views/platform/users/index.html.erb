@@ -38,7 +38,7 @@
             <tr class="hover:bg-slate-50">
               <td class="px-4 py-2 align-top text-slate-900"><%= user.email %></td>
               <td class="px-4 py-2 align-top text-slate-700"><%= user.name.presence || "—" %></td>
-              <td class="px-4 py-2 align-top text-slate-700"><%= user.role.humanize %></td>
+              <td class="px-4 py-2 align-top text-slate-700"><%= user.role.humanize %><% if user.super_admin? %> • <%= t("activerecord.attributes.user.system_role.super_admin") %><% end %></td>
               <td class="px-4 py-2 align-top text-slate-700">
                   <% if user.space %>
                     <%= link_to user.space.name, platform_space_path(user.space), class: "text-slate-900 hover:underline" %>

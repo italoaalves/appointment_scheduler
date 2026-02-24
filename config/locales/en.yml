@@ -41,6 +41,9 @@ en:
               change_limit_reached: "cannot be changed: 3-change limit reached"
               change_too_soon: "cannot be changed yet: wait 14 days since last change"
     attributes:
+      user:
+        system_role:
+          super_admin: "Super admin"
       appointment:
         status:
           pending: "Pending"

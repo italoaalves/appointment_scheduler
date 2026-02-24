@@ -8,7 +8,7 @@ module Platform
     private
 
     def require_platform_admin
-      return if current_user.admin?
+      return if current_user.super_admin?
 
       redirect_to root_path, alert: t("platform.unauthorized")
     end

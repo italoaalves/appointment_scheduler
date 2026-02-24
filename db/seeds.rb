@@ -18,7 +18,8 @@ admin = User.create!(
   email: "admin@example.com",
   password: "password123",
   password_confirmation: "password123",
-  role: :admin,
+  role: :secretary,
+  system_role: :super_admin,
   phone_number: "+5511999999999"
 )
 

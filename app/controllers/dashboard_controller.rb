@@ -2,10 +2,10 @@ class DashboardController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    if tenant_staff?
-      load_calendar_data
-    elsif current_user.admin?
+    if current_user.super_admin?
       load_platform_stats
+    elsif tenant_staff?
+      load_calendar_data
     end
   end
 
