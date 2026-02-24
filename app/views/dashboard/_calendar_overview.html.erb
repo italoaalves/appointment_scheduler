@@ -66,10 +66,11 @@
               <% end %>
             <% when :week, :month %>
               <% grouped = period == :week ? calendar_week_grouped(appointments, @calendar_space) : calendar_month_grouped(appointments, @calendar_space) %>
+              <% today_in_space = Time.current.in_time_zone(TimezoneResolver.zone(@calendar_space)).to_date %>
               <% grouped.each_with_index do |(date, group_appointments), idx| %>
                 <div class="<%= idx < grouped.size - 1 ? 'pb-4 mb-4 border-b border-slate-200' : '' %>">
-                  <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    <%= date.strftime("%A, %b %d") %>
+                  <p class="mb-2 text-xs font-semibold uppercase tracking-wide <%= date == today_in_space ? 'text-indigo-600' : 'text-slate-500' %>">
+                    <%= date.strftime("%A, %b %d") %><% if date == today_in_space %><span class="ml-1 font-normal normal-case text-indigo-500">(Today)</span><% end %>
                   </p>
                   <ul class="space-y-0">
                     <% group_appointments.sort_by { |a| a.scheduled_at || Time.zone.at(0) }.each do |appointment| %>
