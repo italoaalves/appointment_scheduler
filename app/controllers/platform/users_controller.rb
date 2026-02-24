@@ -10,6 +10,7 @@ module Platform
         @space_filter = Space.find(params[:space_id])
         @users = @users.where(space_id: params[:space_id])
       end
+      @users = @users.page(params[:page]).per(20)
     end
 
     def show

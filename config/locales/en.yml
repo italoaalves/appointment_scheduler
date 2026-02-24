@@ -325,6 +325,7 @@ en:
         facebook_label: "Facebook"
         scheduling: "Scheduling"
         slot_duration_label: "Slot duration"
+        slot_duration_notice: "Changing this will only affect future appointments. Existing appointments keep their duration."
         minutes: "minutes"
         timezone_label: "Timezone"
         timezone_prompt: "Select timezone"

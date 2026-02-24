@@ -21,7 +21,7 @@ class DashboardController < ApplicationController
     month_start = now_in_tz.beginning_of_month
     month_end = now_in_tz.end_of_month
 
-    base_scope = space.appointments.includes(:client).where.not(status: :cancelled)
+    base_scope = space.appointments.includes(:client, :space).where.not(status: :cancelled)
 
     @calendar_today = base_scope.where(scheduled_at: today_start..today_end).order(:scheduled_at)
     @calendar_week = base_scope.where(scheduled_at: week_start..week_end).order(:scheduled_at)

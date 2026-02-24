@@ -4,7 +4,7 @@ class AppointmentsController < ApplicationController
   before_action :set_appointment, only: [ :show, :destroy, :cancel ]
 
   def index
-    @appointments = current_user.appointments.order(scheduled_at: :desc)
+    @appointments = current_user.appointments.includes(:space).order(scheduled_at: :desc)
   end
 
   def show

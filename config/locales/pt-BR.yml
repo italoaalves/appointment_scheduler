@@ -296,6 +296,7 @@ pt-BR:
         facebook_label: "Facebook"
         scheduling: "Agendamento"
         slot_duration_label: "Duração do horário"
+        slot_duration_notice: "Esta alteração afeta apenas consultas futuras. As existentes mantêm sua duração."
         minutes: "minutos"
         timezone_label: "Fuso horário"
         timezone_prompt: "Selecione o fuso horário"

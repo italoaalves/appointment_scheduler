@@ -6,7 +6,7 @@ module Admin
     before_action :require_manager, only: [ :destroy ]
 
     def index
-      base = current_tenant.appointments.includes(:client)
+      base = current_tenant.appointments.includes(:client, :space)
       base = apply_status_filter(base)
       base = apply_date_range_filter(base)
       @appointments = base.order(scheduled_at: :desc, created_at: :desc).page(params[:page]).per(20)

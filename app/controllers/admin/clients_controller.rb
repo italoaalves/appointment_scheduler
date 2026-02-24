@@ -9,6 +9,12 @@ module Admin
     end
 
     def show
+      @appointments = @client.appointments
+                            .includes(:space)
+                            .where.not(status: :cancelled)
+                            .order(scheduled_at: :desc)
+                            .page(params[:page])
+                            .per(10)
     end
 
     def new
