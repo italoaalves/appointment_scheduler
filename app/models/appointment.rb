@@ -10,11 +10,17 @@ class Appointment < ApplicationRecord
     duration_minutes.presence || space&.slot_duration_minutes || 30
   end
 
+  def scheduled_in_past?
+    scheduled_at.present? && scheduled_at <= Time.current
+  end
+
   enum :status, {
     pending: 0,
     confirmed: 1,
     cancelled: 2,
-    rescheduled: 3
+    rescheduled: 3,
+    no_show: 4,
+    finished: 5
   }
 
   private

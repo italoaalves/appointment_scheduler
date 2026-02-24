@@ -8,7 +8,7 @@
     <% end %>
   </header>
 
-  <%= form_with url: book_path(token: @scheduling_link.token), method: :post, class: "space-y-4", data: { controller: "booking" } do |form| %>
+  <%= form_with url: @booking_context.form_url, method: :post, class: "space-y-4", data: { controller: "booking", booking_slots_url_value: @booking_context.slots_path } do |form| %>
     <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       <h2 class="text-sm font-semibold text-slate-800"><%= t("booking.choose_date") %></h2>
       <div class="mt-2">

@@ -107,6 +107,25 @@ day_configs.each do |days_offset, count|
   end
 end
 
+# ---- PAST APPOINTMENTS: NO-SHOW + FINISHED ----
+# A few appointments in the past with no_show and finished status
+past_dates = [base_date - 14, base_date - 10, base_date - 5]
+past_dates.each_with_index do |date, i|
+  scheduled_at = tz.local(date.year, date.month, date.day, 10 + i, 0)
+  customer = customers[i % customers.size]
+  status = i.even? ? :no_show : :finished
+
+  attrs = {
+    customer: customer,
+    requested_at: scheduled_at - 1.day,
+    scheduled_at: scheduled_at,
+    status: status
+  }
+  attrs[:finished_at] = scheduled_at + 45.minutes if status == :finished
+
+  space.appointments.create!(attrs)
+end
+
 puts "✅ Seed completed!"
 puts "SaaS admin: admin@example.com / password123"
 puts "Manager (tenant owner): manager@example.com / password123"

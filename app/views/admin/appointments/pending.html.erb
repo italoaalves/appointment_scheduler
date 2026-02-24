@@ -1,0 +1,78 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between gap-2 flex-wrap">
+    <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
+      <%= t("admin.appointments.pending.title") %>
+    </h1>
+    <p class="w-full text-sm text-slate-600 sm:w-auto">
+      <%= t("admin.appointments.pending.subtitle", count: @appointments.total_count) %>
+    </p>
+    <div class="flex flex-wrap items-center gap-2">
+      <%= link_to t("admin.appointments.pending.all_appointments"),
+                  admin_appointments_path,
+                  class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-50" %>
+      <%= link_to t("admin.appointments.index.new_button"),
+                  new_admin_appointment_path,
+                  class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800" %>
+    </div>
+  </div>
+
+  <% if @appointments.any? %>
+    <ul class="space-y-3">
+      <% @appointments.each do |appointment| %>
+        <li class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:border-slate-300">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <%= link_to admin_appointment_path(appointment),
+                            class: "font-medium text-slate-900 hover:underline" do %>
+                  <%= appointment.customer&.name || "—" %>
+                <% end %>
+                <% if appointment.customer&.phone.present? %>
+                  <span class="text-xs text-slate-500">· <%= appointment.customer.phone %></span>
+                <% end %>
+              </div>
+              <div class="mt-1 flex flex-wrap gap-x-4 gap-y-0 text-xs text-slate-600">
+                <span>
+                  <%= t("admin.appointments.pending.requested") %>:
+                  <%= format_appointment_time(appointment.requested_at, space: appointment.space, format: :short) || "—" %>
+                </span>
+                <span>
+                  <%= t("admin.appointments.pending.preferred") %>:
+                  <%= format_appointment_time(appointment.scheduled_at, space: appointment.space, format: :short) || t("admin.appointments.pending.to_be_scheduled") %>
+                </span>
+              </div>
+            </div>
+            <div class="flex shrink-0 flex-wrap items-center gap-2">
+              <%= button_to t("admin.appointments.index.confirm"),
+                            confirm_admin_appointment_path(appointment),
+                            method: :patch,
+                            class: "inline-flex items-center rounded-md bg-emerald-500 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-600" %>
+              <%= link_to t("admin.appointments.index.edit"),
+                          edit_admin_appointment_path(appointment),
+                          class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
+              <%= button_to t("admin.appointments.index.cancel"),
+                            cancel_admin_appointment_path(appointment),
+                            method: :patch,
+                            data: { turbo_confirm: t("admin.appointments.index.cancel_confirm") },
+                            class: "inline-flex items-center rounded-md bg-amber-500 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-600" %>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+
+    <% if @appointments.total_pages > 1 %>
+      <div class="flex justify-center pt-4">
+        <%= paginate @appointments %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-12 text-center">
+      <p class="text-sm font-medium text-slate-700"><%= t("admin.appointments.pending.empty_title") %></p>
+      <p class="mt-1 text-sm text-slate-600"><%= t("admin.appointments.pending.empty_body") %></p>
+      <%= link_to t("admin.appointments.pending.view_all"),
+                  admin_appointments_path,
+                  class: "mt-4 inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800" %>
+    </div>
+  <% end %>
+</div>

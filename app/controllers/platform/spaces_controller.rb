@@ -18,11 +18,24 @@ module Platform
     def create
       @space = Space.new(space_params)
 
-      if @space.save
+      if manager_params?
+        ActiveRecord::Base.transaction do
+          @space.save!
+          @manager = User.new(manager_attrs)
+          @manager.space_id = @space.id
+          @manager.role = :manager
+          @manager.save!
+        end
+        redirect_to platform_space_path(@space), notice: t("platform.spaces.create.notice_with_manager")
+      elsif @space.save
         redirect_to platform_space_path(@space), notice: t("platform.spaces.create.notice")
       else
         render :new
       end
+    rescue ActiveRecord::RecordInvalid => e
+      @manager = e.record if e.record.is_a?(User)
+      @space = Space.new(space_params)
+      render :new
     end
 
     def edit
@@ -49,6 +62,19 @@ module Platform
 
     def space_params
       params.require(:space).permit(:name, :timezone)
+    end
+
+    def manager_params?
+      params[:manager_email].present? || params[:manager_password].present?
+    end
+
+    def manager_attrs
+      {
+        email: params[:manager_email],
+        name: params[:manager_name].presence,
+        password: params[:manager_password],
+        password_confirmation: params[:manager_password_confirmation]
+      }
     end
   end
 end

@@ -73,10 +73,10 @@
         <%= form.submit t("platform.users.edit.submit"),
                         class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
         <%= link_to t("platform.users.edit.back"),
-                    platform_user_path(@user),
+                    platform_user_path(@user, space_id: params[:space_id].presence),
                     class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
         <%= link_to t("platform.users.edit.all_users"),
-                    platform_users_path,
+                    platform_users_path(space_id: params[:space_id].presence),
                     class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
       </div>
     <% end %>

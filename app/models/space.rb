@@ -3,6 +3,7 @@ class Space < ApplicationRecord
   has_many :customers, dependent: :destroy
   has_many :appointments, dependent: :destroy
   has_many :scheduling_links, dependent: :destroy
+  has_one :personalized_scheduling_link, dependent: :destroy
 
   DEFAULT_BUSINESS_HOURS = {
     "1" => { "open" => "09:00", "close" => "17:00" },

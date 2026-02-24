@@ -6,6 +6,7 @@ module Admin
 
     def index
       @scheduling_links = current_tenant.scheduling_links.order(created_at: :desc)
+      @personalized_link = current_tenant.personalized_scheduling_link
     end
 
     def show

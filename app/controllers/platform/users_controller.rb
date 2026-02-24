@@ -20,6 +20,10 @@ module Platform
 
     def new
       @user = User.new(role: :manager)
+      if params[:space_id].present?
+        space = Space.find_by(id: params[:space_id])
+        @user.space_id = space.id if space
+      end
     end
 
     def create
@@ -50,8 +54,9 @@ module Platform
     end
 
     def destroy
+      space_id = params[:space_id].presence
       @user.destroy
-      redirect_to platform_users_path, notice: t("platform.users.destroy.notice")
+      redirect_to platform_users_path(space_id: space_id), notice: t("platform.users.destroy.notice")
     end
 
     private

@@ -32,6 +32,7 @@
               <div class="hidden md:flex items-center gap-3 text-sm">
                 <% if tenant_staff? %>
                   <%= link_to t("layout.nav.all_appointments"), admin_appointments_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
+                  <%= link_to t("layout.nav.pending"), pending_admin_appointments_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
                   <%= link_to t("layout.nav.booking_links"), admin_scheduling_links_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
                   <div class="relative" x-data="{ managementOpen: false }">
                     <button type="button"
@@ -130,6 +131,7 @@
             <div class="space-y-1 pb-3 pt-2">
               <% if tenant_staff? %>
                 <%= link_to t("layout.nav.all_appointments"), admin_appointments_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+                <%= link_to t("layout.nav.pending"), pending_admin_appointments_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
                 <%= link_to t("layout.nav.booking_links"), admin_scheduling_links_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
                 <p class="px-3 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-slate-400"><%= t("layout.nav.management") %></p>
                 <%= link_to t("layout.nav.customers"), admin_customers_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>

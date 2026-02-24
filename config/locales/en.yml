@@ -29,6 +29,13 @@
 
 en:
   activerecord:
+    errors:
+      models:
+        personalized_scheduling_link:
+          attributes:
+            slug:
+              change_limit_reached: "cannot be changed: 3-change limit reached"
+              change_too_soon: "cannot be changed yet: wait 14 days since last change"
     attributes:
       appointment:
         status:
@@ -36,6 +43,8 @@ en:
           confirmed: "Confirmed"
           cancelled: "Cancelled"
           rescheduled: "Rescheduled"
+          no_show: "No-show"
+          finished: "Finished"
 
   profiles:
     edit:
@@ -68,6 +77,7 @@ en:
       my_appointments: "My appointments"
       request_appointment: "Request appointment"
       all_appointments: "All appointments"
+      pending: "Pending"
       management: "Management"
       customers: "Customers"
       booking_links: "Booking links"
@@ -89,6 +99,10 @@ en:
     tenant_subtitle: "Manage appointments and clients for your space."
     platform_admin_message: "Manage tenants and users across the platform."
     platform:
+      stats:
+        tenants: "Tenants"
+        users: "Users"
+        appointments: "Appointments"
       tenants_title: "Tenants"
       tenants_body: "View and manage all tenant spaces, with client and team statistics."
       tenants_cta: "Manage tenants"
@@ -99,6 +113,9 @@ en:
     admin:
       appointments_title: "Appointments"
       appointments_body: "Review, confirm, cancel, or reschedule any appointment."
+      pending_title: "Pending requests"
+      pending_body: "%{count} appointment(s) waiting for your action."
+      pending_cta: "Review pending"
       appointments_cta: "View all appointments"
       customers_title: "Customers"
       customers_body: "Create, edit, or remove customer accounts and view their history."
@@ -127,6 +144,7 @@ en:
       subtitle: "Review your booking status and timing."
       scheduled_for: "Scheduled for"
       requested_at: "Requested at"
+      finished_at: "Finished at"
       to_be_scheduled: "To be scheduled"
       back: "Back to appointments"
       cancel: "Cancel appointment"
@@ -153,6 +171,17 @@ en:
         notice: "Appointment confirmed."
       cancel:
         notice: "Appointment cancelled."
+      no_show:
+        notice: "Marked as no-show."
+        cannot_before_scheduled: "Cannot mark as no-show before the appointment is scheduled to happen."
+      finish:
+        notice: "Marked as finished."
+        cannot_before_scheduled: "Cannot mark as finished before the appointment is scheduled to happen."
+        title: "Mark as finished"
+        subtitle: "When did the appointment with %{customer} finish?"
+        finished_at_label: "Finished at"
+        submit: "Mark finished"
+        cancel: "Cancel"
       calendar:
         today: "Today"
         week: "Week"
@@ -169,6 +198,8 @@ en:
           empty_slots: "Empty slots"
           pending: "Pending"
           confirmed: "Confirmed"
+        mark_no_show: "No-show"
+        mark_finish: "Finished"
       filters:
         status: "Status"
         all_statuses: "All statuses"
@@ -176,6 +207,8 @@ en:
         confirmed: "Confirmed"
         cancelled: "Cancelled"
         rescheduled: "Rescheduled"
+        no_show: "No-show"
+        finished: "Finished"
         from: "From"
         to: "To"
         apply: "Filter"
@@ -195,14 +228,28 @@ en:
         confirm: "Confirm"
         cancel: "Cancel"
         cancel_confirm: "Cancel this appointment?"
+        no_show: "No-show"
+        no_show_confirm: "Mark this appointment as no-show?"
+        finish: "Finished"
         delete: "Delete"
         delete_confirm: "Permanently delete this appointment?"
+      pending:
+        title: "Pending requests"
+        subtitle: "%{count} appointment(s) waiting for confirmation."
+        requested: "Requested"
+        preferred: "Preferred time"
+        to_be_scheduled: "To be scheduled"
+        all_appointments: "All appointments"
+        empty_title: "All caught up!"
+        empty_body: "No pending appointment requests right now."
+        view_all: "View all appointments"
       show:
         title: "Appointment"
         subtitle: "Admin view of the selected booking."
         customer: "Customer"
         scheduled_for: "Scheduled for"
         requested_at: "Requested at"
+        finished_at: "Finished at"
         edit_reschedule: "Edit / reschedule"
         back_to_appointments: "Back to appointments"
       new:
@@ -357,6 +404,9 @@ en:
         scheduling: "Scheduling"
         slot_duration_label: "Slot duration"
         slot_duration_notice: "Changing this will only affect future appointments. Existing appointments keep their duration."
+        booking_success_message_label: "Thank you message"
+        booking_success_message_placeholder: "e.g. Thank you! We will follow up with you shortly to confirm your appointment."
+        booking_success_message_hint: "Shown to customers after they successfully book an appointment. Leave blank for the default message."
         minutes: "minutes"
         timezone_label: "Timezone"
         timezone_prompt: "Select timezone"
@@ -425,6 +475,46 @@ en:
         submit: "Save"
         back: "Back to link"
 
+    personalized_scheduling_links:
+      not_found: "Personalized link not found."
+      new:
+        already_exists: "A personalized link already exists. Edit it instead."
+        title: "Create personalized link"
+        subtitle: "Create a custom URL for your booking page. Use lowercase letters, numbers, and hyphens only."
+        slug_label: "Slug"
+        slug_hint: "You can change the slug up to 3 times, and only 14 days after the last change."
+        slug_placeholder: "e.g. my-clinic"
+        submit: "Create"
+        cancel: "Cancel"
+      create:
+        notice: "Personalized link created."
+      edit:
+        title: "Edit personalized link"
+        subtitle: "Change the slug. Limited to 3 changes total, 14 days apart."
+        slug_label: "Slug"
+        slug_hint: "%{count} changes left. Next change allowed %{days} days after the last one."
+        slug_no_changes_left: "No changes left. The slug cannot be modified anymore."
+        slug_placeholder: "e.g. my-clinic"
+        submit: "Save"
+        cancel: "Cancel"
+        remove_title: "Remove personalized link"
+        remove_hint: "You can remove it anytime. Creating a new one later counts as a slug change."
+        remove: "Remove"
+        remove_confirm: "Remove this personalized link? You can create a new one later (counts as a change)."
+      update:
+        notice: "Personalized link updated."
+      destroy:
+        notice: "Personalized link removed."
+      index:
+        title: "Personalized link"
+        has_link_hint: "Custom URL for your booking page. Never expires, unlimited use."
+        empty_hint: "Create a custom URL (e.g. /book/s/my-clinic) for your booking page."
+        create_button: "Create personalized link"
+        view: "Open"
+        edit: "Edit"
+        remove: "Remove"
+        remove_confirm: "Remove this personalized link?"
+
   booking:
     choose_date: "Choose a date"
     choose_time: "Choose a time"
@@ -443,6 +533,9 @@ en:
     submit: "Request appointment"
     create:
       success: "Your appointment request has been submitted. We'll contact you to confirm."
+    thank_you:
+      title: "Thank you!"
+      default_message: "Your appointment request has been submitted. We will follow up with you shortly to confirm."
     invalid:
       title: "Invalid link"
       body: "This booking link doesn't exist or has been removed."
@@ -455,6 +548,7 @@ en:
     spaces:
       create:
         notice: "Space created."
+        notice_with_manager: "Space and manager account created."
       update:
         notice: "Space updated."
       destroy:
@@ -481,13 +575,23 @@ en:
         customers_count: "Customers"
         team_size: "Team size"
         edit: "Edit"
+        add_user: "Add user"
         manage_users: "Manage users"
+        view_appointments: "View appointments"
+        view_customers: "View customers"
+        view_scheduling_links: "View booking links"
         back: "Back to tenants"
       new:
         title: "New space"
         subtitle: "Create a new tenant space."
         name_label: "Name"
         timezone_label: "Timezone"
+        manager_section: "Create manager account (optional)"
+        manager_hint: "Fill in to create a manager for this space in one step. Leave blank to add users later."
+        manager_email: "Manager email"
+        manager_name: "Manager name"
+        manager_password: "Manager password"
+        manager_password_confirmation: "Password confirmation"
         submit: "Create space"
         back: "Back to tenants"
       edit:
@@ -498,6 +602,30 @@ en:
         submit: "Update space"
         back: "Back to space"
         all_spaces: "All tenants"
+
+    space_appointments:
+      index:
+        title: "Appointments — %{space}"
+        customers: "Customers"
+        back_to_space: "Back to space"
+        back_to_appointments: "Back to appointments"
+      show:
+        subtitle: "Appointment for %{space}"
+
+    space_customers:
+      index:
+        title: "Customers — %{space}"
+        appointments: "Appointments"
+        back_to_space: "Back to space"
+        back_to_customers: "Back to customers"
+      show:
+        subtitle: "Customer for %{space}"
+
+    space_scheduling_links:
+      index:
+        title: "Booking links — %{space}"
+        back_to_space: "Back to space"
+        back_to_links: "Back to links"
 
     users:
       create:

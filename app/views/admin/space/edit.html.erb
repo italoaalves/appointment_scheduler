@@ -109,6 +109,18 @@
             <%= t("admin.space.edit.slot_duration_notice") %>
           </p>
         </div>
+        <div>
+          <%= form.label :booking_success_message,
+                         t("admin.space.edit.booking_success_message_label"),
+                         class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_area :booking_success_message,
+                            rows: 3,
+                            placeholder: t("admin.space.edit.booking_success_message_placeholder"),
+                            class: "mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+          <p class="mt-1.5 text-xs text-slate-500">
+            <%= t("admin.space.edit.booking_success_message_hint") %>
+          </p>
+        </div>
         <div data-controller="timezone-select">
         <%= form.label :timezone,
                        t("admin.space.edit.timezone_label"),

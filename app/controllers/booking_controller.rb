@@ -3,15 +3,15 @@
 class BookingController < ApplicationController
   layout "booking"
 
-  before_action :set_scheduling_link, only: [ :show, :slots, :create ]
-  before_action :validate_link_usable, only: [ :show, :slots, :create ]
+  before_action :set_booking_context, only: [ :show, :slots, :create, :thank_you ]
+  before_action :validate_booking_usable, only: [ :show, :slots, :create ]
 
   def show
-    @space = @scheduling_link.space
+    @space = @booking_context.space
   end
 
   def slots
-    @space = @scheduling_link.space
+    @space = @booking_context.space
     tz = TimezoneResolver.zone(@space)
     today_in_space = Time.current.in_time_zone(tz).to_date
     from = params[:from].present? ? Date.parse(params[:from]) : today_in_space
@@ -23,8 +23,12 @@ class BookingController < ApplicationController
     render json: []
   end
 
+  def thank_you
+    @space = @booking_context.space
+  end
+
   def create
-    @space = @scheduling_link.space
+    @space = @booking_context.space
     customer = find_or_create_customer
     appointment = AppointmentCreator.call(
       space: @space,
@@ -33,10 +37,10 @@ class BookingController < ApplicationController
     )
 
     if appointment.save
-      @scheduling_link.mark_used!
-      redirect_to book_path(token: @scheduling_link.token), notice: t("booking.create.success")
+      @booking_context.mark_used!
+      redirect_to @booking_context.redirect_after_booking
     else
-      @space = @scheduling_link.space
+      @space = @booking_context.space
       flash.now[:alert] = appointment.errors.full_messages.to_sentence
       render :show, status: :unprocessable_entity
     end
@@ -44,14 +48,20 @@ class BookingController < ApplicationController
 
   private
 
-  def set_scheduling_link
-    @scheduling_link = SchedulingLink.find_by!(token: params[:token])
+  def set_booking_context
+    if params[:slug].present?
+      link = PersonalizedSchedulingLink.find_by!(slug: params[:slug])
+      @booking_context = BookingContext::PersonalizedBookingContext.new(link)
+    else
+      link = SchedulingLink.find_by!(token: params[:token])
+      @booking_context = BookingContext::TokenBookingContext.new(link)
+    end
   rescue ActiveRecord::RecordNotFound
     render "booking/invalid", status: :not_found
   end
 
-  def validate_link_usable
-    return if @scheduling_link.usable?
+  def validate_booking_usable
+    return if @booking_context.usable?
 
     render "booking/expired", status: :gone
   end

@@ -7,17 +7,19 @@ export default class extends Controller {
     this.loadSlots()
   }
 
+  static values = { slotsUrl: String }
+
   loadSlots() {
     const dateInput = this.dateInputTarget
     if (!dateInput || !dateInput.value) return
 
     const date = dateInput.value
-    const token = window.location.pathname.split("/")[2]
+    const slotsUrl = this.hasSlotsUrlValue ? this.slotsUrlValue : `/book/${window.location.pathname.split("/")[2]}/slots`
 
     this.slotsContainerTarget.querySelector("p").textContent = this.slotsContainerTarget.dataset.loadingText || "Loading..."
     this.slotsListTarget.innerHTML = ""
 
-    fetch(`/book/${token}/slots?from=${date}&to=${date}`)
+    fetch(`${slotsUrl}?from=${date}&to=${date}`)
       .then(r => r.json())
       .then(slots => {
         this.slotsContainerTarget.querySelector("p").textContent = slots.length === 0

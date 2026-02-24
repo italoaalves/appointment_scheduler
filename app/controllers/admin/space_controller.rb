@@ -39,6 +39,7 @@ module Admin
         :email,
         :business_hours,
         :slot_duration_minutes,
+        :booking_success_message,
         :instagram_url,
         :facebook_url,
         business_hours_schedule: {}

@@ -1,5 +1,12 @@
 pt-BR:
   activerecord:
+    errors:
+      models:
+        personalized_scheduling_link:
+          attributes:
+            slug:
+              change_limit_reached: "não pode ser alterado: limite de 3 alterações atingido"
+              change_too_soon: "ainda não pode ser alterado: aguarde 14 dias desde a última alteração"
     attributes:
       appointment:
         status:
@@ -7,6 +14,8 @@ pt-BR:
           confirmed: "Confirmada"
           cancelled: "Cancelada"
           rescheduled: "Reagendada"
+          no_show: "Faltou"
+          finished: "Finalizada"
 
   profiles:
     edit:
@@ -39,6 +48,7 @@ pt-BR:
       my_appointments: "Minhas consultas"
       request_appointment: "Agendar consulta"
       all_appointments: "Todas as consultas"
+      pending: "Pendentes"
       management: "Gestão"
       customers: "Clientes"
       booking_links: "Links de agendamento"
@@ -60,6 +70,10 @@ pt-BR:
     tenant_subtitle: "Gerencie consultas e clientes do seu espaço."
     platform_admin_message: "Gerencie inquilinos e usuários em toda a plataforma."
     platform:
+      stats:
+        tenants: "Inquilinos"
+        users: "Usuários"
+        appointments: "Consultas"
       tenants_title: "Inquilinos"
       tenants_body: "Visualize e gerencie todos os espaços de inquilinos, com estatísticas de clientes e equipe."
       tenants_cta: "Gerenciar inquilinos"
@@ -70,6 +84,9 @@ pt-BR:
     admin:
       appointments_title: "Consultas"
       appointments_body: "Revise, confirme, cancele ou reagende qualquer consulta."
+      pending_title: "Pendentes"
+      pending_body: "%{count} consulta(s) aguardando sua ação."
+      pending_cta: "Ver pendentes"
       appointments_cta: "Ver todas as consultas"
       customers_title: "Clientes"
       customers_body: "Crie, edite ou remova clientes e veja o histórico deles."
@@ -98,6 +115,7 @@ pt-BR:
       subtitle: "Veja o status da sua consulta e o horário."
       scheduled_for: "Agendada para"
       requested_at: "Solicitada em"
+      finished_at: "Finalizada às"
       to_be_scheduled: "A definir"
       back: "Voltar para consultas"
       cancel: "Cancelar consulta"
@@ -124,6 +142,17 @@ pt-BR:
         notice: "Consulta confirmada."
       cancel:
         notice: "Consulta cancelada."
+      no_show:
+        notice: "Marcado como falta."
+        cannot_before_scheduled: "Não é possível marcar como falta antes do horário agendado da consulta."
+      finish:
+        notice: "Marcado como finalizada."
+        cannot_before_scheduled: "Não é possível marcar como finalizada antes do horário agendado da consulta."
+        title: "Marcar como finalizada"
+        subtitle: "Quando a consulta com %{customer} foi finalizada?"
+        finished_at_label: "Finalizada às"
+        submit: "Marcar finalizada"
+        cancel: "Cancelar"
       calendar:
         today: "Hoje"
         week: "Semana"
@@ -140,6 +169,8 @@ pt-BR:
           empty_slots: "Horários livres"
           pending: "Pendentes"
           confirmed: "Confirmadas"
+        mark_no_show: "Faltou"
+        mark_finish: "Finalizada"
       filters:
         status: "Status"
         all_statuses: "Todos os status"
@@ -147,6 +178,8 @@ pt-BR:
         confirmed: "Confirmada"
         cancelled: "Cancelada"
         rescheduled: "Reagendada"
+        no_show: "Faltou"
+        finished: "Finalizada"
         from: "De"
         to: "Até"
         apply: "Filtrar"
@@ -166,14 +199,28 @@ pt-BR:
         confirm: "Confirmar"
         cancel: "Cancelar"
         cancel_confirm: "Cancelar esta consulta?"
+        no_show: "Faltou"
+        no_show_confirm: "Marcar esta consulta como falta?"
+        finish: "Finalizada"
         delete: "Excluir"
         delete_confirm: "Excluir esta consulta permanentemente?"
+      pending:
+        title: "Consultas pendentes"
+        subtitle: "%{count} consulta(s) aguardando confirmação."
+        requested: "Solicitada"
+        preferred: "Horário preferido"
+        to_be_scheduled: "A definir"
+        all_appointments: "Todas as consultas"
+        empty_title: "Tudo em dia!"
+        empty_body: "Nenhuma solicitação de consulta pendente no momento."
+        view_all: "Ver todas as consultas"
       show:
         title: "Consulta"
         subtitle: "Visão administrativa da consulta selecionada."
         customer: "Cliente"
         scheduled_for: "Agendada para"
         requested_at: "Solicitada em"
+        finished_at: "Finalizada às"
         edit_reschedule: "Editar / reagendar"
         back_to_appointments: "Voltar para consultas"
       new:
@@ -327,6 +374,9 @@ pt-BR:
         scheduling: "Agendamento"
         slot_duration_label: "Duração do horário"
         slot_duration_notice: "Esta alteração afeta apenas consultas futuras. As existentes mantêm sua duração."
+        booking_success_message_label: "Mensagem de agradecimento"
+        booking_success_message_placeholder: "ex: Obrigado! Entraremos em contato em breve para confirmar sua consulta."
+        booking_success_message_hint: "Exibida aos clientes após agendarem com sucesso. Deixe em branco para a mensagem padrão."
         minutes: "minutos"
         timezone_label: "Fuso horário"
         timezone_prompt: "Selecione o fuso horário"
@@ -395,6 +445,46 @@ pt-BR:
         submit: "Salvar"
         back: "Voltar para link"
 
+    personalized_scheduling_links:
+      not_found: "Link personalizado não encontrado."
+      new:
+        already_exists: "Já existe um link personalizado. Edite-o."
+        title: "Criar link personalizado"
+        subtitle: "Crie uma URL personalizada para sua página de agendamento. Use apenas letras minúsculas, números e hífens."
+        slug_label: "Slug"
+        slug_hint: "Você pode alterar o slug até 3 vezes, e somente 14 dias após a última alteração."
+        slug_placeholder: "ex: minha-clinica"
+        submit: "Criar"
+        cancel: "Cancelar"
+      create:
+        notice: "Link personalizado criado."
+      edit:
+        title: "Editar link personalizado"
+        subtitle: "Altere o slug. Limite de 3 alterações no total, com 14 dias de intervalo."
+        slug_label: "Slug"
+        slug_hint: "%{count} alterações restantes. Próxima alteração permitida %{days} dias após a última."
+        slug_no_changes_left: "Nenhuma alteração restante. O slug não pode mais ser modificado."
+        slug_placeholder: "ex: minha-clinica"
+        submit: "Salvar"
+        cancel: "Cancelar"
+        remove_title: "Remover link personalizado"
+        remove_hint: "Você pode removê-lo a qualquer momento. Criar um novo depois conta como alteração de slug."
+        remove: "Remover"
+        remove_confirm: "Remover este link personalizado? Você pode criar um novo depois (conta como alteração)."
+      update:
+        notice: "Link personalizado atualizado."
+      destroy:
+        notice: "Link personalizado removido."
+      index:
+        title: "Link personalizado"
+        has_link_hint: "URL personalizada para sua página de agendamento. Nunca expira, uso ilimitado."
+        empty_hint: "Crie uma URL personalizada (ex: /book/s/minha-clinica) para sua página de agendamento."
+        create_button: "Criar link personalizado"
+        view: "Abrir"
+        edit: "Editar"
+        remove: "Remover"
+        remove_confirm: "Remover este link personalizado?"
+
   booking:
     choose_date: "Escolha uma data"
     choose_time: "Escolha um horário"
@@ -413,6 +503,9 @@ pt-BR:
     submit: "Solicitar consulta"
     create:
       success: "Sua solicitação foi enviada. Entraremos em contato para confirmar."
+    thank_you:
+      title: "Obrigado!"
+      default_message: "Sua solicitação foi enviada. Entraremos em contato em breve para confirmar."
     invalid:
       title: "Link inválido"
       body: "Este link não existe ou foi removido."
@@ -425,6 +518,7 @@ pt-BR:
     spaces:
       create:
         notice: "Espaço criado."
+        notice_with_manager: "Espaço e conta do gerente criados."
       update:
         notice: "Espaço atualizado."
       destroy:
@@ -451,13 +545,23 @@ pt-BR:
         customers_count: "Clientes"
         team_size: "Tamanho da equipe"
         edit: "Editar"
+        add_user: "Adicionar usuário"
         manage_users: "Gerenciar usuários"
+        view_appointments: "Ver consultas"
+        view_customers: "Ver clientes"
+        view_scheduling_links: "Ver links de agendamento"
         back: "Voltar para inquilinos"
       new:
         title: "Novo espaço"
         subtitle: "Crie um novo espaço de inquilino."
         name_label: "Nome"
         timezone_label: "Fuso horário"
+        manager_section: "Criar conta do gerente (opcional)"
+        manager_hint: "Preencha para criar um gerente deste espaço em um único passo. Deixe em branco para adicionar usuários depois."
+        manager_email: "E-mail do gerente"
+        manager_name: "Nome do gerente"
+        manager_password: "Senha do gerente"
+        manager_password_confirmation: "Confirmação de senha"
         submit: "Criar espaço"
         back: "Voltar para inquilinos"
       edit:
@@ -468,6 +572,30 @@ pt-BR:
         submit: "Atualizar espaço"
         back: "Voltar para espaço"
         all_spaces: "Todos os inquilinos"
+
+    space_appointments:
+      index:
+        title: "Consultas — %{space}"
+        customers: "Clientes"
+        back_to_space: "Voltar para espaço"
+        back_to_appointments: "Voltar para consultas"
+      show:
+        subtitle: "Consulta de %{space}"
+
+    space_customers:
+      index:
+        title: "Clientes — %{space}"
+        appointments: "Consultas"
+        back_to_space: "Voltar para espaço"
+        back_to_customers: "Voltar para clientes"
+      show:
+        subtitle: "Cliente de %{space}"
+
+    space_scheduling_links:
+      index:
+        title: "Links de agendamento — %{space}"
+        back_to_space: "Voltar para espaço"
+        back_to_links: "Voltar para links"
 
     users:
       create:

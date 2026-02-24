@@ -2,10 +2,20 @@ class DashboardController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    load_calendar_data if tenant_staff?
+    if tenant_staff?
+      load_calendar_data
+    elsif current_user.admin?
+      load_platform_stats
+    end
   end
 
   private
+
+  def load_platform_stats
+    @platform_spaces_count = Space.count
+    @platform_users_count = User.count
+    @platform_appointments_count = Appointment.count
+  end
 
   def load_calendar_data
     return unless current_tenant
@@ -31,5 +41,6 @@ class DashboardController < ApplicationController
     @stats_week = CalendarStatsService.call(space: space, appointments: @calendar_week, from: week_start, to: week_end)
     @stats_month = CalendarStatsService.call(space: space, appointments: @calendar_month, from: month_start, to: month_end)
     @calendar_space = space
+    @pending_count = space.appointments.pending.count
   end
 end
