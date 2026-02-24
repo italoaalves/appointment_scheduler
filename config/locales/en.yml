@@ -28,6 +28,15 @@
 #       enabled: "ON"
 
 en:
+  activerecord:
+    attributes:
+      appointment:
+        status:
+          pending: "Pending"
+          confirmed: "Confirmed"
+          cancelled: "Cancelled"
+          rescheduled: "Rescheduled"
+
   layout:
     app_name: "Appointment Scheduler"
     nav:
@@ -121,11 +130,28 @@ en:
         week: "Week"
         month: "Month"
         no_appointments: "No appointments in this period."
+        ongoing: "Ongoing"
+        periods:
+          morning: "Morning"
+          afternoon: "Afternoon"
+          evening: "Evening"
+          night: "Night"
         stats:
           total: "Total appointments"
           empty_slots: "Empty slots"
           pending: "Pending"
           confirmed: "Confirmed"
+      filters:
+        status: "Status"
+        all_statuses: "All statuses"
+        pending: "Pending"
+        confirmed: "Confirmed"
+        cancelled: "Cancelled"
+        rescheduled: "Rescheduled"
+        from: "From"
+        to: "To"
+        apply: "Filter"
+        clear: "Clear"
       index:
         title: "All appointments"
         new_button: "New appointment"

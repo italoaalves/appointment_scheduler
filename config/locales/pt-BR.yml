@@ -1,4 +1,13 @@
 pt-BR:
+  activerecord:
+    attributes:
+      appointment:
+        status:
+          pending: "Pendente"
+          confirmed: "Confirmada"
+          cancelled: "Cancelada"
+          rescheduled: "Reagendada"
+
   layout:
     app_name: "Agendador de Consultas"
     nav:
@@ -92,11 +101,28 @@ pt-BR:
         week: "Semana"
         month: "Mês"
         no_appointments: "Nenhuma consulta neste período."
+        ongoing: "Em andamento"
+        periods:
+          morning: "Manhã"
+          afternoon: "Tarde"
+          evening: "Noite"
+          night: "Madrugada"
         stats:
           total: "Total de consultas"
           empty_slots: "Horários livres"
           pending: "Pendentes"
           confirmed: "Confirmadas"
+      filters:
+        status: "Status"
+        all_statuses: "Todos os status"
+        pending: "Pendente"
+        confirmed: "Confirmada"
+        cancelled: "Cancelada"
+        rescheduled: "Reagendada"
+        from: "De"
+        to: "Até"
+        apply: "Filtrar"
+        clear: "Limpar"
       index:
         title: "Todas as consultas"
         new_button: "Nova consulta"

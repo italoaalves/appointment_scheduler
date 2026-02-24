@@ -56,7 +56,7 @@
                   <%= appointment.scheduled_at&.strftime("%B %d, %Y at %l:%M %p") || "—" %>
                 </p>
                 <p class="mt-0.5 text-xs text-slate-500">
-                  <%= t("admin.clients.show.status_prefix") %> <%= appointment.status.humanize %>
+                  <%= t("admin.clients.show.status_prefix") %> <%= t("activerecord.attributes.appointment.status.#{appointment.status}") %>
                 </p>
               </div>
               <%= link_to t("admin.appointments.index.view"),

@@ -1,0 +1,23 @@
+<% ongoing = appointment_ongoing?(appointment) %>
+<%= link_to admin_appointment_path(appointment),
+            class: "flex items-center justify-between gap-2 py-3 text-left -mx-2 px-2 rounded-lg transition-colors relative #{ongoing ? 'bg-blue-50 border-l-4 border-l-blue-400 hover:bg-blue-100' : 'hover:bg-slate-50'}" do %>
+  <div class="min-w-0 flex-1">
+    <div class="flex items-center gap-2">
+      <p class="text-sm font-medium text-slate-900 truncate">
+        <%= appointment.client&.name || "—" %>
+      </p>
+      <% if ongoing %>
+        <span class="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide bg-blue-200/80 text-blue-800">
+          <%= t("admin.appointments.calendar.ongoing") %>
+        </span>
+      <% end %>
+    </div>
+    <p class="text-xs text-slate-500">
+      <%= appointment.scheduled_at&.strftime("%b %d, %Y %l:%M %p") || t("appointments.index.time_to_be_scheduled") %>
+    </p>
+  </div>
+  <span class="inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium
+    <%= appointment.pending? ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800' %>">
+    <%= appointment.status.humanize %>
+  </span>
+<% end %>

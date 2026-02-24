@@ -33,27 +33,40 @@
            style="<%= period == :today ? '' : 'display: none;' %>"
            class="space-y-4">
         <% if appointments.any? %>
-          <ul class="divide-y divide-slate-200">
-            <% appointments.each do |appointment| %>
-              <li>
-                <%= link_to admin_appointment_path(appointment),
-                            class: "flex items-center justify-between gap-2 py-3 text-left hover:bg-slate-50 -mx-2 px-2 rounded-lg transition-colors" do %>
-                  <div class="min-w-0 flex-1">
-                    <p class="text-sm font-medium text-slate-900 truncate">
-                      <%= appointment.client&.name || "—" %>
-                    </p>
-                    <p class="text-xs text-slate-500">
-                      <%= appointment.scheduled_at&.strftime("%b %d, %Y %l:%M %p") || t("appointments.index.time_to_be_scheduled") %>
-                    </p>
-                  </div>
-                  <span class="inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium
-                    <%= appointment.pending? ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800' %>">
-                    <%= appointment.status.humanize %>
-                  </span>
-                <% end %>
-              </li>
+          <% case period %>
+          <% when :today %>
+            <% today_groups = calendar_today_grouped(appointments).select { |_, v| v.any? } %>
+            <% today_groups.each_with_index do |(period_key, group_appointments), idx| %>
+              <div class="<%= idx < today_groups.size - 1 ? 'pb-4 mb-4 border-b border-slate-200' : '' %>">
+                <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <%= t("admin.appointments.calendar.periods.#{period_key}") %>
+                </p>
+                <ul class="space-y-0">
+                  <% group_appointments.each do |appointment| %>
+                    <li>
+                      <%= render "dashboard/calendar_appointment", appointment: appointment %>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
             <% end %>
-          </ul>
+          <% when :week, :month %>
+            <% grouped = period == :week ? calendar_week_grouped(appointments) : calendar_month_grouped(appointments) %>
+            <% grouped.each_with_index do |(date, group_appointments), idx| %>
+              <div class="<%= idx < grouped.size - 1 ? 'pb-4 mb-4 border-b border-slate-200' : '' %>">
+                <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <%= date.strftime("%A, %b %d") %>
+                </p>
+                <ul class="space-y-0">
+                  <% group_appointments.sort_by { |a| a.scheduled_at || Time.zone.at(0) }.each do |appointment| %>
+                    <li>
+                      <%= render "dashboard/calendar_appointment", appointment: appointment %>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+          <% end %>
         <% else %>
           <p class="py-6 text-center text-sm text-slate-500">
             <%= t("admin.appointments.calendar.no_appointments") %>

@@ -52,23 +52,67 @@ clients = [
   space.clients.create!(name: "Maria Costa", phone: "+5511444444444", address: "Rua E, 5")
 ]
 
-# ---- APPOINTMENTS (30 total, mixed statuses and dates) ----
+# ---- APPOINTMENTS (varied: full days, half days, empty days) ----
+# Business hours roughly 9–17; we use slots at 9, 10, 11, 12, 14, 15, 16
 statuses = %i[pending confirmed pending confirmed cancelled rescheduled]
-base_date = Time.current
+tz = Time.zone
+base_date = tz.today
 
-30.times do |i|
-  client = clients[i % clients.size]
-  days_offset = (i - 15) # range: -15 to +14 days
-  scheduled_at = base_date + days_offset.days + (i % 8).hours
-  status = statuses[i % statuses.size]
+# Define day types: empty (0), half (2–3), full (6–7 appointments)
+# Days from -7 to +14 relative to today
+day_configs = {
+  -7 => 0,   # empty
+  -6 => 7,   # full
+  -5 => 0,   # empty
+  -4 => 3,   # half
+  -3 => 7,   # full
+  -2 => 2,   # half
+  -1 => 5,   # half-full
+  0  => 8,   # full (today)
+  1  => 0,   # empty
+  2  => 4,   # half
+  3  => 0,   # empty
+  4  => 6,   # full
+  5  => 2,   # half
+  6  => 0,   # empty (likely Sunday)
+  7  => 7,   # full
+  8  => 3,   # half
+  9  => 0,   # empty
+  10 => 5,   # half-full
+  11 => 0,   # empty
+  12 => 6,   # full
+  13 => 2,   # half
+  14 => 0    # empty
+}
 
-  space.appointments.create!(
-    client: client,
-    requested_at: scheduled_at - 1.day,
-    scheduled_at: scheduled_at,
-    status: status
-  )
+slot_hours = [ 9, 10, 11, 12, 14, 15, 16 ]
+
+day_configs.each do |days_offset, count|
+  next if count.zero?
+
+  date = base_date + days_offset
+  count.times do |i|
+    hour = slot_hours[i % slot_hours.size]
+    scheduled_at = tz.local(date.year, date.month, date.day, hour, 0)
+    client = clients[i % clients.size]
+    status = statuses[i % statuses.size]
+
+    space.appointments.create!(
+      client: client,
+      requested_at: scheduled_at - 1.day,
+      scheduled_at: scheduled_at,
+      status: status
+    )
+  end
 end
+
+# One appointment at current time (for testing "ongoing" highlight)
+space.appointments.create!(
+  client: clients.first,
+  requested_at: Time.current - 1.day,
+  scheduled_at: Time.current,
+  status: :confirmed
+)
 
 puts "✅ Seed completed!"
 puts "SaaS admin: admin@example.com / password123"
