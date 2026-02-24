@@ -11,23 +11,23 @@ class AppointmentsController < ApplicationController
   end
 
   def new
-    @client = Client.find_by(user_id: current_user.id)
-    if @client.nil?
-      redirect_to appointments_path, alert: t("appointments.no_client")
+    @customer = Customer.find_by(user_id: current_user.id)
+    if @customer.nil?
+      redirect_to appointments_path, alert: t("appointments.no_customer")
       return
     end
-    @appointment = @client.space.appointments.build(client: @client)
+    @appointment = @customer.space.appointments.build(customer: @customer)
   end
 
   def create
-    @client = Client.find_by(user_id: current_user.id)
-    if @client.nil?
-      redirect_to appointments_path, alert: t("appointments.no_client")
+    @customer = Customer.find_by(user_id: current_user.id)
+    if @customer.nil?
+      redirect_to appointments_path, alert: t("appointments.no_customer")
       return
     end
     @appointment = AppointmentCreator.call(
-      space: @client.space,
-      client: @client,
+      space: @customer.space,
+      customer: @customer,
       attributes: appointment_params
     )
 

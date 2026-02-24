@@ -2,7 +2,7 @@
 
 one:
   space: one
-  client: one
+  customer: one
   requested_at: 2026-02-21 15:35:04
   scheduled_at: 2026-02-21 15:35:04
   rescheduled_from: 2026-02-21 15:35:04
@@ -10,7 +10,7 @@ one:
 
 two:
   space: one
-  client: two
+  customer: two
   requested_at: 2026-02-21 15:35:04
   scheduled_at: 2026-02-21 15:35:04
   rescheduled_from: 2026-02-21 15:35:04

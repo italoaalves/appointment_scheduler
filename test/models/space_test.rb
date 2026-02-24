@@ -9,10 +9,10 @@ class SpaceTest < ActiveSupport::TestCase
     assert_includes space.users, users(:secretary)
   end
 
-  test "has many clients" do
+  test "has many customers" do
     space = spaces(:one)
-    assert_includes space.clients, clients(:one)
-    assert_includes space.clients, clients(:two)
+    assert_includes space.customers, customers(:one)
+    assert_includes space.customers, customers(:two)
   end
 
   test "has many appointments" do

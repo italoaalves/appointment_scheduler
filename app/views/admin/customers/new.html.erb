@@ -1,20 +1,20 @@
 <div class="space-y-6">
   <header>
     <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
-      <%= t("admin.clients.edit.title") %>
+      <%= t("admin.customers.new.title") %>
     </h1>
     <p class="mt-1 text-sm text-slate-600">
-      <%= t("admin.clients.edit.subtitle") %>
+      <%= t("admin.customers.new.subtitle") %>
     </p>
   </header>
 
   <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-    <%= form_with model: [:admin, @client], class: "space-y-4" do |form| %>
-      <%= render "admin/shared/error_messages", resource: @client %>
+    <%= form_with model: [:admin, @customer], class: "space-y-4" do |form| %>
+      <%= render "admin/shared/error_messages", resource: @customer %>
 
       <div>
         <%= form.label :name,
-                       t("admin.clients.edit.name_label"),
+                       t("admin.customers.new.name_label"),
                        class: "block text-sm font-medium text-slate-700" %>
         <%= form.text_field :name,
                             required: true,
@@ -23,28 +23,33 @@
 
       <div>
         <%= form.label :phone,
-                       t("admin.clients.edit.phone_label"),
+                       t("admin.customers.new.phone_label"),
                        class: "block text-sm font-medium text-slate-700" %>
         <%= form.telephone_field :phone,
                                 class: "mt-1 block w-full max-w-sm rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
       </div>
 
       <div>
+        <%= form.label :email,
+                       t("admin.customers.new.email_label"),
+                       class: "block text-sm font-medium text-slate-700" %>
+        <%= form.email_field :email,
+                             class: "mt-1 block w-full max-w-sm rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+      </div>
+
+      <div>
         <%= form.label :address,
-                       t("admin.clients.edit.address_label"),
+                       t("admin.customers.new.address_label"),
                        class: "block text-sm font-medium text-slate-700" %>
         <%= form.text_field :address,
                            class: "mt-1 block w-full max-w-sm rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
       </div>
 
       <div class="flex flex-wrap gap-3">
-        <%= form.submit t("admin.clients.edit.submit"),
+        <%= form.submit t("admin.customers.new.submit"),
                         class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
-        <%= link_to t("admin.clients.edit.back_to_client"),
-                    admin_client_path(@client),
-                    class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
-        <%= link_to t("admin.clients.edit.all_clients"),
-                    admin_clients_path,
+        <%= link_to t("admin.customers.new.back_to_customers"),
+                    admin_customers_path,
                     class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
       </div>
     <% end %>

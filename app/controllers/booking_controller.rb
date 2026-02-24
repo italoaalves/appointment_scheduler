@@ -25,10 +25,10 @@ class BookingController < ApplicationController
 
   def create
     @space = @scheduling_link.space
-    client = find_or_create_client
+    customer = find_or_create_customer
     appointment = AppointmentCreator.call(
       space: @space,
-      client: client,
+      customer: customer,
       attributes: { scheduled_at: params[:scheduled_at] }
     )
 
@@ -56,13 +56,13 @@ class BookingController < ApplicationController
     render "booking/expired", status: :gone
   end
 
-  def find_or_create_client
-    ClientFinder.find_or_create(
+  def find_or_create_customer
+    CustomerFinder.find_or_create(
       space: @space,
-      email: params[:client_email].to_s.strip.presence,
-      name: params[:client_name].to_s.strip.presence,
-      phone: params[:client_phone].to_s.strip.presence,
-      address: params[:client_address].to_s.strip.presence
+      email: params[:customer_email].to_s.strip.presence,
+      name: params[:customer_name].to_s.strip.presence,
+      phone: params[:customer_phone].to_s.strip.presence,
+      address: params[:customer_address].to_s.strip.presence
     )
   end
 end

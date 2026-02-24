@@ -24,7 +24,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :clients
+    resources :customers
     resources :scheduling_links
     resources :users
   end

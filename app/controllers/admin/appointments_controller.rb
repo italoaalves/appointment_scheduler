@@ -8,7 +8,7 @@ module Admin
     before_action :require_manager, only: [ :destroy ]
 
     def index
-      base = current_tenant.appointments.includes(:client, :space)
+      base = current_tenant.appointments.includes(:customer, :space)
       base = apply_status_filter(base)
       base = apply_date_range_filter(base, timezone: current_tenant)
       @appointments = base.order(scheduled_at: :desc, created_at: :desc).page(params[:page]).per(20)
@@ -73,7 +73,7 @@ module Admin
     end
 
     def appointment_params
-      params.require(:appointment).permit(:client_id, :scheduled_at, :status)
+      params.require(:appointment).permit(:customer_id, :scheduled_at, :status)
     end
 
     def apply_status_filter(scope)

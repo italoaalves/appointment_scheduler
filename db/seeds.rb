@@ -7,7 +7,7 @@ end
 puts "🌱 Seeding database..."
 
 Appointment.destroy_all
-Client.destroy_all
+Customer.destroy_all
 User.destroy_all
 Space.destroy_all
 
@@ -43,13 +43,13 @@ secretary = User.create!(
   space_id: space.id
 )
 
-# ---- CLIENTS (belong to space) ----
-clients = [
-  space.clients.create!(name: "John Client", phone: "+5511888888888", address: "Rua A, 1"),
-  space.clients.create!(name: "Mary Client", phone: "+5511777777777", address: "Rua B, 2"),
-  space.clients.create!(name: "Ana Silva", phone: "+5511666666666", address: "Rua C, 3"),
-  space.clients.create!(name: "Pedro Santos", phone: "+5511555555555", address: "Rua D, 4"),
-  space.clients.create!(name: "Maria Costa", phone: "+5511444444444", address: "Rua E, 5")
+# ---- CUSTOMERS (belong to space) ----
+customers = [
+  space.customers.create!(name: "John Customer", phone: "+5511888888888", address: "Rua A, 1"),
+  space.customers.create!(name: "Mary Customer", phone: "+5511777777777", address: "Rua B, 2"),
+  space.customers.create!(name: "Ana Silva", phone: "+5511666666666", address: "Rua C, 3"),
+  space.customers.create!(name: "Pedro Santos", phone: "+5511555555555", address: "Rua D, 4"),
+  space.customers.create!(name: "Maria Costa", phone: "+5511444444444", address: "Rua E, 5")
 ]
 
 # ---- APPOINTMENTS (varied: full days, half days, empty days) ----
@@ -94,11 +94,11 @@ day_configs.each do |days_offset, count|
   count.times do |i|
     hour = slot_hours[i % slot_hours.size]
     scheduled_at = tz.local(date.year, date.month, date.day, hour, 0)
-    client = clients[i % clients.size]
+    customer = customers[i % customers.size]
     status = statuses[i % statuses.size]
 
     space.appointments.create!(
-      client: client,
+      customer: customer,
       requested_at: scheduled_at - 1.day,
       scheduled_at: scheduled_at,
       status: status
@@ -108,7 +108,7 @@ end
 
 # One appointment at current time (for testing "ongoing" highlight)
 space.appointments.create!(
-  client: clients.first,
+  customer: customers.first,
   requested_at: Time.current - 1.day,
   scheduled_at: Time.current,
   status: :confirmed

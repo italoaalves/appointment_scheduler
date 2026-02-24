@@ -4,7 +4,7 @@
   <div class="min-w-0 flex-1">
     <div class="flex items-center gap-2">
       <p class="text-sm font-medium text-slate-900 truncate">
-        <%= appointment.client&.name || "—" %>
+        <%= appointment.customer&.name || "—" %>
       </p>
       <% if ongoing %>
         <span class="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide bg-blue-200/80 text-blue-800">

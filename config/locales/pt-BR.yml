@@ -14,7 +14,7 @@ pt-BR:
       my_appointments: "Minhas consultas"
       request_appointment: "Agendar consulta"
       all_appointments: "Todas as consultas"
-      clients: "Clientes"
+      customers: "Clientes"
       booking_links: "Links de agendamento"
       team: "Equipe"
       dashboard: "Painel"
@@ -38,15 +38,15 @@ pt-BR:
       users_title: "Usuários"
       users_body: "Crie, edite ou remova usuários e atribua-os a espaços."
       users_cta: "Gerenciar usuários"
-    client_subtitle: "Veja suas consultas futuras e solicite novos horários."
+    customer_subtitle: "Veja suas consultas futuras e solicite novos horários."
     admin:
       appointments_title: "Consultas"
       appointments_body: "Revise, confirme, cancele ou reagende qualquer consulta."
       appointments_cta: "Ver todas as consultas"
-      clients_title: "Clientes"
-      clients_body: "Crie, edite ou remova clientes e veja o histórico deles."
-      clients_cta: "Gerenciar clientes"
-    client:
+      customers_title: "Clientes"
+      customers_body: "Crie, edite ou remova clientes e veja o histórico deles."
+      customers_cta: "Gerenciar clientes"
+    customer:
       my_appointments_title: "Minhas consultas"
       my_appointments_body: "Revise o status e detalhes de todos os seus pedidos."
       my_appointments_cta: "Ver consultas"
@@ -55,7 +55,7 @@ pt-BR:
       new_request_cta: "Agendar consulta"
 
   appointments:
-    no_client: "Nenhuma conta de cliente vinculada. Use o link de agendamento para marcar uma consulta."
+    no_customer: "Nenhuma conta de cliente vinculada. Use o link de agendamento para marcar uma consulta."
     not_found: "Consulta não encontrada."
     index:
       title: "Minhas consultas"
@@ -126,9 +126,9 @@ pt-BR:
       index:
         title: "Todas as consultas"
         new_button: "Nova consulta"
-        manage_clients: "Gerenciar clientes"
+        manage_customers: "Gerenciar clientes"
         table:
-          client: "Cliente"
+          customer: "Cliente"
           scheduled: "Agendada"
           status: "Status"
           actions: "Ações"
@@ -143,7 +143,7 @@ pt-BR:
       show:
         title: "Consulta"
         subtitle: "Visão administrativa da consulta selecionada."
-        client: "Cliente"
+        customer: "Cliente"
         scheduled_for: "Agendada para"
         requested_at: "Solicitada em"
         edit_reschedule: "Editar / reagendar"
@@ -151,8 +151,8 @@ pt-BR:
       new:
         title: "Nova consulta"
         subtitle: "Crie uma consulta em nome de um cliente e defina o status inicial."
-        client_label: "Cliente"
-        client_prompt: "Selecione o cliente"
+        customer_label: "Cliente"
+        customer_prompt: "Selecione o cliente"
         scheduled_for: "Agendada para"
         status_label: "Status"
         submit: "Criar consulta"
@@ -160,7 +160,7 @@ pt-BR:
       edit:
         title: "Editar consulta"
         subtitle: "Reagende, altere o cliente ou atualize o status."
-        client_label: "Cliente"
+        customer_label: "Cliente"
         scheduled_for: "Agendada para"
         status_label: "Status"
         submit: "Atualizar consulta"
@@ -193,30 +193,32 @@ pt-BR:
         name: "Nome"
         phone: "Telefone"
         address: "Endereço"
-        edit_client: "Editar cliente"
-        all_clients: "Todos os clientes"
-        delete_client: "Excluir cliente"
-        delete_client_confirm: "Excluir este cliente permanentemente?"
+        edit_customer: "Editar cliente"
+        all_customers: "Todos os clientes"
+        delete_customer: "Excluir cliente"
+        delete_customer_confirm: "Excluir este cliente permanentemente?"
         appointments_title: "Consultas"
         no_appointments: "Nenhuma consulta para este cliente ainda."
         status_prefix: "Status:"
       new:
         title: "Novo cliente"
-        subtitle: "Adicione um cliente ao seu espaço (nome, telefone, endereço)."
+        subtitle: "Adicione um cliente ao seu espaço (nome, telefone, email, endereço)."
         name_label: "Nome"
         phone_label: "Telefone"
+        email_label: "E-mail"
         address_label: "Endereço"
         submit: "Criar cliente"
-        back_to_clients: "Voltar para clientes"
+        back_to_customers: "Voltar para clientes"
       edit:
         title: "Editar cliente"
         subtitle: "Atualize os dados do cliente."
         name_label: "Nome"
         phone_label: "Telefone"
+        email_label: "E-mail"
         address_label: "Endereço"
         submit: "Atualizar cliente"
-        back_to_client: "Voltar para cliente"
-        all_clients: "Todos os clientes"
+        back_to_customer: "Voltar para cliente"
+        all_customers: "Todos os clientes"
 
     users:
       create:
@@ -271,7 +273,7 @@ pt-BR:
         password_label: "Nova senha (deixe em branco para manter a atual)"
         password_confirmation_label: "Confirmação de senha"
         submit: "Atualizar membro"
-        back_to_client: "Voltar para membro"
+        back_to_user: "Voltar para membro"
         all_team: "Toda a equipe"
 
     space:
@@ -404,7 +406,7 @@ pt-BR:
         new_button: "Novo espaço"
         table:
           name: "Nome"
-          clients: "Clientes"
+          customers: "Clientes"
           team_size: "Tamanho da equipe"
           actions: "Ações"
         view: "Ver"
@@ -418,7 +420,7 @@ pt-BR:
         subtitle: "Detalhes e estatísticas do inquilino."
         name: "Nome"
         timezone: "Fuso horário"
-        clients_count: "Clientes"
+        customers_count: "Clientes"
         team_size: "Tamanho da equipe"
         edit: "Editar"
         manage_users: "Gerenciar usuários"

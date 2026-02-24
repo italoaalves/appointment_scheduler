@@ -1,8 +1,8 @@
 class User < ApplicationRecord
   belongs_to :space, optional: true
 
-  has_many :clients, dependent: :nullify
-  has_many :appointments, through: :clients
+  has_many :customers, dependent: :nullify
+  has_many :appointments, through: :customers
   has_many :notifications, dependent: :destroy
 
   has_many :sent_messages, class_name: "Message", foreign_key: :sender_id

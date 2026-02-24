@@ -17,7 +17,7 @@
               <%= t("platform.spaces.index.table.name") %>
             </th>
             <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("platform.spaces.index.table.clients") %>
+              <%= t("platform.spaces.index.table.customers") %>
             </th>
             <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
               <%= t("platform.spaces.index.table.team_size") %>
@@ -31,7 +31,7 @@
           <% @spaces.each do |space| %>
             <tr class="hover:bg-slate-50">
               <td class="px-4 py-2 align-top text-slate-900"><%= space.name %></td>
-              <td class="px-4 py-2 align-top text-slate-700"><%= space.clients.size %></td>
+              <td class="px-4 py-2 align-top text-slate-700"><%= space.customers.size %></td>
               <td class="px-4 py-2 align-top text-slate-700"><%= space.users.size %></td>
               <td class="px-4 py-2 align-top">
                 <div class="flex flex-wrap justify-end gap-1">

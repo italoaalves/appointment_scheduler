@@ -1,10 +1,10 @@
 class Appointment < ApplicationRecord
   belongs_to :space
-  belongs_to :client, optional: true
+  belongs_to :customer, optional: true
 
   before_validation :set_duration_from_space, on: :create
 
-  validate :client_belongs_to_space, if: :client_id?
+  validate :customer_belongs_to_space, if: :customer_id?
 
   def effective_duration_minutes
     duration_minutes.presence || space&.slot_duration_minutes || 30
@@ -26,11 +26,11 @@ class Appointment < ApplicationRecord
     self.duration_minutes = space.slot_duration_minutes
   end
 
-  def client_belongs_to_space
-    return unless space_id.present? && client_id.present?
+  def customer_belongs_to_space
+    return unless space_id.present? && customer_id.present?
 
-    unless space.client_ids.include?(client_id)
-      errors.add(:client_id, :invalid)
+    unless space.customer_ids.include?(customer_id)
+      errors.add(:customer_id, :invalid)
     end
   end
 end

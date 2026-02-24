@@ -5,7 +5,7 @@ module Platform
     before_action :set_space, only: [ :show, :edit, :update, :destroy ]
 
     def index
-      @spaces = Space.includes(:users, :clients).order(:name).page(params[:page]).per(20)
+      @spaces = Space.includes(:users, :customers).order(:name).page(params[:page]).per(20)
     end
 
     def show
