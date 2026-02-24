@@ -542,6 +542,7 @@ pt-BR:
         remove_confirm: "Remover este link personalizado?"
 
   booking:
+    business_hours: "Horário de atendimento"
     choose_date: "Escolha uma data"
     choose_time: "Escolha um horário"
     choose_time_prompt: "Escolha um horário:"

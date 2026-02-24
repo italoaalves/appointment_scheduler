@@ -572,6 +572,7 @@ en:
         remove_confirm: "Remove this personalized link?"
 
   booking:
+    business_hours: "Open"
     choose_date: "Choose a date"
     choose_time: "Choose a time"
     choose_time_prompt: "Choose a time:"

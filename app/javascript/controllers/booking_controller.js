@@ -1,13 +1,71 @@
 import { Controller } from "@hotwired/stimulus"
+import flatpickr from "flatpickr"
 
 export default class extends Controller {
   static targets = ["dateInput", "slotsList", "slotsContainer", "scheduledAt", "submitBtn", "slotTemplate"]
 
   connect() {
+    this.initFlatpickr()
     this.loadSlots()
   }
 
-  static values = { slotsUrl: String }
+  disconnect() {
+    if (this.flatpickrInstance) this.flatpickrInstance.destroy()
+  }
+
+  static values = { slotsUrl: String, businessWeekdays: Array }
+
+  initFlatpickr() {
+    const input = this.dateInputTarget
+    if (!input) return
+
+    const min = input.min
+    const max = input.max
+    const businessWeekdays = this.hasBusinessWeekdaysValue ? this.businessWeekdaysValue : null
+    const initialDate = input.value
+    const pickerMin = min ? new Date(min + "T12:00:00") : null
+    const pickerMax = max ? new Date(max + "T12:00:00") : null
+
+    const options = {
+      dateFormat: "Y-m-d",
+      minDate: pickerMin,
+      maxDate: pickerMax,
+      defaultDate: initialDate || undefined,
+      onChange: (_selectedDates, dateStr) => {
+        input.value = dateStr
+        this.loadSlots()
+      }
+    }
+
+    if (businessWeekdays && businessWeekdays.length > 0) {
+      options.disable = [
+        (date) => !businessWeekdays.includes(date.getDay())
+      ]
+    }
+
+    this.flatpickrInstance = flatpickr(input, options)
+
+    if (initialDate && businessWeekdays?.length > 0) {
+      const d = new Date(initialDate + "T12:00:00")
+      if (!businessWeekdays.includes(d.getDay())) {
+        const next = this.nextBusinessDate(d, businessWeekdays)
+        if (next) {
+          this.flatpickrInstance.setDate(next, false)
+          input.value = next.toISOString().slice(0, 10)
+          this.loadSlots()
+        }
+      }
+    }
+  }
+
+  nextBusinessDate(from, weekdays) {
+    let d = new Date(from)
+    for (let i = 0; i < 14; i++) {
+      if (weekdays.includes(d.getDay())) return d
+      d.setDate(d.getDate() + 1)
+    }
+    return null
+  }
 
   loadSlots() {
     const dateInput = this.dateInputTarget
