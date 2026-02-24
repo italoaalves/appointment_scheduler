@@ -2,7 +2,8 @@ Rails.application.routes.draw do
   devise_for :users
   root "dashboard#index"
 
-  post "/locale", to: "locales#update", as: :locale
+  resource :profile, only: [ :edit, :update ], controller: "profiles"
+  resource :preferences, only: [ :edit, :update ], controller: "preferences"
 
   get "book/:token", to: "booking#show", as: :book
   get "book/:token/slots", to: "booking#slots", as: :book_slots

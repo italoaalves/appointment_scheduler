@@ -1,6 +1,8 @@
 class User < ApplicationRecord
   belongs_to :space, optional: true
 
+  has_one :user_preference, dependent: :destroy
+
   has_many :customers, dependent: :nullify
   has_many :appointments, through: :customers
   has_many :notifications, dependent: :destroy
@@ -16,8 +18,15 @@ class User < ApplicationRecord
   enum :role, { admin: 0, manager: 1, secretary: 2 }
 
   after_create :ensure_space_for_manager
+  after_create :ensure_user_preference
 
   private
+
+  def ensure_user_preference
+    return if user_preference.present?
+
+    create_user_preference!(locale: I18n.default_locale.to_s)
+  end
 
   def ensure_space_for_manager
     return unless manager? && space_id.nil?

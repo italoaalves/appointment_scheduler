@@ -8,6 +8,7 @@ puts "🌱 Seeding database..."
 
 Appointment.destroy_all
 Customer.destroy_all
+UserPreference.destroy_all
 User.destroy_all
 Space.destroy_all
 
@@ -85,14 +86,14 @@ day_configs = {
   14 => 0    # empty
 }
 
-slot_hours = [ 9, 10, 11, 12, 14, 15, 16 ]
+slot_hours = [ 8, 9, 10, 11, 12, 14, 15, 16 ]
 
 day_configs.each do |days_offset, count|
   next if count.zero?
 
   date = base_date + days_offset
-  count.times do |i|
-    hour = slot_hours[i % slot_hours.size]
+  slots_to_use = slot_hours.first(count)
+  slots_to_use.each_with_index do |hour, i|
     scheduled_at = tz.local(date.year, date.month, date.day, hour, 0)
     customer = customers[i % customers.size]
     status = statuses[i % statuses.size]
@@ -105,14 +106,6 @@ day_configs.each do |days_offset, count|
     )
   end
 end
-
-# One appointment at current time (for testing "ongoing" highlight)
-space.appointments.create!(
-  customer: customers.first,
-  requested_at: Time.current - 1.day,
-  scheduled_at: Time.current,
-  status: :confirmed
-)
 
 puts "✅ Seed completed!"
 puts "SaaS admin: admin@example.com / password123"

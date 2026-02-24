@@ -37,12 +37,38 @@ en:
           cancelled: "Cancelled"
           rescheduled: "Rescheduled"
 
+  profiles:
+    edit:
+      title: "Profile"
+      subtitle: "Update your name, contact information, and password."
+      phone_label: "Phone"
+      password_section: "Change password"
+      current_password_label: "Current password"
+      password_label: "New password"
+      password_confirmation_label: "Confirm new password"
+      password_hint: "Leave blank to keep your current password."
+      submit: "Save"
+      back: "Back"
+    update:
+      notice: "Profile updated."
+
+  preferences:
+    edit:
+      title: "Preferences"
+      subtitle: "Customize your experience."
+      locale_label: "Language"
+      submit: "Save"
+      back: "Back"
+    update:
+      notice: "Preferences updated."
+
   layout:
     app_name: "Appointment Scheduler"
     nav:
       my_appointments: "My appointments"
       request_appointment: "Request appointment"
       all_appointments: "All appointments"
+      management: "Management"
       customers: "Customers"
       booking_links: "Booking links"
       team: "Team"
@@ -51,6 +77,8 @@ en:
       tenants: "Tenants"
       platform_users: "Users"
       logout: "Log out"
+      profile: "Profile"
+      preferences: "Preferences"
       language:
         en: "EN"
         pt: "PT"

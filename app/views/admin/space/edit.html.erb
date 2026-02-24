@@ -8,12 +8,11 @@
     </p>
   </header>
 
-  <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-    <%= form_with model: @space, url: admin_space_path, method: :patch, class: "space-y-4" do |form| %>
-      <%= render "admin/shared/error_messages", resource: @space %>
+  <%= form_with model: @space, url: admin_space_path, method: :patch, class: "space-y-6" do |form| %>
+    <%= render "admin/shared/error_messages", resource: @space %>
 
-      <div class="space-y-4">
-        <h2 class="text-sm font-semibold text-slate-800"><%= t("admin.space.edit.basic_info") %></h2>
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <h2 class="mb-4 text-sm font-semibold text-slate-800"><%= t("admin.space.edit.basic_info") %></h2>
         <div class="grid gap-4 sm:grid-cols-2">
           <div>
             <%= form.label :name,
@@ -32,10 +31,10 @@
                                class: "mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
           </div>
         </div>
-      </div>
+    </div>
 
-      <div class="space-y-4">
-        <h2 class="text-sm font-semibold text-slate-800"><%= t("admin.space.edit.contact") %></h2>
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <h2 class="mb-4 text-sm font-semibold text-slate-800"><%= t("admin.space.edit.contact") %></h2>
         <div class="grid gap-4 sm:grid-cols-2">
           <div>
             <%= form.label :address,
@@ -62,21 +61,11 @@
             </div>
           </div>
         </div>
-      </div>
+    </div>
 
-      <div>
-        <%= form.label :business_hours,
-                       t("admin.space.edit.business_hours_label"),
-                       class: "block text-sm font-medium text-slate-700" %>
-        <%= form.text_area :business_hours,
-                          rows: 2,
-                          placeholder: t("admin.space.edit.business_hours_placeholder"),
-                          class: "mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
-      </div>
-
-      <div class="space-y-4">
-        <h2 class="text-sm font-semibold text-slate-800"><%= t("admin.space.edit.socials") %></h2>
-        <div class="grid gap-4 sm:grid-cols-2">
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <h2 class="mb-4 text-sm font-semibold text-slate-800"><%= t("admin.space.edit.socials") %></h2>
+      <div class="grid gap-4 sm:grid-cols-2">
           <div>
             <%= form.label :instagram_url,
                            t("admin.space.edit.instagram_label"),
@@ -94,10 +83,20 @@
                               class: "mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
           </div>
         </div>
-      </div>
+    </div>
 
-      <div class="space-y-4">
-        <h2 class="text-sm font-semibold text-slate-800"><%= t("admin.space.edit.scheduling") %></h2>
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <h2 class="mb-4 text-sm font-semibold text-slate-800"><%= t("admin.space.edit.scheduling") %></h2>
+      <div class="space-y-6">
+        <div>
+          <%= form.label :business_hours,
+                         t("admin.space.edit.business_hours_label"),
+                         class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_area :business_hours,
+                            rows: 2,
+                            placeholder: t("admin.space.edit.business_hours_placeholder"),
+                            class: "mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+        </div>
         <div>
           <%= form.label :slot_duration_minutes,
                          t("admin.space.edit.slot_duration_label"),
@@ -110,9 +109,7 @@
             <%= t("admin.space.edit.slot_duration_notice") %>
           </p>
         </div>
-      </div>
-
-      <div data-controller="timezone-select">
+        <div data-controller="timezone-select">
         <%= form.label :timezone,
                        t("admin.space.edit.timezone_label"),
                        class: "block text-sm font-medium text-slate-700" %>
@@ -134,15 +131,16 @@
                  placeholder="<%= t('admin.space.edit.timezone_other_placeholder') %>"
                  class="<%= 'hidden ' unless @space.timezone.present? && !ApplicationHelper::COMMON_TIMEZONES.include?(@space.timezone) %>block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" />
         </div>
+        </div>
       </div>
+    </div>
 
-      <div class="flex flex-wrap gap-3 pt-2">
-        <%= form.submit t("admin.space.edit.submit"),
-                        class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
-        <%= link_to t("admin.space.edit.back_to_appointments"),
-                    admin_appointments_path,
-                    class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-50" %>
-      </div>
-    <% end %>
-  </div>
+    <div class="flex flex-wrap gap-3">
+      <%= form.submit t("admin.space.edit.submit"),
+                      class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
+      <%= link_to t("admin.space.edit.back_to_appointments"),
+                  admin_appointments_path,
+                  class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-50" %>
+    </div>
+  <% end %>
 </div>

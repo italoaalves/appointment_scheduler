@@ -17,11 +17,21 @@ class ApplicationController < ActionController::Base
   end
 
   def set_locale
+    locale = locale_from_user_or_session
+    I18n.locale = locale if locale.present?
+  end
+
+  def locale_from_user_or_session
+    if user_signed_in? && current_user.user_preference&.locale.present?
+      loc = current_user.user_preference.locale
+      return loc if I18n.available_locales.map(&:to_s).include?(loc.to_s)
+    end
+
     session_locale = session[:locale]
     if session_locale.present? && I18n.available_locales.map(&:to_s).include?(session_locale.to_s)
-      I18n.locale = session_locale
-    else
-      I18n.locale = I18n.default_locale
+      return session_locale
     end
+
+    I18n.default_locale.to_s
   end
 end

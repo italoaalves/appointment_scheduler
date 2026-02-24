@@ -8,12 +8,38 @@ pt-BR:
           cancelled: "Cancelada"
           rescheduled: "Reagendada"
 
+  profiles:
+    edit:
+      title: "Perfil"
+      subtitle: "Atualize seu nome, informações de contato e senha."
+      phone_label: "Telefone"
+      password_section: "Alterar senha"
+      current_password_label: "Senha atual"
+      password_label: "Nova senha"
+      password_confirmation_label: "Confirmar nova senha"
+      password_hint: "Deixe em branco para manter sua senha atual."
+      submit: "Salvar"
+      back: "Voltar"
+    update:
+      notice: "Perfil atualizado."
+
+  preferences:
+    edit:
+      title: "Preferências"
+      subtitle: "Personalize sua experiência."
+      locale_label: "Idioma"
+      submit: "Salvar"
+      back: "Voltar"
+    update:
+      notice: "Preferências atualizadas."
+
   layout:
     app_name: "Agendador de Consultas"
     nav:
       my_appointments: "Minhas consultas"
       request_appointment: "Agendar consulta"
       all_appointments: "Todas as consultas"
+      management: "Gestão"
       customers: "Clientes"
       booking_links: "Links de agendamento"
       team: "Equipe"
@@ -22,6 +48,8 @@ pt-BR:
       tenants: "Inquilinos"
       platform_users: "Usuários"
       logout: "Sair"
+      profile: "Perfil"
+      preferences: "Preferências"
       language:
         en: "EN"
         pt: "PT"

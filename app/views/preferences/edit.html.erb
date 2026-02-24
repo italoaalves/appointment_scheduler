@@ -1,0 +1,34 @@
+<div class="space-y-6">
+  <header>
+    <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
+      <%= t("preferences.edit.title") %>
+    </h1>
+    <p class="mt-1 text-sm text-slate-600">
+      <%= t("preferences.edit.subtitle") %>
+    </p>
+  </header>
+
+  <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <%= form_with model: @user_preference, url: preferences_path, method: :patch, class: "space-y-4" do |form| %>
+      <%= render "admin/shared/error_messages", resource: @user_preference %>
+
+      <div>
+        <%= form.label :locale,
+                       t("preferences.edit.locale_label"),
+                       class: "block text-sm font-medium text-slate-700" %>
+        <%= form.select :locale,
+                        I18n.available_locales.map { |l| [ t("layout.nav.language.#{l == :'pt-BR' ? :pt : l}"), l.to_s ] },
+                        {},
+                        class: "mt-1 block w-full max-w-sm rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+      </div>
+
+      <div class="flex flex-wrap gap-3 pt-2">
+        <%= form.submit t("preferences.edit.submit"),
+                        class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800" %>
+        <%= link_to t("preferences.edit.back"),
+                    root_path,
+                    class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
+      </div>
+    <% end %>
+  </div>
+</div>
