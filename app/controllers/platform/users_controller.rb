@@ -24,6 +24,8 @@ module Platform
 
     def create
       @user = User.new(user_params)
+      @user.role = params[:user][:role] if params.dig(:user, :role).present?
+      @user.space_id = params[:user][:space_id].presence if params.dig(:user, :space_id).present?
 
       if @user.save
         redirect_to platform_user_path(@user), notice: t("platform.users.create.notice")
@@ -36,7 +38,11 @@ module Platform
     end
 
     def update
-      if @user.update(user_params_without_blank_passwords)
+      attrs = user_params_without_blank_passwords
+      attrs[:role] = params[:user][:role] if params.dig(:user, :role).present?
+      attrs[:space_id] = params[:user][:space_id].presence if params.dig(:user, :space_id).present?
+
+      if @user.update(attrs)
         redirect_to platform_user_path(@user), notice: t("platform.users.update.notice")
       else
         render :edit
@@ -55,7 +61,7 @@ module Platform
     end
 
     def user_params
-      params.require(:user).permit(:email, :name, :phone_number, :role, :space_id, :password, :password_confirmation)
+      params.require(:user).permit(:email, :name, :phone_number, :password, :password_confirmation)
     end
   end
 end
