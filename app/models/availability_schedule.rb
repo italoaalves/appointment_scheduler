@@ -8,7 +8,7 @@ class AvailabilitySchedule < ApplicationRecord
   accepts_nested_attributes_for :availability_windows, allow_destroy: true
   accepts_nested_attributes_for :availability_exceptions, allow_destroy: true
 
-  after_save :update_schedulable_business_hours
+  after_save { BusinessHoursCacheService.call(schedule: self) }
 
   def windows_for_date(date)
     exception = availability_exceptions
@@ -29,25 +29,5 @@ class AvailabilitySchedule < ApplicationRecord
         .where.not(closes_at: nil)
         .map { |w| { opens_at: w.opens_at, closes_at: w.closes_at } }
     end
-  end
-
-  private
-
-  def update_schedulable_business_hours
-    return unless schedulable_type == "Space"
-    return unless schedulable.respond_to?(:update_column)
-
-    windows = availability_windows.reload
-      .where.not(opens_at: nil)
-      .where.not(closes_at: nil)
-      .order(:weekday)
-
-    formatted = BusinessHoursFormatter.format(windows.to_a)
-    formatted = format_business_hours_times(formatted) if formatted.present?
-    schedulable.update_column(:business_hours, formatted)
-  end
-
-  def format_business_hours_times(str)
-    str.gsub(/(\d{1,2}:\d{2}):\d{2}(?:\.\d+)?/, '\1')
   end
 end

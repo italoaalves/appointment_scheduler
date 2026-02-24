@@ -59,43 +59,38 @@ module Admin
     end
 
     def confirm
-      if @appointment.update(status: :confirmed)
-        redirect_to admin_appointments_path, notice: t("admin.appointments.confirm.notice")
-      else
-        redirect_back fallback_location: admin_appointments_path,
-                      alert: @appointment.errors.full_messages.to_sentence
-      end
+      result = AppointmentTransitionService.call(appointment: @appointment, to_status: :confirmed)
+      handle_transition_result(result, notice: t("admin.appointments.confirm.notice"))
     end
 
     def cancel
-      @appointment.update(status: :cancelled)
-      redirect_to admin_appointments_path, notice: t("admin.appointments.cancel.notice")
+      result = AppointmentTransitionService.call(appointment: @appointment, to_status: :cancelled)
+      handle_transition_result(result, notice: t("admin.appointments.cancel.notice"))
     end
 
     def no_show
-      unless @appointment.scheduled_in_past?
-        redirect_to admin_appointment_path(@appointment), alert: t("admin.appointments.no_show.cannot_before_scheduled")
-        return
-      end
-      @appointment.update(status: :no_show)
-      redirect_back fallback_location: admin_appointments_path, notice: t("admin.appointments.no_show.notice")
+      result = AppointmentTransitionService.call(appointment: @appointment, to_status: :no_show)
+      handle_transition_result(result,
+        notice: t("admin.appointments.no_show.notice"),
+        cannot_before_key: "admin.appointments.no_show.cannot_before_scheduled")
     end
 
     def finish_form
       unless @appointment.scheduled_in_past?
         redirect_to admin_appointment_path(@appointment), alert: t("admin.appointments.finish.cannot_before_scheduled")
-        return
       end
     end
 
     def finish
-      unless @appointment.scheduled_in_past?
-        redirect_to admin_appointment_path(@appointment), alert: t("admin.appointments.finish.cannot_before_scheduled")
-        return
-      end
-      finished_at = parse_finished_at
-      @appointment.update(status: :finished, finished_at: finished_at)
-      redirect_to admin_appointment_path(@appointment), notice: t("admin.appointments.finish.notice")
+      result = AppointmentTransitionService.call(
+        appointment: @appointment,
+        to_status: :finished,
+        finished_at_raw: params[:finished_at]
+      )
+      handle_transition_result(result,
+        notice: t("admin.appointments.finish.notice"),
+        success_redirect: admin_appointment_path(@appointment),
+        cannot_before_key: "admin.appointments.finish.cannot_before_scheduled")
     end
 
     private
@@ -120,13 +115,16 @@ module Admin
       scope.where(status: params[:status])
     end
 
-    def parse_finished_at
-      return Time.current if params[:finished_at].blank?
-
-      tz = TimezoneResolver.zone(@appointment.space)
-      tz.parse(params[:finished_at].to_s)
-    rescue ArgumentError
-      Time.current
+    def handle_transition_result(result, notice:, success_redirect: nil, cannot_before_key: nil)
+      if result[:success]
+        redirect_to success_redirect.presence || admin_appointments_path, notice: notice
+      elsif result[:error_key] == :cannot_before_scheduled
+        key = cannot_before_key || "admin.appointments.no_show.cannot_before_scheduled"
+        redirect_to admin_appointment_path(@appointment), alert: t(key)
+      else
+        redirect_back fallback_location: admin_appointments_path,
+                      alert: result[:errors]&.to_sentence || t("admin.unauthorized")
+      end
     end
   end
 end

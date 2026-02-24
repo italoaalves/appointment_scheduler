@@ -18,7 +18,7 @@ class BookingController < ApplicationController
     to = params[:to].present? ? Date.parse(params[:to]) : from + 13.days
     slots = @space.available_slots(from_date: from, to_date: to, limit: 100)
 
-    render json: slots.map { |s| { value: s.iso8601, label: s.strftime("%a %b %d, %Y at %l:%M %p") } }
+    render json: BookingSlotsSerializer.to_json(slots)
   rescue ArgumentError
     render json: []
   end
