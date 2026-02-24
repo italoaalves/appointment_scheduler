@@ -26,7 +26,7 @@ class AppointmentsController < ApplicationController
       return
     end
     @appointment = @client.space.appointments.build(appointment_params.merge(client: @client))
-    @appointment.status = "requested"
+    @appointment.status = "pending"
     @appointment.requested_at = Time.current
 
     if @appointment.save

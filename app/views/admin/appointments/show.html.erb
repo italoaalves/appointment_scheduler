@@ -44,29 +44,25 @@
                 admin_appointments_path,
                 class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
 
-    <% if @appointment.requested? %>
-      <%= button_to t("admin.appointments.index.approve"),
-                    approve_admin_appointment_path(@appointment),
+    <% if @appointment.pending? %>
+      <%= button_to t("admin.appointments.index.confirm"),
+                    confirm_admin_appointment_path(@appointment),
                     method: :patch,
-                    class: "inline-flex items-center rounded-md bg-emerald-500 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-emerald-600" %>
-      <%= button_to t("admin.appointments.index.deny"),
-                    deny_admin_appointment_path(@appointment),
-                    method: :patch,
-                    class: "inline-flex items-center rounded-md bg-red-500 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-red-600" %>
+                    class: "inline-flex items-center rounded-md bg-emerald-500 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-600" %>
     <% end %>
 
-    <% if @appointment.requested? || @appointment.confirmed? %>
+    <% if @appointment.pending? || @appointment.confirmed? %>
       <%= button_to t("admin.appointments.index.cancel"),
                     cancel_admin_appointment_path(@appointment),
                     method: :patch,
                     data: { turbo_confirm: t("admin.appointments.index.cancel_confirm") },
-                    class: "inline-flex items-center rounded-md bg-amber-500 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-amber-600" %>
+                    class: "inline-flex items-center rounded-md bg-amber-500 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-600" %>
     <% end %>
 
     <%= button_to t("admin.appointments.index.delete"),
                   admin_appointment_path(@appointment),
                   method: :delete,
                   data: { turbo_confirm: t("admin.appointments.index.delete_confirm") },
-                  class: "inline-flex items-center rounded-md bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-900" %>
+                  class: "inline-flex items-center rounded-md bg-slate-700 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-900" %>
   </div>
 </div>

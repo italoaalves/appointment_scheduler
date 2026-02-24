@@ -13,6 +13,9 @@
   </header>
 
   <% if tenant_staff? %>
+    <div class="mb-6">
+      <%= render "calendar_overview" %>
+    </div>
     <div class="grid gap-4 sm:grid-cols-2">
       <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 class="text-sm font-medium text-slate-900"><%= t("dashboard.admin.appointments_title") %></h2>

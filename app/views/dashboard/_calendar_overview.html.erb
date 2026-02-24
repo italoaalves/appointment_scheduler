@@ -1,0 +1,72 @@
+<div class="rounded-xl border border-slate-200 bg-white shadow-sm" x-data="{ tab: 'today' }">
+  <div class="border-b border-slate-200">
+    <nav class="flex -mb-px">
+      <button type="button"
+              @click="tab = 'today'"
+              :class="tab === 'today' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'"
+              class="border-b-2 px-4 py-3 text-sm font-medium">
+        <%= t("admin.appointments.calendar.today") %>
+      </button>
+      <button type="button"
+              @click="tab = 'week'"
+              :class="tab === 'week' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'"
+              class="border-b-2 px-4 py-3 text-sm font-medium">
+        <%= t("admin.appointments.calendar.week") %>
+      </button>
+      <button type="button"
+              @click="tab = 'month'"
+              :class="tab === 'month' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'"
+              class="border-b-2 px-4 py-3 text-sm font-medium">
+        <%= t("admin.appointments.calendar.month") %>
+      </button>
+    </nav>
+  </div>
+
+  <div class="p-4">
+    <% %i[today week month].each do |period| %>
+      <% appointments = instance_variable_get("@calendar_#{period}") %>
+      <% stats = instance_variable_get("@stats_#{period}") %>
+      <div x-show="tab === '<%= period %>'"
+           x-transition:enter="transition ease-out duration-200"
+           x-transition:enter-start="opacity-0"
+           x-transition:enter-end="opacity-100"
+           style="<%= period == :today ? '' : 'display: none;' %>"
+           class="space-y-4">
+        <% if appointments.any? %>
+          <ul class="divide-y divide-slate-200">
+            <% appointments.each do |appointment| %>
+              <li>
+                <%= link_to admin_appointment_path(appointment),
+                            class: "flex items-center justify-between gap-2 py-3 text-left hover:bg-slate-50 -mx-2 px-2 rounded-lg transition-colors" do %>
+                  <div class="min-w-0 flex-1">
+                    <p class="text-sm font-medium text-slate-900 truncate">
+                      <%= appointment.client&.name || "—" %>
+                    </p>
+                    <p class="text-xs text-slate-500">
+                      <%= appointment.scheduled_at&.strftime("%b %d, %Y %l:%M %p") || t("appointments.index.time_to_be_scheduled") %>
+                    </p>
+                  </div>
+                  <span class="inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium
+                    <%= appointment.pending? ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800' %>">
+                    <%= appointment.status.humanize %>
+                  </span>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="py-6 text-center text-sm text-slate-500">
+            <%= t("admin.appointments.calendar.no_appointments") %>
+          </p>
+        <% end %>
+
+        <footer class="flex flex-wrap gap-4 pt-2 border-t border-slate-100 text-xs text-slate-600">
+          <span><%= t("admin.appointments.calendar.stats.total") %>: <strong class="text-slate-900"><%= stats[:total] %></strong></span>
+          <span><%= t("admin.appointments.calendar.stats.empty_slots") %>: <strong class="text-slate-900"><%= stats[:empty_slots] %></strong></span>
+          <span><%= t("admin.appointments.calendar.stats.pending") %>: <strong class="text-amber-700"><%= stats[:pending] %></strong></span>
+          <span><%= t("admin.appointments.calendar.stats.confirmed") %>: <strong class="text-emerald-700"><%= stats[:confirmed] %></strong></span>
+        </footer>
+      </div>
+    <% end %>
+  </div>
+</div>

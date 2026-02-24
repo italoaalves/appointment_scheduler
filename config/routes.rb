@@ -19,8 +19,7 @@ Rails.application.routes.draw do
 
     resources :appointments do
       member do
-        patch :approve
-        patch :deny
+        patch :confirm
         patch :cancel
       end
     end

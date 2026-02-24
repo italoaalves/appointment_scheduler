@@ -43,7 +43,7 @@ class Space < ApplicationRecord
     end
 
     booked_starts = appointments.where(scheduled_at: from_date..to_date.end_of_day)
-                               .where(status: [ :requested, :confirmed ])
+                               .where(status: [ :pending, :confirmed ])
                                .pluck(:scheduled_at)
                                .map do |t|
       st = t.in_time_zone(tz)
@@ -52,6 +52,10 @@ class Space < ApplicationRecord
     end.uniq
 
     slots.reject { |s| booked_starts.include?(s.in_time_zone(tz)) }.first(limit)
+  end
+
+  def empty_slots_count(from_date:, to_date:)
+    available_slots(from_date: from_date, to_date: to_date, limit: 2000).size
   end
 
   private

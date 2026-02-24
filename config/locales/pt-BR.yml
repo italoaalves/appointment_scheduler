@@ -32,7 +32,7 @@ pt-BR:
     client_subtitle: "Veja suas consultas futuras e solicite novos horários."
     admin:
       appointments_title: "Consultas"
-      appointments_body: "Revise, aprove, cancele ou reagende qualquer consulta."
+      appointments_body: "Revise, confirme, cancele ou reagende qualquer consulta."
       appointments_cta: "Ver todas as consultas"
       clients_title: "Clientes"
       clients_body: "Crie, edite ou remova clientes e veja o histórico deles."
@@ -83,12 +83,20 @@ pt-BR:
         notice: "Consulta atualizada."
       destroy:
         notice: "Consulta excluída."
-      approve:
+      confirm:
         notice: "Consulta confirmada."
-      deny:
-        notice: "Consulta rejeitada."
       cancel:
         notice: "Consulta cancelada."
+      calendar:
+        today: "Hoje"
+        week: "Semana"
+        month: "Mês"
+        no_appointments: "Nenhuma consulta neste período."
+        stats:
+          total: "Total de consultas"
+          empty_slots: "Horários livres"
+          pending: "Pendentes"
+          confirmed: "Confirmadas"
       index:
         title: "Todas as consultas"
         new_button: "Nova consulta"
@@ -101,8 +109,7 @@ pt-BR:
         empty: "Nenhuma consulta ainda. Quando os clientes começarem a solicitar, elas aparecerão aqui."
         view: "Ver"
         edit: "Editar"
-        approve: "Aprovar"
-        deny: "Rejeitar"
+        confirm: "Confirmar"
         cancel: "Cancelar"
         cancel_confirm: "Cancelar esta consulta?"
         delete: "Excluir"

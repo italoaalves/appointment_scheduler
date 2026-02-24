@@ -2,10 +2,10 @@
 
 module Admin
   class AppointmentsController < Admin::BaseController
-    before_action :set_appointment, only: [ :show, :edit, :update, :destroy, :approve, :deny, :cancel ]
+    before_action :set_appointment, only: [ :show, :edit, :update, :destroy, :confirm, :cancel ]
 
     def index
-      @appointments = current_tenant.appointments.includes(:client).order(scheduled_at: :desc, created_at: :desc)
+      @appointments = current_tenant.appointments.includes(:client).order(scheduled_at: :desc, created_at: :desc).page(params[:page]).per(20)
     end
 
     def show
@@ -17,7 +17,7 @@ module Admin
 
     def create
       @appointment = current_tenant.appointments.build(appointment_params)
-      @appointment.requested_at ||= Time.current if @appointment.requested?
+      @appointment.requested_at ||= Time.current if @appointment.pending?
 
       if @appointment.save
         redirect_to admin_appointment_path(@appointment), notice: t("admin.appointments.create.notice")
@@ -42,14 +42,9 @@ module Admin
       redirect_to admin_appointments_path, notice: t("admin.appointments.destroy.notice")
     end
 
-    def approve
+    def confirm
       @appointment.update(status: :confirmed)
-      redirect_to admin_appointments_path, notice: t("admin.appointments.approve.notice")
-    end
-
-    def deny
-      @appointment.update(status: :denied)
-      redirect_to admin_appointments_path, notice: t("admin.appointments.deny.notice")
+      redirect_to admin_appointments_path, notice: t("admin.appointments.confirm.notice")
     end
 
     def cancel

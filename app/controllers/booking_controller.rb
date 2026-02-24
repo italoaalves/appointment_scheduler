@@ -28,7 +28,7 @@ class BookingController < ApplicationController
     appointment = @space.appointments.build(
       client: client,
       scheduled_at: params[:scheduled_at],
-      status: :requested,
+      status: :pending,
       requested_at: Time.current
     )
 

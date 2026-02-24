@@ -5,11 +5,10 @@ class Appointment < ApplicationRecord
   validate :client_belongs_to_space, if: :client_id?
 
   enum :status, {
-    requested: 0,
+    pending: 0,
     confirmed: 1,
-    denied: 2,
-    cancelled: 3,
-    rescheduled: 4
+    cancelled: 2,
+    rescheduled: 3
   }
 
   private

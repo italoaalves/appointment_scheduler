@@ -61,7 +61,7 @@ en:
     client_subtitle: "See your upcoming appointments and request new time slots."
     admin:
       appointments_title: "Appointments"
-      appointments_body: "Review, approve, cancel, or reschedule any appointment."
+      appointments_body: "Review, confirm, cancel, or reschedule any appointment."
       appointments_cta: "View all appointments"
       clients_title: "Clients"
       clients_body: "Create, edit, or remove client accounts and view their history."
@@ -112,12 +112,20 @@ en:
         notice: "Appointment updated."
       destroy:
         notice: "Appointment deleted."
-      approve:
+      confirm:
         notice: "Appointment confirmed."
-      deny:
-        notice: "Appointment denied."
       cancel:
         notice: "Appointment cancelled."
+      calendar:
+        today: "Today"
+        week: "Week"
+        month: "Month"
+        no_appointments: "No appointments in this period."
+        stats:
+          total: "Total appointments"
+          empty_slots: "Empty slots"
+          pending: "Pending"
+          confirmed: "Confirmed"
       index:
         title: "All appointments"
         new_button: "New appointment"
@@ -130,8 +138,7 @@ en:
         empty: "No appointments yet. Once clients start requesting, they’ll appear here."
         view: "View"
         edit: "Edit"
-        approve: "Approve"
-        deny: "Deny"
+        confirm: "Confirm"
         cancel: "Cancel"
         cancel_confirm: "Cancel this appointment?"
         delete: "Delete"

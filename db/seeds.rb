@@ -44,26 +44,31 @@ secretary = User.create!(
 )
 
 # ---- CLIENTS (belong to space) ----
-client1 = space.clients.create!(name: "John Client", phone: "+5511888888888", address: "Rua A, 1")
-client2 = space.clients.create!(name: "Mary Client", phone: "+5511777777777", address: "Rua B, 2")
+clients = [
+  space.clients.create!(name: "John Client", phone: "+5511888888888", address: "Rua A, 1"),
+  space.clients.create!(name: "Mary Client", phone: "+5511777777777", address: "Rua B, 2"),
+  space.clients.create!(name: "Ana Silva", phone: "+5511666666666", address: "Rua C, 3"),
+  space.clients.create!(name: "Pedro Santos", phone: "+5511555555555", address: "Rua D, 4"),
+  space.clients.create!(name: "Maria Costa", phone: "+5511444444444", address: "Rua E, 5")
+]
 
-# ---- APPOINTMENTS (belong to space and client) ----
-space.appointments.create!(
-  client: client1,
-  requested_at: 2.days.from_now,
-  status: :requested
-)
-space.appointments.create!(
-  client: client1,
-  requested_at: 5.days.from_now,
-  scheduled_at: 5.days.from_now,
-  status: :confirmed
-)
-space.appointments.create!(
-  client: client2,
-  requested_at: 3.days.from_now,
-  status: :denied
-)
+# ---- APPOINTMENTS (30 total, mixed statuses and dates) ----
+statuses = %i[pending confirmed pending confirmed cancelled rescheduled]
+base_date = Time.current
+
+30.times do |i|
+  client = clients[i % clients.size]
+  days_offset = (i - 15) # range: -15 to +14 days
+  scheduled_at = base_date + days_offset.days + (i % 8).hours
+  status = statuses[i % statuses.size]
+
+  space.appointments.create!(
+    client: client,
+    requested_at: scheduled_at - 1.day,
+    scheduled_at: scheduled_at,
+    status: status
+  )
+end
 
 puts "✅ Seed completed!"
 puts "SaaS admin: admin@example.com / password123"
