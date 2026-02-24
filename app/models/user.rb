@@ -26,4 +26,3 @@ class User < ApplicationRecord
     update_column(:space_id, created_space.id)
   end
 end
-

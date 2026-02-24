@@ -26,4 +26,3 @@ class Space < ApplicationRecord
     available_slots(from_date: from_date, to_date: to_date, limit: 2000).size
   end
 end
-

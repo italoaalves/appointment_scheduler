@@ -3,4 +3,3 @@ class AddClientToAppointments < ActiveRecord::Migration[8.0]
     add_reference :appointments, :client, foreign_key: true
   end
 end
-
