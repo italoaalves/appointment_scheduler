@@ -11,10 +11,11 @@ class BookingController < ApplicationController
   end
 
   def slots
-    from = params[:from].present? ? Date.parse(params[:from]) : Date.current
-    to = params[:to].present? ? Date.parse(params[:to]) : from + 13.days
-
     @space = @scheduling_link.space
+    tz = Time.find_zone(@space.timezone.presence || "UTC")
+    today_in_space = Time.current.in_time_zone(tz).to_date
+    from = params[:from].present? ? Date.parse(params[:from]) : today_in_space
+    to = params[:to].present? ? Date.parse(params[:to]) : from + 13.days
     slots = @space.available_slots(from_date: from, to_date: to, limit: 100)
 
     render json: slots.map { |s| { value: s.iso8601, label: s.strftime("%a %b %d, %Y at %l:%M %p") } }

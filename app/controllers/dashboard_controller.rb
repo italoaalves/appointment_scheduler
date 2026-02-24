@@ -11,12 +11,15 @@ class DashboardController < ApplicationController
     return unless current_tenant
 
     space = current_tenant
-    today_start = Time.current.beginning_of_day
-    today_end = Time.current.end_of_day
-    week_start = Time.current.beginning_of_week
-    week_end = Time.current.end_of_week
-    month_start = Time.current.beginning_of_month
-    month_end = Time.current.end_of_month
+    tz = Time.find_zone(space.timezone.presence || "UTC")
+    now_in_tz = Time.current.in_time_zone(tz)
+
+    today_start = now_in_tz.beginning_of_day
+    today_end = now_in_tz.end_of_day
+    week_start = now_in_tz.beginning_of_week
+    week_end = now_in_tz.end_of_week
+    month_start = now_in_tz.beginning_of_month
+    month_end = now_in_tz.end_of_month
 
     base_scope = space.appointments.includes(:client).where.not(status: :cancelled)
 
@@ -27,6 +30,7 @@ class DashboardController < ApplicationController
     @stats_today = calendar_stats(space, @calendar_today, today_start, today_end)
     @stats_week = calendar_stats(space, @calendar_week, week_start, week_end)
     @stats_month = calendar_stats(space, @calendar_month, month_start, month_end)
+    @calendar_space = space
   end
 
   def calendar_stats(space, appointments, from, to)

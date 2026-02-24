@@ -12,8 +12,14 @@
         </span>
       <% end %>
     </div>
-    <p class="text-xs text-slate-500">
-      <%= appointment.scheduled_at&.strftime("%b %d, %Y %l:%M %p") || t("appointments.index.time_to_be_scheduled") %>
+    <p class="text-xs text-slate-500 flex items-center gap-1.5">
+      <%= format_appointment_time(appointment.scheduled_at, space: appointment.space, format: :short) || t("appointments.index.time_to_be_scheduled") %>
+      <% if appointment.scheduled_at.present? && (duration = appointment.effective_duration_minutes).present? %>
+        <span class="text-slate-400">·</span>
+        <span class="text-[10px] uppercase tracking-wide text-slate-400">
+          <%= duration >= 60 ? "#{number_with_precision(duration / 60.0, precision: 1, strip_insignificant_zeros: true)} hr" : "#{duration} min" %>
+        </span>
+      <% end %>
     </p>
   </div>
   <span class="inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium

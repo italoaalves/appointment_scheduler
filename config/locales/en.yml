@@ -327,6 +327,9 @@ en:
         slot_duration_label: "Slot duration"
         minutes: "minutes"
         timezone_label: "Timezone"
+        timezone_prompt: "Select timezone"
+        timezone_other: "Other (specify below)"
+        timezone_other_placeholder: "e.g. America/Sao_Paulo"
         submit: "Save"
         back_to_appointments: "Back to appointments"
 

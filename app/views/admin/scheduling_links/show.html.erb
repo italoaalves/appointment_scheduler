@@ -52,11 +52,11 @@
       <% if @scheduling_link.single_use? %>
         <div class="flex justify-between gap-4">
           <dt class="font-medium text-slate-700"><%= t("admin.scheduling_links.show.expires_at") %></dt>
-          <dd class="text-slate-900"><%= @scheduling_link.expires_at&.strftime("%b %d, %Y %l:%M %p") || "—" %></dd>
+          <dd class="text-slate-900"><%= format_datetime_in_zone(@scheduling_link.expires_at, @scheduling_link.space&.timezone) || "—" %></dd>
         </div>
         <div class="flex justify-between gap-4">
           <dt class="font-medium text-slate-700"><%= t("admin.scheduling_links.show.used_at") %></dt>
-          <dd class="text-slate-900"><%= @scheduling_link.used_at&.strftime("%b %d, %Y %l:%M %p") || t("admin.scheduling_links.show.not_used") %></dd>
+          <dd class="text-slate-900"><%= format_datetime_in_zone(@scheduling_link.used_at, @scheduling_link.space&.timezone) || t("admin.scheduling_links.show.not_used") %></dd>
         </div>
       <% end %>
     </dl>

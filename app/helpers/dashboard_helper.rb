@@ -4,43 +4,55 @@ module DashboardHelper
   # Time-of-day periods for Today tab (ordered chronologically)
   TODAY_PERIODS = %i[morning afternoon evening night].freeze
 
-  def calendar_today_grouped(appointments)
+  def calendar_today_grouped(appointments, space = nil)
     return {} unless appointments.respond_to?(:each)
 
-    groups = appointments.group_by { |a| time_of_day_period(a.scheduled_at) }
+    tz = space_timezone(space, appointments)
+    groups = appointments.group_by { |a| time_of_day_period(a.scheduled_at, tz) }
     TODAY_PERIODS.index_with { |p| groups[p] || [] }
   end
 
-  def calendar_week_grouped(appointments)
+  def calendar_week_grouped(appointments, space = nil)
     return [] unless appointments.respond_to?(:each)
 
-    appointments.group_by { |a| a.scheduled_at&.to_date }.reject { |k, _| k.nil? }.sort
+    tz = space_timezone(space, appointments)
+    appointments.group_by { |a| a.scheduled_at&.in_time_zone(tz)&.to_date }.reject { |k, _| k.nil? }.sort
   end
 
-  def calendar_month_grouped(appointments)
+  def calendar_month_grouped(appointments, space = nil)
     return [] unless appointments.respond_to?(:each)
 
-    appointments.group_by { |a| a.scheduled_at&.to_date }.reject { |k, _| k.nil? }.sort
+    tz = space_timezone(space, appointments)
+    appointments.group_by { |a| a.scheduled_at&.in_time_zone(tz)&.to_date }.reject { |k, _| k.nil? }.sort
   end
 
   def appointment_ongoing?(appointment)
     return false unless appointment.scheduled_at.present?
     return false unless appointment.pending? || appointment.confirmed?
 
-    now = Time.current
-    duration_minutes = appointment.space&.slot_duration_minutes || 30
-    end_at = appointment.scheduled_at + duration_minutes.minutes
+    tz = Time.find_zone(appointment.space&.timezone.presence || "UTC")
+    now = Time.current.in_time_zone(tz)
+    local_scheduled = appointment.scheduled_at.in_time_zone(tz)
+    duration_minutes = appointment.effective_duration_minutes
+    end_at = local_scheduled + duration_minutes.minutes
 
-    now >= appointment.scheduled_at && now < end_at
+    now >= local_scheduled && now < end_at
   end
 
   private
 
+  def space_timezone(space, appointments)
+    tz_name = space&.timezone.presence || appointments.first&.space&.timezone.presence || "UTC"
+    Time.find_zone(tz_name)
+  end
+
   # Morning: 5am-12pm | Afternoon: 12pm-6pm | Evening: 6pm-9pm | Night: 9pm-5am
-  def time_of_day_period(datetime)
+  # hour is read in the space's local timezone
+  def time_of_day_period(datetime, tz = nil)
     return :morning if datetime.blank?
 
-    hour = datetime.hour
+    local = tz ? datetime.in_time_zone(tz) : datetime
+    hour = local.hour
     case hour
     when 5..11 then :morning
     when 12..17 then :afternoon

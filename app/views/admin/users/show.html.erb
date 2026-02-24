@@ -58,7 +58,7 @@
             <div class="flex items-start justify-between gap-3">
               <div>
                 <p class="text-slate-900">
-                  <%= appointment.scheduled_at&.strftime("%B %d, %Y at %l:%M %p") || "—" %>
+                  <%= format_appointment_time(appointment.scheduled_at, space: appointment.space, format: :long) || "—" %>
                 </p>
                 <p class="mt-0.5 text-xs text-slate-500">
                   <%= t("admin.users.show.status_prefix") %> <%= t("activerecord.attributes.appointment.status.#{appointment.status}") %>

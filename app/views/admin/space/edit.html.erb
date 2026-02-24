@@ -109,13 +109,28 @@
         </div>
       </div>
 
-      <div>
+      <div data-controller="timezone-select">
         <%= form.label :timezone,
                        t("admin.space.edit.timezone_label"),
                        class: "block text-sm font-medium text-slate-700" %>
-        <%= form.text_field :timezone,
-                           placeholder: "America/Sao_Paulo",
-                           class: "mt-1 block w-full max-w-sm rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+        <%= form.hidden_field :timezone, data: { timezone_select_target: "input" } %>
+        <div class="mt-1 max-w-sm space-y-2">
+          <select data-timezone-select-target="select"
+                  class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500">
+            <% options = common_timezone_options_for_select(@space.timezone) %>
+            <% show_other = @space.timezone.present? && !ApplicationHelper::COMMON_TIMEZONES.include?(@space.timezone) %>
+            <% options.each do |label, value| %>
+              <option value="<%= value %>"<%= " selected" if (value == @space.timezone) || (show_other && value == ApplicationHelper::OTHER_TIMEZONE_VALUE) %>>
+                <%= label %>
+              </option>
+            <% end %>
+          </select>
+          <input type="text"
+                 data-timezone-select-target="otherField"
+                 value="<%= @space.timezone if @space.timezone.present? && !ApplicationHelper::COMMON_TIMEZONES.include?(@space.timezone) %>"
+                 placeholder="<%= t('admin.space.edit.timezone_other_placeholder') %>"
+                 class="<%= 'hidden ' unless @space.timezone.present? && !ApplicationHelper::COMMON_TIMEZONES.include?(@space.timezone) %>block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" />
+        </div>
       </div>
 
       <div class="flex flex-wrap gap-3 pt-2">

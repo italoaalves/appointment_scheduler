@@ -298,6 +298,9 @@ pt-BR:
         slot_duration_label: "Duração do horário"
         minutes: "minutos"
         timezone_label: "Fuso horário"
+        timezone_prompt: "Selecione o fuso horário"
+        timezone_other: "Outro (informe abaixo)"
+        timezone_other_placeholder: "ex: America/Sao_Paulo"
         submit: "Salvar"
         back_to_appointments: "Voltar para consultas"
 
