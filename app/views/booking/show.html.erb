@@ -12,7 +12,7 @@
     <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       <h2 class="text-sm font-semibold text-slate-800"><%= t("booking.choose_date") %></h2>
       <div class="mt-2">
-        <% today_in_space = Time.current.in_time_zone(@space.timezone.presence || "UTC").to_date %>
+        <% today_in_space = Time.current.in_time_zone(timezone_for(@space)).to_date %>
         <input type="date"
                name="date"
                id="booking_date"

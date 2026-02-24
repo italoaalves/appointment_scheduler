@@ -1,8 +1,12 @@
 module ApplicationHelper
+  def timezone_for(space_or_timezone)
+    TimezoneResolver.zone(space_or_timezone)
+  end
+
   def format_appointment_time(datetime, space: nil, format: :default)
     return nil if datetime.blank?
 
-    tz = Time.find_zone(space&.timezone.presence || "UTC")
+    tz = TimezoneResolver.zone(space)
     local = datetime.in_time_zone(tz)
     case format
     when :long then local.strftime("%B %d, %Y at %l:%M %p")
@@ -16,7 +20,7 @@ module ApplicationHelper
   def format_datetime_in_zone(datetime, timezone, format_string = "%b %d, %Y %l:%M %p")
     return nil if datetime.blank?
 
-    tz = Time.find_zone(timezone.presence || "UTC")
+    tz = TimezoneResolver.zone(timezone)
     datetime.in_time_zone(tz).strftime(format_string)
   end
 

@@ -2,6 +2,8 @@
 
 module Admin
   class UsersController < Admin::BaseController
+    include StripBlankPasswordParams
+
     before_action :set_user, only: [ :show, :edit, :update, :destroy ]
     before_action :require_manager, only: [ :new, :create, :edit, :update, :destroy ]
 
@@ -31,10 +33,7 @@ module Admin
     end
 
     def update
-      p = user_params
-      p.delete(:password) if p[:password].blank?
-      p.delete(:password_confirmation) if p[:password_confirmation].blank?
-      if @user.update(p)
+      if @user.update(user_params_without_blank_passwords)
         redirect_to admin_users_path, notice: t("admin.users.update.notice")
       else
         render :edit

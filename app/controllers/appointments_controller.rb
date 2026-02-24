@@ -25,12 +25,11 @@ class AppointmentsController < ApplicationController
       redirect_to appointments_path, alert: t("appointments.no_client")
       return
     end
-    tz = @client.space.timezone.presence || "UTC"
-    @appointment = Time.use_zone(tz) do
-      @client.space.appointments.build(appointment_params.merge(client: @client))
-    end
-    @appointment.status = "pending"
-    @appointment.requested_at = Time.current
+    @appointment = AppointmentCreator.call(
+      space: @client.space,
+      client: @client,
+      attributes: appointment_params
+    )
 
     if @appointment.save
       redirect_to appointments_path

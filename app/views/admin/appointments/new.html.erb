@@ -28,7 +28,7 @@
                        t("admin.appointments.new.scheduled_for"),
                        class: "block text-sm font-medium text-slate-700" %>
         <div class="mt-1 inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
-          <% Time.use_zone(current_tenant.timezone.presence || "UTC") do %>
+          <% Time.use_zone(timezone_for(current_tenant)) do %>
             <%= form.datetime_select :scheduled_at,
                                      { start_year: Date.current.year },
                                      { class: "text-sm" } %>

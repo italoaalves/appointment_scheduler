@@ -11,7 +11,7 @@ class DashboardController < ApplicationController
     return unless current_tenant
 
     space = current_tenant
-    tz = Time.find_zone(space.timezone.presence || "UTC")
+    tz = TimezoneResolver.zone(space)
     now_in_tz = Time.current.in_time_zone(tz)
 
     today_start = now_in_tz.beginning_of_day
@@ -27,18 +27,9 @@ class DashboardController < ApplicationController
     @calendar_week = base_scope.where(scheduled_at: week_start..week_end).order(:scheduled_at)
     @calendar_month = base_scope.where(scheduled_at: month_start..month_end).order(:scheduled_at)
 
-    @stats_today = calendar_stats(space, @calendar_today, today_start, today_end)
-    @stats_week = calendar_stats(space, @calendar_week, week_start, week_end)
-    @stats_month = calendar_stats(space, @calendar_month, month_start, month_end)
+    @stats_today = CalendarStatsService.call(space: space, appointments: @calendar_today, from: today_start, to: today_end)
+    @stats_week = CalendarStatsService.call(space: space, appointments: @calendar_week, from: week_start, to: week_end)
+    @stats_month = CalendarStatsService.call(space: space, appointments: @calendar_month, from: month_start, to: month_end)
     @calendar_space = space
-  end
-
-  def calendar_stats(space, appointments, from, to)
-    {
-      total: appointments.size,
-      empty_slots: space.empty_slots_count(from_date: from, to_date: to),
-      pending: appointments.pending.size,
-      confirmed: appointments.confirmed.size
-    }
   end
 end

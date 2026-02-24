@@ -12,7 +12,7 @@ class BookingController < ApplicationController
 
   def slots
     @space = @scheduling_link.space
-    tz = Time.find_zone(@space.timezone.presence || "UTC")
+    tz = TimezoneResolver.zone(@space)
     today_in_space = Time.current.in_time_zone(tz).to_date
     from = params[:from].present? ? Date.parse(params[:from]) : today_in_space
     to = params[:to].present? ? Date.parse(params[:to]) : from + 13.days
@@ -26,11 +26,10 @@ class BookingController < ApplicationController
   def create
     @space = @scheduling_link.space
     client = find_or_create_client
-    appointment = @space.appointments.build(
+    appointment = AppointmentCreator.call(
+      space: @space,
       client: client,
-      scheduled_at: params[:scheduled_at],
-      status: :pending,
-      requested_at: Time.current
+      attributes: { scheduled_at: params[:scheduled_at] }
     )
 
     if appointment.save
@@ -58,13 +57,12 @@ class BookingController < ApplicationController
   end
 
   def find_or_create_client
-    name = params[:client_name].to_s.strip.presence || "Guest"
-    phone = params[:client_phone].to_s.strip.presence
-    email = params[:client_email].to_s.strip.presence
-    address = params[:client_address].to_s.strip.presence
-
-    client = @space.clients.find_by("LOWER(email) = ?", email.downcase) if email.present?
-    client ||= @space.clients.create!(name: name, phone: phone, email: email, address: address)
-    client
+    ClientFinder.find_or_create(
+      space: @space,
+      email: params[:client_email].to_s.strip.presence,
+      name: params[:client_name].to_s.strip.presence,
+      phone: params[:client_phone].to_s.strip.presence,
+      address: params[:client_address].to_s.strip.presence
+    )
   end
 end

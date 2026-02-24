@@ -2,6 +2,8 @@
 
 module Platform
   class UsersController < Platform::BaseController
+    include StripBlankPasswordParams
+
     before_action :set_user, only: [ :show, :edit, :update, :destroy ]
 
     def index
@@ -34,11 +36,7 @@ module Platform
     end
 
     def update
-      p = user_params
-      p.delete(:password) if p[:password].blank?
-      p.delete(:password_confirmation) if p[:password_confirmation].blank?
-
-      if @user.update(p)
+      if @user.update(user_params_without_blank_passwords)
         redirect_to platform_user_path(@user), notice: t("platform.users.update.notice")
       else
         render :edit

@@ -2,13 +2,15 @@
 
 module Admin
   class AppointmentsController < Admin::BaseController
+    include FilterableByDateRange
+
     before_action :set_appointment, only: [ :show, :edit, :update, :destroy, :confirm, :cancel ]
     before_action :require_manager, only: [ :destroy ]
 
     def index
       base = current_tenant.appointments.includes(:client, :space)
       base = apply_status_filter(base)
-      base = apply_date_range_filter(base)
+      base = apply_date_range_filter(base, timezone: current_tenant)
       @appointments = base.order(scheduled_at: :desc, created_at: :desc).page(params[:page]).per(20)
     end
 
@@ -20,11 +22,10 @@ module Admin
     end
 
     def create
-      space = current_tenant
-      @appointment = Time.use_zone(space.timezone.presence || "UTC") do
-        space.appointments.build(appointment_params)
-      end
-      @appointment.requested_at ||= Time.current if @appointment.pending?
+      @appointment = AppointmentCreator.call(
+        space: current_tenant,
+        attributes: appointment_params
+      )
 
       if @appointment.save
         redirect_to admin_appointment_path(@appointment), notice: t("admin.appointments.create.notice")
@@ -37,8 +38,7 @@ module Admin
     end
 
     def update
-      tz = @appointment.space&.timezone.presence || "UTC"
-      if Time.use_zone(tz) { @appointment.update(appointment_params) }
+      if Time.use_zone(TimezoneResolver.zone(@appointment.space)) { @appointment.update(appointment_params) }
         redirect_to admin_appointments_path, notice: t("admin.appointments.update.notice")
       else
         render :edit
@@ -80,23 +80,6 @@ module Admin
       return scope unless Appointment.statuses.key?(params[:status].to_s)
 
       scope.where(status: params[:status])
-    end
-
-    def apply_date_range_filter(scope)
-      from = parse_date(params[:date_from])
-      to = parse_date(params[:date_to])
-      tz = Time.find_zone(current_tenant.timezone.presence || "UTC")
-      scope = scope.where(scheduled_at: tz.local(from.year, from.month, from.day, 0, 0, 0)..) if from
-      scope = scope.where(scheduled_at: ..tz.local(to.year, to.month, to.day, 0, 0, 0).end_of_day) if to
-      scope
-    end
-
-    def parse_date(str)
-      return nil if str.blank?
-
-      Date.parse(str.to_s)
-    rescue ArgumentError
-      nil
     end
   end
 end

@@ -30,7 +30,7 @@ module DashboardHelper
     return false unless appointment.scheduled_at.present?
     return false unless appointment.pending? || appointment.confirmed?
 
-    tz = Time.find_zone(appointment.space&.timezone.presence || "UTC")
+    tz = TimezoneResolver.zone(appointment.space)
     now = Time.current.in_time_zone(tz)
     local_scheduled = appointment.scheduled_at.in_time_zone(tz)
     duration_minutes = appointment.effective_duration_minutes
@@ -42,8 +42,8 @@ module DashboardHelper
   private
 
   def space_timezone(space, appointments)
-    tz_name = space&.timezone.presence || appointments.first&.space&.timezone.presence || "UTC"
-    Time.find_zone(tz_name)
+    space_or_model = space || appointments.first&.space
+    TimezoneResolver.zone(space_or_model || "UTC")
   end
 
   # Morning: 5am-12pm | Afternoon: 12pm-6pm | Evening: 6pm-9pm | Night: 9pm-5am
