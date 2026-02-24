@@ -1,20 +1,32 @@
-<div class="rounded-xl border border-slate-200 bg-white shadow-sm" x-data="{ tab: 'today' }">
-  <div class="border-b border-slate-200">
+<div class="flex max-h-[65vh] min-h-0 flex-col rounded-xl border border-slate-200 bg-white shadow-sm"
+     x-data="{
+       tab: 'today',
+       scrollable: false,
+       atBottom: false,
+       checkOverflow() {
+         const el = this.$refs.scrollArea;
+         if (!el) return;
+         this.scrollable = el.scrollHeight > el.clientHeight;
+         this.atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 2;
+       }
+     }"
+     x-init="$nextTick(() => { checkOverflow(); const el = $refs.scrollArea; const self = this; if (el) new ResizeObserver(() => self.$nextTick(() => self.checkOverflow())).observe(el); })">
+  <div class="shrink-0 border-b border-slate-200">
     <nav class="flex -mb-px">
       <button type="button"
-              @click="tab = 'today'"
+              @click="tab = 'today'; $nextTick(() => checkOverflow())"
               :class="tab === 'today' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'"
               class="border-b-2 px-4 py-3 text-sm font-medium">
         <%= t("admin.appointments.calendar.today") %>
       </button>
       <button type="button"
-              @click="tab = 'week'"
+              @click="tab = 'week'; $nextTick(() => checkOverflow())"
               :class="tab === 'week' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'"
               class="border-b-2 px-4 py-3 text-sm font-medium">
         <%= t("admin.appointments.calendar.week") %>
       </button>
       <button type="button"
-              @click="tab = 'month'"
+              @click="tab = 'month'; $nextTick(() => checkOverflow())"
               :class="tab === 'month' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'"
               class="border-b-2 px-4 py-3 text-sm font-medium">
         <%= t("admin.appointments.calendar.month") %>
@@ -22,64 +34,88 @@
     </nav>
   </div>
 
-  <div class="p-4">
-    <% %i[today week month].each do |period| %>
-      <% appointments = instance_variable_get("@calendar_#{period}") %>
-      <% stats = instance_variable_get("@stats_#{period}") %>
-      <div x-show="tab === '<%= period %>'"
-           x-transition:enter="transition ease-out duration-200"
-           x-transition:enter-start="opacity-0"
-           x-transition:enter-end="opacity-100"
-           style="<%= period == :today ? '' : 'display: none;' %>"
-           class="space-y-4">
-        <% if appointments.any? %>
-          <% case period %>
-          <% when :today %>
-            <% today_groups = calendar_today_grouped(appointments, @calendar_space).select { |_, v| v.any? } %>
-            <% today_groups.each_with_index do |(period_key, group_appointments), idx| %>
-              <div class="<%= idx < today_groups.size - 1 ? 'pb-4 mb-4 border-b border-slate-200' : '' %>">
-                <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  <%= t("admin.appointments.calendar.periods.#{period_key}") %>
-                </p>
-                <ul class="space-y-0">
-                  <% group_appointments.each do |appointment| %>
-                    <li>
-                      <%= render "dashboard/calendar_appointment", appointment: appointment %>
-                    </li>
-                  <% end %>
-                </ul>
-              </div>
+  <div class="relative min-h-0 flex-1 flex flex-col">
+    <div x-ref="scrollArea"
+         class="min-h-0 flex-1 overflow-y-auto p-4"
+         @scroll="checkOverflow()">
+      <% %i[today week month].each do |period| %>
+        <% appointments = instance_variable_get("@calendar_#{period}") %>
+        <div x-show="tab === '<%= period %>'"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             style="<%= period == :today ? '' : 'display: none;' %>"
+             class="space-y-4">
+          <% if appointments.any? %>
+            <% case period %>
+            <% when :today %>
+              <% today_groups = calendar_today_grouped(appointments, @calendar_space).select { |_, v| v.any? } %>
+              <% today_groups.each_with_index do |(period_key, group_appointments), idx| %>
+                <div class="<%= idx < today_groups.size - 1 ? 'pb-4 mb-4 border-b border-slate-200' : '' %>">
+                  <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <%= t("admin.appointments.calendar.periods.#{period_key}") %>
+                  </p>
+                  <ul class="space-y-0">
+                    <% group_appointments.each do |appointment| %>
+                      <li>
+                        <%= render "dashboard/calendar_appointment", appointment: appointment %>
+                      </li>
+                    <% end %>
+                  </ul>
+                </div>
+              <% end %>
+            <% when :week, :month %>
+              <% grouped = period == :week ? calendar_week_grouped(appointments, @calendar_space) : calendar_month_grouped(appointments, @calendar_space) %>
+              <% grouped.each_with_index do |(date, group_appointments), idx| %>
+                <div class="<%= idx < grouped.size - 1 ? 'pb-4 mb-4 border-b border-slate-200' : '' %>">
+                  <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <%= date.strftime("%A, %b %d") %>
+                  </p>
+                  <ul class="space-y-0">
+                    <% group_appointments.sort_by { |a| a.scheduled_at || Time.zone.at(0) }.each do |appointment| %>
+                      <li>
+                        <%= render "dashboard/calendar_appointment", appointment: appointment %>
+                      </li>
+                    <% end %>
+                  </ul>
+                </div>
+              <% end %>
             <% end %>
-          <% when :week, :month %>
-            <% grouped = period == :week ? calendar_week_grouped(appointments, @calendar_space) : calendar_month_grouped(appointments, @calendar_space) %>
-            <% grouped.each_with_index do |(date, group_appointments), idx| %>
-              <div class="<%= idx < grouped.size - 1 ? 'pb-4 mb-4 border-b border-slate-200' : '' %>">
-                <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  <%= date.strftime("%A, %b %d") %>
-                </p>
-                <ul class="space-y-0">
-                  <% group_appointments.sort_by { |a| a.scheduled_at || Time.zone.at(0) }.each do |appointment| %>
-                    <li>
-                      <%= render "dashboard/calendar_appointment", appointment: appointment %>
-                    </li>
-                  <% end %>
-                </ul>
-              </div>
-            <% end %>
+          <% else %>
+            <p class="py-6 text-center text-sm text-slate-500">
+              <%= t("admin.appointments.calendar.no_appointments") %>
+            </p>
           <% end %>
-        <% else %>
-          <p class="py-6 text-center text-sm text-slate-500">
-            <%= t("admin.appointments.calendar.no_appointments") %>
-          </p>
-        <% end %>
+        </div>
+      <% end %>
+    </div>
 
-        <footer class="flex flex-wrap gap-4 pt-2 border-t border-slate-100 text-xs text-slate-600">
+    <div x-show="scrollable && !atBottom"
+         x-transition:enter="transition ease-out duration-150"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-100"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="pointer-events-none absolute left-0 right-0 z-10 h-8 bg-gradient-to-t from-white via-white/80 to-transparent"
+         style="display: none; bottom: 52px;">
+    </div>
+
+    <footer class="shrink-0 border-t border-slate-100 bg-white px-4 py-3">
+      <% %i[today week month].each do |period| %>
+        <% stats = instance_variable_get("@stats_#{period}") %>
+        <div x-show="tab === '<%= period %>'"
+             x-transition:enter="transition ease-out duration-150"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             class="flex flex-wrap gap-4 text-xs text-slate-600"
+             style="<%= period == :today ? '' : 'display: none;' %>">
           <span><%= t("admin.appointments.calendar.stats.total") %>: <strong class="text-slate-900"><%= stats[:total] %></strong></span>
           <span><%= t("admin.appointments.calendar.stats.empty_slots") %>: <strong class="text-slate-900"><%= stats[:empty_slots] %></strong></span>
           <span><%= t("admin.appointments.calendar.stats.pending") %>: <strong class="text-amber-700"><%= stats[:pending] %></strong></span>
           <span><%= t("admin.appointments.calendar.stats.confirmed") %>: <strong class="text-emerald-700"><%= stats[:confirmed] %></strong></span>
-        </footer>
-      </div>
-    <% end %>
+        </div>
+      <% end %>
+    </footer>
   </div>
 </div>

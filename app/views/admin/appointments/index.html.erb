@@ -1,25 +1,17 @@
 <div class="space-y-6">
   <div class="space-y-4">
-  <div class="flex items-center justify-between gap-2 flex-wrap">
-    <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
-      <%= t("admin.appointments.index.title") %>
-    </h1>
-    <div class="flex flex-wrap items-center gap-2">
-      <%= link_to t("admin.appointments.index.new_button"),
-                  new_admin_appointment_path,
-                  class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
-      <%= link_to t("admin.appointments.index.manage_customers"),
-                  admin_customers_path,
-                  class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
-    </div>
-  </div>
+  <% page_actions = capture do %>
+    <%= link_to t("admin.appointments.index.new_button"), new_admin_appointment_path, class: button_classes(:primary) %>
+    <%= link_to t("admin.appointments.index.manage_customers"), admin_customers_path, class: button_classes(:secondary) %>
+  <% end %>
+  <%= render "application/shared/page_header", title: t("admin.appointments.index.title"), actions: page_actions %>
 
   <%= form_with url: admin_appointments_path,
                 method: :get,
                 local: true,
                 class: "flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm" do %>
     <div class="flex flex-col gap-1">
-      <label for="status" class="text-xs font-medium text-slate-600"><%= t("admin.appointments.filters.status") %></label>
+      <label for="status" class="<%= form_label_classes_sm %>"><%= t("admin.appointments.filters.status") %></label>
       <%= select_tag :status,
                      options_for_select(
                        [
@@ -36,16 +28,16 @@
                      class: "rounded-md border-slate-300 text-sm focus:border-slate-500 focus:ring-slate-500" %>
     </div>
     <div class="flex flex-col gap-1">
-      <label for="date_from" class="text-xs font-medium text-slate-600"><%= t("admin.appointments.filters.from") %></label>
+      <label for="date_from" class="<%= form_label_classes_sm %>"><%= t("admin.appointments.filters.from") %></label>
       <%= date_field_tag :date_from, params[:date_from], class: "rounded-md border-slate-300 text-sm focus:border-slate-500 focus:ring-slate-500" %>
     </div>
     <div class="flex flex-col gap-1">
-      <label for="date_to" class="text-xs font-medium text-slate-600"><%= t("admin.appointments.filters.to") %></label>
+      <label for="date_to" class="<%= form_label_classes_sm %>"><%= t("admin.appointments.filters.to") %></label>
       <%= date_field_tag :date_to, params[:date_to], class: "rounded-md border-slate-300 text-sm focus:border-slate-500 focus:ring-slate-500" %>
     </div>
     <div class="flex gap-2">
-      <%= submit_tag t("admin.appointments.filters.apply"), class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
-      <%= link_to t("admin.appointments.filters.clear"), admin_appointments_path, class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
+      <%= submit_tag t("admin.appointments.filters.apply"), class: button_classes(:primary) %>
+      <%= link_to t("admin.appointments.filters.clear"), admin_appointments_path, class: button_classes(:secondary) %>
     </div>
   <% end %>
 
@@ -78,51 +70,28 @@
                 <%= format_appointment_time(appointment.scheduled_at, space: appointment.space, format: :short) || "—" %>
               </td>
               <td class="px-4 py-2 align-top">
-                <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-800">
-                  <%= t("activerecord.attributes.appointment.status.#{appointment.status}") %>
-                </span>
+                <%= render "application/shared/status_badge", status: appointment.status %>
               </td>
               <td class="px-4 py-2 align-top">
                 <div class="flex flex-wrap justify-end gap-1">
-                  <%= link_to t("admin.appointments.index.view"),
-                              admin_appointment_path(appointment),
-                              class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
-                  <%= link_to t("admin.appointments.index.edit"),
-                              edit_admin_appointment_path(appointment),
-                              class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
+                  <%= link_to t("admin.appointments.index.view"), admin_appointment_path(appointment), class: button_classes(:table_link) %>
+                  <%= link_to t("admin.appointments.index.edit"), edit_admin_appointment_path(appointment), class: button_classes(:table_link) %>
                   <% if appointment.pending? %>
-                    <%= button_to t("admin.appointments.index.confirm"),
-                                  confirm_admin_appointment_path(appointment),
-                                  method: :patch,
-                                  class: "inline-flex items-center rounded-md bg-emerald-500 px-2.5 py-1 text-xs font-semibold text-white hover:bg-emerald-600" %>
+                    <%= button_to t("admin.appointments.index.confirm"), confirm_admin_appointment_path(appointment), method: :patch, class: button_classes(:table_success) %>
                   <% end %>
                   <% if appointment.confirmed? %>
                     <% if appointment.scheduled_in_past? %>
-                      <%= button_to t("admin.appointments.index.no_show"),
-                                    no_show_admin_appointment_path(appointment),
-                                    method: :patch,
-                                    data: { turbo_confirm: t("admin.appointments.index.no_show_confirm") },
-                                    class: "inline-flex items-center rounded-md bg-slate-500 px-2.5 py-1 text-xs font-semibold text-white hover:bg-slate-600" %>
+                      <%= button_to t("admin.appointments.index.no_show"), no_show_admin_appointment_path(appointment), method: :patch, data: { turbo_confirm: t("admin.appointments.index.no_show_confirm") }, class: button_classes(:table_muted) %>
                     <% end %>
                     <% if appointment.scheduled_in_past? %>
-                      <%= link_to t("admin.appointments.index.finish"),
-                                  finish_form_admin_appointment_path(appointment),
-                                  class: "inline-flex items-center rounded-md bg-emerald-500 px-2.5 py-1 text-xs font-semibold text-white hover:bg-emerald-600" %>
+                      <%= link_to t("admin.appointments.index.finish"), finish_form_admin_appointment_path(appointment), class: button_classes(:table_success) %>
                     <% end %>
                   <% end %>
                   <% if appointment.pending? || appointment.confirmed? %>
-                    <%= button_to t("admin.appointments.index.cancel"),
-                                  cancel_admin_appointment_path(appointment),
-                                  method: :patch,
-                                  data: { turbo_confirm: t("admin.appointments.index.cancel_confirm") },
-                                  class: "inline-flex items-center rounded-md bg-amber-500 px-2.5 py-1 text-xs font-semibold text-white hover:bg-amber-600" %>
+                    <%= button_to t("admin.appointments.index.cancel"), cancel_admin_appointment_path(appointment), method: :patch, data: { turbo_confirm: t("admin.appointments.index.cancel_confirm") }, class: button_classes(:table_cancel) %>
                   <% end %>
                   <% if current_user.manager? %>
-                    <%= button_to t("admin.appointments.index.delete"),
-                                  admin_appointment_path(appointment),
-                                  method: :delete,
-                                  data: { turbo_confirm: t("admin.appointments.index.delete_confirm") },
-                                  class: "inline-flex items-center rounded-md bg-slate-700 px-2.5 py-1 text-xs font-semibold text-white hover:bg-slate-900" %>
+                    <%= button_to t("admin.appointments.index.delete"), admin_appointment_path(appointment), method: :delete, data: { turbo_confirm: t("admin.appointments.index.delete_confirm") }, class: button_classes(:table_danger) %>
                   <% end %>
                 </div>
               </td>
@@ -132,9 +101,7 @@
       </table>
     </div>
   <% else %>
-    <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-sm text-slate-600">
-      <%= t("admin.appointments.index.empty") %>
-    </div>
+    <%= render "application/shared/empty_state", content: t("admin.appointments.index.empty") %>
   <% end %>
 
   <% if @appointments.total_pages > 1 %>

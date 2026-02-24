@@ -10,7 +10,7 @@
 
   <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
     <%= form_with model: [ :admin, @personalized_link ], url: admin_personalized_scheduling_link_path, method: :patch, class: "space-y-4" do |form| %>
-      <%= render "admin/shared/error_messages", resource: @personalized_link %>
+      <%= render "application/shared/error_messages", resource: @personalized_link %>
       <div>
         <%= form.label :slug, t("admin.personalized_scheduling_links.edit.slug_label"), class: "block text-sm font-medium text-slate-700" %>
         <p class="mt-0.5 text-xs text-slate-500">

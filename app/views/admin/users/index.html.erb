@@ -1,19 +1,11 @@
 <div class="space-y-4">
-  <div class="flex items-center justify-between gap-2">
-    <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
-      <%= t("admin.users.index.title") %>
-    </h1>
-    <div class="flex flex-wrap items-center gap-2">
-      <% if current_user.manager? %>
-        <%= link_to t("admin.users.index.new_button"),
-                    new_admin_user_path,
-                    class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
-      <% end %>
-      <%= link_to t("admin.users.index.all_appointments"),
-                  admin_appointments_path,
-                  class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
-    </div>
-  </div>
+  <% page_actions = capture do %>
+    <% if current_user.manager? %>
+      <%= link_to t("admin.users.index.new_button"), new_admin_user_path, class: button_classes(:primary) %>
+    <% end %>
+    <%= link_to t("admin.users.index.all_appointments"), admin_appointments_path, class: button_classes(:secondary) %>
+  <% end %>
+  <%= render "application/shared/page_header", title: t("admin.users.index.title"), actions: page_actions %>
 
   <% if @users.any? %>
     <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -42,18 +34,10 @@
               <td class="px-4 py-2 align-top text-slate-700"><%= user.role.humanize %></td>
               <td class="px-4 py-2 align-top">
                 <div class="flex flex-wrap justify-end gap-1">
-                  <%= link_to t("admin.users.index.view"),
-                              admin_user_path(user),
-                              class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
+                  <%= link_to t("admin.users.index.view"), admin_user_path(user), class: button_classes(:table_link) %>
                   <% if current_user.manager? %>
-                    <%= link_to t("admin.users.index.edit"),
-                                edit_admin_user_path(user),
-                                class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
-                    <%= button_to t("admin.users.index.delete"),
-                                  admin_user_path(user),
-                                  method: :delete,
-                                  data: { turbo_confirm: t("admin.users.index.delete_confirm") },
-                                  class: "inline-flex items-center rounded-md bg-slate-700 px-2.5 py-1 text-xs font-semibold text-white hover:bg-slate-900" %>
+                    <%= link_to t("admin.users.index.edit"), edit_admin_user_path(user), class: button_classes(:table_link) %>
+                    <%= button_to t("admin.users.index.delete"), admin_user_path(user), method: :delete, data: { turbo_confirm: t("admin.users.index.delete_confirm") }, class: button_classes(:table_danger) %>
                   <% end %>
                 </div>
               </td>
@@ -63,8 +47,6 @@
       </table>
     </div>
   <% else %>
-    <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-sm text-slate-600">
-      <%= t("admin.users.index.empty") %>
-    </div>
+    <%= render "application/shared/empty_state", content: t("admin.users.index.empty") %>
   <% end %>
 </div>

@@ -8,9 +8,7 @@
         <%= t("appointments.show.subtitle") %>
       </p>
     </div>
-    <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-800">
-      <%= t("activerecord.attributes.appointment.status.#{@appointment.status}") %>
-    </span>
+    <%= render "application/shared/status_badge", status: @appointment.status %>
   </header>
 
   <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -31,16 +29,10 @@
   </div>
 
   <div class="flex flex-wrap items-center gap-3">
-    <%= link_to t("appointments.show.back"),
-                appointments_path,
-                class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
+    <%= link_to t("appointments.show.back"), appointments_path, class: button_classes(:secondary) %>
 
     <% if @appointment.pending? || @appointment.confirmed? %>
-      <%= button_to t("appointments.show.cancel"),
-                    cancel_appointment_path(@appointment),
-                    method: :patch,
-                    data: { turbo_confirm: t("appointments.show.cancel_confirm") },
-                    class: "inline-flex items-center rounded-md bg-red-500 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-red-600" %>
+      <%= button_to t("appointments.show.cancel"), cancel_appointment_path(@appointment), method: :patch, data: { turbo_confirm: t("appointments.show.cancel_confirm") }, class: button_classes(:destructive) %>
     <% end %>
 
     <% if @appointment.pending? %>

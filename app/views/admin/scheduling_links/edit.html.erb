@@ -10,7 +10,7 @@
 
   <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
     <%= form_with model: [:admin, @scheduling_link], class: "space-y-4" do |form| %>
-      <%= render "admin/shared/error_messages", resource: @scheduling_link %>
+      <%= render "application/shared/error_messages", resource: @scheduling_link %>
 
       <div>
         <%= form.label :name,
