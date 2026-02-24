@@ -31,6 +31,16 @@ en:
   activerecord:
     errors:
       models:
+        availability_window:
+          attributes:
+            closes_at:
+              must_be_after_opens_at: "must be after opening time"
+        availability_exception:
+          attributes:
+            ends_on:
+              must_be_on_or_after_starts_on: "must be on or after start date"
+            base:
+              opens_and_closes_required: "opening and closing times are required for this type"
         appointment:
           attributes:
             base:
@@ -388,6 +398,18 @@ en:
         back_to_user: "Back to team member"
         all_team: "All team"
 
+    availability:
+      edit:
+        title: "Availability"
+        subtitle: "Configure when your space is open for bookings."
+        business_hours_preview_label: "Display hours"
+        normal_hours_title: "Hours"
+        scheduling_title: "Scheduling"
+        submit: "Save"
+        back_to_space: "Back to space settings"
+      update:
+        notice: "Availability updated."
+
     space:
       update:
         notice: "Space updated."
@@ -403,8 +425,35 @@ en:
         address_label: "Address"
         phone_label: "Phone"
         email_label: "Email"
-        business_hours_label: "Business hours"
-        business_hours_placeholder: "e.g. Mon–Fri 9am–5pm, Sat 10am–2pm"
+        availability_title: "Availability"
+        availability_link_hint: "Configure hours, timezone, and slot duration."
+        availability_day: "Day"
+        availability_open: "Open"
+        availability_close: "Close"
+        availability_open_on: "Open on:"
+        availability_preset_mon_fri: "Mon–Fri"
+        availability_preset_mon_sat: "Mon–Sat"
+        availability_preset_every_day: "Every day"
+        availability_different_hours: "Some days have different hours?"
+        availability_different_hours_hint: "Add entries for days with custom hours (e.g. Saturday 10:00–14:00)."
+        availability_add_override: "Add different hours"
+        availability_remove_override: "Remove"
+        availability_normal_title: "Normal hours"
+        availability_normal_hint: "Leave blank for closed. Times in your space timezone."
+        availability_exceptions_title: "Special availability"
+        availability_exceptions_hint: "Holidays, time-off, or extended hours for events."
+        availability_add_exception: "Add exception"
+        weekday_sun: "Sun"
+        weekday_mon: "Mon"
+        weekday_tue: "Tue"
+        weekday_wed: "Wed"
+        weekday_thu: "Thu"
+        weekday_fri: "Fri"
+        weekday_sat: "Sat"
+        exception_name_placeholder: "e.g. Christmas 2025"
+        exception_closed: "Closed"
+        exception_reduced_hours: "Reduced hours"
+        exception_extended_hours: "Extended hours"
         socials: "Social media"
         instagram_label: "Instagram"
         facebook_label: "Facebook"

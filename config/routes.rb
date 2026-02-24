@@ -22,7 +22,9 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
-    resource :space, only: [ :edit, :update ], controller: "space"
+    resource :space, only: [ :edit, :update ], controller: "space" do
+      resource :availability, only: [ :edit, :update ], controller: "space/availabilities"
+    end
 
     resources :appointments do
       collection do

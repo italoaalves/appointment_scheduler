@@ -32,17 +32,13 @@ module Admin
     def space_params
       params.require(:space).permit(
         :name,
-        :timezone,
         :business_type,
         :address,
         :phone,
         :email,
-        :business_hours,
-        :slot_duration_minutes,
         :booking_success_message,
         :instagram_url,
-        :facebook_url,
-        business_hours_schedule: {}
+        :facebook_url
       )
     end
   end

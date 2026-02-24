@@ -37,10 +37,8 @@ module Admin
           address: "123 Main St",
           phone: "+5511999999999",
           email: "contact@space.com",
-          business_hours: "Mon-Fri 9am-5pm",
           instagram_url: "https://instagram.com/space",
-          facebook_url: "https://facebook.com/space",
-          timezone: "America/Sao_Paulo"
+          facebook_url: "https://facebook.com/space"
         }
       }
       assert_redirected_to edit_admin_space_url
@@ -50,10 +48,8 @@ module Admin
       assert_equal "123 Main St", @space.address
       assert_equal "+5511999999999", @space.phone
       assert_equal "contact@space.com", @space.email
-      assert_equal "Mon-Fri 9am-5pm", @space.business_hours
       assert_equal "https://instagram.com/space", @space.instagram_url
       assert_equal "https://facebook.com/space", @space.facebook_url
-      assert_equal "America/Sao_Paulo", @space.timezone
     end
   end
 end

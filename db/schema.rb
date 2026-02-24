@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_25_140000) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_25_150001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -29,6 +29,40 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_25_140000) do
     t.index ["customer_id"], name: "index_appointments_on_customer_id"
     t.index ["space_id", "status", "scheduled_at"], name: "index_appointments_on_space_status_scheduled_at"
     t.index ["space_id"], name: "index_appointments_on_space_id"
+  end
+
+  create_table "availability_exceptions", force: :cascade do |t|
+    t.bigint "availability_schedule_id", null: false
+    t.string "name"
+    t.date "starts_on", null: false
+    t.date "ends_on", null: false
+    t.integer "kind", default: 0, null: false
+    t.time "opens_at"
+    t.time "closes_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["availability_schedule_id", "starts_on", "ends_on"], name: "index_availability_exceptions_on_schedule_dates"
+    t.index ["availability_schedule_id"], name: "index_availability_exceptions_on_availability_schedule_id"
+  end
+
+  create_table "availability_schedules", force: :cascade do |t|
+    t.string "schedulable_type", null: false
+    t.bigint "schedulable_id", null: false
+    t.string "timezone"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["schedulable_type", "schedulable_id"], name: "index_availability_schedules_on_schedulable"
+  end
+
+  create_table "availability_windows", force: :cascade do |t|
+    t.bigint "availability_schedule_id", null: false
+    t.integer "weekday", null: false
+    t.time "opens_at", null: false
+    t.time "closes_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["availability_schedule_id", "weekday"], name: "index_availability_windows_on_schedule_weekday"
+    t.index ["availability_schedule_id"], name: "index_availability_windows_on_availability_schedule_id"
   end
 
   create_table "customers", force: :cascade do |t|
@@ -141,6 +175,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_25_140000) do
 
   add_foreign_key "appointments", "customers"
   add_foreign_key "appointments", "spaces"
+  add_foreign_key "availability_exceptions", "availability_schedules"
+  add_foreign_key "availability_windows", "availability_schedules"
   add_foreign_key "customers", "spaces"
   add_foreign_key "customers", "users"
   add_foreign_key "messages", "users", column: "recipient_id"

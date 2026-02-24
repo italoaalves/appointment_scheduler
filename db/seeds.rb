@@ -35,6 +35,18 @@ manager = User.create!(
 # ensure_space_for_manager callback creates Space and assigns it
 space = manager.reload.space
 
+# Default timezone and business hours (Mon–Fri 9:00–17:00)
+space.update!(timezone: "America/Sao_Paulo")
+schedule = space.create_availability_schedule!
+[ 1, 2, 3, 4, 5 ].each do |wday|
+  schedule.availability_windows.create!(
+    weekday: wday,
+    opens_at: Time.zone.parse("2000-01-01 09:00"),
+    closes_at: Time.zone.parse("2000-01-01 17:00")
+  )
+end
+schedule.touch # Triggers after_save to cache business_hours
+
 secretary = User.create!(
   name: "Jane Secretary",
   email: "secretary@example.com",

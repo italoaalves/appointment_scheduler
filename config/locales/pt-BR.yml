@@ -2,6 +2,16 @@ pt-BR:
   activerecord:
     errors:
       models:
+        availability_window:
+          attributes:
+            closes_at:
+              must_be_after_opens_at: "deve ser após o horário de abertura"
+        availability_exception:
+          attributes:
+            ends_on:
+              must_be_on_or_after_starts_on: "deve ser igual ou depois da data de início"
+            base:
+              opens_and_closes_required: "horários de abertura e fechamento são obrigatórios para este tipo"
         appointment:
           attributes:
             base:
@@ -358,6 +368,18 @@ pt-BR:
         back_to_user: "Voltar para membro"
         all_team: "Toda a equipe"
 
+    availability:
+      edit:
+        title: "Disponibilidade"
+        subtitle: "Configure quando seu espaço está aberto para agendamentos."
+        business_hours_preview_label: "Horário de exibição"
+        normal_hours_title: "Horários"
+        scheduling_title: "Agendamento"
+        submit: "Salvar"
+        back_to_space: "Voltar para configurações do espaço"
+      update:
+        notice: "Disponibilidade atualizada."
+
     space:
       update:
         notice: "Espaço atualizado."
@@ -373,8 +395,35 @@ pt-BR:
         address_label: "Endereço"
         phone_label: "Telefone"
         email_label: "E-mail"
-        business_hours_label: "Horário de funcionamento"
-        business_hours_placeholder: "ex: Seg–Sex 9h–17h, Sáb 10h–14h"
+        availability_title: "Disponibilidade"
+        availability_link_hint: "Configure horários, fuso horário e duração dos horários."
+        availability_day: "Dia"
+        availability_open: "Abre"
+        availability_close: "Fecha"
+        availability_open_on: "Aberto em:"
+        availability_preset_mon_fri: "Seg–Sex"
+        availability_preset_mon_sat: "Seg–Sáb"
+        availability_preset_every_day: "Todos os dias"
+        availability_different_hours: "Algum dia tem horário diferente?"
+        availability_different_hours_hint: "Adicione itens para dias com horários customizados (ex: Sáb 10h–14h)."
+        availability_add_override: "Adicionar horário diferente"
+        availability_remove_override: "Remover"
+        availability_normal_title: "Horário normal"
+        availability_normal_hint: "Deixe em branco para fechado. Horários no fuso do espaço."
+        availability_exceptions_title: "Disponibilidade especial"
+        availability_exceptions_hint: "Feriados, folgas ou horário estendido para eventos."
+        availability_add_exception: "Adicionar exceção"
+        weekday_sun: "Dom"
+        weekday_mon: "Seg"
+        weekday_tue: "Ter"
+        weekday_wed: "Qua"
+        weekday_thu: "Qui"
+        weekday_fri: "Sex"
+        weekday_sat: "Sáb"
+        exception_name_placeholder: "ex: Natal 2025"
+        exception_closed: "Fechado"
+        exception_reduced_hours: "Horário reduzido"
+        exception_extended_hours: "Horário estendido"
         socials: "Redes sociais"
         instagram_label: "Instagram"
         facebook_label: "Facebook"
