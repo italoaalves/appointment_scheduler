@@ -19,7 +19,7 @@ module Platform
     end
 
     def new
-      @user = User.new(role: :manager)
+      @user = User.new
       if params[:space_id].present?
         space = Space.find_by(id: params[:space_id])
         @user.space_id = space.id if space
@@ -28,7 +28,6 @@ module Platform
 
     def create
       @user = User.new(user_params)
-      @user.role = params[:user][:role] if params.dig(:user, :role).present?
       @user.space_id = params[:user][:space_id].presence if params.dig(:user, :space_id).present?
 
       if @user.save
@@ -43,7 +42,6 @@ module Platform
 
     def update
       attrs = user_params_without_blank_passwords
-      attrs[:role] = params[:user][:role] if params.dig(:user, :role).present?
       attrs[:space_id] = params[:user][:space_id].presence if params.dig(:user, :space_id).present?
 
       if @user.update(attrs)
@@ -66,7 +64,7 @@ module Platform
     end
 
     def user_params
-      params.require(:user).permit(:email, :name, :phone_number, :password, :password_confirmation)
+      params.require(:user).permit(:email, :name, :phone_number, :password, :password_confirmation, :role, permission_names_param: [])
     end
   end
 end

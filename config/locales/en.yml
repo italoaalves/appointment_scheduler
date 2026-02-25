@@ -35,12 +35,6 @@ en:
           attributes:
             closes_at:
               must_be_after_opens_at: "must be after opening time"
-        availability_exception:
-          attributes:
-            ends_on:
-              must_be_on_or_after_starts_on: "must be on or after start date"
-            base:
-              opens_and_closes_required: "opening and closing times are required for this type"
         appointment:
           attributes:
             base:
@@ -101,6 +95,7 @@ en:
       team: "Team"
       dashboard: "Dashboard"
       space: "Space"
+      availability: "Availability"
       tenants: "Tenants"
       platform_users: "Users"
       logout: "Log out"
@@ -127,6 +122,8 @@ en:
       users_body: "Create, edit, or remove users and assign them to spaces."
       users_cta: "Manage users"
     customer_subtitle: "See your upcoming appointments and request new time slots."
+    customer_landing:
+      message: "Use your scheduling link to book an appointment."
     admin:
       appointments_title: "Appointments"
       appointments_body: "Review, confirm, cancel, or reschedule any appointment."
@@ -147,6 +144,7 @@ en:
 
   appointments:
     no_customer: "No customer account linked. Please use the booking link to schedule an appointment."
+    use_scheduling_link: "Please use your scheduling link to book appointments."
     not_found: "Appointment not found."
     index:
       title: "My appointments"
@@ -175,7 +173,7 @@ en:
       submit: "Request appointment"
       back: "Back to appointments"
 
-  admin:
+  admin: &admin_translations
     unauthorized: "You are not allowed to access this area."
     appointments:
       create:
@@ -349,10 +347,12 @@ en:
         notice: "Team member updated."
       destroy:
         notice: "Team member removed."
-      manager_only: "Only the manager can add or edit team members."
-      roles:
-        manager: "Manager"
-        secretary: "Secretary"
+      manager_only: "Only users with permission can add or edit team members."
+      form:
+        role_label: "Job title"
+        role_placeholder: "e.g. Manager, Receptionist"
+        role_hint: "Free-text label for display. Permissions below control access."
+        permissions_label: "Permissions"
       index:
         title: "Team"
         new_button: "Invite team member"
@@ -398,6 +398,16 @@ en:
         back_to_user: "Back to team member"
         all_team: "All team"
 
+    permissions:
+      access_space_dashboard: "Access space dashboard"
+      manage_space: "Manage space settings"
+      manage_team: "Manage team members"
+      manage_customers: "Manage customers"
+      manage_appointments: "Manage appointments"
+      destroy_appointments: "Delete appointments"
+      manage_scheduling_links: "Manage scheduling links"
+      manage_personalized_links: "Manage personalized link"
+
     availability:
       edit:
         title: "Availability"
@@ -440,9 +450,6 @@ en:
         availability_remove_override: "Remove"
         availability_normal_title: "Normal hours"
         availability_normal_hint: "Leave blank for closed. Times in your space timezone."
-        availability_exceptions_title: "Special availability"
-        availability_exceptions_hint: "Holidays, time-off, or extended hours for events."
-        availability_add_exception: "Add exception"
         weekday_sun: "Sun"
         weekday_mon: "Mon"
         weekday_tue: "Tue"
@@ -450,10 +457,6 @@ en:
         weekday_thu: "Thu"
         weekday_fri: "Fri"
         weekday_sat: "Sat"
-        exception_name_placeholder: "e.g. Christmas 2025"
-        exception_closed: "Closed"
-        exception_reduced_hours: "Reduced hours"
-        exception_extended_hours: "Extended hours"
         socials: "Social media"
         instagram_label: "Instagram"
         facebook_label: "Facebook"
@@ -570,6 +573,9 @@ en:
         edit: "Edit"
         remove: "Remove"
         remove_confirm: "Remove this personalized link?"
+
+  space:
+    <<: *admin_translations
 
   booking:
     business_hours: "Open"
@@ -718,6 +724,10 @@ en:
         back: "Back to users"
         delete: "Delete"
         delete_confirm: "Permanently delete this user?"
+      form:
+        role_label: "Job title"
+        role_placeholder: "e.g. Manager, Receptionist"
+        permissions_label: "Permissions"
       new:
         title: "New user"
         subtitle: "Create a user and assign to a space."

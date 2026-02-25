@@ -15,17 +15,7 @@ Rails.application.routes.draw do
   get "book/:token/slots", to: "booking#slots", as: :book_slots
   post "book/:token", to: "booking#create"
 
-  resources :appointments, only: [ :index, :new, :create, :show, :destroy ] do
-    member do
-      patch :cancel
-    end
-  end
-
-  namespace :admin do
-    resource :space, only: [ :edit, :update ], controller: "space" do
-      resource :availability, only: [ :edit, :update ], controller: "space/availabilities"
-    end
-
+  scope module: "tenant" do
     resources :appointments do
       collection do
         get :pending
@@ -42,10 +32,18 @@ Rails.application.routes.draw do
     resources :customers
     resources :scheduling_links
     resource :personalized_scheduling_link, only: [ :new, :create, :edit, :update, :destroy ], path: "personalized_link"
-    resources :users
+    resources :users, path: "team"
+  end
+
+  scope path: "settings", module: "tenant", as: "settings" do
+    resource :space, only: [ :edit, :update ], controller: "space" do
+      resource :availability, only: [ :edit, :update ], controller: "space/availabilities"
+    end
   end
 
   namespace :platform do
+    root to: "dashboard#index", as: :root
+
     resources :spaces do
       resources :appointments, only: [ :index, :show ], controller: "space_appointments"
       resources :customers, only: [ :index, :show ], controller: "space_customers"

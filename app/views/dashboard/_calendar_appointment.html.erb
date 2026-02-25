@@ -1,6 +1,6 @@
 <% ongoing = appointment_ongoing?(appointment) %>
 <div class="flex items-center justify-between gap-2 py-3 -mx-2 px-2 rounded-lg transition-colors relative <%= ongoing ? 'bg-blue-50 border-l-4 border-l-blue-400' : '' %>">
-  <%= link_to admin_appointment_path(appointment),
+  <%= link_to appointment_path(appointment),
               class: "min-w-0 flex-1 #{ongoing ? 'hover:bg-blue-100/50 -mx-2 px-2 py-1 rounded' : 'hover:bg-slate-50 -mx-2 px-2 py-1 rounded'}" do %>
     <div class="flex items-center gap-2">
       <p class="text-sm font-medium text-slate-900 truncate">
@@ -8,7 +8,7 @@
       </p>
       <% if ongoing %>
         <span class="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide bg-blue-200/80 text-blue-800">
-          <%= t("admin.appointments.calendar.ongoing") %>
+          <%= t("space.appointments.calendar.ongoing") %>
         </span>
       <% end %>
       <span class="shrink-0">
@@ -27,15 +27,15 @@
   <% end %>
   <div class="flex shrink-0 items-center gap-2">
     <% if appointment.confirmed? && appointment.scheduled_in_past? %>
-      <%= button_to t("admin.appointments.calendar.mark_no_show"),
-                    no_show_admin_appointment_path(appointment),
+      <%= button_to t("space.appointments.calendar.mark_no_show"),
+                    no_show_appointment_path(appointment),
                     method: :patch,
-                    data: { turbo_confirm: t("admin.appointments.index.no_show_confirm") },
+                    data: { turbo_confirm: t("space.appointments.index.no_show_confirm") },
                     class: "inline-flex items-center rounded px-2 py-1 text-[11px] font-medium text-slate-600 hover:bg-slate-200/80 hover:text-slate-900" %>
     <% end %>
     <% if appointment.confirmed? && appointment.scheduled_in_past? %>
-      <%= link_to t("admin.appointments.calendar.mark_finish"),
-                  finish_form_admin_appointment_path(appointment),
+      <%= link_to t("space.appointments.calendar.mark_finish"),
+                  finish_form_appointment_path(appointment),
                   class: "inline-flex items-center rounded px-2 py-1 text-[11px] font-medium text-emerald-700 hover:bg-emerald-100" %>
     <% end %>
   </div>

@@ -27,11 +27,21 @@
       </div>
 
       <div>
-        <%= form.label :role, class: form_label_classes %>
-        <%= form.select :role,
-                        User.roles.keys.map { |r| [r.humanize, r] },
-                        {},
-                        class: form_input_classes %>
+        <%= form.label :role, t("platform.users.form.role_label"), class: form_label_classes %>
+        <%= form.text_field :role, placeholder: t("platform.users.form.role_placeholder"), class: form_input_classes %>
+      </div>
+
+      <div>
+        <p class="text-sm font-medium text-slate-700"><%= t("platform.users.form.permissions_label") %></p>
+        <%= form.collection_check_boxes :permission_names_param,
+                                        PermissionService::ALLOWED_PERMISSIONS.excluding("own_space"),
+                                        :to_s,
+                                        ->(p) { t("admin.permissions.#{p}") } do |b| %>
+          <label class="mt-2 flex items-center gap-2 text-sm">
+            <%= b.check_box %>
+            <span><%= b.text %></span>
+          </label>
+        <% end %>
       </div>
 
       <div>

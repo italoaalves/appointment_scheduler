@@ -18,21 +18,23 @@ admin = User.create!(
   email: "admin@example.com",
   password: "password123",
   password_confirmation: "password123",
-  role: :secretary,
   system_role: :super_admin,
   phone_number: "+5511999999999"
 )
 
 # ---- TENANT: SPACE + MANAGER + SECRETARY ----
-manager = User.create!(
+manager = User.new(
   name: "Dr. Owner",
   email: "manager@example.com",
   password: "password123",
   password_confirmation: "password123",
-  role: :manager,
+  role: "Manager",
   phone_number: "+5511988888888"
 )
-# ensure_space_for_manager callback creates Space and assigns it
+%w[access_space_dashboard manage_space manage_team manage_customers manage_appointments destroy_appointments manage_scheduling_links manage_personalized_links own_space].each do |p|
+  manager.user_permissions.build(permission: p)
+end
+manager.save!
 space = manager.reload.space
 
 # Default timezone and business hours (Mon–Fri 9:00–17:00)
@@ -47,15 +49,19 @@ schedule = space.create_availability_schedule!
 end
 schedule.touch # Triggers after_save to cache business_hours
 
-secretary = User.create!(
+secretary = User.new(
   name: "Jane Secretary",
   email: "secretary@example.com",
   password: "password123",
   password_confirmation: "password123",
-  role: :secretary,
+  role: "Secretary",
   phone_number: "+5511977777777",
   space_id: space.id
 )
+%w[access_space_dashboard manage_customers manage_appointments manage_scheduling_links].each do |p|
+  secretary.user_permissions.build(permission: p)
+end
+secretary.save!
 
 # ---- CUSTOMERS (belong to space) ----
 customers = [

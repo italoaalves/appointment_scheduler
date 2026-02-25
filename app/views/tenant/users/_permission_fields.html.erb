@@ -1,0 +1,20 @@
+<% if current_user.can?(:manage_team) %>
+  <div>
+    <%= form.label :role, t("space.users.form.role_label"), class: form_label_classes %>
+    <%= form.text_field :role, placeholder: t("space.users.form.role_placeholder"), class: form_input_classes %>
+    <p class="mt-1 text-xs text-slate-500"><%= t("space.users.form.role_hint") %></p>
+  </div>
+
+  <div>
+    <p class="text-sm font-medium text-slate-700"><%= t("space.users.form.permissions_label") %></p>
+    <%= form.collection_check_boxes :permission_names_param,
+                                    PermissionService::ALLOWED_PERMISSIONS.excluding("own_space"),
+                                    :to_s,
+                                    ->(p) { t("space.permissions.#{p}") } do |b| %>
+      <label class="mt-2 flex items-center gap-2 text-sm">
+        <%= b.check_box %>
+        <span><%= b.text %></span>
+      </label>
+    <% end %>
+  </div>
+<% end %>

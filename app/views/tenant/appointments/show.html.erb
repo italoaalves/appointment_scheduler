@@ -1,0 +1,69 @@
+<div class="space-y-4">
+  <header class="flex items-center justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
+        <%= t("space.appointments.show.title") %>
+      </h1>
+      <p class="mt-1 text-xs text-slate-600">
+        <%= t("space.appointments.show.subtitle") %>
+      </p>
+    </div>
+    <%= render "application/shared/status_badge", status: @appointment.status %>
+  </header>
+
+  <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <dl class="space-y-3 text-sm">
+      <div class="flex justify-between gap-4">
+        <dt class="font-medium text-slate-700"><%= t("space.appointments.show.customer") %></dt>
+        <dd class="text-slate-900">
+          <%= @appointment.customer&.name || "—" %>
+        </dd>
+      </div>
+      <div class="flex justify-between gap-4">
+        <dt class="font-medium text-slate-700"><%= t("space.appointments.show.scheduled_for") %></dt>
+        <dd class="text-slate-900">
+          <%= format_appointment_time(@appointment.scheduled_at, space: @appointment.space, format: :long) || "—" %>
+        </dd>
+      </div>
+      <div class="flex justify-between gap-4">
+        <dt class="font-medium text-slate-700"><%= t("space.appointments.show.requested_at") %></dt>
+        <dd class="text-slate-900">
+          <%= format_appointment_time(@appointment.requested_at, space: @appointment.space, format: :date_only) || "—" %>
+        </dd>
+      </div>
+      <% if @appointment.finished? && @appointment.finished_at.present? %>
+        <div class="flex justify-between gap-4">
+          <dt class="font-medium text-slate-700"><%= t("space.appointments.show.finished_at") %></dt>
+          <dd class="text-slate-900">
+            <%= format_appointment_time(@appointment.finished_at, space: @appointment.space, format: :long) || "—" %>
+          </dd>
+        </div>
+      <% end %>
+    </dl>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-3">
+    <%= link_to t("space.appointments.show.edit_reschedule"), edit_appointment_path(@appointment), class: button_classes(:primary) %>
+    <%= link_to t("space.appointments.show.back_to_appointments"), appointments_path, class: button_classes(:secondary) %>
+
+    <% if @appointment.pending? %>
+      <%= button_to t("space.appointments.index.confirm"), confirm_appointment_path(@appointment), method: :patch, class: button_classes(:success) %>
+    <% end %>
+
+    <% if @appointment.confirmed? %>
+      <% if @appointment.scheduled_in_past? %>
+        <%= button_to t("space.appointments.index.no_show"), no_show_appointment_path(@appointment), method: :patch, data: { turbo_confirm: t("space.appointments.index.no_show_confirm") }, class: button_classes(:neutral) %>
+      <% end %>
+      <% if @appointment.scheduled_in_past? %>
+        <%= link_to t("space.appointments.index.finish"), finish_form_appointment_path(@appointment), class: button_classes(:success) %>
+      <% end %>
+    <% end %>
+    <% if @appointment.pending? || @appointment.confirmed? %>
+      <%= button_to t("space.appointments.index.cancel"), cancel_appointment_path(@appointment), method: :patch, data: { turbo_confirm: t("space.appointments.index.cancel_confirm") }, class: button_classes(:cancel) %>
+    <% end %>
+
+    <% if current_user.can?(:destroy_appointments) %>
+      <%= button_to t("space.appointments.index.delete"), appointment_path(@appointment), method: :delete, data: { turbo_confirm: t("space.appointments.index.delete_confirm") }, class: button_classes(:danger) %>
+    <% end %>
+  </div>
+</div>

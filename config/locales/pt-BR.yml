@@ -6,12 +6,6 @@ pt-BR:
           attributes:
             closes_at:
               must_be_after_opens_at: "deve ser após o horário de abertura"
-        availability_exception:
-          attributes:
-            ends_on:
-              must_be_on_or_after_starts_on: "deve ser igual ou depois da data de início"
-            base:
-              opens_and_closes_required: "horários de abertura e fechamento são obrigatórios para este tipo"
         appointment:
           attributes:
             base:
@@ -72,6 +66,7 @@ pt-BR:
       team: "Equipe"
       dashboard: "Painel"
       space: "Espaço"
+      availability: "Disponibilidade"
       tenants: "Inquilinos"
       platform_users: "Usuários"
       logout: "Sair"
@@ -98,6 +93,8 @@ pt-BR:
       users_body: "Crie, edite ou remova usuários e atribua-os a espaços."
       users_cta: "Gerenciar usuários"
     customer_subtitle: "Veja suas consultas futuras e solicite novos horários."
+    customer_landing:
+      message: "Use seu link de agendamento para marcar uma consulta."
     admin:
       appointments_title: "Consultas"
       appointments_body: "Revise, confirme, cancele ou reagende qualquer consulta."
@@ -118,6 +115,7 @@ pt-BR:
 
   appointments:
     no_customer: "Nenhuma conta de cliente vinculada. Use o link de agendamento para marcar uma consulta."
+    use_scheduling_link: "Use seu link de agendamento para marcar consultas."
     not_found: "Consulta não encontrada."
     index:
       title: "Minhas consultas"
@@ -146,7 +144,7 @@ pt-BR:
       submit: "Agendar consulta"
       back: "Voltar para consultas"
 
-  admin:
+  admin: &admin_translations
     unauthorized: "Você não tem permissão para acessar esta área."
     appointments:
       create:
@@ -320,10 +318,12 @@ pt-BR:
         notice: "Membro da equipe atualizado."
       destroy:
         notice: "Membro da equipe removido."
-      manager_only: "Apenas o gerente pode adicionar ou editar membros da equipe."
-      roles:
-        manager: "Gerente"
-        secretary: "Secretário"
+      manager_only: "Apenas usuários com permissão podem adicionar ou editar membros da equipe."
+      form:
+        role_label: "Cargo"
+        role_placeholder: "ex: Gerente, Recepcionista"
+        role_hint: "Rótulo livre para exibição. As permissões abaixo controlam o acesso."
+        permissions_label: "Permissões"
       index:
         title: "Equipe"
         new_button: "Convidar membro"
@@ -369,6 +369,16 @@ pt-BR:
         back_to_user: "Voltar para membro"
         all_team: "Toda a equipe"
 
+    permissions:
+      access_space_dashboard: "Acessar painel do espaço"
+      manage_space: "Gerenciar configurações do espaço"
+      manage_team: "Gerenciar membros da equipe"
+      manage_customers: "Gerenciar clientes"
+      manage_appointments: "Gerenciar consultas"
+      destroy_appointments: "Excluir consultas"
+      manage_scheduling_links: "Gerenciar links de agendamento"
+      manage_personalized_links: "Gerenciar link personalizado"
+
     availability:
       edit:
         title: "Disponibilidade"
@@ -411,9 +421,6 @@ pt-BR:
         availability_remove_override: "Remover"
         availability_normal_title: "Horário normal"
         availability_normal_hint: "Deixe em branco para fechado. Horários no fuso do espaço."
-        availability_exceptions_title: "Disponibilidade especial"
-        availability_exceptions_hint: "Feriados, folgas ou horário estendido para eventos."
-        availability_add_exception: "Adicionar exceção"
         weekday_sun: "Dom"
         weekday_mon: "Seg"
         weekday_tue: "Ter"
@@ -421,10 +428,6 @@ pt-BR:
         weekday_thu: "Qui"
         weekday_fri: "Sex"
         weekday_sat: "Sáb"
-        exception_name_placeholder: "ex: Natal 2025"
-        exception_closed: "Fechado"
-        exception_reduced_hours: "Horário reduzido"
-        exception_extended_hours: "Horário estendido"
         socials: "Redes sociais"
         instagram_label: "Instagram"
         facebook_label: "Facebook"
@@ -541,6 +544,9 @@ pt-BR:
         edit: "Editar"
         remove: "Remover"
         remove_confirm: "Remover este link personalizado?"
+
+  space:
+    <<: *admin_translations
 
   booking:
     business_hours: "Horário de atendimento"
@@ -689,6 +695,10 @@ pt-BR:
         back: "Voltar para usuários"
         delete: "Excluir"
         delete_confirm: "Excluir este usuário permanentemente?"
+      form:
+        role_label: "Cargo"
+        role_placeholder: "ex: Gerente, Recepcionista"
+        permissions_label: "Permissões"
       new:
         title: "Novo usuário"
         subtitle: "Crie um usuário e atribua a um espaço."

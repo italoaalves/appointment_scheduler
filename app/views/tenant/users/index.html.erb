@@ -1,0 +1,52 @@
+<div class="space-y-4">
+  <% page_actions = capture do %>
+    <% if current_user.can?(:manage_team) %>
+      <%= link_to t("space.users.index.new_button"), new_user_path, class: button_classes(:primary) %>
+    <% end %>
+    <%= link_to t("space.users.index.all_appointments"), appointments_path, class: button_classes(:secondary) %>
+  <% end %>
+  <%= render "application/shared/page_header", title: t("space.users.index.title"), actions: page_actions %>
+
+  <% if @users.any? %>
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead class="bg-slate-50">
+          <tr>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <%= t("space.users.index.table.email") %>
+            </th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <%= t("space.users.index.table.name") %>
+            </th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <%= t("space.users.index.table.role") %>
+            </th>
+            <th scope="col" class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <%= t("space.users.index.table.actions") %>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <% @users.each do |user| %>
+            <tr class="hover:bg-slate-50">
+              <td class="px-4 py-2 align-top text-slate-900"><%= user.email %></td>
+              <td class="px-4 py-2 align-top text-slate-700"><%= user.name.presence || "—" %></td>
+              <td class="px-4 py-2 align-top text-slate-700"><%= user.role.presence || "—" %></td>
+              <td class="px-4 py-2 align-top">
+                <div class="flex flex-wrap justify-end gap-1">
+                  <%= link_to t("space.users.index.view"), user_path(user), class: button_classes(:table_link) %>
+                  <% if current_user.can?(:manage_team) %>
+                    <%= link_to t("space.users.index.edit"), edit_user_path(user), class: button_classes(:table_link) %>
+                    <%= button_to t("space.users.index.delete"), user_path(user), method: :delete, data: { turbo_confirm: t("space.users.index.delete_confirm") }, class: button_classes(:table_danger) %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render "application/shared/empty_state", content: t("space.users.index.empty") %>
+  <% end %>
+</div>

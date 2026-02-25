@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Adds/removes nested form entries (e.g. availability exceptions)
+// Adds/removes nested form entries
 export default class extends Controller {
   static values = {
     wrapper: { type: String, default: ".nested-fields" }

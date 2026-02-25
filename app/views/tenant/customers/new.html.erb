@@ -1,0 +1,36 @@
+<div class="space-y-6">
+  <%= render "application/shared/page_header",
+             title: t("space.customers.new.title"),
+             subtitle: t("space.customers.new.subtitle") %>
+
+  <%= render layout: "application/shared/card" do %>
+    <%= form_with model: @customer, class: "space-y-4" do |form| %>
+      <%= render "application/shared/error_messages", resource: @customer %>
+
+      <div>
+        <%= form.label :name, t("space.customers.new.name_label"), class: form_label_classes %>
+        <%= form.text_field :name, required: true, class: form_input_classes %>
+      </div>
+
+      <div>
+        <%= form.label :phone, t("space.customers.new.phone_label"), class: form_label_classes %>
+        <%= form.telephone_field :phone, class: form_input_classes %>
+      </div>
+
+      <div>
+        <%= form.label :email, t("space.customers.new.email_label"), class: form_label_classes %>
+        <%= form.email_field :email, class: form_input_classes %>
+      </div>
+
+      <div>
+        <%= form.label :address, t("space.customers.new.address_label"), class: form_label_classes %>
+        <%= form.text_field :address, class: form_input_classes %>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <%= form.submit t("space.customers.new.submit"), class: button_classes(:primary) %>
+        <%= link_to t("space.customers.new.back_to_customers"), customers_path, class: button_classes(:secondary) %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

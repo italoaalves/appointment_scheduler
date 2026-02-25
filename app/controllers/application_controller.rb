@@ -6,6 +6,13 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_tenant, :tenant_staff?
 
+  def after_sign_in_path_for(resource)
+    return platform_root_path if resource.super_admin?
+    return root_path if resource.can?(:access_space_dashboard)
+
+    stored_location_for(resource) || root_path
+  end
+
   private
 
   def current_tenant
@@ -13,7 +20,7 @@ class ApplicationController < ActionController::Base
   end
 
   def tenant_staff?
-    current_user&.manager? || current_user&.secretary?
+    current_user&.can?(:access_space_dashboard)
   end
 
   def set_locale

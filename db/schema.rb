@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_25_150001) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_26_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -29,20 +29,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_25_150001) do
     t.index ["customer_id"], name: "index_appointments_on_customer_id"
     t.index ["space_id", "status", "scheduled_at"], name: "index_appointments_on_space_status_scheduled_at"
     t.index ["space_id"], name: "index_appointments_on_space_id"
-  end
-
-  create_table "availability_exceptions", force: :cascade do |t|
-    t.bigint "availability_schedule_id", null: false
-    t.string "name"
-    t.date "starts_on", null: false
-    t.date "ends_on", null: false
-    t.integer "kind", default: 0, null: false
-    t.time "opens_at"
-    t.time "closes_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["availability_schedule_id", "starts_on", "ends_on"], name: "index_availability_exceptions_on_schedule_dates"
-    t.index ["availability_schedule_id"], name: "index_availability_exceptions_on_availability_schedule_id"
   end
 
   create_table "availability_schedules", force: :cascade do |t|
@@ -147,6 +133,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_25_150001) do
     t.text "booking_success_message"
   end
 
+  create_table "user_permissions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "permission", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "permission"], name: "index_user_permissions_on_user_id_and_permission", unique: true
+    t.index ["user_id"], name: "index_user_permissions_on_user_id"
+  end
+
   create_table "user_preferences", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "locale", default: "pt-BR", null: false
@@ -162,12 +157,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_25_150001) do
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
     t.string "name"
-    t.integer "role", default: 0, null: false
     t.string "phone_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "space_id"
     t.integer "system_role"
+    t.string "role", default: "", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["space_id"], name: "index_users_on_space_id"
@@ -175,7 +170,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_25_150001) do
 
   add_foreign_key "appointments", "customers"
   add_foreign_key "appointments", "spaces"
-  add_foreign_key "availability_exceptions", "availability_schedules"
   add_foreign_key "availability_windows", "availability_schedules"
   add_foreign_key "customers", "spaces"
   add_foreign_key "customers", "users"
@@ -184,6 +178,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_25_150001) do
   add_foreign_key "notifications", "users"
   add_foreign_key "personalized_scheduling_links", "spaces"
   add_foreign_key "scheduling_links", "spaces"
+  add_foreign_key "user_permissions", "users"
   add_foreign_key "user_preferences", "users"
   add_foreign_key "users", "spaces"
 end

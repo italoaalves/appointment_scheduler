@@ -1,31 +1,31 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-# role: manager=0, secretary=1
+# role: free-text string for display
 # system_role: super_admin=0 (nil for non-platform-admins)
+# See user_permissions.yml for permission assignment
 
 admin:
   email: "admin@example.com"
   encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
   name: "Platform Admin"
-  role: 1
+  role: ""
   system_role: 0
 
 manager:
   email: "manager@example.com"
   encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
   name: "Dr. Owner"
-  role: 0
+  role: "Manager"
   space: one
 
 manager_two:
   email: "manager2@example.com"
   encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
   name: "Other Manager"
-  role: 0
+  role: "Manager"
   space: two
 
 secretary:
   email: "secretary@example.com"
   encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
   name: "Jane Secretary"
-  role: 1
+  role: "Secretary"
   space: one

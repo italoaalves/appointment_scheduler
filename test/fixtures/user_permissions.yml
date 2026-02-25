@@ -1,0 +1,89 @@
+# Permissions for fixture users (manager=all, secretary=subset, admin=none for tenant)
+
+manager_access:
+  user: manager
+  permission: access_space_dashboard
+
+manager_manage_space:
+  user: manager
+  permission: manage_space
+
+manager_manage_team:
+  user: manager
+  permission: manage_team
+
+manager_manage_customers:
+  user: manager
+  permission: manage_customers
+
+manager_manage_appointments:
+  user: manager
+  permission: manage_appointments
+
+manager_destroy_appointments:
+  user: manager
+  permission: destroy_appointments
+
+manager_scheduling_links:
+  user: manager
+  permission: manage_scheduling_links
+
+manager_personalized_links:
+  user: manager
+  permission: manage_personalized_links
+
+manager_own_space:
+  user: manager
+  permission: own_space
+
+manager_two_access:
+  user: manager_two
+  permission: access_space_dashboard
+
+manager_two_manage_space:
+  user: manager_two
+  permission: manage_space
+
+manager_two_manage_team:
+  user: manager_two
+  permission: manage_team
+
+manager_two_manage_customers:
+  user: manager_two
+  permission: manage_customers
+
+manager_two_manage_appointments:
+  user: manager_two
+  permission: manage_appointments
+
+manager_two_destroy_appointments:
+  user: manager_two
+  permission: destroy_appointments
+
+manager_two_scheduling_links:
+  user: manager_two
+  permission: manage_scheduling_links
+
+manager_two_personalized_links:
+  user: manager_two
+  permission: manage_personalized_links
+
+manager_two_own_space:
+  user: manager_two
+  permission: own_space
+
+secretary_access:
+  user: secretary
+  permission: access_space_dashboard
+
+secretary_customers:
+  user: secretary
+  permission: manage_customers
+
+secretary_appointments:
+  user: secretary
+  permission: manage_appointments
+
+secretary_scheduling_links:
+  user: secretary
+  permission: manage_scheduling_links

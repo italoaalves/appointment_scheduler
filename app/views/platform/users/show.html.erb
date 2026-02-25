@@ -9,7 +9,7 @@
       </p>
     </div>
     <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-800">
-      <%= @user.role.humanize %><% if @user.super_admin? %> • <%= t("activerecord.attributes.user.system_role.super_admin") %><% end %>
+      <%= @user.role.presence || "—" %><% if @user.super_admin? %> • <%= t("activerecord.attributes.user.system_role.super_admin") %><% end %>
     </span>
   </header>
 

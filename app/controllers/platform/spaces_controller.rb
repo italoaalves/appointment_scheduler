@@ -23,7 +23,8 @@ module Platform
           @space.save!
           @manager = User.new(manager_attrs)
           @manager.space_id = @space.id
-          @manager.role = :manager
+          @manager.role = "Manager"
+          PermissionService::ALLOWED_PERMISSIONS.each { |p| @manager.user_permissions.build(permission: p) }
           @manager.save!
         end
         redirect_to platform_space_path(@space), notice: t("platform.spaces.create.notice_with_manager")

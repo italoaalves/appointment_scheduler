@@ -28,15 +28,15 @@
         <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div class="flex h-14 items-center justify-between">
             <div class="flex items-center gap-4">
-              <%= link_to t("layout.app_name"), root_path, class: "text-sm font-semibold text-white tracking-tight" %>
+              <%= link_to t("layout.app_name"), current_user.super_admin? ? platform_root_path : root_path, class: "text-sm font-semibold text-white tracking-tight" %>
               <div class="hidden md:flex items-center gap-3 text-sm">
                 <% if current_user.super_admin? %>
                   <%= link_to t("layout.nav.tenants"), platform_spaces_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
                   <%= link_to t("layout.nav.platform_users"), platform_users_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
                 <% elsif tenant_staff? %>
-                  <%= link_to t("layout.nav.all_appointments"), admin_appointments_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
-                  <%= link_to t("layout.nav.pending"), pending_admin_appointments_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
-                  <%= link_to t("layout.nav.booking_links"), admin_scheduling_links_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
+                  <%= link_to t("layout.nav.all_appointments"), appointments_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
+                  <%= link_to t("layout.nav.pending"), pending_appointments_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
+                  <%= link_to t("layout.nav.booking_links"), scheduling_links_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
                   <div class="relative" x-data="{ managementOpen: false }">
                     <button type="button"
                             class="inline-flex items-center gap-1 text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition text-sm"
@@ -58,16 +58,16 @@
                          x-transition:leave-end="opacity-0 scale-95"
                          x-cloak
                          class="absolute left-0 top-full mt-1 min-w-[160px] rounded-md bg-slate-800 py-1 shadow-lg ring-1 ring-slate-700">
-                      <%= link_to t("layout.nav.customers"), admin_customers_path, class: "block px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 hover:text-white" %>
-                      <%= link_to t("layout.nav.team"), admin_users_path, class: "block px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 hover:text-white" %>
-                      <% if current_user.manager? %>
-                        <%= link_to t("layout.nav.space"), edit_admin_space_path, class: "block px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 hover:text-white" %>
+                      <%= link_to t("layout.nav.customers"), customers_path, class: "block px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 hover:text-white" %>
+                      <%= link_to t("layout.nav.team"), users_path, class: "block px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 hover:text-white" %>
+                      <% if current_user.can?(:manage_space) %>
+                        <%= link_to t("layout.nav.space"), edit_settings_space_path, class: "block px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 hover:text-white" %>
+                        <%= link_to t("layout.nav.availability"), edit_settings_space_availability_path, class: "block px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 hover:text-white" %>
                       <% end %>
                     </div>
                   </div>
                 <% else %>
-                  <%= link_to t("layout.nav.my_appointments"), appointments_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
-                  <%= link_to t("layout.nav.request_appointment"), new_appointment_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
+                  <%# Customers: profile/logout only; book via scheduling links %>
                 <% end %>
               </div>
             </div>
@@ -133,18 +133,18 @@
                 <%= link_to t("layout.nav.tenants"), platform_spaces_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
                 <%= link_to t("layout.nav.platform_users"), platform_users_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
               <% elsif tenant_staff? %>
-                <%= link_to t("layout.nav.all_appointments"), admin_appointments_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
-                <%= link_to t("layout.nav.pending"), pending_admin_appointments_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
-                <%= link_to t("layout.nav.booking_links"), admin_scheduling_links_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+                <%= link_to t("layout.nav.all_appointments"), appointments_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+                <%= link_to t("layout.nav.pending"), pending_appointments_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+                <%= link_to t("layout.nav.booking_links"), scheduling_links_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
                 <p class="px-3 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-slate-400"><%= t("layout.nav.management") %></p>
-                <%= link_to t("layout.nav.customers"), admin_customers_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
-                <%= link_to t("layout.nav.team"), admin_users_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
-                <% if current_user.manager? %>
-                  <%= link_to t("layout.nav.space"), edit_admin_space_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+                <%= link_to t("layout.nav.customers"), customers_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+                <%= link_to t("layout.nav.team"), users_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+                <% if current_user.can?(:manage_space) %>
+                  <%= link_to t("layout.nav.space"), edit_settings_space_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+                  <%= link_to t("layout.nav.availability"), edit_settings_space_availability_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
                 <% end %>
               <% else %>
-                <%= link_to t("layout.nav.my_appointments"), appointments_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
-                <%= link_to t("layout.nav.request_appointment"), new_appointment_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+                <%# Customers: profile/logout only; book via scheduling links %>
               <% end %>
               <div class="border-t border-slate-800 mt-2 pt-2 space-y-1 px-3 pb-2">
                 <%= link_to edit_profile_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" do %>
