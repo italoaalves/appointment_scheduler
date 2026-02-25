@@ -58,7 +58,7 @@ module BusinessHoursFormatter
       t.strftime("%H:%M")
     else
       str = t.is_a?(String) ? t : t.to_s
-      str[ /\d{1,2}:\d{2}\b/ ] || str
+      str[/\d{1,2}:\d{2}\b/] || str
     end
   end
 

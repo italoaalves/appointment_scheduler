@@ -34,7 +34,7 @@ module UiHelper
   def form_input_classes(extra = nil)
     base = "mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
     width = extra || "max-w-sm"
-    [base, width].join(" ")
+    [ base, width ].join(" ")
   end
 
   def status_badge_classes(status)

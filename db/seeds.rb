@@ -122,7 +122,7 @@ end
 
 # ---- PAST APPOINTMENTS: NO-SHOW + FINISHED ----
 # A few appointments in the past with no_show and finished status
-past_dates = [base_date - 14, base_date - 10, base_date - 5]
+past_dates = [ base_date - 14, base_date - 10, base_date - 5 ]
 past_dates.each_with_index do |date, i|
   scheduled_at = tz.local(date.year, date.month, date.day, 10 + i, 0)
   customer = customers[i % customers.size]
