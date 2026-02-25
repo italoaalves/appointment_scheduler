@@ -259,7 +259,7 @@ pt-BR:
         back_to_appointment: "Voltar para consulta"
         all_appointments: "Todas as consultas"
 
-    clients:
+    customers:
       create:
         notice: "Cliente criado."
       update:
@@ -284,6 +284,7 @@ pt-BR:
         subtitle: "Veja os detalhes e o histórico de consultas do cliente."
         name: "Nome"
         phone: "Telefone"
+        email: "E-mail"
         address: "Endereço"
         edit_customer: "Editar cliente"
         all_customers: "Todos os clientes"
