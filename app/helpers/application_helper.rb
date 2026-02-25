@@ -53,7 +53,7 @@ module ApplicationHelper
     zones = COMMON_TIMEZONES.dup
     zones.unshift(current_value) if current_value.present? && !COMMON_TIMEZONES.include?(current_value)
     options = zones.map { |tz| [ "#{tz} (UTC #{Time.find_zone(tz)&.formatted_offset || ''})", tz ] }
-    options << [ I18n.t("admin.space.edit.timezone_other"), OTHER_TIMEZONE_VALUE ]
-    options.unshift([ I18n.t("admin.space.edit.timezone_prompt"), "" ])
+    options << [ I18n.t("space.settings.edit.timezone_other"), OTHER_TIMEZONE_VALUE ]
+    options.unshift([ I18n.t("space.settings.edit.timezone_prompt"), "" ])
   end
 end

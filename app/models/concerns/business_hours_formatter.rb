@@ -13,7 +13,7 @@ module BusinessHoursFormatter
 
     I18n.with_locale(locale) do
       abbr = I18n.t("date.abbr_day_names")
-      every_day = I18n.t("admin.space.edit.availability_preset_every_day")
+      every_day = I18n.t("space.settings.edit.availability_preset_every_day")
 
       groups = valid.group_by { |w| [ time_key(w.opens_at), time_key(w.closes_at) ] }
 

@@ -1,30 +1,30 @@
 <%# Shared partial for availability schedule - usable by Space or future Professional %>
 <% schedule = form.object.availability_schedule || form.object.build_availability_schedule %>
 <% weekdays = [
-  [0, t("space.space.edit.weekday_sun")],
-  [1, t("space.space.edit.weekday_mon")],
-  [2, t("space.space.edit.weekday_tue")],
-  [3, t("space.space.edit.weekday_wed")],
-  [4, t("space.space.edit.weekday_thu")],
-  [5, t("space.space.edit.weekday_fri")],
-  [6, t("space.space.edit.weekday_sat")]
+  [0, t("space.settings.edit.weekday_sun")],
+  [1, t("space.settings.edit.weekday_mon")],
+  [2, t("space.settings.edit.weekday_tue")],
+  [3, t("space.settings.edit.weekday_wed")],
+  [4, t("space.settings.edit.weekday_thu")],
+  [5, t("space.settings.edit.weekday_fri")],
+  [6, t("space.settings.edit.weekday_sat")]
 ] %>
 
 <%= form.fields_for :availability_schedule, schedule do |schedule_form| %>
-  <% weekday_abbr = [ t("space.space.edit.weekday_sun"), t("space.space.edit.weekday_mon"), t("space.space.edit.weekday_tue"), t("space.space.edit.weekday_wed"), t("space.space.edit.weekday_thu"), t("space.space.edit.weekday_fri"), t("space.space.edit.weekday_sat") ] %>
-  <div class="space-y-6" data-controller="availability-hours" data-availability-hours-weekday-abbr-value='<%= raw weekday_abbr.to_json %>' data-availability-hours-every-day-value="<%= t("space.space.edit.availability_preset_every_day") %>">
+  <% weekday_abbr = [ t("space.settings.edit.weekday_sun"), t("space.settings.edit.weekday_mon"), t("space.settings.edit.weekday_tue"), t("space.settings.edit.weekday_wed"), t("space.settings.edit.weekday_thu"), t("space.settings.edit.weekday_fri"), t("space.settings.edit.weekday_sat") ] %>
+  <div class="space-y-6" data-controller="availability-hours" data-availability-hours-weekday-abbr-value='<%= raw weekday_abbr.to_json %>' data-availability-hours-every-day-value="<%= t("space.settings.edit.availability_preset_every_day") %>">
     <div class="rounded-md border border-slate-200 bg-slate-50 p-3">
       <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("space.availability.edit.business_hours_preview_label") %></p>
       <p class="mt-1 text-sm text-slate-800" data-availability-hours-target="preview"><%= form.object.business_hours.presence || "—" %></p>
     </div>
     <div>
-      <h3 class="mb-2 text-sm font-medium text-slate-700"><%= t("space.space.edit.availability_normal_title") %></h3>
-      <p class="mb-3 text-xs text-slate-500"><%= t("space.space.edit.availability_normal_hint") %></p>
+      <h3 class="mb-2 text-sm font-medium text-slate-700"><%= t("space.settings.edit.availability_normal_title") %></h3>
+      <p class="mb-3 text-xs text-slate-500"><%= t("space.settings.edit.availability_normal_hint") %></p>
 
       <div class="rounded-md border border-slate-200 bg-slate-50 p-4">
         <div class="flex flex-wrap items-center gap-4">
           <div class="flex items-center gap-2">
-            <label class="text-sm font-medium text-slate-700"><%= t("space.space.edit.availability_open") %></label>
+            <label class="text-sm font-medium text-slate-700"><%= t("space.settings.edit.availability_open") %></label>
             <input type="time"
                    data-availability-hours-target="opensAt"
                    value="09:00"
@@ -32,7 +32,7 @@
                    class="rounded-md border border-slate-300 px-2 py-1.5 text-sm" />
           </div>
           <div class="flex items-center gap-2">
-            <label class="text-sm font-medium text-slate-700"><%= t("space.space.edit.availability_close") %></label>
+            <label class="text-sm font-medium text-slate-700"><%= t("space.settings.edit.availability_close") %></label>
             <input type="time"
                    data-availability-hours-target="closesAt"
                    value="17:00"
@@ -40,7 +40,7 @@
                    class="rounded-md border border-slate-300 px-2 py-1.5 text-sm" />
           </div>
         </div>
-        <p class="mt-2 text-xs text-slate-500"><%= t("space.space.edit.availability_open_on") %></p>
+        <p class="mt-2 text-xs text-slate-500"><%= t("space.settings.edit.availability_open_on") %></p>
         <div class="mt-2 flex flex-wrap gap-3">
           <% weekdays.each do |wday, label| %>
             <label class="inline-flex items-center gap-1.5 text-sm">
@@ -57,17 +57,17 @@
           <button type="button"
                   data-availability-hours-preset="1,2,3,4,5"
                   class="rounded border border-slate-300 bg-white px-2 py-1 text-xs text-slate-600 hover:bg-slate-50">
-            <%= t("space.space.edit.availability_preset_mon_fri") %>
+            <%= t("space.settings.edit.availability_preset_mon_fri") %>
           </button>
           <button type="button"
                   data-availability-hours-preset="1,2,3,4,5,6"
                   class="rounded border border-slate-300 bg-white px-2 py-1 text-xs text-slate-600 hover:bg-slate-50">
-            <%= t("space.space.edit.availability_preset_mon_sat") %>
+            <%= t("space.settings.edit.availability_preset_mon_sat") %>
           </button>
           <button type="button"
                   data-availability-hours-preset="0,1,2,3,4,5,6"
                   class="rounded border border-slate-300 bg-white px-2 py-1 text-xs text-slate-600 hover:bg-slate-50">
-            <%= t("space.space.edit.availability_preset_every_day") %>
+            <%= t("space.settings.edit.availability_preset_every_day") %>
           </button>
         </div>
       </div>
@@ -75,9 +75,9 @@
       <div class="mt-4">
         <details class="group" data-availability-hours-target="overridesDetails">
           <summary class="cursor-pointer text-sm font-medium text-slate-600 hover:text-slate-800">
-            <%= t("space.space.edit.availability_different_hours") %>
+            <%= t("space.settings.edit.availability_different_hours") %>
           </summary>
-          <p class="mt-2 mb-3 text-xs text-slate-500"><%= t("space.space.edit.availability_different_hours_hint") %></p>
+          <p class="mt-2 mb-3 text-xs text-slate-500"><%= t("space.settings.edit.availability_different_hours_hint") %></p>
           <template data-availability-hours-target="overrideTemplate">
             <div class="availability-override-item mb-2 flex flex-wrap items-center gap-2 rounded-md border border-slate-200 bg-white p-3"
                  data-availability-hours-target="overrideItem">
@@ -101,7 +101,7 @@
               <button type="button"
                       data-action="availability-hours#removeOverride"
                       class="text-xs text-red-600 hover:text-red-800">
-                <%= t("space.space.edit.availability_remove_override") %>
+                <%= t("space.settings.edit.availability_remove_override") %>
               </button>
             </div>
           </template>
@@ -109,7 +109,7 @@
           <button type="button"
                   data-action="availability-hours#addOverride"
                   class="mt-2 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50">
-            <%= t("space.space.edit.availability_add_override") %>
+            <%= t("space.settings.edit.availability_add_override") %>
           </button>
         </details>
       </div>

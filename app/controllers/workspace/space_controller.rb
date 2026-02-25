@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Tenant
-  class SpaceController < Tenant::BaseController
+module Space
+  class SpaceController < Space::BaseController
     include RequirePermission
 
     require_permission :manage_space, only: [ :edit, :update ]

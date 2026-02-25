@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
 
   before_action :set_locale
 
+  helper UiHelper
   helper_method :current_tenant, :tenant_staff?
 
   def after_sign_in_path_for(resource)

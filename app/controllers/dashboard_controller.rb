@@ -8,7 +8,8 @@ class DashboardController < ApplicationController
       load_calendar_data
       render :tenant_dashboard
     else
-      render :customer_landing
+      sign_out current_user
+      redirect_to new_user_session_path, alert: t("space.unauthorized")
     end
   end
 

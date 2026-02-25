@@ -21,19 +21,19 @@
       <div class="space-y-4">
         <div>
           <%= form.label :slot_duration_minutes,
-                         t("space.space.edit.slot_duration_label"),
+                         t("space.settings.edit.slot_duration_label"),
                          class: "block text-sm font-medium text-slate-700" %>
           <%= form.select :slot_duration_minutes,
-                          [ [ "15 #{t('space.space.edit.minutes')}", 15 ], [ "30 #{t('space.space.edit.minutes')}", 30 ], [ "45 #{t('space.space.edit.minutes')}", 45 ], [ "60 #{t('space.space.edit.minutes')}", 60 ], [ "90 #{t('space.space.edit.minutes')}", 90 ], [ "120 #{t('space.space.edit.minutes')}", 120 ] ],
+                          [ [ "15 #{t('space.settings.edit.minutes')}", 15 ], [ "30 #{t('space.settings.edit.minutes')}", 30 ], [ "45 #{t('space.settings.edit.minutes')}", 45 ], [ "60 #{t('space.settings.edit.minutes')}", 60 ], [ "90 #{t('space.settings.edit.minutes')}", 90 ], [ "120 #{t('space.settings.edit.minutes')}", 120 ] ],
                           {},
                           class: "mt-1 block w-full max-w-sm rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
           <p class="mt-1.5 text-xs text-slate-500">
-            <%= t("space.space.edit.slot_duration_notice") %>
+            <%= t("space.settings.edit.slot_duration_notice") %>
           </p>
         </div>
         <div data-controller="timezone-select">
           <label for="space_timezone"
-                 class="block text-sm font-medium text-slate-700"><%= t("space.space.edit.timezone_label") %></label>
+                 class="block text-sm font-medium text-slate-700"><%= t("space.settings.edit.timezone_label") %></label>
           <%= form.hidden_field :timezone, id: nil, data: { timezone_select_target: "input" } %>
           <div class="mt-1 max-w-sm space-y-2">
             <select id="space_timezone"
@@ -50,7 +50,7 @@
             <input type="text"
                    data-timezone-select-target="otherField"
                    value="<%= @space.timezone if @space.timezone.present? && !ApplicationHelper::COMMON_TIMEZONES.include?(@space.timezone) %>"
-                   placeholder="<%= t('space.space.edit.timezone_other_placeholder') %>"
+                   placeholder="<%= t('space.settings.edit.timezone_other_placeholder') %>"
                    class="<%= 'hidden ' unless @space.timezone.present? && !ApplicationHelper::COMMON_TIMEZONES.include?(@space.timezone) %>block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" />
           </div>
         </div>
@@ -63,7 +63,7 @@
       <%= link_to t("space.availability.edit.back_to_space"),
                   edit_settings_space_path,
                   class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-50" %>
-      <%= link_to t("space.space.edit.back_to_appointments"),
+      <%= link_to t("space.settings.edit.back_to_appointments"),
                   appointments_path,
                   class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-50" %>
     </div>
