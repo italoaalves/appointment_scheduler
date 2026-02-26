@@ -15,12 +15,14 @@ module Spaces
     end
 
     def new
-      @user = current_tenant.users.build
+      @user = User.new
+      @user.space_id = current_tenant.id
     end
 
     def create
-      @user = current_tenant.users.build(user_params)
-      @user.password = SecureRandom.hex(32) # Temporary; invitee sets their own via email link
+      @user = User.new(user_params)
+      @user.space_id = current_tenant.id
+      @user.password = SecureRandom.hex(32)
 
       if @user.save
         @user.send_reset_password_instructions

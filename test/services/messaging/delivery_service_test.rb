@@ -44,13 +44,12 @@ module Messaging
       assert_includes result[:error], "requires recipient with email"
     end
 
-    test "returns error hash when channel is unknown" do
+    test "raises ArgumentError when channel is unknown" do
       recipient = OpenStruct.new(email: "test@example.com")
 
-      result = DeliveryService.call(channel: :sms, to: recipient, body: "Hi")
-
-      assert_not result[:success]
-      assert_includes result[:error], "Unknown channel"
+      assert_raises(ArgumentError) do
+        DeliveryService.call(channel: :sms, to: recipient, body: "Hi")
+      end
     end
 
     test "accepts channel as string" do

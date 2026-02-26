@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class PersonalizedSchedulingLink < ApplicationRecord
+  include SpaceScoped
+
   SLUG_FORMAT = /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/
 
   belongs_to :space

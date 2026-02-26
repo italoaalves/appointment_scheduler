@@ -29,7 +29,25 @@ module Messaging
         subject: @subject,
         **@opts
       )
-    rescue Messaging::DeliveryError, StandardError => e
+    rescue Messaging::DeliveryError => e
+      Rails.logger.error(
+        "[Messaging] delivery_failed" \
+        " channel=#{@channel}" \
+        " to=#{@to.inspect}" \
+        " error_class=#{e.class}" \
+        " error=#{e.message}"
+      )
+      { success: false, error: e.message }
+    rescue => e
+      raise unless defined?(Twilio::REST::TwilioError) && e.is_a?(Twilio::REST::TwilioError)
+
+      Rails.logger.error(
+        "[Messaging] twilio_transport_error" \
+        " channel=#{@channel}" \
+        " to=#{@to.inspect}" \
+        " error_class=#{e.class}" \
+        " error=#{e.message}"
+      )
       { success: false, error: e.message }
     end
   end

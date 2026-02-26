@@ -1,4 +1,10 @@
 class Appointment < ApplicationRecord
+  include SpaceScoped
+
+  default_scope { where(discarded_at: nil) }
+
+  SLOT_BLOCKING_STATUSES = %i[pending confirmed rescheduled].freeze
+
   belongs_to :space
   belongs_to :customer, optional: true
 
@@ -13,6 +19,15 @@ class Appointment < ApplicationRecord
 
   def scheduled_in_past?
     scheduled_at.present? && scheduled_at <= Time.current
+  end
+
+  def save(**options, &block)
+    super
+  rescue ActiveRecord::RecordNotUnique => e
+    raise unless e.message.include?("index_appointments_unique_active_slot")
+
+    errors.add(:base, :slot_already_booked)
+    false
   end
 
   enum :status, {
@@ -42,15 +57,17 @@ class Appointment < ApplicationRecord
   end
 
   def requires_slot_validation?
-    (confirmed? || rescheduled?) && scheduled_at.present?
+    status&.to_sym.in?(SLOT_BLOCKING_STATUSES) && scheduled_at.present?
   end
 
   def no_double_booking
     return unless space_id.present? && scheduled_at.present?
 
+    acquire_slot_advisory_lock!
+
     my_end = scheduled_at + effective_duration_minutes.minutes
     conflict_exists = space.appointments
-      .where(status: [ :confirmed, :rescheduled ])
+      .where(status: SLOT_BLOCKING_STATUSES)
       .where.not(id: id)
       .where.not(scheduled_at: nil)
       .where("scheduled_at < ? AND (scheduled_at + (COALESCE(duration_minutes, ?) || ' minutes')::interval) > ?",
@@ -58,5 +75,12 @@ class Appointment < ApplicationRecord
       .exists?
 
     errors.add(:base, :slot_already_booked) if conflict_exists
+  end
+
+  # Serializes concurrent slot checks for the same space+date within a transaction,
+  # closing the TOCTOU window between the overlap query and the INSERT/UPDATE.
+  def acquire_slot_advisory_lock!
+    lock_key = Zlib.crc32("appointment_slot:#{space_id}:#{scheduled_at.to_date}")
+    self.class.connection.execute("SELECT pg_advisory_xact_lock(#{lock_key})")
   end
 end

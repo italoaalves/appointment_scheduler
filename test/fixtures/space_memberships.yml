@@ -1,0 +1,11 @@
+manager_in_one:
+  user: manager
+  space: one
+
+manager_two_in_two:
+  user: manager_two
+  space: two
+
+secretary_in_one:
+  user: secretary
+  space: one

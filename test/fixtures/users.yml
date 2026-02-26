@@ -1,6 +1,7 @@
 # role: free-text string for display
 # system_role: super_admin=0 (nil for non-platform-admins)
 # See user_permissions.yml for permission assignment
+# See space_memberships.yml for space assignment
 
 admin:
   email: "admin@example.com"
@@ -14,18 +15,15 @@ manager:
   encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
   name: "Dr. Owner"
   role: "Manager"
-  space: one
 
 manager_two:
   email: "manager2@example.com"
   encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
   name: "Other Manager"
   role: "Manager"
-  space: two
 
 secretary:
   email: "secretary@example.com"
   encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
   name: "Jane Secretary"
   role: "Secretary"
-  space: one

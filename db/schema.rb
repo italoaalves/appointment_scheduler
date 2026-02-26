@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_26_100000) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_26_160000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -25,8 +25,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_100000) do
     t.bigint "space_id", null: false
     t.integer "duration_minutes"
     t.datetime "finished_at"
+    t.datetime "discarded_at"
     t.index ["customer_id", "scheduled_at"], name: "index_appointments_on_client_scheduled_at"
     t.index ["customer_id"], name: "index_appointments_on_customer_id"
+    t.index ["discarded_at"], name: "index_appointments_on_discarded_at"
+    t.index ["space_id", "scheduled_at"], name: "index_appointments_unique_active_slot", unique: true, where: "((status = ANY (ARRAY[0, 1, 3])) AND (scheduled_at IS NOT NULL) AND (discarded_at IS NULL))"
     t.index ["space_id", "status", "scheduled_at"], name: "index_appointments_on_space_status_scheduled_at"
     t.index ["space_id"], name: "index_appointments_on_space_id"
   end
@@ -60,6 +63,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_100000) do
     t.datetime "updated_at", null: false
     t.string "email"
     t.bigint "user_id"
+    t.index "space_id, lower((email)::text)", name: "index_customers_on_space_id_lower_email", where: "(email IS NOT NULL)"
     t.index ["space_id"], name: "index_customers_on_space_id"
     t.index ["user_id"], name: "index_customers_on_user_id"
   end
@@ -75,7 +79,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_100000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["messageable_type", "messageable_id"], name: "index_messages_on_messageable"
+    t.index ["recipient_id", "created_at"], name: "index_messages_on_recipient_id_created_at"
     t.index ["recipient_id"], name: "index_messages_on_recipient_id"
+    t.index ["sender_id", "created_at"], name: "index_messages_on_sender_id_created_at"
     t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
 
@@ -89,6 +95,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_100000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable"
+    t.index ["user_id", "read"], name: "index_notifications_on_user_id_and_read"
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
@@ -112,6 +119,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_100000) do
     t.datetime "updated_at", null: false
     t.index ["space_id"], name: "index_scheduling_links_on_space_id"
     t.index ["token"], name: "index_scheduling_links_on_token", unique: true
+  end
+
+  create_table "space_memberships", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "space_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["space_id"], name: "index_space_memberships_on_space_id"
+    t.index ["user_id", "space_id"], name: "index_space_memberships_on_user_id_and_space_id", unique: true
+    t.index ["user_id"], name: "index_space_memberships_on_user_id"
   end
 
   create_table "spaces", force: :cascade do |t|
@@ -166,12 +183,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_100000) do
     t.string "phone_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "space_id"
     t.integer "system_role"
     t.string "role", default: "", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-    t.index ["space_id"], name: "index_users_on_space_id"
   end
 
   add_foreign_key "appointments", "customers"
@@ -184,8 +199,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_100000) do
   add_foreign_key "notifications", "users"
   add_foreign_key "personalized_scheduling_links", "spaces"
   add_foreign_key "scheduling_links", "spaces"
+  add_foreign_key "space_memberships", "spaces"
+  add_foreign_key "space_memberships", "users"
   add_foreign_key "spaces", "users", column: "owner_id"
   add_foreign_key "user_permissions", "users"
   add_foreign_key "user_preferences", "users"
-  add_foreign_key "users", "spaces"
 end

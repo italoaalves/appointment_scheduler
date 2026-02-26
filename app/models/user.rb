@@ -1,5 +1,6 @@
 class User < ApplicationRecord
-  belongs_to :space, optional: true
+  has_one :space_membership, dependent: :destroy, autosave: true
+  has_one :space, through: :space_membership
 
   has_one :user_preference, dependent: :destroy
   has_many :user_permissions, dependent: :destroy
@@ -23,7 +24,21 @@ class User < ApplicationRecord
   after_create :ensure_user_preference
   after_commit :create_owner_space, on: :create
 
-  # role: free-text string for display (e.g. "Manager", "Receptionist")
+  # Virtual attribute: reads/writes through SpaceMembership so that
+  # forms, controllers, and seeds that assign user.space_id keep working.
+  def space_id
+    space_membership&.space_id
+  end
+
+  def space_id=(value)
+    if value.blank?
+      space_membership&.mark_for_destruction
+    elsif space_membership
+      space_membership.space_id = value
+    else
+      build_space_membership(space_id: value)
+    end
+  end
 
   def permission_names_param
     permission_names

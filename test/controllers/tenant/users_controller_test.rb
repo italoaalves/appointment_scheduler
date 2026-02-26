@@ -59,7 +59,7 @@ module Tenant
       assert new_user.can?(:access_space_dashboard)
       assert new_user.can?(:manage_customers)
       refute new_user.can?(:manage_team)
-      assert_equal @manager.space_id, new_user.space_id
+      assert_equal @manager.space&.id, new_user.space&.id
     end
 
     test "secretary cannot create team member" do

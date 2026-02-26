@@ -10,12 +10,12 @@ class CreateOwnerSpace
   end
 
   def call
-    return unless @user.can?(:own_space) && @user.space_id.nil?
+    return unless @user.can?(:own_space) && !SpaceMembership.exists?(user_id: @user.id)
 
     space = Space.new(name: @user.name.presence || @user.email)
     space.owner_id = @user.id
     space.save!
-    @user.update_column(:space_id, space.id)
+    SpaceMembership.create!(user_id: @user.id, space_id: space.id)
     space
   end
 end

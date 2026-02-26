@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class SchedulingLink < ApplicationRecord
+  include SpaceScoped
+
   belongs_to :space
 
   enum :link_type, { permanent: 0, single_use: 1 }

@@ -49,7 +49,7 @@ module Tenant
         }
       end
       assert_redirected_to customer_url(Customer.last)
-      assert_equal @manager.space_id, Customer.last.space_id
+      assert_equal @manager.space&.id, Customer.last.space_id
     end
 
     test "manager can update customer" do

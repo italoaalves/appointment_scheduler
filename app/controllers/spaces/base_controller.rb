@@ -7,8 +7,13 @@ module Spaces
   class BaseController < ApplicationController
     before_action :authenticate_user!
     before_action :require_space_staff
+    before_action :set_current_space
 
     private
+
+    def set_current_space
+      Current.space = current_tenant
+    end
 
     def require_space_staff
       return redirect_to platform_root_path, alert: t("space.unauthorized") if current_user.super_admin?

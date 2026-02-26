@@ -86,7 +86,7 @@ class AppointmentTest < ActiveSupport::TestCase
     assert non_overlapping.valid?
   end
 
-  test "pending appointments skip double booking check" do
+  test "pending appointments are subject to double booking check" do
     existing = @space.appointments.create!(
       customer: @customer,
       scheduled_at: 3.days.from_now.change(hour: 10),
@@ -100,7 +100,8 @@ class AppointmentTest < ActiveSupport::TestCase
       status: :pending,
       duration_minutes: 30
     )
-    assert overlapping_pending.valid?
+    assert_not overlapping_pending.valid?
+    assert overlapping_pending.errors[:base].any?
   end
 
   test "scheduled_in_past? returns true for past appointments" do

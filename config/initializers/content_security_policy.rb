@@ -6,7 +6,7 @@ Rails.application.configure do
     policy.font_src    :self, :https, :data
     policy.img_src     :self, :https, :data
     policy.object_src  :none
-    policy.script_src  :self, :https, "https://esm.sh"
+    policy.script_src  :self, :https, :unsafe_eval, "https://esm.sh"
     policy.style_src   :self, :https, :unsafe_inline
     policy.connect_src :self, :https
   end

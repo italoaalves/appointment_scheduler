@@ -6,7 +6,8 @@ class Space < ApplicationRecord
   attribute :timezone, :string, default: "America/Sao_Paulo"
 
   belongs_to :owner, class_name: "User", optional: true
-  has_many :users, dependent: :destroy
+  has_many :space_memberships, dependent: :destroy
+  has_many :users, through: :space_memberships
 
   validates :name, presence: true
   validates :slot_duration_minutes, numericality: { only_integer: true, greater_than: 0 }
@@ -20,15 +21,14 @@ class Space < ApplicationRecord
 
   # Returns array of weekday integers (0=Sunday..6=Saturday) when the space has availability.
   def business_weekdays
-    if availability_schedule.present?
-      availability_schedule.availability_windows
-        .where.not(opens_at: nil)
-        .where.not(closes_at: nil)
-        .distinct
-        .pluck(:weekday)
-    else
-      legacy_business_schedule.keys.map(&:to_i)
-    end
+    return [] unless availability_schedule
+
+    availability_schedule
+      .availability_windows
+      .where.not(opens_at: nil)
+      .where.not(closes_at: nil)
+      .distinct
+      .pluck(:weekday)
   end
 
   DEFAULT_BUSINESS_HOURS = {

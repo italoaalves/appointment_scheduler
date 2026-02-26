@@ -6,6 +6,7 @@ module Impersonation
   included do
     helper_method :impersonating?, :real_current_user
     before_action :validate_impersonation, if: :impersonating?
+    after_action :audit_impersonation_write, if: :impersonating?
   end
 
   def impersonating?
@@ -28,6 +29,24 @@ module Impersonation
   end
 
   private
+
+  def audit_impersonation_write
+    return if request.get?
+
+    Rails.logger.info(
+      "[IMPERSONATION] write_action=true" \
+      " real_user_id=#{real_current_user&.id}" \
+      " impersonated_user_id=#{session[:impersonated_user_id]}" \
+      " controller=#{controller_name}" \
+      " action=#{action_name}" \
+      " params=#{filtered_audit_params.inspect}" \
+      " timestamp=#{Time.current.iso8601}"
+    )
+  end
+
+  def filtered_audit_params
+    request.filtered_parameters.except("controller", "action", "authenticity_token")
+  end
 
   def validate_impersonation
     return if User.exists?(session[:impersonated_user_id])

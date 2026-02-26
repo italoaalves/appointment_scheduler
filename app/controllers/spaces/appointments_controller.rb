@@ -83,7 +83,7 @@ module Spaces
     end
 
     def destroy
-      @appointment.destroy
+      @appointment.update!(discarded_at: Time.current)
       redirect_to appointments_path, notice: t("space.appointments.destroy.notice")
     end
 

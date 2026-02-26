@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "set"
+
 module Spaces
   class SlotAvailabilityService
     def self.call(schedulable:, from_date:, to_date:, limit: 50)
@@ -45,7 +47,7 @@ module Spaces
           st = t.in_time_zone(tz)
           mins = (st.hour * 60 + st.min) / @schedulable.slot_duration_minutes * @schedulable.slot_duration_minutes
           tz.local(st.year, st.month, st.day, mins / 60, mins % 60)
-        end.uniq
+        end.to_set
 
       slots.reject { |s| booked_starts.include?(s.in_time_zone(tz)) }.first(@limit)
     end

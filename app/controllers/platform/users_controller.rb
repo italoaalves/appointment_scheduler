@@ -7,10 +7,10 @@ module Platform
     before_action :set_user, only: [ :show, :edit, :update, :destroy, :impersonate ]
 
     def index
-      @users = User.includes(:space).order(:email)
+      @users = User.includes(:space_membership, :space).order(:email)
       if params[:space_id].present?
         @space_filter = Space.find(params[:space_id])
-        @users = @users.where(space_id: params[:space_id])
+        @users = @users.joins(:space_membership).where(space_memberships: { space_id: params[:space_id] })
       end
       @users = @users.page(params[:page]).per(20)
     end

@@ -39,6 +39,8 @@ class BookingController < ApplicationController
       return render :show, status: :unprocessable_entity
     end
     customer = find_or_create_customer
+    return if performed?
+
     appointment = Spaces::AppointmentCreator.call(
       space: @space,
       customer: customer,
@@ -96,5 +98,9 @@ class BookingController < ApplicationController
       phone: bp[:customer_phone].to_s.strip.presence,
       address: bp[:customer_address].to_s.strip.presence
     )
+  rescue ArgumentError
+    flash.now[:alert] = t("booking.email_or_phone_required")
+    render :show, status: :unprocessable_entity
+    nil
   end
 end
