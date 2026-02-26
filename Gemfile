@@ -69,3 +69,5 @@ gem "kaminari", "~> 1.2"
 gem "tailwindcss-rails", "~> 4.4"
 
 gem "devise-i18n", "~> 1.16"
+
+gem "twilio-ruby", "~> 6.0"
