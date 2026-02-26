@@ -77,14 +77,20 @@ module Tenant
       assert_redirected_to users_url
     end
 
-    test "manager can update team member" do
+    test "manager can update team member role and permissions" do
       sign_in @manager
       patch user_url(@secretary), params: {
-        user: { name: "Updated Secretary", email: @secretary.email }
+        user: {
+          role: "Assistant",
+          permission_names_param: %w[access_space_dashboard manage_appointments]
+        }
       }
       assert_redirected_to users_url
       @secretary.reload
-      assert_equal "Updated Secretary", @secretary.name
+      assert_equal "Assistant", @secretary.role
+      assert @secretary.can?(:access_space_dashboard)
+      assert @secretary.can?(:manage_appointments)
+      refute @secretary.can?(:manage_customers)
     end
 
     test "manager cannot access other tenant user" do

@@ -2,7 +2,6 @@
 
 module Spaces
   class UsersController < Spaces::BaseController
-    include StripBlankPasswordParams
     include RequirePermission
 
     require_permission :manage_team, only: [ :new, :create, :edit, :update, :destroy ], redirect_to: :users_path
@@ -33,7 +32,7 @@ module Spaces
     end
 
     def update
-      if @user.update(user_params_without_blank_passwords)
+      if @user.update(update_user_params)
         redirect_to users_path, notice: t("space.users.update.notice")
       else
         render :edit
@@ -57,6 +56,12 @@ module Spaces
 
     def user_params
       permitted = [ :email, :name, :phone_number, :password, :password_confirmation, :role ]
+      permitted << { permission_names_param: [] } if current_user.can?(:manage_team, space: current_tenant)
+      params.require(:user).permit(permitted)
+    end
+
+    def update_user_params
+      permitted = [ :role ]
       permitted << { permission_names_param: [] } if current_user.can?(:manage_team, space: current_tenant)
       params.require(:user).permit(permitted)
     end
