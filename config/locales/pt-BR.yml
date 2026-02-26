@@ -148,12 +148,16 @@ pt-BR:
         notice: "Consulta criada."
       update:
         notice: "Consulta atualizada."
+        policy_blocked: "Não é possível reagendar dentro do limite da política. Entre em contato com o dono do espaço se precisar de uma exceção."
+        already_rescheduled: "Esta consulta já foi reagendada uma vez e não pode ser reagendada novamente."
+        cancelled_locked: "Consultas canceladas não podem ser alteradas. Você só pode excluí-las."
       destroy:
         notice: "Consulta excluída."
       confirm:
         notice: "Consulta confirmada."
       cancel:
         notice: "Consulta cancelada."
+        policy_blocked: "Não é possível cancelar dentro do limite da política. Entre em contato com o dono do espaço se precisar de uma exceção."
       no_show:
         notice: "Marcado como falta."
         cannot_before_scheduled: "Não é possível marcar como falta antes do horário agendado da consulta."
@@ -216,6 +220,7 @@ pt-BR:
         finish: "Finalizada"
         delete: "Excluir"
         delete_confirm: "Excluir esta consulta permanentemente?"
+      cancelled_locked: "Consultas canceladas não podem ser alteradas. Você só pode excluí-las."
       pending:
         title: "Consultas pendentes"
         subtitle: "%{count} consulta(s) aguardando confirmação."
@@ -377,6 +382,7 @@ pt-BR:
       destroy_appointments: "Excluir consultas"
       manage_scheduling_links: "Gerenciar links de agendamento"
       manage_personalized_links: "Gerenciar link personalizado"
+      manage_policies: "Gerenciar políticas de agendamento"
 
     availability:
       edit:
@@ -545,6 +551,28 @@ pt-BR:
         timezone_other_placeholder: "ex: America/Sao_Paulo"
         submit: "Salvar"
         back_to_appointments: "Voltar para consultas"
+        policies_title: "Políticas"
+        policies_link_hint: "Defina regras de cancelamento, reagendamento e janela de agendamento."
+    policies:
+      edit:
+        title: "Políticas de agendamento"
+        subtitle: "Configure regras para cancelamento, reagendamento e quando os clientes podem solicitar consultas."
+        cancellation_title: "Cancelamento"
+        cancellation_label: "Mínimo de horas antes da consulta para permitir cancelamento"
+        cancellation_hint: "Deixe em branco para sem restrição. Ex: 24 = não pode cancelar até 24 horas antes."
+        reschedule_title: "Reagendamento"
+        reschedule_label: "Mínimo de horas antes da consulta para permitir reagendamento"
+        reschedule_hint: "Deixe em branco para sem restrição. Ex: 48 = não pode reagendar até 48 horas antes."
+        requesting_title: "Solicitação de consultas"
+        request_max_label: "Máximo de dias à frente que os clientes podem agendar"
+        request_max_hint: "Deixe em branco para sem limite. Ex: 14 = só pode agendar até 14 dias à frente."
+        request_min_label: "Mínimo de horas de antecedência necessárias"
+        request_min_hint: "Deixe em branco para sem mínimo. Ex: 24 = deve agendar com pelo menos 24 horas de antecedência."
+        no_restriction_placeholder: "Sem restrição"
+        submit: "Salvar políticas"
+        back_to_space: "Voltar para configurações do espaço"
+      update:
+        notice: "Políticas atualizadas."
 
   booking:
     business_hours: "Horário de atendimento"
@@ -571,6 +599,8 @@ pt-BR:
     invalid:
       title: "Link inválido"
       body: "Este link não existe ou foi removido."
+    invalid_slot: "Selecione um horário válido."
+    slot_outside_window: "Este horário não está disponível para agendamento. Pode estar fora da janela permitida."
     expired:
       title: "Link expirado"
       body: "Este link expirou ou já foi utilizado."

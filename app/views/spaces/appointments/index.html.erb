@@ -75,7 +75,9 @@
               <td class="px-4 py-2 align-top">
                 <div class="flex flex-wrap justify-end gap-1">
                   <%= link_to t("space.appointments.index.view"), appointment_path(appointment), class: button_classes(:table_link) %>
-                  <%= link_to t("space.appointments.index.edit"), edit_appointment_path(appointment), class: button_classes(:table_link) %>
+                  <% unless appointment.cancelled? %>
+                    <%= link_to t("space.appointments.index.edit"), edit_appointment_path(appointment), class: button_classes(:table_link) unless appointment.rescheduled_from.present? %>
+                  <% end %>
                   <% if appointment.pending? %>
                     <%= button_to t("space.appointments.index.confirm"), confirm_appointment_path(appointment), method: :patch, class: button_classes(:table_success) %>
                   <% end %>

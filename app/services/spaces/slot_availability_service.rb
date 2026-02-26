@@ -18,7 +18,10 @@ module Spaces
       slots = []
       duration = @schedulable.slot_duration_minutes.minutes
 
-      @from_date.to_date.upto(@to_date.to_date) do |date|
+      from_date = @from_date.to_date
+      to_date = capped_to_date(tz, from_date)
+
+      from_date.upto(to_date) do |date|
         break if slots.size >= @limit
 
         @schedulable.windows_for_date(date).each do |window|
@@ -28,14 +31,14 @@ module Spaces
           slot_end = tz.local(date.year, date.month, date.day, close_t.hour, close_t.min)
 
           while slot_start < slot_end && slots.size < @limit
-            slots << slot_start if slot_start > Time.current
+            slots << slot_start if slot_eligible?(slot_start)
             slot_start += duration
           end
         end
       end
 
       booked_starts = schedulable_appointments
-        .where(scheduled_at: @from_date..@to_date.end_of_day)
+        .where(scheduled_at: from_date..to_date.end_of_day)
         .where(status: [ :pending, :confirmed, :rescheduled ])
         .pluck(:scheduled_at)
         .map do |t|
@@ -48,6 +51,26 @@ module Spaces
     end
 
     private
+
+    def capped_to_date(tz, from_date)
+      to = @to_date.to_date
+      return to unless @schedulable.respond_to?(:request_max_days_ahead)
+      return to if @schedulable.request_max_days_ahead.blank?
+
+      today = Time.current.in_time_zone(tz).to_date
+      max_date = today + @schedulable.request_max_days_ahead.days
+      [ to, max_date ].min
+    end
+
+    def slot_eligible?(slot_start)
+      return false if slot_start <= Time.current
+
+      return true unless @schedulable.respond_to?(:request_min_hours_ahead)
+      return true if @schedulable.request_min_hours_ahead.blank?
+
+      min_slot = Time.current + @schedulable.request_min_hours_ahead.hours
+      slot_start >= min_slot
+    end
 
     def schedulable_appointments
       @schedulable.respond_to?(:appointments) ? @schedulable.appointments : Appointment.none

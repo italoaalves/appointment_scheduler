@@ -29,11 +29,22 @@ class BookingController < ApplicationController
 
   def create
     @space = @booking_context.space
+    scheduled_at = parse_scheduled_at(params[:scheduled_at])
+    if scheduled_at.blank?
+      @space = @booking_context.space
+      flash.now[:alert] = t("booking.invalid_slot")
+      return render :show, status: :unprocessable_entity
+    end
+    unless Spaces::SpacePolicyChecker.slot_requestable?(space: @space, scheduled_at: scheduled_at)
+      @space = @booking_context.space
+      flash.now[:alert] = t("booking.slot_outside_window")
+      return render :show, status: :unprocessable_entity
+    end
     customer = find_or_create_customer
     appointment = Spaces::AppointmentCreator.call(
       space: @space,
       customer: customer,
-      attributes: { scheduled_at: params[:scheduled_at] }
+      attributes: { scheduled_at: scheduled_at }
     )
 
     if appointment.save
@@ -64,6 +75,15 @@ class BookingController < ApplicationController
     return if @booking_context.usable?
 
     render "booking/expired", status: :gone
+  end
+
+  def parse_scheduled_at(value)
+    return nil if value.blank?
+
+    tz = TimezoneResolver.zone(@space)
+    tz.parse(value.to_s)
+  rescue ArgumentError
+    nil
   end
 
   def find_or_create_customer

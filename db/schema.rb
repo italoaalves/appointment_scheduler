@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_26_013844) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_26_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -132,6 +132,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_013844) do
     t.datetime "personalized_slug_last_changed_at"
     t.text "booking_success_message"
     t.bigint "owner_id"
+    t.integer "cancellation_min_hours_before"
+    t.integer "reschedule_min_hours_before"
+    t.integer "request_max_days_ahead"
+    t.integer "request_min_hours_ahead"
     t.index ["owner_id"], name: "index_spaces_on_owner_id"
   end
 

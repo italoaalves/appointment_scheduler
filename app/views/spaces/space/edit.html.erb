@@ -96,6 +96,16 @@
           <% end %>
           <p class="mt-2 text-xs text-slate-500"><%= t("space.settings.edit.availability_link_hint") %></p>
         </div>
+        <% if current_user.can?(:manage_policies, space: @space) %>
+          <div>
+            <%= link_to edit_settings_space_policies_path,
+                        class: "inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-800 hover:bg-slate-100" do %>
+              <%= t("space.settings.edit.policies_title") %>
+              <span aria-hidden="true">→</span>
+            <% end %>
+            <p class="mt-2 text-xs text-slate-500"><%= t("space.settings.edit.policies_link_hint") %></p>
+          </div>
+        <% end %>
         <div>
           <%= form.label :booking_success_message,
                          t("space.settings.edit.booking_success_message_label"),

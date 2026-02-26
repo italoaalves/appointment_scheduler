@@ -177,12 +177,16 @@ en:
         notice: "Appointment created."
       update:
         notice: "Appointment updated."
+        policy_blocked: "Cannot reschedule within the policy threshold. Contact the space owner if you need to override."
+        already_rescheduled: "This appointment has already been rescheduled once and cannot be rescheduled again."
+        cancelled_locked: "Cancelled appointments cannot be modified. You can only delete them."
       destroy:
         notice: "Appointment deleted."
       confirm:
         notice: "Appointment confirmed."
       cancel:
         notice: "Appointment cancelled."
+        policy_blocked: "Cannot cancel within the policy threshold. Contact the space owner if you need to override."
       no_show:
         notice: "Marked as no-show."
         cannot_before_scheduled: "Cannot mark as no-show before the appointment is scheduled to happen."
@@ -245,6 +249,7 @@ en:
         finish: "Finished"
         delete: "Delete"
         delete_confirm: "Permanently delete this appointment?"
+      cancelled_locked: "Cancelled appointments cannot be modified. You can only delete them."
       pending:
         title: "Pending requests"
         subtitle: "%{count} appointment(s) waiting for confirmation."
@@ -406,6 +411,7 @@ en:
       destroy_appointments: "Delete appointments"
       manage_scheduling_links: "Manage scheduling links"
       manage_personalized_links: "Manage personalized link"
+      manage_policies: "Manage appointment policies"
 
     availability:
       edit:
@@ -574,6 +580,28 @@ en:
         timezone_other_placeholder: "e.g. America/Sao_Paulo"
         submit: "Save"
         back_to_appointments: "Back to appointments"
+        policies_title: "Policies"
+        policies_link_hint: "Set cancellation, rescheduling, and booking window rules."
+    policies:
+      edit:
+        title: "Appointment policies"
+        subtitle: "Configure rules for cancellation, rescheduling, and when customers can request appointments."
+        cancellation_title: "Cancellation"
+        cancellation_label: "Minimum hours before appointment to allow cancellation"
+        cancellation_hint: "Leave blank for no restriction. E.g. 24 = cannot cancel within 24 hours of the appointment."
+        reschedule_title: "Rescheduling"
+        reschedule_label: "Minimum hours before appointment to allow rescheduling"
+        reschedule_hint: "Leave blank for no restriction. E.g. 48 = cannot reschedule within 48 hours."
+        requesting_title: "Requesting appointments"
+        request_max_label: "Maximum days ahead customers can book"
+        request_max_hint: "Leave blank for no limit. E.g. 14 = can only book up to 14 days in advance."
+        request_min_label: "Minimum hours advance notice required"
+        request_min_hint: "Leave blank for no minimum. E.g. 24 = must book at least 24 hours in advance."
+        no_restriction_placeholder: "No restriction"
+        submit: "Save policies"
+        back_to_space: "Back to space settings"
+      update:
+        notice: "Policies updated."
 
   booking:
     business_hours: "Open"
@@ -600,6 +628,8 @@ en:
     invalid:
       title: "Invalid link"
       body: "This booking link doesn't exist or has been removed."
+    invalid_slot: "Please select a valid time slot."
+    slot_outside_window: "This time slot is not available for booking. It may be outside the allowed booking window."
     expired:
       title: "Link expired"
       body: "This booking link has expired or has already been used."

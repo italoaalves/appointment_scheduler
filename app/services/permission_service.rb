@@ -10,7 +10,7 @@ class PermissionService
   ALLOWED_PERMISSIONS = %w[
     access_space_dashboard manage_space manage_team manage_customers
     manage_appointments destroy_appointments manage_scheduling_links
-    manage_personalized_links own_space
+    manage_personalized_links manage_policies own_space
   ].freeze
 
   def self.can?(user:, permission:, space: nil)

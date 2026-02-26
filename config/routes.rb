@@ -38,6 +38,7 @@ Rails.application.routes.draw do
   scope path: "settings", module: "spaces", as: "settings" do
     resource :space, only: [ :edit, :update ], controller: "space" do
       resource :availability, only: [ :edit, :update ], controller: "space/availabilities"
+      resource :policies, only: [ :edit, :update ], controller: "space/policies"
     end
   end
 

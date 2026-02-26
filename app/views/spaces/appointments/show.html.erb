@@ -43,7 +43,9 @@
   </div>
 
   <div class="flex flex-wrap items-center gap-3">
-    <%= link_to t("space.appointments.show.edit_reschedule"), edit_appointment_path(@appointment), class: button_classes(:primary) %>
+    <% unless @appointment.cancelled? %>
+      <%= link_to t("space.appointments.show.edit_reschedule"), edit_appointment_path(@appointment), class: button_classes(:primary) unless @appointment.rescheduled_from.present? %>
+    <% end %>
     <%= link_to t("space.appointments.show.back_to_appointments"), appointments_path, class: button_classes(:secondary) %>
 
     <% if @appointment.pending? %>
