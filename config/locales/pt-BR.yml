@@ -316,7 +316,7 @@ pt-BR:
     users:
       owner: "Proprietário"
       create:
-        notice: "Membro da equipe adicionado."
+        notice: "Convite enviado. O membro da equipe receberá um e-mail com um link para definir a senha."
       update:
         notice: "Membro da equipe atualizado."
       destroy:
@@ -357,11 +357,9 @@ pt-BR:
         status_prefix: "Status:"
       new:
         title: "Convidar membro"
-        subtitle: "Adicione um secretário ao seu espaço. Eles receberão os dados de acesso."
+        subtitle: "Adicione um membro à sua equipe. Eles receberão um e-mail com um link para definir a senha."
         phone_label: "Telefone"
-        password_label: "Senha"
-        password_confirmation_label: "Confirmação de senha"
-        submit: "Criar membro"
+        submit: "Enviar convite"
         back_to_team: "Voltar para equipe"
       edit:
         title: "Editar membro"

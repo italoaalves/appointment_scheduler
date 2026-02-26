@@ -4,6 +4,9 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
+  rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
+  rescue_from ActionController::ParameterMissing, with: :render_bad_request
+
   before_action :set_locale
 
   helper UiHelper
@@ -29,6 +32,20 @@ class ApplicationController < ActionController::Base
   def set_locale
     locale = locale_from_user_or_session
     I18n.locale = locale if locale.present?
+  end
+
+  def render_not_found
+    respond_to do |format|
+      format.html { render file: Rails.root.join("public/404.html"), status: :not_found, layout: false }
+      format.json { render json: { error: "Not found" }, status: :not_found }
+    end
+  end
+
+  def render_bad_request(exception)
+    respond_to do |format|
+      format.html { redirect_back fallback_location: root_path, alert: exception.message }
+      format.json { render json: { error: exception.message }, status: :bad_request }
+    end
   end
 
   def locale_from_user_or_session

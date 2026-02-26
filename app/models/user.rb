@@ -21,7 +21,7 @@ class User < ApplicationRecord
 
   after_save :sync_permissions_from_param
   after_create :ensure_user_preference
-  after_commit :ensure_space_for_owner, on: :create
+  after_commit :create_owner_space, on: :create
 
   # role: free-text string for display (e.g. "Manager", "Receptionist")
 
@@ -43,16 +43,17 @@ class User < ApplicationRecord
   end
 
   def permission_names
-    user_permissions.pluck(:permission)
+    @permission_names_cache ||= user_permissions.pluck(:permission)
+  end
+
+  def clear_permission_cache!
+    @permission_names_cache = nil
   end
 
   def sync_permissions_from_param
     return if @permission_names_param.nil?
 
-    names = @permission_names_param.reject(&:blank?).map(&:to_s) & PermissionService::ALLOWED_PERMISSIONS
-    current = permission_names
-    (current - names).each { |p| user_permissions.find_by(permission: p)&.destroy }
-    (names - current).each { |p| user_permissions.find_or_create_by!(permission: p) }
+    SyncUserPermissions.call(self, @permission_names_param)
   end
 
   private
@@ -63,12 +64,7 @@ class User < ApplicationRecord
     create_user_preference!(locale: I18n.default_locale.to_s)
   end
 
-  def ensure_space_for_owner
-    return unless can?(:own_space) && space_id.nil?
-
-    created_space = Space.new(name: name.presence || email)
-    created_space.owner_id = id
-    created_space.save!
-    update_column(:space_id, created_space.id)
+  def create_owner_space
+    CreateOwnerSpace.call(self)
   end
 end

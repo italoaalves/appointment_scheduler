@@ -3,6 +3,8 @@
 
   <%= render layout: "application/shared/card" do %>
     <%= form_with model: @user, class: "space-y-4" do |form| %>
+      <%= render "application/shared/error_messages", resource: @user %>
+
       <div>
         <%= form.label :email,
                        class: form_label_classes %>
@@ -26,24 +28,7 @@
                                  class: form_input_classes %>
       </div>
 
-      <%= render "users/permission_fields", form: form %>
-
-      <div class="grid gap-4 sm:grid-cols-2">
-        <div>
-          <%= form.label :password,
-                         t("space.users.new.password_label"),
-                         class: form_label_classes %>
-          <%= form.password_field :password,
-                                  class: form_input_classes("max-w-none") %>
-        </div>
-        <div>
-          <%= form.label :password_confirmation,
-                         t("space.users.new.password_confirmation_label"),
-                         class: form_label_classes %>
-          <%= form.password_field :password_confirmation,
-                                  class: form_input_classes("max-w-none") %>
-        </div>
-      </div>
+      <%= render "permission_fields", form: form %>
 
       <div class="flex flex-wrap gap-3">
         <%= form.submit t("space.users.new.submit"),

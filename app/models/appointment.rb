@@ -36,7 +36,7 @@ class Appointment < ApplicationRecord
   def customer_belongs_to_space
     return unless space_id.present? && customer_id.present?
 
-    unless space.customer_ids.include?(customer_id)
+    unless space.customers.exists?(id: customer_id)
       errors.add(:customer_id, :invalid)
     end
   end
@@ -49,17 +49,14 @@ class Appointment < ApplicationRecord
     return unless space_id.present? && scheduled_at.present?
 
     my_end = scheduled_at + effective_duration_minutes.minutes
-    overlapping = space.appointments
-                       .where(status: [ :confirmed, :rescheduled ])
-                       .where.not(id: id)
-                       .where.not(scheduled_at: nil)
+    conflict_exists = space.appointments
+      .where(status: [ :confirmed, :rescheduled ])
+      .where.not(id: id)
+      .where.not(scheduled_at: nil)
+      .where("scheduled_at < ? AND (scheduled_at + (COALESCE(duration_minutes, ?) || ' minutes')::interval) > ?",
+             my_end, space&.slot_duration_minutes || 30, scheduled_at)
+      .exists?
 
-      overlapping.find_each do |other|
-      other_end = other.scheduled_at + other.effective_duration_minutes.minutes
-      if scheduled_at < other_end && other.scheduled_at < my_end
-        errors.add(:base, :slot_already_booked)
-        break
-      end
-    end
+    errors.add(:base, :slot_already_booked) if conflict_exists
   end
 end

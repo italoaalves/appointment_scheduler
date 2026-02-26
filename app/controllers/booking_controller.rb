@@ -29,14 +29,12 @@ class BookingController < ApplicationController
 
   def create
     @space = @booking_context.space
-    scheduled_at = parse_scheduled_at(params[:scheduled_at])
+    scheduled_at = parse_scheduled_at(booking_params[:scheduled_at])
     if scheduled_at.blank?
-      @space = @booking_context.space
       flash.now[:alert] = t("booking.invalid_slot")
       return render :show, status: :unprocessable_entity
     end
     unless Spaces::SpacePolicyChecker.slot_requestable?(space: @space, scheduled_at: scheduled_at)
-      @space = @booking_context.space
       flash.now[:alert] = t("booking.slot_outside_window")
       return render :show, status: :unprocessable_entity
     end
@@ -51,7 +49,6 @@ class BookingController < ApplicationController
       @booking_context.mark_used!
       redirect_to @booking_context.redirect_after_booking
     else
-      @space = @booking_context.space
       flash.now[:alert] = appointment.errors.full_messages.to_sentence
       render :show, status: :unprocessable_entity
     end
@@ -86,13 +83,18 @@ class BookingController < ApplicationController
     nil
   end
 
+  def booking_params
+    params.permit(:customer_name, :customer_email, :customer_phone, :customer_address, :scheduled_at)
+  end
+
   def find_or_create_customer
+    bp = booking_params
     Spaces::CustomerFinder.find_or_create(
       space: @space,
-      email: params[:customer_email].to_s.strip.presence,
-      name: params[:customer_name].to_s.strip.presence,
-      phone: params[:customer_phone].to_s.strip.presence,
-      address: params[:customer_address].to_s.strip.presence
+      email: bp[:customer_email].to_s.strip.presence,
+      name: bp[:customer_name].to_s.strip.presence,
+      phone: bp[:customer_phone].to_s.strip.presence,
+      address: bp[:customer_address].to_s.strip.presence
     )
   end
 end

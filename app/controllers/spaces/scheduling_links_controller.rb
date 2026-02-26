@@ -2,10 +2,13 @@
 
 module Spaces
   class SchedulingLinksController < Spaces::BaseController
+    include RequirePermission
+
+    require_permission :manage_scheduling_links, except: [ :index, :show ], redirect_to: :scheduling_links_path
     before_action :set_scheduling_link, only: [ :show, :edit, :update, :destroy ]
 
     def index
-      @scheduling_links = current_tenant.scheduling_links.order(created_at: :desc)
+      @scheduling_links = current_tenant.scheduling_links.order(created_at: :desc).page(params[:page]).per(20)
       @personalized_link = current_tenant.personalized_scheduling_link
     end
 

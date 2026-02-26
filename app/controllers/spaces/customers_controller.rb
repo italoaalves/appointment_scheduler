@@ -2,10 +2,13 @@
 
 module Spaces
   class CustomersController < Spaces::BaseController
+    include RequirePermission
+
+    require_permission :manage_customers, except: [ :index, :show ], redirect_to: :customers_path
     before_action :set_customer, only: [ :show, :edit, :update, :destroy ]
 
     def index
-      @customers = current_tenant.customers.order(:name)
+      @customers = current_tenant.customers.order(:name).page(params[:page]).per(20)
     end
 
     def show

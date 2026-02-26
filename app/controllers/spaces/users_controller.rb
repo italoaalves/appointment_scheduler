@@ -8,7 +8,7 @@ module Spaces
     before_action :set_user, only: [ :show, :edit, :update, :destroy ]
 
     def index
-      @users = current_tenant.users.order(:email)
+      @users = current_tenant.users.order(:email).page(params[:page]).per(20)
     end
 
     def show
@@ -20,8 +20,10 @@ module Spaces
 
     def create
       @user = current_tenant.users.build(user_params)
+      @user.password = SecureRandom.hex(32) # Temporary; invitee sets their own via email link
 
       if @user.save
+        @user.send_reset_password_instructions
         redirect_to user_path(@user), notice: t("space.users.create.notice")
       else
         render :new
@@ -55,7 +57,7 @@ module Spaces
     end
 
     def user_params
-      permitted = [ :email, :name, :phone_number, :password, :password_confirmation, :role ]
+      permitted = [ :email, :name, :phone_number, :role ]
       permitted << { permission_names_param: [] } if current_user.can?(:manage_team, space: current_tenant)
       params.require(:user).permit(permitted)
     end

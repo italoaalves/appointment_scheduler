@@ -7,6 +7,10 @@ class Space < ApplicationRecord
 
   belongs_to :owner, class_name: "User", optional: true
   has_many :users, dependent: :destroy
+
+  validates :name, presence: true
+  validates :slot_duration_minutes, numericality: { only_integer: true, greater_than: 0 }
+  validates :timezone, presence: true
   has_many :customers, dependent: :destroy
   has_many :appointments, dependent: :destroy
   has_many :scheduling_links, dependent: :destroy

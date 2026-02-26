@@ -22,7 +22,7 @@ module Messaging
       assert result[:success]
       assert_equal 1, ActionMailer::Base.deliveries.size
       mail = ActionMailer::Base.deliveries.first
-      assert_equal ["customer@example.com"], mail.to
+      assert_equal [ "customer@example.com" ], mail.to
       assert_equal "Appointment Confirmation", mail.subject
       assert_includes mail.body.encoded, "Your appointment is confirmed"
     end

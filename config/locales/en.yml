@@ -345,7 +345,7 @@ en:
     users:
       owner: "Owner"
       create:
-        notice: "Team member added."
+        notice: "Invitation sent. The team member will receive an email with a link to set their password."
       update:
         notice: "Team member updated."
       destroy:
@@ -386,11 +386,9 @@ en:
         status_prefix: "Status:"
       new:
         title: "Invite team member"
-        subtitle: "Add a secretary to your space. They will receive login details."
+        subtitle: "Add a team member to your space. They will receive an email with a link to set their password."
         phone_label: "Phone"
-        password_label: "Password"
-        password_confirmation_label: "Password confirmation"
-        submit: "Create team member"
+        submit: "Send invitation"
         back_to_team: "Back to team"
       edit:
         title: "Edit team member"

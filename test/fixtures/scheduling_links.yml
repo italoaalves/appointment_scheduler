@@ -1,0 +1,30 @@
+permanent_link:
+  space: one
+  token: "test-permanent-token"
+  link_type: 0
+  name: "Main Link"
+
+single_use_link:
+  space: one
+  token: "test-single-use-token"
+  link_type: 1
+  expires_at: <%= 7.days.from_now.iso8601 %>
+
+expired_link:
+  space: one
+  token: "test-expired-token"
+  link_type: 1
+  expires_at: <%= 1.day.ago.iso8601 %>
+
+used_link:
+  space: one
+  token: "test-used-token"
+  link_type: 1
+  expires_at: <%= 7.days.from_now.iso8601 %>
+  used_at: <%= 1.hour.ago.iso8601 %>
+
+other_space_link:
+  space: two
+  token: "test-other-space-token"
+  link_type: 0
+  name: "Other Space Link"

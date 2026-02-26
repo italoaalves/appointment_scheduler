@@ -64,6 +64,13 @@ module Platform
       end
 
       session[:impersonated_user_id] = @user.id
+      Rails.logger.info(
+        "[IMPERSONATION_START] admin_id=#{real_current_user.id} " \
+        "admin_email=#{real_current_user.email} " \
+        "impersonated_id=#{@user.id} " \
+        "impersonated_email=#{@user.email} " \
+        "at=#{Time.current.iso8601}"
+      )
       redirect_to root_path, notice: t("platform.impersonation.started", name: @user.name.presence || @user.email)
     end
 

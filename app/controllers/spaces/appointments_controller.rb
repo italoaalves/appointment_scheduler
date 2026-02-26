@@ -5,6 +5,7 @@ module Spaces
     include FilterableByDateRange
     include RequirePermission
 
+    require_permission :manage_appointments, except: [ :index, :pending, :show ], redirect_to: :appointments_path
     require_permission :destroy_appointments, only: [ :destroy ], redirect_to: :appointments_path
     before_action :set_appointment, only: [ :show, :edit, :update, :destroy, :confirm, :cancel, :no_show, :finish_form, :finish ]
 

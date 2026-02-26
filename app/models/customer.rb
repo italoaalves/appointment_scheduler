@@ -6,4 +6,5 @@ class Customer < ApplicationRecord
   has_many :appointments, dependent: :nullify
 
   validates :name, presence: true
+  validates :email, uniqueness: { scope: :space_id, allow_blank: true }
 end

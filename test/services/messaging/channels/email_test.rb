@@ -16,7 +16,7 @@ module Messaging
         assert result[:success]
         assert_equal 1, ActionMailer::Base.deliveries.size
         mail = ActionMailer::Base.deliveries.first
-        assert_equal ["customer@example.com"], mail.to
+        assert_equal [ "customer@example.com" ], mail.to
         assert_equal "Test", mail.subject
         assert_includes mail.body.encoded, "Hello!"
       end
@@ -25,7 +25,7 @@ module Messaging
         result = Email.new.deliver(to: "direct@example.com", body: "Hi", subject: "Direct")
 
         assert result[:success]
-        assert_equal ["direct@example.com"], ActionMailer::Base.deliveries.first.to
+        assert_equal [ "direct@example.com" ], ActionMailer::Base.deliveries.first.to
       end
 
       test "uses default subject when subject is blank" do
