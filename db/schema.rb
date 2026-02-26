@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_26_010000) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_26_013844) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -131,6 +131,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_010000) do
     t.integer "personalized_slug_changes_count", default: 0, null: false
     t.datetime "personalized_slug_last_changed_at"
     t.text "booking_success_message"
+    t.bigint "owner_id"
+    t.index ["owner_id"], name: "index_spaces_on_owner_id"
   end
 
   create_table "user_permissions", force: :cascade do |t|
@@ -178,6 +180,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_010000) do
   add_foreign_key "notifications", "users"
   add_foreign_key "personalized_scheduling_links", "spaces"
   add_foreign_key "scheduling_links", "spaces"
+  add_foreign_key "spaces", "users", column: "owner_id"
   add_foreign_key "user_permissions", "users"
   add_foreign_key "user_preferences", "users"
   add_foreign_key "users", "spaces"

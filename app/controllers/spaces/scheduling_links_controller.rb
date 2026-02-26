@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Space
-  class SchedulingLinksController < Space::BaseController
+module Spaces
+  class SchedulingLinksController < Spaces::BaseController
     before_action :set_scheduling_link, only: [ :show, :edit, :update, :destroy ]
 
     def index

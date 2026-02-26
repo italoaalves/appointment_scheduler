@@ -48,6 +48,12 @@
                 </td>
               <td class="px-4 py-2 align-top">
                 <div class="flex flex-wrap justify-end gap-1">
+                  <% unless user.super_admin? %>
+                    <%= button_to t("platform.users.index.impersonate"),
+                                  impersonate_platform_user_path(user),
+                                  method: :post,
+                                  class: button_classes(:table_link) %>
+                  <% end %>
                   <%= link_to t("platform.users.index.view"), platform_user_path(user, space_id: params[:space_id].presence), class: button_classes(:table_link) %>
                   <%= link_to t("platform.users.index.edit"), edit_platform_user_path(user, space_id: params[:space_id].presence), class: button_classes(:table_link) %>
                   <%= button_to t("platform.users.index.delete"), platform_user_path(user), method: :delete, params: { space_id: params[:space_id].presence }, data: { turbo_confirm: t("platform.users.index.delete_confirm") }, class: button_classes(:danger) %>

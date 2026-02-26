@@ -2,7 +2,7 @@
 
 module Platform
   class SpaceCustomersController < Platform::BaseController
-    before_action :set_space
+    include Platform::SpaceScoped
 
     def index
       @customers = @space.customers.order(:name).page(params[:page]).per(20)
@@ -16,12 +16,6 @@ module Platform
                                .order(scheduled_at: :desc)
                                .page(params[:page])
                                .per(10)
-    end
-
-    private
-
-    def set_space
-      @space = Space.find(params[:space_id])
     end
   end
 end

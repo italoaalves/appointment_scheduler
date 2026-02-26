@@ -309,12 +309,14 @@ pt-BR:
         all_customers: "Todos os clientes"
 
     users:
+      owner: "Proprietário"
       create:
         notice: "Membro da equipe adicionado."
       update:
         notice: "Membro da equipe atualizado."
       destroy:
         notice: "Membro da equipe removido."
+        cannot_remove_owner: "Não é possível remover o proprietário do espaço."
       manager_only: "Apenas usuários com permissão podem adicionar ou editar membros da equipe."
       form:
         role_label: "Cargo"
@@ -574,7 +576,17 @@ pt-BR:
       body: "Este link expirou ou já foi utilizado."
 
   platform:
+    dashboard:
+      subtitle: "Área de administração da plataforma. Gestão de inquilinos pode ser adicionada aqui."
     unauthorized: "Você não tem permissão para acessar a área da plataforma."
+    impersonation:
+      banner: "Impersonando %{name}"
+      stop: "Parar impersonação"
+      started: "Visualizando como %{name}"
+      stopped: "Impersonação encerrada."
+      stop_first: "Pare a impersonação antes de acessar a área da plataforma."
+      cannot_impersonate_admin: "Não é possível impersonar outro administrador da plataforma."
+      user_not_found: "Usuário impersonado não existe mais."
     spaces:
       create:
         notice: "Espaço criado."
@@ -657,6 +669,87 @@ pt-BR:
         back_to_space: "Voltar para espaço"
         back_to_links: "Voltar para links"
 
+    appointments:
+      filters:
+        status: "Status"
+        all_statuses: "Todos os status"
+        pending: "Pendente"
+        confirmed: "Confirmada"
+        cancelled: "Cancelada"
+        rescheduled: "Reagendada"
+        no_show: "Faltou"
+        finished: "Finalizada"
+        from: "De"
+        to: "Até"
+        apply: "Filtrar"
+        clear: "Limpar"
+      index:
+        table:
+          customer: "Cliente"
+          scheduled: "Agendada"
+          status: "Status"
+          actions: "Ações"
+        view: "Ver"
+        empty: "Nenhuma consulta ainda. Quando os clientes começarem a solicitar, elas aparecerão aqui."
+      show:
+        title: "Consulta"
+        customer: "Cliente"
+        scheduled_for: "Agendada para"
+        requested_at: "Solicitada em"
+
+    customers:
+      index:
+        table:
+          name: "Nome"
+          phone: "Telefone"
+          actions: "Ações"
+        view: "Ver"
+        empty: "Nenhum cliente ainda. Adicione clientes para atribuir consultas."
+      show:
+        title: "Cliente"
+        name: "Nome"
+        phone: "Telefone"
+        email: "E-mail"
+        address: "Endereço"
+        appointments_title: "Consultas"
+        no_appointments: "Nenhuma consulta para este cliente ainda."
+        status_prefix: "Status:"
+
+    scheduling_links:
+      index:
+        table:
+          name: "Nome"
+          type: "Tipo"
+          status: "Status"
+          actions: "Ações"
+        active: "Ativo"
+        inactive: "Inativo"
+        view: "Ver"
+        empty: "Nenhum link ainda. Crie um para que clientes agendem sem fazer login."
+      show:
+        untitled: "Link de agendamento"
+        active: "Ativo"
+        inactive: "Inativo"
+        booking_url: "URL de agendamento"
+        copy_hint: "Compartilhe este link com clientes. Não precisa fazer login."
+        copy: "Copiar"
+        copied: "Copiado!"
+        type: "Tipo"
+        expires_at: "Expira em"
+        used_at: "Usado em"
+        not_used: "Não usado"
+        open_link: "Abrir link"
+
+    permissions:
+      access_space_dashboard: "Acessar painel do espaço"
+      manage_space: "Gerenciar configurações do espaço"
+      manage_team: "Gerenciar membros da equipe"
+      manage_customers: "Gerenciar clientes"
+      manage_appointments: "Gerenciar consultas"
+      destroy_appointments: "Excluir consultas"
+      manage_scheduling_links: "Gerenciar links de agendamento"
+      manage_personalized_links: "Gerenciar link personalizado"
+
     users:
       create:
         notice: "Usuário criado."
@@ -677,6 +770,7 @@ pt-BR:
           actions: "Ações"
         view: "Ver"
         edit: "Editar"
+        impersonate: "Impersonar"
         delete: "Excluir"
         delete_confirm: "Excluir este usuário permanentemente?"
         empty: "Nenhum usuário ainda."
@@ -688,6 +782,7 @@ pt-BR:
         phone: "Telefone"
         space: "Espaço"
         edit: "Editar"
+        impersonate: "Impersonar"
         back: "Voltar para usuários"
         delete: "Excluir"
         delete_confirm: "Excluir este usuário permanentemente?"

@@ -28,6 +28,9 @@ class PermissionService
     return false unless ALLOWED_PERMISSIONS.include?(permission.to_s)
     return false unless @space.nil? || @user.space_id == @space&.id
 
+    # Space owner has full access by default
+    return true if @space.present? && @user.space_owner?(@space)
+
     @user.permission_names.include?(permission.to_s)
   end
 

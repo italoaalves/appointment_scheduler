@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Space
-  class CustomersController < Space::BaseController
+module Spaces
+  class CustomersController < Spaces::BaseController
     before_action :set_customer, only: [ :show, :edit, :update, :destroy ]
 
     def index

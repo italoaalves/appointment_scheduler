@@ -2,7 +2,7 @@
   <header class="flex items-center justify-between gap-3">
     <div>
       <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
-        <%= t("admin.customers.show.title") %>
+        <%= t("platform.customers.show.title") %>
       </h1>
       <p class="mt-1 text-xs text-slate-600">
         <%= t("platform.space_customers.show.subtitle", space: @space.name) %>
@@ -18,19 +18,19 @@
   <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
     <dl class="space-y-3 text-sm">
       <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("admin.customers.show.name") %></dt>
+        <dt class="font-medium text-slate-700"><%= t("platform.customers.show.name") %></dt>
         <dd class="text-slate-900"><%= @customer.name %></dd>
       </div>
       <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("admin.customers.show.phone") %></dt>
+        <dt class="font-medium text-slate-700"><%= t("platform.customers.show.phone") %></dt>
         <dd class="text-slate-900"><%= @customer.phone.presence || "—" %></dd>
       </div>
       <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("admin.customers.show.email") %></dt>
+        <dt class="font-medium text-slate-700"><%= t("platform.customers.show.email") %></dt>
         <dd class="text-slate-900"><%= @customer.email.presence || "—" %></dd>
       </div>
       <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("admin.customers.show.address") %></dt>
+        <dt class="font-medium text-slate-700"><%= t("platform.customers.show.address") %></dt>
         <dd class="text-slate-900"><%= @customer.address.presence || "—" %></dd>
       </div>
     </dl>
@@ -44,7 +44,7 @@
 
   <section class="space-y-3">
     <h2 class="text-sm font-semibold text-slate-900">
-      <%= t("admin.customers.show.appointments_title") %>
+      <%= t("platform.customers.show.appointments_title") %>
     </h2>
 
     <% if @appointments.any? %>
@@ -57,10 +57,10 @@
                   <%= format_appointment_time(appointment.scheduled_at, space: appointment.space, format: :long) || "—" %>
                 </p>
                 <p class="mt-0.5 text-xs text-slate-500">
-                  <%= t("admin.customers.show.status_prefix") %> <%= t("activerecord.attributes.appointment.status.#{appointment.status}") %>
+                  <%= t("platform.customers.show.status_prefix") %> <%= t("activerecord.attributes.appointment.status.#{appointment.status}") %>
                 </p>
               </div>
-              <%= link_to t("admin.appointments.index.view"),
+              <%= link_to t("platform.appointments.index.view"),
                           platform_space_appointment_path(@space, appointment),
                           class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
             </div>
@@ -70,7 +70,7 @@
       <%= paginate @appointments %>
     <% else %>
       <p class="text-sm text-slate-600">
-        <%= t("admin.customers.show.no_appointments") %>
+        <%= t("platform.customers.show.no_appointments") %>
       </p>
     <% end %>
   </section>

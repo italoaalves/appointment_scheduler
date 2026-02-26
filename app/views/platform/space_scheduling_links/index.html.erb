@@ -10,16 +10,16 @@
         <thead class="bg-slate-50">
           <tr>
             <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("admin.scheduling_links.index.table.name") %>
+              <%= t("platform.scheduling_links.index.table.name") %>
             </th>
             <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("admin.scheduling_links.index.table.type") %>
+              <%= t("platform.scheduling_links.index.table.type") %>
             </th>
             <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("admin.scheduling_links.index.table.status") %>
+              <%= t("platform.scheduling_links.index.table.status") %>
             </th>
             <th scope="col" class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("admin.scheduling_links.index.table.actions") %>
+              <%= t("platform.scheduling_links.index.table.actions") %>
             </th>
           </tr>
         </thead>
@@ -34,13 +34,13 @@
               </td>
               <td class="px-4 py-2 align-top text-slate-700">
                 <% if link.usable? %>
-                  <span class="text-emerald-600"><%= t("admin.scheduling_links.index.active") %></span>
+                  <span class="text-emerald-600"><%= t("platform.scheduling_links.index.active") %></span>
                 <% else %>
-                  <span class="text-slate-500"><%= t("admin.scheduling_links.index.inactive") %></span>
+                  <span class="text-slate-500"><%= t("platform.scheduling_links.index.inactive") %></span>
                 <% end %>
               </td>
               <td class="px-4 py-2 align-top">
-                <%= link_to t("admin.scheduling_links.index.view"), platform_space_scheduling_link_path(@space, link), class: button_classes(:table_link) %>
+                <%= link_to t("platform.scheduling_links.index.view"), platform_space_scheduling_link_path(@space, link), class: button_classes(:table_link) %>
               </td>
             </tr>
           <% end %>
@@ -49,6 +49,6 @@
     </div>
     <%= paginate @scheduling_links %>
   <% else %>
-    <%= render "application/shared/empty_state", content: t("admin.scheduling_links.index.empty") %>
+    <%= render "application/shared/empty_state", content: t("platform.scheduling_links.index.empty") %>
   <% end %>
 </div>

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Space
-  class UsersController < Space::BaseController
+module Spaces
+  class UsersController < Spaces::BaseController
     include StripBlankPasswordParams
     include RequirePermission
 
@@ -41,6 +41,10 @@ module Space
     end
 
     def destroy
+      if @user.space_owner?(current_tenant)
+        redirect_to users_path, alert: t("space.users.destroy.cannot_remove_owner")
+        return
+      end
       @user.destroy
       redirect_to users_path, notice: t("space.users.destroy.notice")
     end
@@ -53,7 +57,7 @@ module Space
 
     def user_params
       permitted = [ :email, :name, :phone_number, :password, :password_confirmation, :role ]
-      permitted << { permission_names_param: [] } if current_user.can?(:manage_team)
+      permitted << { permission_names_param: [] } if current_user.can?(:manage_team, space: current_tenant)
       params.require(:user).permit(permitted)
     end
   end

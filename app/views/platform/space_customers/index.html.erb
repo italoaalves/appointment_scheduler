@@ -11,13 +11,13 @@
         <thead class="bg-slate-50">
           <tr>
             <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("admin.customers.index.table.name") %>
+              <%= t("platform.customers.index.table.name") %>
             </th>
             <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("admin.customers.index.table.phone") %>
+              <%= t("platform.customers.index.table.phone") %>
             </th>
             <th scope="col" class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("admin.customers.index.table.actions") %>
+              <%= t("platform.customers.index.table.actions") %>
             </th>
           </tr>
         </thead>
@@ -27,7 +27,7 @@
               <td class="px-4 py-2 align-top text-slate-900"><%= customer.name %></td>
               <td class="px-4 py-2 align-top text-slate-700"><%= customer.phone.presence || "—" %></td>
               <td class="px-4 py-2 align-top">
-                <%= link_to t("admin.customers.index.view"), platform_space_customer_path(@space, customer), class: button_classes(:table_link) %>
+                <%= link_to t("platform.customers.index.view"), platform_space_customer_path(@space, customer), class: button_classes(:table_link) %>
               </td>
             </tr>
           <% end %>
@@ -36,6 +36,6 @@
     </div>
     <%= paginate @customers %>
   <% else %>
-    <%= render "application/shared/empty_state", content: t("admin.customers.index.empty") %>
+    <%= render "application/shared/empty_state", content: t("platform.customers.index.empty") %>
   <% end %>
 </div>

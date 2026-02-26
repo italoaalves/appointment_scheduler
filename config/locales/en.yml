@@ -338,12 +338,14 @@ en:
         all_customers: "All customers"
 
     users:
+      owner: "Owner"
       create:
         notice: "Team member added."
       update:
         notice: "Team member updated."
       destroy:
         notice: "Team member removed."
+        cannot_remove_owner: "Cannot remove the space owner."
       manager_only: "Only users with permission can add or edit team members."
       form:
         role_label: "Job title"
@@ -603,7 +605,17 @@ en:
       body: "This booking link has expired or has already been used."
 
   platform:
+    dashboard:
+      subtitle: "SaaS admin area. Tenant management can be added here."
     unauthorized: "You are not allowed to access the platform area."
+    impersonation:
+      banner: "Impersonating %{name}"
+      stop: "Stop impersonating"
+      started: "Now viewing as %{name}"
+      stopped: "Impersonation ended."
+      stop_first: "Stop impersonating before accessing the platform area."
+      cannot_impersonate_admin: "Cannot impersonate another platform admin."
+      user_not_found: "Impersonated user no longer exists."
     spaces:
       create:
         notice: "Space created."
@@ -686,6 +698,87 @@ en:
         back_to_space: "Back to space"
         back_to_links: "Back to links"
 
+    appointments:
+      filters:
+        status: "Status"
+        all_statuses: "All statuses"
+        pending: "Pending"
+        confirmed: "Confirmed"
+        cancelled: "Cancelled"
+        rescheduled: "Rescheduled"
+        no_show: "No-show"
+        finished: "Finished"
+        from: "From"
+        to: "To"
+        apply: "Filter"
+        clear: "Clear"
+      index:
+        table:
+          customer: "Customer"
+          scheduled: "Scheduled"
+          status: "Status"
+          actions: "Actions"
+        view: "View"
+        empty: "No appointments yet. Once customers start requesting, they'll appear here."
+      show:
+        title: "Appointment"
+        customer: "Customer"
+        scheduled_for: "Scheduled for"
+        requested_at: "Requested at"
+
+    customers:
+      index:
+        table:
+          name: "Name"
+          phone: "Phone"
+          actions: "Actions"
+        view: "View"
+        empty: "No customers yet. Add customers to assign appointments."
+      show:
+        title: "Customer"
+        name: "Name"
+        phone: "Phone"
+        email: "Email"
+        address: "Address"
+        appointments_title: "Appointments"
+        no_appointments: "No appointments for this customer yet."
+        status_prefix: "Status:"
+
+    scheduling_links:
+      index:
+        table:
+          name: "Name"
+          type: "Type"
+          status: "Status"
+          actions: "Actions"
+        active: "Active"
+        inactive: "Inactive"
+        view: "View"
+        empty: "No booking links yet. Create one to let customers schedule appointments without logging in."
+      show:
+        untitled: "Booking link"
+        active: "Active"
+        inactive: "Inactive"
+        booking_url: "Booking URL"
+        copy_hint: "Share this link with customers. No login required."
+        copy: "Copy"
+        copied: "Copied!"
+        type: "Type"
+        expires_at: "Expires at"
+        used_at: "Used at"
+        not_used: "Not used"
+        open_link: "Open link"
+
+    permissions:
+      access_space_dashboard: "Access space dashboard"
+      manage_space: "Manage space settings"
+      manage_team: "Manage team members"
+      manage_customers: "Manage customers"
+      manage_appointments: "Manage appointments"
+      destroy_appointments: "Delete appointments"
+      manage_scheduling_links: "Manage scheduling links"
+      manage_personalized_links: "Manage personalized link"
+
     users:
       create:
         notice: "User created."
@@ -706,6 +799,7 @@ en:
           actions: "Actions"
         view: "View"
         edit: "Edit"
+        impersonate: "Impersonate"
         delete: "Delete"
         delete_confirm: "Permanently delete this user?"
         empty: "No users yet."
@@ -717,6 +811,7 @@ en:
         phone: "Phone"
         space: "Space"
         edit: "Edit"
+        impersonate: "Impersonate"
         back: "Back to users"
         delete: "Delete"
         delete_confirm: "Permanently delete this user?"

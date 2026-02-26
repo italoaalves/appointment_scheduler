@@ -3,8 +3,8 @@
 module Platform
   class SpaceAppointmentsController < Platform::BaseController
     include FilterableByDateRange
+    include Platform::SpaceScoped
 
-    before_action :set_space
     before_action :set_appointment, only: [ :show ]
 
     def index
@@ -18,10 +18,6 @@ module Platform
     end
 
     private
-
-    def set_space
-      @space = Space.find(params[:space_id])
-    end
 
     def set_appointment
       @appointment = @space.appointments.find(params[:id])

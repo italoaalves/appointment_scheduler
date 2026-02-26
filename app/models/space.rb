@@ -5,6 +5,7 @@ class Space < ApplicationRecord
 
   attribute :timezone, :string, default: "America/Sao_Paulo"
 
+  belongs_to :owner, class_name: "User", optional: true
   has_many :users, dependent: :destroy
   has_many :customers, dependent: :destroy
   has_many :appointments, dependent: :destroy

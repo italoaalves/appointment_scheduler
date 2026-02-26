@@ -36,7 +36,7 @@
         <%= form.collection_check_boxes :permission_names_param,
                                         PermissionService::ALLOWED_PERMISSIONS.excluding("own_space"),
                                         :to_s,
-                                        ->(p) { t("admin.permissions.#{p}") } do |b| %>
+                                        ->(p) { t("platform.permissions.#{p}") } do |b| %>
           <label class="mt-2 flex items-center gap-2 text-sm">
             <%= b.check_box %>
             <span><%= b.text %></span>

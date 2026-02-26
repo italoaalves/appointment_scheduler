@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Tenant
-  class AppointmentsController < Tenant::BaseController
+module Spaces
+  class AppointmentsController < Spaces::BaseController
     include FilterableByDateRange
     include RequirePermission
 
@@ -31,7 +31,7 @@ module Tenant
     end
 
     def create
-      @appointment = AppointmentCreator.call(
+      @appointment = Spaces::AppointmentCreator.call(
         space: current_tenant,
         attributes: appointment_params
       )
@@ -60,17 +60,17 @@ module Tenant
     end
 
     def confirm
-      result = AppointmentTransitionService.call(appointment: @appointment, to_status: :confirmed)
+      result = Spaces::AppointmentTransitionService.call(appointment: @appointment, to_status: :confirmed)
       handle_transition_result(result, notice: t("space.appointments.confirm.notice"))
     end
 
     def cancel
-      result = AppointmentTransitionService.call(appointment: @appointment, to_status: :cancelled)
+      result = Spaces::AppointmentTransitionService.call(appointment: @appointment, to_status: :cancelled)
       handle_transition_result(result, notice: t("space.appointments.cancel.notice"))
     end
 
     def no_show
-      result = AppointmentTransitionService.call(appointment: @appointment, to_status: :no_show)
+      result = Spaces::AppointmentTransitionService.call(appointment: @appointment, to_status: :no_show)
       handle_transition_result(result,
         notice: t("space.appointments.no_show.notice"),
         cannot_before_key: "space.appointments.no_show.cannot_before_scheduled")
@@ -83,7 +83,7 @@ module Tenant
     end
 
     def finish
-      result = AppointmentTransitionService.call(
+      result = Spaces::AppointmentTransitionService.call(
         appointment: @appointment,
         to_status: :finished,
         finished_at_raw: params[:finished_at]

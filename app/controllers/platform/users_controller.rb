@@ -4,7 +4,7 @@ module Platform
   class UsersController < Platform::BaseController
     include StripBlankPasswordParams
 
-    before_action :set_user, only: [ :show, :edit, :update, :destroy ]
+    before_action :set_user, only: [ :show, :edit, :update, :destroy, :impersonate ]
 
     def index
       @users = User.includes(:space).order(:email)
@@ -55,6 +55,16 @@ module Platform
       space_id = params[:space_id].presence
       @user.destroy
       redirect_to platform_users_path(space_id: space_id), notice: t("platform.users.destroy.notice")
+    end
+
+    def impersonate
+      if @user.super_admin?
+        redirect_to platform_users_path, alert: t("platform.impersonation.cannot_impersonate_admin")
+        return
+      end
+
+      session[:impersonated_user_id] = @user.id
+      redirect_to root_path, notice: t("platform.impersonation.started", name: @user.name.presence || @user.email)
     end
 
     private

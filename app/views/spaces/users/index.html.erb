@@ -31,13 +31,21 @@
             <tr class="hover:bg-slate-50">
               <td class="px-4 py-2 align-top text-slate-900"><%= user.email %></td>
               <td class="px-4 py-2 align-top text-slate-700"><%= user.name.presence || "—" %></td>
-              <td class="px-4 py-2 align-top text-slate-700"><%= user.role.presence || "—" %></td>
+              <td class="px-4 py-2 align-top text-slate-700">
+                <% if user.space_owner?(current_tenant) %>
+                  <span class="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800"><%= t("space.users.owner") %></span>
+                <% else %>
+                  <%= user.role.presence || "—" %>
+                <% end %>
+              </td>
               <td class="px-4 py-2 align-top">
                 <div class="flex flex-wrap justify-end gap-1">
                   <%= link_to t("space.users.index.view"), user_path(user), class: button_classes(:table_link) %>
                   <% if current_user.can?(:manage_team) %>
                     <%= link_to t("space.users.index.edit"), edit_user_path(user), class: button_classes(:table_link) %>
-                    <%= button_to t("space.users.index.delete"), user_path(user), method: :delete, data: { turbo_confirm: t("space.users.index.delete_confirm") }, class: button_classes(:table_danger) %>
+                    <% unless user.space_owner?(current_tenant) %>
+                      <%= button_to t("space.users.index.delete"), user_path(user), method: :delete, data: { turbo_confirm: t("space.users.index.delete_confirm") }, class: button_classes(:table_danger) %>
+                    <% end %>
                   <% end %>
                 </div>
               </td>

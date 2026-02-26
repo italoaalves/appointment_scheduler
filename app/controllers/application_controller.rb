@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  include Impersonation
+
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
@@ -21,7 +23,7 @@ class ApplicationController < ActionController::Base
   end
 
   def tenant_staff?
-    current_user&.can?(:access_space_dashboard)
+    current_user&.can?(:access_space_dashboard, space: current_user.space)
   end
 
   def set_locale

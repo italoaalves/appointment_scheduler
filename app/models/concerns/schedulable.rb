@@ -17,7 +17,7 @@ module Schedulable
   end
 
   def available_slots(from_date:, to_date:, limit: 50)
-    SlotAvailabilityService.call(schedulable: self, from_date: from_date, to_date: to_date, limit: limit)
+    Spaces::SlotAvailabilityService.call(schedulable: self, from_date: from_date, to_date: to_date, limit: limit)
   end
 
   def empty_slots_count(from_date:, to_date:)

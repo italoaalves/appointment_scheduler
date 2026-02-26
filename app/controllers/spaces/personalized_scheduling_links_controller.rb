@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Space
-  class PersonalizedSchedulingLinksController < Space::BaseController
+module Spaces
+  class PersonalizedSchedulingLinksController < Spaces::BaseController
     include RequirePermission
 
     require_permission :manage_personalized_links, redirect_to: :scheduling_links_path

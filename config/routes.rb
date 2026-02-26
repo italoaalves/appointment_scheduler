@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   get "book/:token/slots", to: "booking#slots", as: :book_slots
   post "book/:token", to: "booking#create"
 
-  scope module: "tenant" do
+  scope module: "spaces" do
     resources :appointments do
       collection do
         get :pending
@@ -35,7 +35,7 @@ Rails.application.routes.draw do
     resources :users, path: "team"
   end
 
-  scope path: "settings", module: "tenant", as: "settings" do
+  scope path: "settings", module: "spaces", as: "settings" do
     resource :space, only: [ :edit, :update ], controller: "space" do
       resource :availability, only: [ :edit, :update ], controller: "space/availabilities"
     end
@@ -44,11 +44,17 @@ Rails.application.routes.draw do
   namespace :platform do
     root to: "dashboard#index", as: :root
 
+    post "impersonation/stop", to: "impersonations#stop", as: :stop_impersonation
+
     resources :spaces do
       resources :appointments, only: [ :index, :show ], controller: "space_appointments"
       resources :customers, only: [ :index, :show ], controller: "space_customers"
       resources :scheduling_links, only: [ :index, :show ], controller: "space_scheduling_links"
     end
-    resources :users
+    resources :users do
+      member do
+        post :impersonate
+      end
+    end
   end
 end

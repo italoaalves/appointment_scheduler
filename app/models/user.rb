@@ -37,6 +37,11 @@ class User < ApplicationRecord
     PermissionService.can?(user: self, permission: permission, space: space)
   end
 
+  def space_owner?(space = nil)
+    target = space || self.space
+    target.present? && target.owner_id == id
+  end
+
   def permission_names
     user_permissions.pluck(:permission)
   end
@@ -61,7 +66,9 @@ class User < ApplicationRecord
   def ensure_space_for_owner
     return unless can?(:own_space) && space_id.nil?
 
-    created_space = Space.create!(name: name.presence || email)
+    created_space = Space.new(name: name.presence || email)
+    created_space.owner_id = id
+    created_space.save!
     update_column(:space_id, created_space.id)
   end
 end

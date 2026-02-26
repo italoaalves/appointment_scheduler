@@ -30,7 +30,7 @@ class BookingController < ApplicationController
   def create
     @space = @booking_context.space
     customer = find_or_create_customer
-    appointment = AppointmentCreator.call(
+    appointment = Spaces::AppointmentCreator.call(
       space: @space,
       customer: customer,
       attributes: { scheduled_at: params[:scheduled_at] }
@@ -67,7 +67,7 @@ class BookingController < ApplicationController
   end
 
   def find_or_create_customer
-    CustomerFinder.find_or_create(
+    Spaces::CustomerFinder.find_or_create(
       space: @space,
       email: params[:customer_email].to_s.strip.presence,
       name: params[:customer_name].to_s.strip.presence,
