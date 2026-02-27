@@ -58,6 +58,13 @@ module Billing
       assert @subscription.reload.active?
     end
 
+    test "PAYMENT_CONFIRMED BillingEvent metadata includes plan_slug" do
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED"))
+
+      event = Billing::BillingEvent.find_by(event_type: "webhook.payment_confirmed")
+      assert_equal @subscription.plan.slug, event.metadata["plan_slug"]
+    end
+
     test "PAYMENT_CONFIRMED is idempotent — processing twice does not create duplicate BillingEvents" do
       Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED"))
       Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED"))

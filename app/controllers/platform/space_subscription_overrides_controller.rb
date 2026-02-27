@@ -78,7 +78,22 @@ module Platform
         return
       end
 
-      Billing::CreditManager.purchase(space: @space, amount: amount, actor: current_user)
+      ActiveRecord::Base.transaction do
+        credit = Billing::MessageCredit.find_or_create_by!(space: @space) do |c|
+          c.balance = 0
+          c.monthly_quota_remaining = 0
+          c.quota_refreshed_at = Time.current
+        end
+        credit.increment!(:balance, amount)
+
+        Billing::BillingEvent.create!(
+          space:      @space,
+          event_type: "credits.granted",
+          metadata:   { amount: amount },
+          actor_id:   current_user.id
+        )
+      end
+
       redirect_to platform_space_path(@space), notice: "#{amount} credits granted."
     end
   end

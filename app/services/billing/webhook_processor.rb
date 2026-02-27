@@ -132,7 +132,8 @@ module Billing
       return if already_processed?("webhook.subscription_deleted", asaas_subscription_id,
                                    key: "asaas_subscription_id")
 
-      subscription = Billing::Subscription.find_by(asaas_subscription_id: asaas_subscription_id)
+      subscription = Billing::Subscription.includes(:billing_plan)
+                                         .find_by(asaas_subscription_id: asaas_subscription_id)
       return log_missing_subscription(asaas_subscription_id) unless subscription
 
       ActiveRecord::Base.transaction do
@@ -146,12 +147,15 @@ module Billing
 
     def find_subscription_for_payment(payment_data)
       asaas_sub_id = payment_data["subscription"]
-      sub = Billing::Subscription.find_by(asaas_subscription_id: asaas_sub_id) if asaas_sub_id.present?
-      return sub if sub
+      if asaas_sub_id.present?
+        sub = Billing::Subscription.includes(:billing_plan)
+                                   .find_by(asaas_subscription_id: asaas_sub_id)
+        return sub if sub
+      end
 
       external_ref = payment_data["externalReference"].to_s
       space_id     = external_ref.sub("space_", "").to_i
-      Billing::Subscription.find_by(space_id: space_id) if space_id.positive?
+      Billing::Subscription.includes(:billing_plan).find_by(space_id: space_id) if space_id.positive?
     end
 
     def find_or_create_payment(payment_data, subscription)
@@ -171,10 +175,9 @@ module Billing
     # ── Idempotency ───────────────────────────────────────────────────────────
 
     def already_processed?(event_type, id_value, key: "asaas_payment_id")
-      Billing::BillingEvent.exists?(
-        event_type: event_type,
-        metadata:   { key => id_value }
-      )
+      Billing::BillingEvent.where(event_type: event_type)
+                           .where("metadata->>? = ?", key, id_value)
+                           .exists?
     end
 
     def log_webhook_event(event_type, subscription, metadata = {})
@@ -182,7 +185,7 @@ module Billing
         space_id:        subscription.space_id,
         subscription_id: subscription.id,
         event_type:      event_type,
-        metadata:        metadata
+        metadata:        metadata.merge(plan_slug: subscription.plan.slug)
       )
     end
 
