@@ -60,16 +60,19 @@
         <div class="mt-3 flex gap-2">
           <button type="button"
                   data-availability-hours-preset="1,2,3,4,5"
+                  data-action="click->availability-hours#applyPreset"
                   class="rounded border border-slate-300 bg-white px-2 py-1 text-xs text-slate-600 hover:bg-slate-50">
             <%= t("space.settings.edit.availability_preset_mon_fri") %>
           </button>
           <button type="button"
                   data-availability-hours-preset="1,2,3,4,5,6"
+                  data-action="click->availability-hours#applyPreset"
                   class="rounded border border-slate-300 bg-white px-2 py-1 text-xs text-slate-600 hover:bg-slate-50">
             <%= t("space.settings.edit.availability_preset_mon_sat") %>
           </button>
           <button type="button"
                   data-availability-hours-preset="0,1,2,3,4,5,6"
+                  data-action="click->availability-hours#applyPreset"
                   class="rounded border border-slate-300 bg-white px-2 py-1 text-xs text-slate-600 hover:bg-slate-50">
             <%= t("space.settings.edit.availability_preset_every_day") %>
           </button>

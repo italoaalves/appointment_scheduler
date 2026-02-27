@@ -24,15 +24,8 @@ export default class extends Controller {
       })
       this.syncToRows()
     }
-    this.presets()
     this.rebuildOverridesFromRows()
     this.updatePreview()
-  }
-
-  presets() {
-    this.element.querySelectorAll("[data-availability-hours-preset]").forEach(btn => {
-      btn.addEventListener("click", (e) => this.applyPreset(e))
-    })
   }
 
   applyPreset(e) {
