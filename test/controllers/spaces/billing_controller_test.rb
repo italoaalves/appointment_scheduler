@@ -133,12 +133,14 @@ module Spaces
       Billing::SubscriptionManager.stub(:subscribe, fake_result) do
         post subscribe_settings_billing_path, params: {
           plan_id: "pro",
-          payment_method: "pix"
+          payment_method: "pix",
+          cpf_cnpj: "123.456.789-00"
         }
       end
 
       assert_redirected_to settings_billing_path
       assert_equal I18n.t("billing.checkout.success"), flash[:notice]
+      assert_equal "12345678900", @manager.reload.cpf_cnpj
     end
 
     test "POST subscribe with paid plan on failure renders error" do
@@ -149,11 +151,38 @@ module Spaces
       Billing::SubscriptionManager.stub(:subscribe, fake_result) do
         post subscribe_settings_billing_path, params: {
           plan_id: "pro",
-          payment_method: "pix"
+          payment_method: "pix",
+          cpf_cnpj: "12345678900"
         }
       end
 
       assert_redirected_to checkout_settings_billing_path
+    end
+
+    test "POST subscribe with paid plan rejects missing cpf_cnpj" do
+      sign_in @manager
+
+      post subscribe_settings_billing_path, params: {
+        plan_id: "pro",
+        payment_method: "pix",
+        cpf_cnpj: ""
+      }
+
+      assert_redirected_to checkout_settings_billing_path
+      assert_equal I18n.t("billing.checkout.cpf_cnpj_required"), flash[:alert]
+    end
+
+    test "POST subscribe with paid plan rejects invalid cpf_cnpj length" do
+      sign_in @manager
+
+      post subscribe_settings_billing_path, params: {
+        plan_id: "pro",
+        payment_method: "pix",
+        cpf_cnpj: "12345"
+      }
+
+      assert_redirected_to checkout_settings_billing_path
+      assert_equal I18n.t("billing.checkout.cpf_cnpj_invalid"), flash[:alert]
     end
   end
 end

@@ -58,6 +58,20 @@ module Spaces
       plan           = Billing::Plan.find(plan_id)
       subscription   = current_tenant.subscription
 
+      if plan.price_cents > 0
+        cpf_cnpj = params[:cpf_cnpj].to_s.gsub(/\D/, "")
+
+        if cpf_cnpj.blank?
+          redirect_to checkout_settings_billing_path, alert: I18n.t("billing.checkout.cpf_cnpj_required") and return
+        end
+
+        unless cpf_cnpj.length.in?([ 11, 14 ])
+          redirect_to checkout_settings_billing_path, alert: I18n.t("billing.checkout.cpf_cnpj_invalid") and return
+        end
+
+        current_user.update!(cpf_cnpj: cpf_cnpj)
+      end
+
       asaas_customer_id = resolve_asaas_customer(subscription)
 
       result = Billing::SubscriptionManager.subscribe(
@@ -109,7 +123,7 @@ module Spaces
       result = Billing::AsaasClient.new.create_customer(
         name:               owner.name,
         email:              owner.email,
-        cpf_cnpj:           "",
+        cpf_cnpj:           owner.cpf_cnpj.to_s,
         external_reference: "space_#{current_tenant.id}"
       )
       customer_id = result["id"]

@@ -73,16 +73,20 @@ export default class extends Controller {
 
     const date = dateInput.value
     const slotsUrl = this.hasSlotsUrlValue ? this.slotsUrlValue : `/book/${window.location.pathname.split("/")[2]}/slots`
+    const container = this.slotsContainerTarget
 
-    this.slotsContainerTarget.querySelector("p").textContent = this.slotsContainerTarget.dataset.loadingText || "Loading..."
+    container.querySelector("p").textContent = container.dataset.loadingText || "Loading..."
     this.slotsListTarget.innerHTML = ""
 
     fetch(`${slotsUrl}?from=${date}&to=${date}`)
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error("fetch failed")
+        return r.json()
+      })
       .then(slots => {
-        this.slotsContainerTarget.querySelector("p").textContent = slots.length === 0
-          ? (this.slotsContainerTarget.dataset.emptyText || "No available slots for this date.")
-          : (this.slotsContainerTarget.dataset.chooseText || "Choose a time:")
+        container.querySelector("p").textContent = slots.length === 0
+          ? (container.dataset.emptyText || "No available slots for this date.")
+          : (container.dataset.chooseText || "Choose a time:")
         this.slotsListTarget.innerHTML = ""
         slots.forEach(slot => {
           const btn = document.createElement("button")
@@ -95,9 +99,28 @@ export default class extends Controller {
           this.slotsListTarget.appendChild(btn)
         })
       })
-      .catch(() => {
-        this.slotsContainerTarget.querySelector("p").textContent = "Unable to load slots."
-      })
+      .catch(() => this.showError())
+  }
+
+  showError() {
+    const container = this.slotsContainerTarget
+    const errorText = container.dataset.errorText || "Could not load available times."
+    const retryText = container.dataset.retryText || "Try again"
+    container.querySelector("p").textContent = ""
+    const wrapper = document.createElement("div")
+    wrapper.className = "col-span-full space-y-2"
+    const errP = document.createElement("p")
+    errP.className = "text-sm text-red-600"
+    errP.textContent = errorText
+    wrapper.appendChild(errP)
+    const retryBtn = document.createElement("button")
+    retryBtn.type = "button"
+    retryBtn.className = "text-sm font-medium text-slate-700 underline hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-1 rounded"
+    retryBtn.textContent = retryText
+    retryBtn.addEventListener("click", () => this.loadSlots())
+    wrapper.appendChild(retryBtn)
+    this.slotsListTarget.innerHTML = ""
+    this.slotsListTarget.appendChild(wrapper)
   }
 
   selectSlot(btn) {
