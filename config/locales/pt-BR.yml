@@ -739,7 +739,7 @@ pt-BR:
 
   billing:
     plan_changed: "Seu plano foi atualizado com sucesso."
-    downgrade_scheduled: "Seu plano será alterado para Starter ao final do período atual."
+    downgrade_scheduled: "Seu plano será alterado para %{plan} ao final do período atual."
     canceled: "Sua assinatura foi cancelada. O acesso continua até o fim do período de cobrança."
     no_change: "Você já está neste plano."
     resubscribe_unavailable: "Entre em contato com o suporte para reativar sua assinatura."
@@ -824,6 +824,9 @@ pt-BR:
       personalized_page: "Página de agendamento personalizada"
       custom_policies: "Políticas de agendamento customizadas"
       whatsapp_quota: "%{count} mensagens WhatsApp/mês"
+      whatsapp_unlimited: "Mensagens WhatsApp ilimitadas"
+      priority_support: "Suporte prioritário"
+      recommended: "Recomendado"
       select_plan: "Selecionar plano"
       back: "Voltar para cobrança"
     limits:

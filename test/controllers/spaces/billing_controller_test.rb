@@ -39,7 +39,7 @@ module Spaces
       sign_in @manager
 
       # subscriptions(:one) has no asaas_subscription_id → no API call
-      patch settings_billing_path, params: { plan_id: "pro" }
+      patch settings_billing_path, params: { billing_plan_id: billing_plans(:pro).id }
 
       assert_redirected_to settings_billing_path
       assert_equal I18n.t("billing.plan_changed"), flash[:notice]
@@ -48,7 +48,7 @@ module Spaces
     test "PATCH update with same plan redirects with no_change alert" do
       sign_in @manager  # already on essential
 
-      patch settings_billing_path, params: { plan_id: "essential" }
+      patch settings_billing_path, params: { billing_plan_id: billing_plans(:essential).id }
 
       assert_redirected_to settings_billing_path
       assert_equal I18n.t("billing.no_change"), flash[:alert]
@@ -56,11 +56,12 @@ module Spaces
 
     test "PATCH update with downgrade from pro to essential schedules downgrade" do
       sign_in @manager2  # on pro
+      essential = billing_plans(:essential)
 
-      patch settings_billing_path, params: { plan_id: "essential" }
+      patch settings_billing_path, params: { billing_plan_id: essential.id }
 
       assert_redirected_to settings_billing_path
-      assert_equal I18n.t("billing.downgrade_scheduled"), flash[:notice]
+      assert_equal I18n.t("billing.downgrade_scheduled", plan: essential.name), flash[:notice]
     end
 
     # ── cancel ────────────────────────────────────────────────────────────────

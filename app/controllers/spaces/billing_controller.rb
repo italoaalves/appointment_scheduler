@@ -12,7 +12,6 @@ module Spaces
 
     def show
       @subscription = current_tenant.subscription
-      @plans        = Billing::Plan.visible
       @current_plan = @subscription&.plan
       @payments     = current_tenant.payments.order(created_at: :desc).limit(10)
       @credit       = current_tenant.message_credit
@@ -27,26 +26,26 @@ module Spaces
     end
 
     def update
-      new_plan_slug = params[:plan_id]
-      subscription  = current_tenant.subscription
+      new_plan     = Billing::Plan.find(params[:billing_plan_id])
+      subscription = current_tenant.subscription
 
-      if upgrade?(subscription, new_plan_slug)
-        new_plan     = Billing::Plan.find_by_slug!(new_plan_slug)
-        result       = Billing::SubscriptionManager.upgrade(subscription: subscription, new_billing_plan_id: new_plan.id)
-        success_key  = "billing.plan_changed"
-      elsif downgrade?(subscription, new_plan_slug)
-        new_plan     = Billing::Plan.find_by_slug!(new_plan_slug)
-        result       = Billing::SubscriptionManager.downgrade(subscription: subscription, new_billing_plan_id: new_plan.id)
-        success_key  = "billing.downgrade_scheduled"
+      if upgrade?(subscription, new_plan)
+        result      = Billing::SubscriptionManager.upgrade(subscription: subscription, new_billing_plan_id: new_plan.id)
+        success_msg = I18n.t("billing.plan_changed")
+      elsif downgrade?(subscription, new_plan)
+        result      = Billing::SubscriptionManager.downgrade(subscription: subscription, new_billing_plan_id: new_plan.id)
+        success_msg = I18n.t("billing.downgrade_scheduled", plan: new_plan.name)
       else
         redirect_to settings_billing_path, alert: I18n.t("billing.no_change") and return
       end
 
       if result[:success]
-        redirect_to settings_billing_path, notice: I18n.t(success_key)
+        redirect_to settings_billing_path, notice: success_msg
       else
         redirect_to settings_billing_path, alert: result[:error]
       end
+    rescue ActiveRecord::RecordNotFound
+      redirect_to settings_billing_path, alert: I18n.t("billing.no_change")
     end
 
     def checkout
@@ -108,22 +107,16 @@ module Spaces
 
     private
 
-    def upgrade?(subscription, new_plan_id)
-      return false if subscription.nil?
-      current  = subscription.plan
-      new_plan = Billing::Plan.find_by_slug!(new_plan_id)
-      new_plan.price_cents > current.price_cents
-    rescue ActiveRecord::RecordNotFound
-      false
+    def upgrade?(subscription, new_plan)
+      current_plan = subscription&.billing_plan
+      return false unless current_plan
+      new_plan.price_cents > current_plan.price_cents
     end
 
-    def downgrade?(subscription, new_plan_id)
-      return false if subscription.nil?
-      current  = subscription.plan
-      new_plan = Billing::Plan.find_by_slug!(new_plan_id)
-      new_plan.price_cents < current.price_cents
-    rescue ActiveRecord::RecordNotFound
-      false
+    def downgrade?(subscription, new_plan)
+      current_plan = subscription&.billing_plan
+      return false unless current_plan
+      new_plan.price_cents < current_plan.price_cents
     end
 
     def resolve_asaas_customer(subscription)

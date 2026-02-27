@@ -768,7 +768,7 @@ en:
 
   billing:
     plan_changed: "Your plan has been upgraded."
-    downgrade_scheduled: "Your plan will switch to Starter at the end of your current billing period."
+    downgrade_scheduled: "Your plan will switch to %{plan} at the end of your current billing period."
     canceled: "Your subscription has been canceled. Access continues until the end of your billing period."
     no_change: "You're already on this plan."
     resubscribe_unavailable: "Please contact support to resubscribe."
@@ -824,6 +824,9 @@ en:
       personalized_page: "Personalized booking page"
       custom_policies: "Custom appointment policies"
       whatsapp_quota: "%{count} WhatsApp messages/month"
+      whatsapp_unlimited: "Unlimited WhatsApp messages"
+      priority_support: "Priority support"
+      recommended: "Recommended"
       select_plan: "Select plan"
       back: "Back to billing"
     features:
