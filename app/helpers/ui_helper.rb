@@ -64,19 +64,42 @@ module UiHelper
     active = nav_active?(section)
     case variant.to_sym
     when :desktop
-      if active
-        "text-white border-b-2 border-indigo-400"
-      else
-        "text-slate-200 hover:text-white hover:bg-slate-800"
-      end
+      base = "inline-flex items-center px-2 py-1 rounded-md transition text-sm border-b-2"
+      active ? "#{base} text-white border-white" : "#{base} text-slate-200 hover:text-white hover:bg-slate-800 border-transparent"
     when :mobile
-      if active
-        "bg-indigo-900/40 text-white font-medium"
-      else
-        "text-slate-100 hover:bg-slate-800"
-      end
+      base = "block rounded-md px-3 py-2 text-sm font-medium"
+      active ? "#{base} bg-indigo-900/40 text-white" : "#{base} text-slate-100 hover:bg-slate-800"
     else
       active ? "text-white" : "text-slate-200 hover:text-white hover:bg-slate-800"
+    end
+  end
+
+  def settings_sidebar_link(label, path, section, variant: :desktop)
+    active = settings_section_active?(section)
+    if variant == :mobile
+      classes = active ? "block shrink-0 px-4 py-2 text-sm font-medium text-slate-900 border-b-2 border-slate-900 -mb-px" : "block shrink-0 px-4 py-2 text-sm text-slate-500 hover:text-slate-700 -mb-px"
+    else
+      classes = active ? "block rounded-md px-3 py-2 text-sm font-medium bg-slate-100 text-slate-900 border-l-2 border-slate-900" : "block rounded-md px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-800"
+    end
+    content_tag(:li, class: variant == :mobile ? "shrink-0" : nil) do
+      link_to label, path, class: classes, aria: (active ? { current: "page" } : {})
+    end
+  end
+
+  def settings_section_active?(section)
+    case section.to_sym
+    when :space
+      controller_path == "spaces/space" && action_name == "edit"
+    when :availability
+      controller_path == "spaces/space/availabilities"
+    when :policies
+      controller_path == "spaces/space/policies"
+    when :billing
+      controller_path == "spaces/billing"
+    when :credits
+      controller_path == "spaces/credits"
+    else
+      false
     end
   end
 

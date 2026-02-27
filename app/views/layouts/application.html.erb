@@ -45,10 +45,10 @@
                   <%= link_to t("layout.nav.platform_users"), platform_users_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
                   <%= link_to t("layout.nav.platform_billing"), platform_billing_index_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
                 <% elsif tenant_staff? %>
-                  <%= link_to root_path, class: "inline-flex items-center px-2 py-1 rounded-md transition text-sm border-b-2 #{nav_active?(:dashboard) ? 'text-white border-white' : 'text-slate-200 hover:text-white hover:bg-slate-800 border-transparent'}", aria: { current: (nav_active?(:dashboard) ? "page" : nil) } do %>
+                  <%= link_to root_path, class: nav_active_classes(:dashboard), aria: { current: (nav_active?(:dashboard) ? "page" : nil) } do %>
                     <%= t("layout.nav.dashboard") %>
                   <% end %>
-                  <%= link_to appointments_path, class: "inline-flex items-center px-2 py-1 rounded-md transition text-sm border-b-2 #{nav_active?(:appointments) ? 'text-white border-white' : 'text-slate-200 hover:text-white hover:bg-slate-800 border-transparent'}", aria: { current: (nav_active?(:appointments) ? "page" : nil) } do %>
+                  <%= link_to appointments_path, class: nav_active_classes(:appointments), aria: { current: (nav_active?(:appointments) ? "page" : nil) } do %>
                     <%= t("layout.nav.all_appointments") %>
                     <% if pending_appointments_count > 0 %>
                       <span class="ml-1.5 inline-flex items-center justify-center rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-bold text-white leading-none"
@@ -58,17 +58,17 @@
                       </span>
                     <% end %>
                   <% end %>
-                  <%= link_to scheduling_links_path, class: "inline-flex items-center px-2 py-1 rounded-md transition text-sm border-b-2 #{nav_active?(:booking_links) ? 'text-white border-white' : 'text-slate-200 hover:text-white hover:bg-slate-800 border-transparent'}", aria: { current: (nav_active?(:booking_links) ? "page" : nil) } do %>
+                  <%= link_to scheduling_links_path, class: nav_active_classes(:booking_links), aria: { current: (nav_active?(:booking_links) ? "page" : nil) } do %>
                     <%= t("layout.nav.booking_links") %>
                   <% end %>
-                  <%= link_to customers_path, class: "inline-flex items-center px-2 py-1 rounded-md transition text-sm border-b-2 #{nav_active?(:customers) ? 'text-white border-white' : 'text-slate-200 hover:text-white hover:bg-slate-800 border-transparent'}", aria: { current: (nav_active?(:customers) ? "page" : nil) } do %>
+                  <%= link_to customers_path, class: nav_active_classes(:customers), aria: { current: (nav_active?(:customers) ? "page" : nil) } do %>
                     <%= t("layout.nav.customers") %>
                   <% end %>
-                  <%= link_to users_path, class: "inline-flex items-center px-2 py-1 rounded-md transition text-sm border-b-2 #{nav_active?(:team) ? 'text-white border-white' : 'text-slate-200 hover:text-white hover:bg-slate-800 border-transparent'}", aria: { current: (nav_active?(:team) ? "page" : nil) } do %>
+                  <%= link_to users_path, class: nav_active_classes(:team), aria: { current: (nav_active?(:team) ? "page" : nil) } do %>
                     <%= t("layout.nav.team") %>
                   <% end %>
                   <% if current_user.can?(:manage_space) %>
-                    <%= link_to edit_settings_space_path, class: "inline-flex items-center gap-1 px-2 py-1 rounded-md transition text-sm border-b-2 #{nav_active?(:settings) ? 'text-white border-white' : 'text-slate-200 hover:text-white hover:bg-slate-800 border-transparent'}", aria: { current: (nav_active?(:settings) ? "page" : nil) } do %>
+                    <%= link_to edit_settings_space_path, class: "#{nav_active_classes(:settings)} gap-1", aria: { current: (nav_active?(:settings) ? "page" : nil) } do %>
                       <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -146,31 +146,31 @@
                 <%= link_to t("layout.nav.platform_users"), platform_users_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
                 <%= link_to t("layout.nav.platform_billing"), platform_billing_index_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
               <% elsif tenant_staff? %>
-                <%= link_to root_path, class: "block rounded-md px-3 py-2 text-sm font-medium #{nav_active?(:dashboard) ? 'bg-indigo-900/40 text-white font-medium' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (nav_active?(:dashboard) ? "page" : nil) } do %>
+                <%= link_to root_path, class: nav_active_classes(:dashboard, variant: :mobile), aria: { current: (nav_active?(:dashboard) ? "page" : nil) } do %>
                   <%= t("layout.nav.dashboard") %>
                 <% end %>
-                <%= link_to appointments_path, class: "block rounded-md px-3 py-2 text-sm font-medium #{nav_active?(:appointments) ? 'bg-indigo-900/40 text-white font-medium' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (nav_active?(:appointments) ? "page" : nil) } do %>
+                <%= link_to appointments_path, class: nav_active_classes(:appointments, variant: :mobile), aria: { current: (nav_active?(:appointments) ? "page" : nil) } do %>
                   <%= t("layout.nav.all_appointments") %>
                   <% if pending_appointments_count > 0 %>
                     <span class="ml-1.5 inline-flex items-center rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-bold text-white" title="<%= t("layout.nav.pending_count", count: pending_appointments_count) %>" aria-label="<%= t("layout.nav.pending_count", count: pending_appointments_count) %>">(<%= pending_appointments_count %>)</span>
                   <% end %>
                 <% end %>
-                <%= link_to scheduling_links_path, class: "block rounded-md px-3 py-2 text-sm font-medium #{nav_active?(:booking_links) ? 'bg-indigo-900/40 text-white font-medium' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (nav_active?(:booking_links) ? "page" : nil) } do %>
+                <%= link_to scheduling_links_path, class: nav_active_classes(:booking_links, variant: :mobile), aria: { current: (nav_active?(:booking_links) ? "page" : nil) } do %>
                   <%= t("layout.nav.booking_links") %>
                 <% end %>
-                <%= link_to customers_path, class: "block rounded-md px-3 py-2 text-sm font-medium #{nav_active?(:customers) ? 'bg-indigo-900/40 text-white font-medium' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (nav_active?(:customers) ? "page" : nil) } do %>
+                <%= link_to customers_path, class: nav_active_classes(:customers, variant: :mobile), aria: { current: (nav_active?(:customers) ? "page" : nil) } do %>
                   <%= t("layout.nav.customers") %>
                 <% end %>
-                <%= link_to users_path, class: "block rounded-md px-3 py-2 text-sm font-medium #{nav_active?(:team) ? 'bg-indigo-900/40 text-white font-medium' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (nav_active?(:team) ? "page" : nil) } do %>
+                <%= link_to users_path, class: nav_active_classes(:team, variant: :mobile), aria: { current: (nav_active?(:team) ? "page" : nil) } do %>
                   <%= t("layout.nav.team") %>
                 <% end %>
                 <% if current_user.can?(:manage_space) %>
                   <p class="px-3 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-slate-400"><%= t("layout.nav.settings") %></p>
-                  <%= link_to t("layout.nav.settings_space"), edit_settings_space_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{request.path == edit_settings_space_path ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (request.path == edit_settings_space_path ? "page" : nil) } %>
-                  <%= link_to t("layout.nav.settings_availability"), edit_settings_space_availability_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{request.path.include?('availability') ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (request.path.include?('availability') ? "page" : nil) } %>
-                  <%= link_to t("layout.nav.settings_policies"), edit_settings_space_policies_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{request.path.include?('policies') ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (request.path.include?('policies') ? "page" : nil) } %>
-                  <%= link_to t("layout.nav.billing"), settings_billing_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{request.path.start_with?('/settings/billing') ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (request.path.start_with?('/settings/billing') ? "page" : nil) } %>
-                  <%= link_to t("layout.nav.credits"), settings_credits_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{request.path.include?('credits') ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (request.path.include?('credits') ? "page" : nil) } %>
+                  <%= link_to t("layout.nav.settings_space"), edit_settings_space_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{settings_section_active?(:space) ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (settings_section_active?(:space) ? "page" : nil) } %>
+                  <%= link_to t("layout.nav.settings_availability"), edit_settings_space_availability_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{settings_section_active?(:availability) ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (settings_section_active?(:availability) ? "page" : nil) } %>
+                  <%= link_to t("layout.nav.settings_policies"), edit_settings_space_policies_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{settings_section_active?(:policies) ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (settings_section_active?(:policies) ? "page" : nil) } %>
+                  <%= link_to t("layout.nav.billing"), settings_billing_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{settings_section_active?(:billing) ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (settings_section_active?(:billing) ? "page" : nil) } %>
+                  <%= link_to t("layout.nav.credits"), settings_credits_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{settings_section_active?(:credits) ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (settings_section_active?(:credits) ? "page" : nil) } %>
                 <% end %>
               <% else %>
                 <%# Customers: profile/logout only; book via scheduling links %>
@@ -227,9 +227,18 @@
       </div>
     <% end %>
 
-    <main class="mx-auto max-w-4xl px-4 py-8">
+    <main class="mx-auto px-4 py-8 <%= content_for?(:settings_sidebar) ? 'max-w-5xl' : 'max-w-4xl' %>">
       <%= yield(:breadcrumbs) if content_for?(:breadcrumbs) %>
-      <%= yield %>
+      <% if content_for?(:settings_sidebar) %>
+        <div class="flex flex-col md:flex-row gap-6 md:gap-8">
+          <%= yield(:settings_sidebar) %>
+          <div class="flex-1 min-w-0">
+            <%= yield %>
+          </div>
+        </div>
+      <% else %>
+        <%= yield %>
+      <% end %>
     </main>
   </body>
 </html>
