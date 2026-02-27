@@ -24,7 +24,8 @@ admin = User.create!(
   password: "password123",
   password_confirmation: "password123",
   system_role: :super_admin,
-  phone_number: "+5511999999999"
+  phone_number: "+5511999999999",
+  confirmed_at: Time.current
 )
 
 # ---- TENANT: SPACE + MANAGER + SECRETARY ----
@@ -34,7 +35,8 @@ manager = User.new(
   password: "password123",
   password_confirmation: "password123",
   role: "Manager",
-  phone_number: "+5511988888888"
+  phone_number: "+5511988888888",
+  confirmed_at: Time.current
 )
 %w[access_space_dashboard manage_space manage_team manage_customers manage_appointments destroy_appointments manage_scheduling_links manage_personalized_links own_space].each do |p|
   manager.user_permissions.build(permission: p)
@@ -101,7 +103,8 @@ secretary = User.new(
   password_confirmation: "password123",
   role: "Secretary",
   phone_number: "+5511977777777",
-  space_id: space.id
+  space_id: space.id,
+  confirmed_at: Time.current
 )
 %w[access_space_dashboard manage_customers manage_appointments manage_scheduling_links].each do |p|
   secretary.user_permissions.build(permission: p)
