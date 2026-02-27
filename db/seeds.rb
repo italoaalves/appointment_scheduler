@@ -83,7 +83,7 @@ space = manager.reload.space
 subscription = space.subscription
 subscription.update!(
   status: :active,
-  plan_id: "pro",
+  billing_plan: Billing::Plan.find_by_slug!("pro"),
   current_period_start: Time.current,
   current_period_end: 30.days.from_now,
   trial_ends_at: nil
