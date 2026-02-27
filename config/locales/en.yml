@@ -41,6 +41,34 @@ en:
     appointment_rescheduled:
       subject: "Your appointment has been rescheduled"
       body: "Your appointment has been moved to %{date} at %{time}."
+    in_app:
+      appointment_booked:
+        title: "New appointment request"
+        body: "%{customer_name} requested an appointment on %{date} at %{time}"
+      appointment_confirmed:
+        title: "Appointment confirmed"
+        body: "Your appointment with %{business_name} on %{date} at %{time} has been confirmed"
+      appointment_cancelled:
+        title: "Appointment cancelled"
+        body: "Your appointment with %{business_name} on %{date} at %{time} has been cancelled"
+      appointment_rescheduled:
+        title: "Appointment rescheduled"
+        body: "Your appointment with %{business_name} has been rescheduled to %{date} at %{time}"
+      trial_ending:
+        title: "Trial ending soon"
+        body: "Your Pro trial ends in %{days} days. Subscribe to keep all features."
+      subscription_expired:
+        title: "Subscription expired"
+        body: "Your subscription has expired. Renew to continue accepting bookings."
+      credits_low:
+        title: "Low WhatsApp credits"
+        body: "You have %{count} WhatsApp credits remaining. Purchase more to keep sending messages."
+      dropdown:
+        title: "Notifications"
+        mark_all_read: "Mark all as read"
+        view_all: "View all"
+        empty: "No notifications"
+        time_ago: "%{time} ago"
 
   activerecord:
     errors:

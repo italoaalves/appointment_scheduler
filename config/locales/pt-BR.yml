@@ -12,6 +12,34 @@ pt-BR:
     appointment_rescheduled:
       subject: "Sua consulta foi reagendada"
       body: "Sua consulta foi remarcada para %{date} às %{time}."
+    in_app:
+      appointment_booked:
+        title: "Nova solicitação de consulta"
+        body: "%{customer_name} solicitou uma consulta em %{date} às %{time}"
+      appointment_confirmed:
+        title: "Consulta confirmada"
+        body: "Sua consulta com %{business_name} em %{date} às %{time} foi confirmada"
+      appointment_cancelled:
+        title: "Consulta cancelada"
+        body: "Sua consulta com %{business_name} em %{date} às %{time} foi cancelada"
+      appointment_rescheduled:
+        title: "Consulta reagendada"
+        body: "Sua consulta com %{business_name} foi remarcada para %{date} às %{time}"
+      trial_ending:
+        title: "Período de teste acabando"
+        body: "Seu teste Pro termina em %{days} dias. Assine para manter todos os recursos."
+      subscription_expired:
+        title: "Assinatura expirada"
+        body: "Sua assinatura expirou. Renove para continuar aceitando agendamentos."
+      credits_low:
+        title: "Créditos WhatsApp baixos"
+        body: "Você tem %{count} créditos WhatsApp restantes. Compre mais para continuar enviando mensagens."
+      dropdown:
+        title: "Notificações"
+        mark_all_read: "Marcar tudo como lido"
+        view_all: "Ver tudo"
+        empty: "Sem notificações"
+        time_ago: "há %{time}"
 
   activerecord:
     errors:
