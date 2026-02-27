@@ -151,6 +151,24 @@ en:
         other: "%{count} minutes"
     step3_placeholder: "Step 3 coming soon."
     step3:
+      title: "Your booking page is ready!"
+      default_link_name: "General Booking"
+      preview:
+        available: "Available"
+        duration: "%{minutes} min appointments"
+      url_label: "Your booking link"
+      copy_link: "Copy Link"
+      copied: "Copied!"
+      share_whatsapp: "Share on WhatsApp"
+      share_whatsapp_message: "Book your appointment with %{name}: %{url}"
+      open_preview: "Open Preview"
+      trial_active: "Your 14-day Pro trial is active. All features are unlocked."
+      trial_features:
+        team: "Up to 5 team members"
+        personalized_page: "Personalized booking page"
+        whatsapp: "WhatsApp notifications"
+      plan_change_hint: "You can change your plan anytime in Settings > Billing."
+      go_to_dashboard: "Go to Dashboard"
       completed_notice: "Your space is ready! You can now share your booking link."
 
   layout:

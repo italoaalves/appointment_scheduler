@@ -122,6 +122,24 @@ pt-BR:
         other: "%{count} minutos"
     step3_placeholder: "Etapa 3 em breve."
     step3:
+      title: "Sua página de agendamento está pronta!"
+      default_link_name: "Agendamento Geral"
+      preview:
+        available: "Disponível"
+        duration: "%{minutes} min de consulta"
+      url_label: "Seu link de agendamento"
+      copy_link: "Copiar link"
+      copied: "Copiado!"
+      share_whatsapp: "Compartilhar no WhatsApp"
+      share_whatsapp_message: "Agende sua consulta com %{name}: %{url}"
+      open_preview: "Abrir preview"
+      trial_active: "Seu trial Pro de 14 dias está ativo. Todos os recursos estão liberados."
+      trial_features:
+        team: "Até 5 membros na equipe"
+        personalized_page: "Página de agendamento personalizada"
+        whatsapp: "Notificações via WhatsApp"
+      plan_change_hint: "Você pode alterar seu plano a qualquer momento em Configurações > Cobrança."
+      go_to_dashboard: "Ir para o Painel"
       completed_notice: "Seu espaço está pronto! Agora você pode compartilhar seu link de agendamento."
 
   layout:

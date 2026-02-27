@@ -21,6 +21,7 @@ module Onboarding
         @brazilian_timezones = BRAZILIAN_TIMEZONES
         @duration_options = DURATION_OPTIONS
       end
+      prepare_step3_resources if @step == 3
       render "onboarding/step#{@step}"
     end
 
@@ -83,6 +84,21 @@ module Onboarding
     def step2_days_params
       permitted = (0..6).map(&:to_s).index_with { [ :enabled, :opens_at, :closes_at ] }
       params.permit(days: permitted).fetch(:days, {}).to_h
+    end
+
+    def prepare_step3_resources
+      @scheduling_link = current_tenant.scheduling_links.find_or_create_by!(link_type: :permanent) do |link|
+        link.name = I18n.t("onboarding.step3.default_link_name")
+      end
+
+      unless current_tenant.personalized_scheduling_link.present?
+        slug = Onboarding::SlugGenerator.call(current_tenant.name)
+        current_tenant.create_personalized_scheduling_link!(slug: slug)
+      end
+
+      current_tenant.availability_schedule&.touch # refresh business_hours cache
+      @personalized_link = current_tenant.personalized_scheduling_link.reload
+      @booking_url = book_by_slug_url(slug: @personalized_link.slug)
     end
 
     def ensure_availability_schedule
