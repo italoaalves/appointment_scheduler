@@ -104,8 +104,7 @@ module UiHelper
   end
 
   def pending_appointments_count
-    return 0 unless tenant_staff?
-    @_pending_count ||= current_tenant.appointments.pending.count
+    @pending_appointments_count || 0
   end
 
   def status_badge_classes(status)

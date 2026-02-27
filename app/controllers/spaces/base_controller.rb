@@ -8,6 +8,7 @@ module Spaces
     before_action :authenticate_user!
     before_action :require_space_staff
     before_action :set_current_space
+    before_action :set_pending_appointments_count
 
     include Billing::RequireActiveSubscription
 
@@ -16,6 +17,10 @@ module Spaces
     def set_current_space
       Current.space        = current_tenant
       Current.subscription = current_tenant&.subscription
+    end
+
+    def set_pending_appointments_count
+      @pending_appointments_count = current_tenant.appointments.pending.count
     end
 
     def require_space_staff
