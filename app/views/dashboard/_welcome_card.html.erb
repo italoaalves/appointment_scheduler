@@ -1,17 +1,16 @@
 <% booking_url = current_tenant.personalized_scheduling_link ? book_by_slug_url(slug: current_tenant.personalized_scheduling_link.slug) : nil %>
 <% if booking_url.present? %>
   <div class="relative rounded-xl border border-emerald-200 bg-emerald-50 p-6 shadow-sm"
-       data-controller="clipboard dashboard"
-       data-dashboard-dismiss-url-value="<%= dismiss_dashboard_welcome_path %>"
        id="dashboard_welcome_card">
-    <button type="button"
-            data-action="click->dashboard#dismissWelcome"
-            aria-label="<%= t("dashboard.welcome_card.dismiss") %>"
-            class="absolute right-3 top-3 rounded p-1 text-slate-500 hover:bg-emerald-100 hover:text-slate-700">
+    <%= button_to dismiss_dashboard_welcome_path,
+          method: :patch,
+          class: "absolute right-3 top-3 rounded p-1 text-slate-500 hover:bg-emerald-100 hover:text-slate-700",
+          aria: { label: t("dashboard.welcome_card.dismiss") },
+          data: { turbo_submits_with: t("shared.submitting") } do %>
       <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
       </svg>
-    </button>
+    <% end %>
     <h2 class="pr-8 text-lg font-semibold text-slate-900">
       <%= t("dashboard.welcome_card.title") %>
     </h2>

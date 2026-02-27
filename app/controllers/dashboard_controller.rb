@@ -20,7 +20,11 @@ class DashboardController < ApplicationController
   def dismiss_welcome
     pref = current_user.user_preference || current_user.create_user_preference!(locale: I18n.default_locale.to_s)
     pref.update!(dismissed_welcome_card: true)
-    head :ok
+
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove("dashboard_welcome_card") }
+      format.html { redirect_to root_path }
+    end
   end
 
   private
