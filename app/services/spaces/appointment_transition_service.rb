@@ -34,6 +34,7 @@ module Spaces
       attrs[:finished_at] = parse_finished_at if @to_status == :finished
 
       if @appointment.update(attrs)
+        enqueue_notification
         { success: true }
       else
         { success: false, errors: @appointment.errors.full_messages }
@@ -57,6 +58,20 @@ module Spaces
 
     def requires_past?
       PAST_REQUIRED_STATUSES.include?(@to_status)
+    end
+
+    def enqueue_notification
+      event = case @to_status
+      when :confirmed then :appointment_confirmed
+      when :cancelled then :appointment_cancelled
+      else nil
+      end
+      return if event.nil?
+
+      Notifications::SendNotificationJob.perform_later(
+        event:         event,
+        appointment_id: @appointment.id
+      )
     end
 
     def parse_finished_at

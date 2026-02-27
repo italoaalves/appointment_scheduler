@@ -49,6 +49,10 @@ class BookingController < ApplicationController
 
     if appointment.save
       @booking_context.mark_used!
+      Notifications::SendNotificationJob.perform_later(
+        event:         :appointment_booked,
+        appointment_id: appointment.id
+      )
       redirect_to @booking_context.redirect_after_booking
     else
       flash.now[:alert] = appointment.errors.full_messages.to_sentence

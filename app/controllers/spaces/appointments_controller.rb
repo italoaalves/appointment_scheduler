@@ -76,6 +76,12 @@ module Spaces
       end
 
       if Time.use_zone(TimezoneResolver.zone(@appointment.space)) { @appointment.save }
+        if rescheduling?(old_scheduled_at)
+          Notifications::SendNotificationJob.perform_later(
+            event:         :appointment_rescheduled,
+            appointment_id: @appointment.id
+          )
+        end
         redirect_to appointments_path, notice: t("space.appointments.update.notice")
       else
         render :edit

@@ -50,6 +50,20 @@ class BookingControllerTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
+  test "create enqueues appointment_booked notification" do
+    scheduled = 3.days.from_now.change(hour: 10, min: 0, sec: 0)
+
+    assert_enqueued_with(job: Notifications::SendNotificationJob) do
+      post "/book/#{@link.token}", params: {
+        customer_name: "Test Person",
+        customer_email: "test@example.com",
+        customer_phone: "+5511999999999",
+        scheduled_at: scheduled.strftime("%Y-%m-%d %H:%M")
+      }
+    end
+    assert_response :redirect
+  end
+
   test "create with blank scheduled_at returns error" do
     post "/book/#{@link.token}", params: {
       customer_name: "Test Person",

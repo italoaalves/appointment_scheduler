@@ -1,12 +1,14 @@
 one:
   space: one
   name: "John Customer"
+  email: "john@example.com"
   phone: "+5511888888888"
   address: "Rua A, 1"
 
 two:
   space: one
   name: "Mary Customer"
+  email: "mary@example.com"
   phone: "+5511777777777"
   address: "Rua B, 2"
 

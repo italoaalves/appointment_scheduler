@@ -28,6 +28,20 @@
 #       enabled: "ON"
 
 en:
+  notifications:
+    appointment_booked:
+      subject: "New appointment request from %{customer_name}"
+      body: "%{customer_name} has requested an appointment on %{date} at %{time}."
+    appointment_confirmed:
+      subject: "Your appointment has been confirmed"
+      body: "Your appointment on %{date} at %{time} has been confirmed."
+    appointment_cancelled:
+      subject: "Your appointment has been cancelled"
+      body: "Your appointment on %{date} at %{time} has been cancelled."
+    appointment_rescheduled:
+      subject: "Your appointment has been rescheduled"
+      body: "Your appointment has been moved to %{date} at %{time}."
+
   activerecord:
     errors:
       models:
