@@ -9,6 +9,8 @@ module Spaces
     before_action :require_space_staff
     before_action :set_current_space
 
+    include Billing::RequireActiveSubscription
+
     private
 
     def set_current_space

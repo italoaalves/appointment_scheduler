@@ -10,10 +10,14 @@ class ApplicationController < ActionController::Base
   before_action :set_locale
 
   helper UiHelper
-  helper_method :current_tenant, :tenant_staff?, :current_subscription
+  helper_method :current_tenant, :tenant_staff?, :current_subscription, :subscription_restricted?
 
   def current_subscription
     Current.subscription
+  end
+
+  def subscription_restricted?
+    false
   end
 
   def after_sign_in_path_for(resource)

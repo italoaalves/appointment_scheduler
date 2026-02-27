@@ -74,4 +74,31 @@ class BookingControllerTest < ActionDispatch::IntegrationTest
     get thank_you_book_url(token: @link.token)
     assert_response :success
   end
+
+  # ── Subscription restriction ──────────────────────────────────────────────
+
+  test "show returns service_unavailable when space subscription is expired" do
+    subscriptions(:one).update!(status: :expired)
+
+    get book_url(token: @link.token)
+    assert_response :service_unavailable
+  end
+
+  test "show renders normally when space subscription is active" do
+    subscriptions(:one).update!(status: :active)
+
+    get book_url(token: @link.token)
+    assert_response :success
+  end
+
+  test "show renders normally when space has no subscription" do
+    sub = subscriptions(:one)
+    Billing::BillingEvent.where(subscription_id: sub.id).delete_all
+    Billing::Payment.where(subscription_id: sub.id).delete_all
+    sub.delete
+    @space.reload
+
+    get book_url(token: @link.token)
+    assert_response :success
+  end
 end

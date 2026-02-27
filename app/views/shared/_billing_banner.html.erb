@@ -1,0 +1,5 @@
+<% if subscription_restricted? %>
+  <div class="flex items-center justify-between gap-3 bg-red-600 px-4 py-2 text-sm font-medium text-white">
+    <span><%= t("billing.restricted_mode.banner") %></span>
+  </div>
+<% end %>

@@ -71,9 +71,13 @@ class BookingController < ApplicationController
   end
 
   def validate_booking_usable
-    return if @booking_context.usable?
+    return if @booking_context.usable? == false && (render "booking/expired", status: :gone; true)
 
-    render "booking/expired", status: :gone
+    space = @booking_context.space
+    subscription = space.subscription
+    if subscription&.expired?
+      render "booking/unavailable", status: :service_unavailable
+    end
   end
 
   def parse_scheduled_at(value)

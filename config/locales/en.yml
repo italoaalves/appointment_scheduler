@@ -601,6 +601,12 @@ en:
       update:
         notice: "Policies updated."
 
+  billing:
+    restricted_mode:
+      banner: "Your subscription has expired. Subscribe to continue managing your business."
+      write_blocked: "This action is not available. Please subscribe to a plan to continue."
+      booking_unavailable: "Scheduling is temporarily unavailable. Please contact the business directly."
+
   booking:
     business_hours: "Open"
     choose_date: "Choose a date"
@@ -631,6 +637,9 @@ en:
     expired:
       title: "Link expired"
       body: "This booking link has expired or has already been used."
+    unavailable:
+      title: "Scheduling unavailable"
+      body: "Scheduling is temporarily unavailable. Please contact the business directly."
 
   platform:
     dashboard:

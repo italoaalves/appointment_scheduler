@@ -572,6 +572,12 @@ pt-BR:
       update:
         notice: "Políticas atualizadas."
 
+  billing:
+    restricted_mode:
+      banner: "Sua assinatura expirou. Assine um plano para continuar gerenciando seu negócio."
+      write_blocked: "Esta ação não está disponível. Assine um plano para continuar."
+      booking_unavailable: "O agendamento está temporariamente indisponível. Entre em contato diretamente com o estabelecimento."
+
   booking:
     business_hours: "Horário de atendimento"
     choose_date: "Escolha uma data"
@@ -602,6 +608,9 @@ pt-BR:
     expired:
       title: "Link expirado"
       body: "Este link expirou ou já foi utilizado."
+    unavailable:
+      title: "Agendamento indisponível"
+      body: "O agendamento está temporariamente indisponível. Entre em contato diretamente com o estabelecimento."
 
   platform:
     dashboard:
