@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   resource :profile, only: [ :edit, :update ], controller: "profiles"
   resource :preferences, only: [ :edit, :update ], controller: "preferences"
 
+  get "booking/calendar/:token", to: "booking#calendar_ics", as: :booking_calendar_ics
+
   get "book/s/:slug", to: "booking#show", as: :book_by_slug, slug: /[a-z0-9-]+/
   get "book/s/:slug/thank-you", to: "booking#thank_you", as: :thank_you_book_by_slug, slug: /[a-z0-9-]+/
   get "book/s/:slug/slots", to: "booking#slots", as: :book_slots_by_slug, slug: /[a-z0-9-]+/

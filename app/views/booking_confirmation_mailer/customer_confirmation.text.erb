@@ -1,0 +1,14 @@
+<%= t("booking.confirmation_email.greeting", business_name: @space.name) %>
+
+<%= t("booking.confirmation_email.intro") %>
+
+<%= t("booking.thank_you.date") %>: <%= @date_str %>
+<%= t("booking.thank_you.time") %>: <%= @time_str %>
+<%= t("booking.thank_you.duration") %>: <%= t("booking.thank_you.duration_minutes", count: @duration) %>
+<%= t("booking.thank_you.status") %>: <%= t("booking.confirmation_email.status_message") %>
+
+<% if @space.booking_success_message.present? %>
+<%= @space.booking_success_message %>
+<% end %>
+
+<%= t("booking.confirmation_email.footer", business_name: @space.name, app_name: t("layout.app_name")) %>

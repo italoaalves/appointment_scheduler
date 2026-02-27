@@ -6,6 +6,8 @@ class BookingController < ApplicationController
   before_action :set_booking_context, only: [ :show, :slots, :create, :thank_you ]
   before_action :validate_booking_usable, only: [ :show, :slots, :create ]
 
+  CALENDAR_VERIFIER = Rails.application.message_verifier(:booking_calendar)
+
   def show
     @space = @booking_context.space
   end
@@ -25,6 +27,21 @@ class BookingController < ApplicationController
 
   def thank_you
     @space = @booking_context.space
+    @appointment = flash[:appointment_id].present? ? @space.appointments.find_by(id: flash[:appointment_id]) : nil
+  end
+
+  def calendar_ics
+    appointment_id = CALENDAR_VERIFIER.verified(params[:token])
+    appointment = appointment_id.present? ? Appointment.find_by(id: appointment_id) : nil
+    unless appointment
+      head :not_found
+      return
+    end
+    ics = Booking::CalendarFileGenerator.call(appointment: appointment)
+    send_data ics,
+              filename: Booking::CalendarFileGenerator.new(appointment: appointment).filename,
+              type: "text/calendar",
+              disposition: "attachment"
   end
 
   def create
@@ -53,6 +70,7 @@ class BookingController < ApplicationController
         event:         :appointment_booked,
         appointment_id: appointment.id
       )
+      flash[:appointment_id] = appointment.id
       redirect_to @booking_context.redirect_after_booking
     else
       flash.now[:alert] = appointment.errors.full_messages.to_sentence

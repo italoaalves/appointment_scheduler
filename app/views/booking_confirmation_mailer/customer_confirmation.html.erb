@@ -1,0 +1,18 @@
+<p><%= t("booking.confirmation_email.greeting", business_name: @space.name) %></p>
+
+<p><%= t("booking.confirmation_email.intro") %></p>
+
+<table style="margin: 1em 0; border-collapse: collapse;">
+  <tr><td style="padding: 0.25em 1em 0.25em 0; color: #666; font-size: 12px;"><%= t("booking.thank_you.date") %>:</td><td><%= @date_str %></td></tr>
+  <tr><td style="padding: 0.25em 1em 0.25em 0; color: #666; font-size: 12px;"><%= t("booking.thank_you.time") %>:</td><td><%= @time_str %></td></tr>
+  <tr><td style="padding: 0.25em 1em 0.25em 0; color: #666; font-size: 12px;"><%= t("booking.thank_you.duration") %>:</td><td><%= t("booking.thank_you.duration_minutes", count: @duration) %></td></tr>
+  <tr><td style="padding: 0.25em 1em 0.25em 0; color: #666; font-size: 12px;"><%= t("booking.thank_you.status") %>:</td><td><%= t("booking.confirmation_email.status_message") %></td></tr>
+</table>
+
+<% if @space.booking_success_message.present? %>
+  <p><%= @space.booking_success_message %></p>
+<% end %>
+
+<p style="margin-top: 1.5em; font-size: 12px; color: #666;">
+  <%= t("booking.confirmation_email.footer", business_name: @space.name, app_name: t("layout.app_name")) %>
+</p>

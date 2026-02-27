@@ -828,7 +828,28 @@ en:
       success: "Your appointment request has been submitted. We'll contact you to confirm."
     thank_you:
       title: "Thank you!"
-      default_message: "Your appointment request has been submitted. We will follow up with you shortly to confirm."
+      title_new: "Appointment Requested!"
+      date: "Date"
+      time: "Time"
+      duration: "Duration"
+      duration_minutes:
+        one: "1 min"
+        other: "%{count} min"
+      status: "Status"
+      status_pending: "Pending confirmation"
+      add_to_calendar: "Add to Calendar"
+      add_to_google_calendar: "Add to Google Calendar"
+      default_message: "Your appointment request has been submitted. You will receive a confirmation shortly."
+    calendar:
+      summary: "%{business_name} — Appointment"
+      summary_suffix: "Appointment"
+      default_description: "Appointment booked via booking page"
+    confirmation_email:
+      subject: "%{business_name} — Appointment requested for %{date}"
+      greeting: "Your appointment with %{business_name} has been requested!"
+      intro: "Your appointment has been requested!"
+      status_message: "Pending confirmation — we will notify you when confirmed."
+      footer: "This is an automated message from %{business_name} via %{app_name}."
     invalid:
       title: "Invalid link"
       body: "This booking link doesn't exist or has been removed."

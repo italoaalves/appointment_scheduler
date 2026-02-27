@@ -799,7 +799,28 @@ pt-BR:
       success: "Sua solicitação foi enviada. Entraremos em contato para confirmar."
     thank_you:
       title: "Obrigado!"
-      default_message: "Sua solicitação foi enviada. Entraremos em contato em breve para confirmar."
+      title_new: "Consulta solicitada!"
+      date: "Data"
+      time: "Horário"
+      duration: "Duração"
+      duration_minutes:
+        one: "1 min"
+        other: "%{count} min"
+      status: "Status"
+      status_pending: "Pendente de confirmação"
+      add_to_calendar: "Adicionar ao calendário"
+      add_to_google_calendar: "Adicionar ao Google Calendar"
+      default_message: "Sua solicitação foi enviada. Você receberá uma confirmação em breve."
+    calendar:
+      summary: "%{business_name} — Consulta"
+      summary_suffix: "Consulta"
+      default_description: "Consulta agendada pela página de agendamento"
+    confirmation_email:
+      subject: "%{business_name} — Agendamento solicitado para %{date}"
+      greeting: "Sua consulta com %{business_name} foi solicitada!"
+      intro: "Sua consulta foi solicitada!"
+      status_message: "Pendente de confirmação — avisaremos quando for confirmada."
+      footer: "Esta é uma mensagem automática de %{business_name} via %{app_name}."
     invalid:
       title: "Link inválido"
       body: "Este link não existe ou foi removido."

@@ -30,8 +30,10 @@ module Spaces
     def recipients_for_event
       case @event
       when :appointment_booked
-        return [] if owner.blank? || owner.email.blank?
-        [ [ owner, [ :email ] ] ]
+        recipients = []
+        recipients << [ owner, [ :email ] ] if owner.present? && owner.email.present?
+        recipients << [ @appointment.customer, [ :email ] ] if @appointment.customer&.email.present?
+        recipients
       when :appointment_confirmed, :appointment_cancelled, :appointment_rescheduled
         return [] if @appointment.customer.blank?
         [ [ @appointment.customer, channels_for_customer ] ]
@@ -61,6 +63,23 @@ module Spaces
     def dispatch_to(recipient:, channel:)
       return if recipient.blank?
 
+      if @event == :appointment_booked && channel == :email && recipient.is_a?(Customer)
+        send_customer_confirmation(recipient)
+      else
+        send_owner_notification(recipient, channel)
+      end
+    end
+
+    def send_customer_confirmation(customer)
+      BookingConfirmationMailer.customer_confirmation(appointment: @appointment).deliver_now
+    rescue => e
+      Rails.logger.error(
+        "[Notifications] customer_confirmation_failed appointment_id=#{@appointment.id} " \
+        "error_class=#{e.class} error=#{e.message}"
+      )
+    end
+
+    def send_owner_notification(recipient, channel)
       subject = build_subject(channel)
       body    = build_body(channel)
 
