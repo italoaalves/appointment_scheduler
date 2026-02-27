@@ -27,14 +27,16 @@ module Spaces
     end
 
     def update
-      new_plan_id  = params[:plan_id]
-      subscription = current_tenant.subscription
+      new_plan_slug = params[:plan_id]
+      subscription  = current_tenant.subscription
 
-      if upgrade?(subscription, new_plan_id)
-        result       = Billing::SubscriptionManager.upgrade(subscription: subscription, new_plan_id: new_plan_id)
+      if upgrade?(subscription, new_plan_slug)
+        new_plan     = Billing::Plan.find_by_slug!(new_plan_slug)
+        result       = Billing::SubscriptionManager.upgrade(subscription: subscription, new_billing_plan_id: new_plan.id)
         success_key  = "billing.plan_changed"
-      elsif downgrade?(subscription, new_plan_id)
-        result       = Billing::SubscriptionManager.downgrade(subscription: subscription, new_plan_id: new_plan_id)
+      elsif downgrade?(subscription, new_plan_slug)
+        new_plan     = Billing::Plan.find_by_slug!(new_plan_slug)
+        result       = Billing::SubscriptionManager.downgrade(subscription: subscription, new_billing_plan_id: new_plan.id)
         success_key  = "billing.downgrade_scheduled"
       else
         redirect_to settings_billing_path, alert: I18n.t("billing.no_change") and return
@@ -76,7 +78,7 @@ module Spaces
 
       result = Billing::SubscriptionManager.subscribe(
         space:             current_tenant,
-        plan_id:           plan_id,
+        billing_plan_id:   plan.id,
         payment_method:    payment_method&.to_sym,
         asaas_customer_id: asaas_customer_id
       )

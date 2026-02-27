@@ -61,7 +61,7 @@ module Billing
 
       Billing::SubscriptionManager.subscribe(
         space:             @space,
-        plan_id:           "pro",
+        billing_plan_id:   billing_plans(:pro).id,
         payment_method:    :pix,
         asaas_customer_id: "cus_001",
         asaas_client:      fake_client
@@ -77,7 +77,7 @@ module Billing
 
       result = Billing::SubscriptionManager.subscribe(
         space:             @space,
-        plan_id:           "pro",
+        billing_plan_id:   billing_plans(:pro).id,
         payment_method:    :pix,
         asaas_customer_id: "cus_001",
         asaas_client:      client
@@ -92,16 +92,19 @@ module Billing
       assert_equal "pro",           @subscription.billing_plan.slug
     end
 
-    test "subscribe logs subscription.activated BillingEvent" do
+    test "subscribe logs subscription.activated BillingEvent with plan_slug" do
       assert_difference -> { Billing::BillingEvent.where(event_type: "subscription.activated").count } do
         Billing::SubscriptionManager.subscribe(
           space:             @space,
-          plan_id:           "pro",
+          billing_plan_id:   billing_plans(:pro).id,
           payment_method:    :pix,
           asaas_customer_id: "cus_001",
           asaas_client:      fake_client
         )
       end
+
+      event = Billing::BillingEvent.where(event_type: "subscription.activated").last
+      assert_equal "pro", event.metadata["plan_slug"]
     end
 
     test "subscribe returns error hash when Asaas API fails" do
@@ -111,7 +114,7 @@ module Billing
 
       result = Billing::SubscriptionManager.subscribe(
         space:             @space,
-        plan_id:           "pro",
+        billing_plan_id:   billing_plans(:pro).id,
         payment_method:    :pix,
         asaas_customer_id: "cus_001",
         asaas_client:      error_client
@@ -129,7 +132,7 @@ module Billing
 
       Billing::SubscriptionManager.subscribe(
         space:             @space,
-        plan_id:           "pro",
+        billing_plan_id:   billing_plans(:pro).id,
         payment_method:    :pix,
         asaas_customer_id: "cus_001",
         asaas_client:      error_client
@@ -138,42 +141,80 @@ module Billing
       assert_equal original_plan_id, @subscription.reload.billing_plan_id
     end
 
+    test "subscribe returns error when payment method not allowed for plan" do
+      result = Billing::SubscriptionManager.subscribe(
+        space:             @space,
+        billing_plan_id:   billing_plans(:enterprise).id,
+        payment_method:    :pix,
+        asaas_customer_id: "cus_001",
+        asaas_client:      fake_client
+      )
+
+      assert_equal false, result[:success]
+      assert result[:error].present?
+    end
+
+    test "subscribe succeeds for enterprise with credit_card payment method" do
+      result = Billing::SubscriptionManager.subscribe(
+        space:             @space,
+        billing_plan_id:   billing_plans(:enterprise).id,
+        payment_method:    :credit_card,
+        asaas_customer_id: "cus_001",
+        asaas_client:      fake_client
+      )
+
+      assert result[:success]
+    end
+
+    test "subscribe raises RecordNotFound for invalid billing_plan_id" do
+      assert_raises(ActiveRecord::RecordNotFound) do
+        Billing::SubscriptionManager.subscribe(
+          space:             @space,
+          billing_plan_id:   0,
+          payment_method:    :pix,
+          asaas_customer_id: "cus_001",
+          asaas_client:      fake_client
+        )
+      end
+    end
+
     # ── upgrade ───────────────────────────────────────────────────────────────
 
     test "upgrade changes billing_plan immediately" do
       result = Billing::SubscriptionManager.upgrade(
-        subscription: @subscription,
-        new_plan_id:  "pro",
-        asaas_client: fake_client
+        subscription:       @subscription,
+        new_billing_plan_id: billing_plans(:enterprise).id,
+        asaas_client:       fake_client
       )
 
       assert result[:success]
-      assert_equal "pro", @subscription.reload.billing_plan.slug
+      assert_equal "enterprise", @subscription.reload.billing_plan.slug
     end
 
     test "upgrade clears pending_billing_plan" do
       @subscription.update_column(:pending_billing_plan_id, billing_plans(:essential).id)
 
       Billing::SubscriptionManager.upgrade(
-        subscription: @subscription,
-        new_plan_id:  "pro",
-        asaas_client: fake_client
+        subscription:       @subscription,
+        new_billing_plan_id: billing_plans(:enterprise).id,
+        asaas_client:       fake_client
       )
 
       assert_nil @subscription.reload.pending_billing_plan_id
     end
 
-    test "upgrade logs plan.changed BillingEvent with from/to metadata" do
+    test "upgrade logs plan.changed BillingEvent with from/to slugs" do
       assert_difference -> { Billing::BillingEvent.where(event_type: "plan.changed").count } do
         Billing::SubscriptionManager.upgrade(
-          subscription: @subscription,
-          new_plan_id:  "pro",
-          asaas_client: fake_client
+          subscription:       @subscription,
+          new_billing_plan_id: billing_plans(:enterprise).id,
+          asaas_client:       fake_client
         )
       end
 
       event = Billing::BillingEvent.where(event_type: "plan.changed").last
-      assert_equal "pro", event.metadata["plan_id"] || event.metadata["to"]
+      assert_equal "enterprise", event.metadata["to"]
+      assert_equal "pro",        event.metadata["from"]
     end
 
     test "upgrade returns error hash when Asaas fails" do
@@ -184,9 +225,9 @@ module Billing
       )
 
       result = Billing::SubscriptionManager.upgrade(
-        subscription: @subscription,
-        new_plan_id:  "pro",
-        asaas_client: error_client
+        subscription:       @subscription,
+        new_billing_plan_id: billing_plans(:enterprise).id,
+        asaas_client:       error_client
       )
 
       assert_equal false, result[:success]
@@ -201,9 +242,9 @@ module Billing
       )
 
       Billing::SubscriptionManager.upgrade(
-        subscription: @subscription,
-        new_plan_id:  "pro",
-        asaas_client: error_client
+        subscription:       @subscription,
+        new_billing_plan_id: billing_plans(:enterprise).id,
+        asaas_client:       error_client
       )
 
       assert_equal original_plan_id, @subscription.reload.billing_plan_id
@@ -213,8 +254,8 @@ module Billing
 
     test "downgrade sets pending_billing_plan without changing current billing_plan" do
       result = Billing::SubscriptionManager.downgrade(
-        subscription: @subscription,
-        new_plan_id:  "essential"
+        subscription:        @subscription,
+        new_billing_plan_id: billing_plans(:essential).id
       )
 
       assert result[:success]
@@ -226,8 +267,8 @@ module Billing
     test "downgrade logs plan.downgrade_scheduled BillingEvent" do
       assert_difference -> { Billing::BillingEvent.where(event_type: "plan.downgrade_scheduled").count } do
         Billing::SubscriptionManager.downgrade(
-          subscription: @subscription,
-          new_plan_id:  "essential"
+          subscription:        @subscription,
+          new_billing_plan_id: billing_plans(:essential).id
         )
       end
 
@@ -236,11 +277,11 @@ module Billing
       assert_equal "pro",       event.metadata["from"]
     end
 
-    test "downgrade raises ActiveRecord::RecordNotFound for unknown new_plan_id" do
+    test "downgrade raises ActiveRecord::RecordNotFound for invalid new_billing_plan_id" do
       assert_raises(ActiveRecord::RecordNotFound) do
         Billing::SubscriptionManager.downgrade(
-          subscription: @subscription,
-          new_plan_id:  "bogus_plan"
+          subscription:        @subscription,
+          new_billing_plan_id: 0
         )
       end
     end

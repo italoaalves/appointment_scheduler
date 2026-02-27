@@ -2,20 +2,20 @@
 
 module Billing
   class SubscriptionManager
-    def self.subscribe(space:, plan_id:, payment_method:, asaas_customer_id:,
+    def self.subscribe(space:, billing_plan_id:, payment_method:, asaas_customer_id:,
                        asaas_client: Billing::AsaasClient.new)
-      new(asaas_client).subscribe(space: space, plan_id: plan_id,
+      new(asaas_client).subscribe(space: space, billing_plan_id: billing_plan_id,
                                    payment_method: payment_method,
                                    asaas_customer_id: asaas_customer_id)
     end
 
-    def self.upgrade(subscription:, new_plan_id:,
+    def self.upgrade(subscription:, new_billing_plan_id:,
                      asaas_client: Billing::AsaasClient.new)
-      new(asaas_client).upgrade(subscription: subscription, new_plan_id: new_plan_id)
+      new(asaas_client).upgrade(subscription: subscription, new_billing_plan_id: new_billing_plan_id)
     end
 
-    def self.downgrade(subscription:, new_plan_id:)
-      new(nil).downgrade(subscription: subscription, new_plan_id: new_plan_id)
+    def self.downgrade(subscription:, new_billing_plan_id:)
+      new(nil).downgrade(subscription: subscription, new_billing_plan_id: new_billing_plan_id)
     end
 
     def self.cancel(subscription:, asaas_client: Billing::AsaasClient.new)
@@ -28,8 +28,12 @@ module Billing
       @client = asaas_client
     end
 
-    def subscribe(space:, plan_id:, payment_method:, asaas_customer_id:)
-      plan = Billing::Plan.find_by_slug!(plan_id)
+    def subscribe(space:, billing_plan_id:, payment_method:, asaas_customer_id:)
+      plan = Billing::Plan.active.find(billing_plan_id)
+
+      unless plan.requires_payment_method?(payment_method)
+        return { success: false, error: I18n.t("billing.checkout.payment_method_not_allowed") }
+      end
 
       asaas_result = @client.create_subscription(
         customer_id:        asaas_customer_id,
@@ -61,7 +65,7 @@ module Billing
           space_id:        space.id,
           subscription_id: subscription.id,
           event_type:      "subscription.activated",
-          metadata:        { plan_id: plan_id, payment_method: payment_method.to_s }
+          metadata:        { plan_slug: plan.slug, payment_method: payment_method.to_s }
         )
       end
 
@@ -70,9 +74,9 @@ module Billing
       { success: false, error: e.message }
     end
 
-    def upgrade(subscription:, new_plan_id:)
+    def upgrade(subscription:, new_billing_plan_id:)
       old_plan_slug = subscription.billing_plan.slug
-      new_plan      = Billing::Plan.find_by_slug!(new_plan_id)
+      new_plan      = Billing::Plan.active.find(new_billing_plan_id)
 
       if subscription.asaas_subscription_id.present?
         @client.update_subscription(
@@ -88,7 +92,7 @@ module Billing
           space_id:        subscription.space_id,
           subscription_id: subscription.id,
           event_type:      "plan.changed",
-          metadata:        { from: old_plan_slug, to: new_plan_id }
+          metadata:        { from: old_plan_slug, to: new_plan.slug }
         )
       end
 
@@ -97,8 +101,8 @@ module Billing
       { success: false, error: e.message }
     end
 
-    def downgrade(subscription:, new_plan_id:)
-      new_plan = Billing::Plan.find_by_slug!(new_plan_id)
+    def downgrade(subscription:, new_billing_plan_id:)
+      new_plan = Billing::Plan.active.find(new_billing_plan_id)
 
       ActiveRecord::Base.transaction do
         subscription.update!(pending_billing_plan: new_plan)
@@ -109,7 +113,7 @@ module Billing
           event_type:      "plan.downgrade_scheduled",
           metadata:        {
             from:         subscription.billing_plan.slug,
-            to:           new_plan_id,
+            to:           new_plan.slug,
             effective_at: subscription.current_period_end&.iso8601
           }
         )

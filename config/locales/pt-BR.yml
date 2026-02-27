@@ -789,6 +789,7 @@ pt-BR:
       subscribe_button: "Assinar"
       back: "Voltar"
       success: "Assinatura ativada com sucesso."
+      payment_method_not_allowed: "Este plano não aceita a forma de pagamento selecionada."
     show:
       title: "Cobrança"
       subtitle: "Gerencie sua assinatura, plano e histórico de pagamentos."

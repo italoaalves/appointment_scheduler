@@ -789,6 +789,7 @@ en:
       subscribe_button: "Subscribe"
       back: "Back"
       success: "Subscription activated successfully."
+      payment_method_not_allowed: "This plan does not accept the selected payment method."
     show:
       title: "Billing"
       subtitle: "Manage your subscription, plan, and payment history."
