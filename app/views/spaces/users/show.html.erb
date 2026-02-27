@@ -38,18 +38,18 @@
     <% if current_user.can?(:manage_team) %>
       <%= link_to t("space.users.show.edit_team_member"),
                   edit_user_path(@user),
-                  class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
+                  class: button_classes(:primary) %>
       <% unless @user.space_owner?(current_tenant) %>
         <%= button_to t("space.users.show.delete_team_member"),
                       user_path(@user),
                       method: :delete,
                       data: { turbo_confirm: t("space.users.show.delete_team_member_confirm") },
-                      class: "inline-flex items-center rounded-md bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-900" %>
+                      class: button_classes(:danger) %>
       <% end %>
     <% end %>
     <%= link_to t("space.users.show.all_team"),
                 users_path,
-                class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
+                class: button_classes(:secondary) %>
   </div>
 
   <section class="space-y-3">
@@ -72,7 +72,7 @@
               </div>
               <%= link_to t("space.appointments.index.view"),
                           appointment_path(appointment),
-                          class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
+                          class: button_classes(:table_link) %>
             </div>
           </li>
         <% end %>

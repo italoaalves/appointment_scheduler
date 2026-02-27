@@ -28,11 +28,11 @@
       <div class="flex flex-wrap gap-3">
         <% if changes_left > 0 %>
           <%= form.submit t("space.personalized_scheduling_links.edit.submit"),
-                        class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800" %>
+                        class: button_classes(:primary) %>
         <% end %>
         <%= link_to t("space.personalized_scheduling_links.edit.cancel"),
                     scheduling_links_path,
-                    class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
+                    class: button_classes(:secondary) %>
       </div>
     <% end %>
   </div>
@@ -44,6 +44,6 @@
                   personalized_scheduling_link_path,
                   method: :delete,
                   data: { turbo_confirm: t("space.personalized_scheduling_links.edit.remove_confirm") },
-                  class: "mt-3 inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-500" %>
+                  class: "mt-3 #{button_classes(:destructive)}" %>
   </div>
 </div>

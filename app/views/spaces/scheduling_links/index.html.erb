@@ -28,7 +28,7 @@
           </button>
           <%= link_to t("space.personalized_scheduling_links.index.view"), book_by_slug_path(slug: @personalized_link.slug), target: "_blank", class: button_classes(:table_link) %>
           <%= link_to t("space.personalized_scheduling_links.index.edit"), edit_personalized_scheduling_link_path, class: button_classes(:table_link) %>
-          <%= button_to t("space.personalized_scheduling_links.index.remove"), personalized_scheduling_link_path, method: :delete, data: { turbo_confirm: t("space.personalized_scheduling_links.index.remove_confirm"), turbo_submits_with: t("shared.removing") }, class: "inline-flex items-center rounded-md bg-red-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-red-500" %>
+          <%= button_to t("space.personalized_scheduling_links.index.remove"), personalized_scheduling_link_path, method: :delete, data: { turbo_confirm: t("space.personalized_scheduling_links.index.remove_confirm"), turbo_submits_with: t("shared.removing") }, class: button_classes(:destructive) %>
         </div>
       <% else %>
         <p class="mt-1 text-xs text-slate-600"><%= t("space.personalized_scheduling_links.index.empty_hint") %></p>

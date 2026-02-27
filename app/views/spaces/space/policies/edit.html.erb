@@ -75,13 +75,13 @@
 
     <div class="flex flex-wrap gap-3">
       <%= form.submit t("space.policies.edit.submit"),
-                      class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
+                      class: button_classes(:primary) %>
       <%= link_to t("space.policies.edit.back_to_space"),
                   edit_settings_space_path,
-                  class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-50" %>
+                  class: button_classes(:secondary) %>
       <%= link_to t("space.settings.edit.back_to_appointments"),
                   appointments_path,
-                  class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-50" %>
+                  class: button_classes(:secondary) %>
     </div>
   <% end %>
 </div>

@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 module UiHelper
-  BUTTON_BASE = "inline-flex items-center rounded-md text-xs font-semibold shadow-sm transition-colors"
+  BUTTON_BASE = "inline-flex items-center rounded-md text-xs font-semibold shadow-sm transition-colors " \
+                "disabled:opacity-50 disabled:cursor-not-allowed " \
+                "focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 " \
+                "active:scale-[0.98]"
 
   def button_classes(variant = :primary)
     base = "#{BUTTON_BASE} px-3 py-2"

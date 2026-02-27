@@ -34,15 +34,15 @@
   <div class="flex flex-wrap gap-3">
     <%= link_to t("space.customers.show.edit_customer"),
                 edit_customer_path(@customer),
-                class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
+                class: button_classes(:primary) %>
     <%= link_to t("space.customers.show.all_customers"),
                 customers_path,
-                class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
+                class: button_classes(:secondary) %>
     <%= button_to t("space.customers.show.delete_customer"),
                   customer_path(@customer),
                   method: :delete,
                   data: { turbo_confirm: t("space.customers.show.delete_customer_confirm") },
-                  class: "inline-flex items-center rounded-md bg-slate-700 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-900" %>
+                  class: button_classes(:danger) %>
   </div>
 
   <section class="space-y-3">
@@ -65,7 +65,7 @@
               </div>
               <%= link_to t("space.appointments.index.view"),
                           appointment_path(appointment),
-                          class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
+                          class: button_classes(:table_link) %>
             </div>
           </li>
         <% end %>

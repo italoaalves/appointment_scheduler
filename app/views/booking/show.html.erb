@@ -75,7 +75,7 @@
     <div class="flex flex-wrap gap-3">
       <button type="submit" disabled data-booking-target="submitBtn"
               data-turbo-submits-with="<%= t("booking.submit_loading") %>"
-              class="inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">
+              class="<%= button_classes(:primary) %>">
         <%= t("booking.submit") %>
       </button>
     </div>

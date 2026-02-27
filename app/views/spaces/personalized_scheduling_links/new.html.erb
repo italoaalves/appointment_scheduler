@@ -25,10 +25,10 @@
       </div>
       <div class="flex flex-wrap gap-3">
         <%= form.submit t("space.personalized_scheduling_links.new.submit"),
-                        class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800" %>
+                        class: button_classes(:primary) %>
         <%= link_to t("space.personalized_scheduling_links.new.cancel"),
                     scheduling_links_path,
-                    class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
+                    class: button_classes(:secondary) %>
       </div>
     <% end %>
   </div>
