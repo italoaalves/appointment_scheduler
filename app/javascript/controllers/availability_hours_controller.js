@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { formatBusinessHours } from "utils/business_hours_formatter"
 
 // Syncs simple "Open/Close + day checkboxes" UI with availability window inputs.
 // Supports add-to-list overrides: user adds items like "Saturday 10:00–14:00".
@@ -204,45 +205,7 @@ export default class extends Controller {
       if (opens && closes) windows.push({ weekday: wday, opens, closes })
     })
 
-    const formatted = this.formatBusinessHours(windows)
+    const formatted = formatBusinessHours(windows, this.weekdayAbbrValue, this.everyDayValue)
     this.previewTarget.textContent = formatted || "—"
-  }
-
-  formatBusinessHours(windows) {
-    if (!windows.length) return null
-
-    const abbr = this.weekdayAbbrValue
-    const everyDay = this.everyDayValue
-
-    const groups = this.groupByTime(windows)
-    return groups.map(({ days, opens, closes }) => {
-      const dayStr = this.formatWeekdayRange(days.sort((a, b) => a - b), abbr, everyDay)
-      return `${dayStr} ${opens}–${closes}`
-    }).join(", ")
-  }
-
-  groupByTime(windows) {
-    const map = new Map()
-    windows.forEach(({ weekday, opens, closes }) => {
-      const key = `${opens}|${closes}`
-      if (!map.has(key)) map.set(key, { opens, closes, days: [] })
-      map.get(key).days.push(weekday)
-    })
-    return Array.from(map.values())
-  }
-
-  formatWeekdayRange(days, abbr, everyDay) {
-    const monFri = [ 1, 2, 3, 4, 5 ]
-    const monSat = [ 1, 2, 3, 4, 5, 6 ]
-    const all = [ 0, 1, 2, 3, 4, 5, 6 ]
-    if (this.arraysEqual(days, monFri)) return `${abbr[1]}–${abbr[5]}`
-    if (this.arraysEqual(days, monSat)) return `${abbr[1]}–${abbr[6]}`
-    if (this.arraysEqual(days, all)) return everyDay
-    return days.map(d => abbr[d]).join(", ")
-  }
-
-  arraysEqual(a, b) {
-    if (a.length !== b.length) return false
-    return a.every((v, i) => v === b[i])
   }
 }
