@@ -49,7 +49,7 @@
     <div class="flex flex-wrap gap-2">
       <%= link_to t("booking.thank_you.add_to_calendar"),
                   booking_calendar_ics_path(token: booking_calendar_token(@appointment)),
-                  class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50",
+                  class: button_classes(:secondary),
                   download: "" %>
       <% google_calendar_url = @appointment.scheduled_at ? [
         "https://calendar.google.com/calendar/render",
@@ -63,7 +63,7 @@
         <a href="<%= google_calendar_url %>"
            target="_blank"
            rel="noopener noreferrer"
-           class="inline-flex items-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50">
+           class="<%= button_classes(:secondary) %>">
           <%= t("booking.thank_you.add_to_google_calendar") %>
         </a>
       <% end %>

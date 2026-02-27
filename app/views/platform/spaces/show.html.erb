@@ -11,16 +11,16 @@
     <div class="flex flex-wrap gap-2">
       <%= link_to t("platform.spaces.show.edit"),
                   edit_platform_space_path(@space),
-                  class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800" %>
+                  class: button_classes(:primary) %>
       <%= link_to t("platform.spaces.show.add_user"),
                   new_platform_user_path(space_id: @space.id),
-                  class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
+                  class: button_classes(:secondary) %>
       <%= link_to t("platform.spaces.show.manage_users"),
                   platform_users_path(space_id: @space.id),
-                  class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
+                  class: button_classes(:secondary) %>
       <%= link_to t("platform.spaces.show.back"),
                   platform_spaces_path,
-                  class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
+                  class: button_classes(:secondary) %>
     </div>
   </header>
 
@@ -80,8 +80,8 @@
   </div>
 
   <div class="flex flex-wrap gap-2">
-    <%= link_to t("platform.spaces.show.view_appointments"), platform_space_appointments_path(@space), class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
-    <%= link_to t("platform.spaces.show.view_customers"), platform_space_customers_path(@space), class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
-    <%= link_to t("platform.spaces.show.view_scheduling_links"), platform_space_scheduling_links_path(@space), class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
+    <%= link_to t("platform.spaces.show.view_appointments"), platform_space_appointments_path(@space), class: button_classes(:secondary) %>
+    <%= link_to t("platform.spaces.show.view_customers"), platform_space_customers_path(@space), class: button_classes(:secondary) %>
+    <%= link_to t("platform.spaces.show.view_scheduling_links"), platform_space_scheduling_links_path(@space), class: button_classes(:secondary) %>
   </div>
 </div>

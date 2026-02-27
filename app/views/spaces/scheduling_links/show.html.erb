@@ -16,10 +16,10 @@
     <div class="flex flex-wrap gap-2">
       <%= link_to t("space.scheduling_links.show.edit"),
                   edit_scheduling_link_path(@scheduling_link),
-                  class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800" %>
+                  class: button_classes(:primary) %>
       <%= link_to t("space.scheduling_links.show.back"),
                   scheduling_links_path,
-                  class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-50" %>
+                  class: button_classes(:secondary) %>
     </div>
   </header>
 
@@ -37,7 +37,7 @@
               data-clipboard-text-value="<%= book_url(token: @scheduling_link.token) %>"
               data-action="click->clipboard#copy"
               data-copied-text="<%= t("space.scheduling_links.show.copied") %>"
-              class="inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+              class="<%= button_classes(:secondary) %>">
         <%= t("space.scheduling_links.show.copy") %>
       </button>
     </div>
@@ -67,6 +67,6 @@
                 book_path(token: @scheduling_link.token),
                 target: "_blank",
                 rel: "noopener",
-                class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
+                class: button_classes(:table_link) %>
   </div>
 </div>
