@@ -19,7 +19,11 @@ class CreateOwnerSpace
     SpaceMembership.create!(user_id: @user.id, space_id: space.id)
     grant_owner_permissions
     seed_default_availability(space)
-    Billing::TrialManager.start_trial(space)
+    begin
+      Billing::TrialManager.start_trial(space)
+    rescue => e
+      Rails.logger.error "[CreateOwnerSpace] start_trial failed for space #{space.id}: #{e.class} #{e.message}\n#{e.backtrace.first(5).join("\n")}"
+    end
     space
   end
 

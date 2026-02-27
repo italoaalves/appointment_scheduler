@@ -22,14 +22,25 @@ module Billing
       space
     end
 
-    # ── No subscription — grace period ────────────────────────────────────────
+    # ── No subscription — defaults to Starter ─────────────────────────────────
 
-    test "no subscription returns true for all actions (grace period)" do
+    test "no subscription treats space as Starter (create_team_member with 1 member returns false)" do
+      space = make_space(plan_id: "starter", status: :no_subscription)
+      SpaceMembership.create!(space: space, user: users(:manager))
+
+      assert_not Billing::PlanEnforcer.can?(space, :create_team_member)
+    end
+
+    test "no subscription treats space as Starter (create_customer with 0 returns true)" do
       space = make_space(plan_id: "starter", status: :no_subscription)
 
-      assert Billing::PlanEnforcer.can?(space, :create_team_member)
       assert Billing::PlanEnforcer.can?(space, :create_customer)
-      assert Billing::PlanEnforcer.can?(space, :access_personalized_booking_page)
+    end
+
+    test "no subscription treats space as Starter (access_personalized_booking_page returns false)" do
+      space = make_space(plan_id: "starter", status: :no_subscription)
+
+      assert_not Billing::PlanEnforcer.can?(space, :access_personalized_booking_page)
     end
 
     # ── Expired subscription ──────────────────────────────────────────────────
@@ -191,10 +202,11 @@ module Billing
       assert_equal Float::INFINITY, Billing::PlanEnforcer.limit_for(space, :max_customers)
     end
 
-    test "limit_for returns nil when no subscription" do
+    test "limit_for returns Starter limits when no subscription" do
       space = make_space(plan_id: "starter", status: :no_subscription)
 
-      assert_nil Billing::PlanEnforcer.limit_for(space, :max_team_members)
+      assert_equal 1, Billing::PlanEnforcer.limit_for(space, :max_team_members)
+      assert_equal 100, Billing::PlanEnforcer.limit_for(space, :max_customers)
     end
 
     # ── Unknown action ────────────────────────────────────────────────────────

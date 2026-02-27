@@ -16,11 +16,9 @@ module Billing
 
     def can?(action)
       subscription = Current.subscription || @space.subscription
+      plan = subscription&.plan || Billing::Plan::STARTER
 
-      return true  if subscription.nil?
-      return false if subscription.expired?
-
-      plan = subscription.plan
+      return false if subscription&.expired?
 
       case action
       when :create_team_member
@@ -34,6 +32,7 @@ module Billing
       when :access_custom_policies
         plan.feature?(:custom_appointment_policies)
       when :send_whatsapp
+        return false unless plan.feature?(:whatsapp_included_quota) || plan.whatsapp_monthly_quota.positive?
         credit = Billing::MessageCredit.find_by(space_id: @space.id)
         credit.present? && (credit.balance + credit.monthly_quota_remaining) > 0
       else
@@ -43,9 +42,8 @@ module Billing
 
     def limit_for(attribute)
       subscription = Current.subscription || @space.subscription
-      return nil if subscription.nil?
-
-      subscription.plan.limit(attribute)
+      plan = subscription&.plan || Billing::Plan::STARTER
+      plan.limit(attribute)
     end
   end
 end
