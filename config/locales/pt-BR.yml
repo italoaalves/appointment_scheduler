@@ -194,6 +194,18 @@ pt-BR:
       customers_title: "Clientes"
       customers_body: "Crie, edite ou remova clientes e veja o histórico deles."
       customers_cta: "Gerenciar clientes"
+    welcome_card:
+      title: "Tudo pronto!"
+      body: "Sua página de agendamento está no ar. Compartilhe seu link para começar a receber consultas."
+      copy_link: "Copiar link de agendamento"
+      share_whatsapp: "Compartilhar no WhatsApp"
+      help_link: "Precisa de ajuda? Guia rápido"
+      dismiss: "Dispensar"
+    setup_checklist:
+      resume_onboarding: "Concluir sua configuração"
+    empty_calendar:
+      message: "Nenhuma consulta ainda. Compartilhe seu link de agendamento para começar."
+      copy_link: "Copiar link"
     onboarding:
       checklist_title: "Bem-vindo! Vamos preparar seu espaço para agendamentos."
       set_business_hours: "Definir horário de funcionamento"

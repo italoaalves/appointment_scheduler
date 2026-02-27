@@ -83,9 +83,23 @@
               <% end %>
             <% end %>
           <% else %>
-            <p class="py-6 text-center text-sm text-slate-500">
-              <%= t("admin.appointments.calendar.no_appointments") %>
-            </p>
+            <div class="py-6 text-center">
+              <p class="text-sm text-slate-500">
+                <%= t("dashboard.empty_calendar.message") %>
+              </p>
+              <% if current_tenant.personalized_scheduling_link.present? %>
+                <% empty_booking_url = book_by_slug_url(slug: current_tenant.personalized_scheduling_link.slug) %>
+                <div class="mt-3" data-controller="clipboard">
+                  <code data-clipboard-target="source" class="hidden"><%= empty_booking_url %></code>
+                  <span data-clipboard-target="feedback" class="hidden text-sm font-medium text-emerald-600"><%= t("onboarding.step3.copied") %></span>
+                  <button type="button"
+                          data-action="click->clipboard#copy"
+                          class="<%= button_classes(:primary) %> mt-2">
+                    <%= t("dashboard.empty_calendar.copy_link") %>
+                  </button>
+                </div>
+              <% end %>
+            </div>
           <% end %>
         </div>
       <% end %>

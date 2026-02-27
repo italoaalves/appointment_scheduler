@@ -6,7 +6,13 @@
     </p>
   </header>
 
-  <% if !current_tenant.setup_complete? %>
+  <% if current_tenant.onboarding_complete? && current_tenant.personalized_scheduling_link.present? %>
+    <% unless current_user.user_preference&.dismissed_welcome_card %>
+      <div class="mb-6">
+        <%= render "dashboard/welcome_card" %>
+      </div>
+    <% end %>
+  <% else %>
     <div class="mb-6">
       <%= render "dashboard/setup_checklist", space: current_tenant %>
     </div>

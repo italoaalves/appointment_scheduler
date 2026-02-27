@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: "users/registrations" }
   root "dashboard#index"
 
+  patch "dashboard/dismiss_welcome", to: "dashboard#dismiss_welcome", as: :dismiss_dashboard_welcome
+
   resource :profile, only: [ :edit, :update ], controller: "profiles"
   resource :preferences, only: [ :edit, :update ], controller: "preferences"
 

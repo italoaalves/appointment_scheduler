@@ -9,6 +9,9 @@
   <h2 class="text-lg font-semibold text-slate-900">
     <%= t("dashboard.onboarding.checklist_title") %>
   </h2>
+  <p class="mt-2">
+    <%= link_to t("dashboard.setup_checklist.resume_onboarding"), onboarding_wizard_path, class: "text-sm font-medium text-indigo-700 hover:text-indigo-900 hover:underline" %>
+  </p>
   <ul class="mt-4 space-y-3">
     <li class="flex items-start gap-3">
       <% if availability_done %>

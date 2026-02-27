@@ -17,6 +17,12 @@ class DashboardController < ApplicationController
     redirect_to new_user_session_path, alert: t("space.unauthorized")
   end
 
+  def dismiss_welcome
+    pref = current_user.user_preference || current_user.create_user_preference!(locale: I18n.default_locale.to_s)
+    pref.update!(dismissed_welcome_card: true)
+    head :ok
+  end
+
   private
 
   def stop_impersonation_and_redirect

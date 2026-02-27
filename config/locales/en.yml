@@ -223,6 +223,18 @@ en:
       customers_title: "Customers"
       customers_body: "Create, edit, or remove customer accounts and view their history."
       customers_cta: "Manage customers"
+    welcome_card:
+      title: "You're all set!"
+      body: "Your booking page is live. Share your link to start receiving appointments."
+      copy_link: "Copy Booking Link"
+      share_whatsapp: "Share on WhatsApp"
+      help_link: "Need help? Quick guide"
+      dismiss: "Dismiss"
+    setup_checklist:
+      resume_onboarding: "Complete your setup"
+    empty_calendar:
+      message: "No appointments yet. Share your booking link to get started."
+      copy_link: "Copy Link"
     onboarding:
       checklist_title: "Welcome! Let's get your space ready for booking."
       set_business_hours: "Set your business hours"
