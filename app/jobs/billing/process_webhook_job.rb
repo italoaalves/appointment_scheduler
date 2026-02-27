@@ -2,7 +2,7 @@
 
 module Billing
   class ProcessWebhookJob < ApplicationJob
-    queue_as :billing
+    queue_as :default
 
     def perform(payload:)
       Billing::WebhookProcessor.call(payload)
