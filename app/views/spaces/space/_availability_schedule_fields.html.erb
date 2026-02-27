@@ -24,20 +24,24 @@
       <div class="rounded-md border border-slate-200 bg-slate-50 p-4">
         <div class="flex flex-wrap items-center gap-4">
           <div class="flex items-center gap-2">
-            <label class="text-sm font-medium text-slate-700"><%= t("space.settings.edit.availability_open") %></label>
+            <label for="availability_opens_at" class="text-sm font-medium text-slate-700"><%= t("space.settings.edit.availability_open") %></label>
             <input type="time"
+                   id="availability_opens_at"
                    data-availability-hours-target="opensAt"
                    value="09:00"
                    data-action="input->availability-hours#sync change->availability-hours#sync"
-                   class="rounded-md border border-slate-300 px-2 py-1.5 text-sm" />
+                   class="rounded-md border border-slate-300 px-2 py-1.5 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                   aria-label="<%= t("space.settings.edit.availability_open") %>" />
           </div>
           <div class="flex items-center gap-2">
-            <label class="text-sm font-medium text-slate-700"><%= t("space.settings.edit.availability_close") %></label>
+            <label for="availability_closes_at" class="text-sm font-medium text-slate-700"><%= t("space.settings.edit.availability_close") %></label>
             <input type="time"
+                   id="availability_closes_at"
                    data-availability-hours-target="closesAt"
                    value="17:00"
                    data-action="input->availability-hours#sync change->availability-hours#sync"
-                   class="rounded-md border border-slate-300 px-2 py-1.5 text-sm" />
+                   class="rounded-md border border-slate-300 px-2 py-1.5 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                   aria-label="<%= t("space.settings.edit.availability_close") %>" />
           </div>
         </div>
         <p class="mt-2 text-xs text-slate-500"><%= t("space.settings.edit.availability_open_on") %></p>
@@ -83,7 +87,8 @@
                  data-availability-hours-target="overrideItem">
               <select data-availability-hours-target="overrideDay"
                       data-action="change->availability-hours#syncOverrides"
-                      class="rounded-md border border-slate-300 px-2 py-1.5 text-sm">
+                      class="rounded-md border border-slate-300 px-2 py-1.5 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                      aria-label="<%= t("space.settings.edit.availability_day") %>">
                 <% weekdays.each do |wday, label| %>
                   <option value="<%= wday %>"><%= label %></option>
                 <% end %>
@@ -92,12 +97,14 @@
                      data-availability-hours-target="overrideOpens"
                      placeholder="09:00"
                      data-action="input->availability-hours#syncOverrides change->availability-hours#syncOverrides"
-                     class="rounded-md border border-slate-300 px-2 py-1.5 text-sm" />
+                     class="rounded-md border border-slate-300 px-2 py-1.5 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                     aria-label="<%= t("space.settings.edit.availability_open") %>" />
               <input type="time"
                      data-availability-hours-target="overrideCloses"
                      placeholder="17:00"
                      data-action="input->availability-hours#syncOverrides change->availability-hours#syncOverrides"
-                     class="rounded-md border border-slate-300 px-2 py-1.5 text-sm" />
+                     class="rounded-md border border-slate-300 px-2 py-1.5 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                     aria-label="<%= t("space.settings.edit.availability_close") %>" />
               <button type="button"
                       data-action="availability-hours#removeOverride"
                       class="text-xs text-red-600 hover:text-red-800">

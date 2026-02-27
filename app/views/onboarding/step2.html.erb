@@ -55,13 +55,13 @@
                      name="days[<%= wday %>][opens_at]"
                      value="<%= opens_val %>"
                      :disabled="!enabled"
-                     class="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                     class="rounded-md border border-slate-300 px-2 py-1.5 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
                      aria-label="<%= t("onboarding.step2.opens_at") %>">
               <input type="time"
                      name="days[<%= wday %>][closes_at]"
                      value="<%= closes_val %>"
                      :disabled="!enabled"
-                     class="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                     class="rounded-md border border-slate-300 px-2 py-1.5 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
                      aria-label="<%= t("onboarding.step2.closes_at") %>">
             </div>
           <% end %>

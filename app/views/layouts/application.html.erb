@@ -130,7 +130,9 @@
               <button type="button"
                       class="inline-flex items-center justify-center rounded-md p-1.5 text-slate-200 hover:bg-slate-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                       @click="open = !open"
-                      aria-label="Toggle navigation">
+                      aria-label="Toggle navigation"
+                      aria-haspopup="true"
+                      :aria-expanded="open">
                 <svg x-show="!open" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
@@ -140,7 +142,7 @@
               </button>
             </div>
           </div>
-          <div class="md:hidden" x-show="open" x-transition>
+          <div class="md:hidden" x-show="open" x-transition @click.outside="open = false" x-cloak>
             <div class="space-y-1 pb-3 pt-2">
               <% if current_user.super_admin? %>
                 <%= link_to t("layout.nav.tenants"), platform_spaces_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>

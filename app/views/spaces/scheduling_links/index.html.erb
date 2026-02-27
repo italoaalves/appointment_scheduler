@@ -18,7 +18,8 @@
           <input type="text"
                  readonly
                  value="<%= book_by_slug_url(slug: @personalized_link.slug) %>"
-                 class="block flex-1 min-w-0 rounded-md border border-slate-300 bg-slate-50 px-2 py-1.5 text-xs text-slate-700" />
+                 class="block flex-1 min-w-0 rounded-md border border-slate-300 bg-slate-50 px-2 py-1.5 text-xs text-slate-700 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                 aria-label="<%= t("space.scheduling_links.show.booking_url") %>" />
           <button type="button"
                   data-controller="clipboard"
                   data-clipboard-text-value="<%= book_by_slug_url(slug: @personalized_link.slug) %>"
