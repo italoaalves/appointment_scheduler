@@ -1,0 +1,42 @@
+<div class="space-y-4">
+  <% page_actions = capture do %>
+    <%= link_to t("platform.credit_bundles.index.new_button"), new_platform_credit_bundle_path, class: button_classes(:primary) %>
+  <% end %>
+  <%= render "application/shared/page_header",
+             title:    t("platform.credit_bundles.index.title"),
+             subtitle: t("platform.credit_bundles.index.subtitle"),
+             actions:  page_actions %>
+
+  <% if @bundles.any? %>
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead class="bg-slate-50">
+          <tr>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.credit_bundles.index.table.position") %></th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.credit_bundles.index.table.name") %></th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.credit_bundles.index.table.amount") %></th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.credit_bundles.index.table.price") %></th>
+            <th scope="col" class="px-4 py-2 text-center text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.credit_bundles.index.table.active") %></th>
+            <th scope="col" class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.credit_bundles.index.table.actions") %></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <% @bundles.each do |bundle| %>
+            <tr class="hover:bg-slate-50 <%= 'opacity-50' unless bundle.active? %>">
+              <td class="px-4 py-2 text-slate-500"><%= bundle.position %></td>
+              <td class="px-4 py-2 font-medium text-slate-900"><%= bundle.name %></td>
+              <td class="px-4 py-2 text-slate-700"><%= bundle.amount %> <%= t("platform.credit_bundles.index.credits") %></td>
+              <td class="px-4 py-2 text-slate-700"><%= number_to_currency(bundle.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
+              <td class="px-4 py-2 text-center"><%= bundle.active? ? "✓" : "—" %></td>
+              <td class="px-4 py-2 text-right">
+                <%= link_to t("platform.credit_bundles.index.edit"), edit_platform_credit_bundle_path(bundle), class: button_classes(:table_link) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render "application/shared/empty_state", content: t("platform.credit_bundles.index.empty") %>
+  <% end %>
+</div>

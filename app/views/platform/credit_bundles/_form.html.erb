@@ -1,0 +1,43 @@
+<%= form_with model: bundle,
+             scope: :credit_bundle,
+             url: bundle.persisted? ? platform_credit_bundle_path(bundle) : platform_credit_bundles_path,
+             method: bundle.persisted? ? :patch : :post,
+             class: "space-y-4" do |f| %>
+  <%= render "application/shared/error_messages", resource: bundle %>
+
+  <div>
+    <%= f.label :name, t("platform.credit_bundles.form.name"), class: form_label_classes %>
+    <%= f.text_field :name, required: true, class: form_input_classes %>
+  </div>
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div>
+      <%= f.label :amount, t("platform.credit_bundles.form.amount"), class: form_label_classes %>
+      <%= f.number_field :amount, min: 1, required: true, class: form_input_classes("max-w-none") %>
+      <p class="mt-1 text-xs text-slate-500"><%= t("platform.credit_bundles.form.amount_hint") %></p>
+    </div>
+
+    <div>
+      <%= f.label :price_cents, t("platform.credit_bundles.form.price_cents"), class: form_label_classes %>
+      <%= f.number_field :price_cents, min: 1, required: true, class: form_input_classes("max-w-none") %>
+      <p class="mt-1 text-xs text-slate-500"><%= t("platform.credit_bundles.form.price_cents_hint") %></p>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :position, t("platform.credit_bundles.form.position"), class: form_label_classes %>
+    <%= f.number_field :position, min: 0, required: true, class: form_input_classes("max-w-xs") %>
+  </div>
+
+  <label class="flex items-center gap-2">
+    <%= f.check_box :active, class: "h-4 w-4 rounded border-slate-300 accent-slate-700" %>
+    <span class="text-sm text-slate-700"><%= t("platform.credit_bundles.form.active") %></span>
+  </label>
+
+  <div class="flex flex-wrap gap-3 border-t border-slate-200 pt-4">
+    <%= f.submit bundle.persisted? ? t("platform.credit_bundles.form.update") : t("platform.credit_bundles.form.create"),
+          class: "#{button_classes(:primary)} cursor-pointer",
+          data: { turbo_submits_with: t("shared.submitting") } %>
+    <%= link_to t("platform.credit_bundles.form.back"), platform_credit_bundles_path, class: button_classes(:secondary) %>
+  </div>
+<% end %>

@@ -244,6 +244,8 @@ en:
       billing: "Billing"
       credits: "Credits"
       platform_billing: "Billing"
+      platform_plans: "Plans"
+      platform_credit_bundles: "Bundles"
       language:
         en: "EN"
         pt: "PT"
@@ -998,6 +1000,42 @@ en:
         create: "Create plan"
         update: "Update plan"
         back: "Back to plans"
+    credit_bundles:
+      create:
+        notice: "Bundle created."
+      update:
+        notice: "Bundle updated."
+      index:
+        title: "Credit Bundles"
+        subtitle: "Manage WhatsApp credit bundles available for purchase."
+        new_button: "New bundle"
+        edit: "Edit"
+        credits: "credits"
+        empty: "No bundles yet."
+        table:
+          position: "Position"
+          name: "Name"
+          amount: "Credits"
+          price: "Price"
+          active: "Active"
+          actions: "Actions"
+      new:
+        title: "New bundle"
+        subtitle: "Create a new credit bundle."
+      edit:
+        title: "Edit bundle"
+        subtitle: "Editing bundle %{name}."
+      form:
+        name: "Name"
+        amount: "Credit amount"
+        amount_hint: "Number of WhatsApp credits included in the bundle."
+        price_cents: "Price (cents)"
+        price_cents_hint: "Value in cents. E.g. 2500 = R$ 25.00."
+        position: "Position"
+        active: "Active"
+        create: "Create bundle"
+        update: "Update bundle"
+        back: "Back to bundles"
     subscription_overrides:
       title: "Subscription Override"
       subtitle: "Manual billing overrides for %{name}."

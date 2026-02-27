@@ -215,6 +215,8 @@ pt-BR:
       billing: "Cobrança"
       credits: "Créditos"
       platform_billing: "Cobrança"
+      platform_plans: "Planos"
+      platform_credit_bundles: "Pacotes"
       language:
         en: "EN"
         pt: "PT"
@@ -969,6 +971,42 @@ pt-BR:
         create: "Criar plano"
         update: "Atualizar plano"
         back: "Voltar para planos"
+    credit_bundles:
+      create:
+        notice: "Pacote criado."
+      update:
+        notice: "Pacote atualizado."
+      index:
+        title: "Pacotes de créditos"
+        subtitle: "Gerencie os pacotes de créditos WhatsApp disponíveis para compra."
+        new_button: "Novo pacote"
+        edit: "Editar"
+        credits: "créditos"
+        empty: "Nenhum pacote cadastrado."
+        table:
+          position: "Posição"
+          name: "Nome"
+          amount: "Créditos"
+          price: "Preço"
+          active: "Ativo"
+          actions: "Ações"
+      new:
+        title: "Novo pacote"
+        subtitle: "Cadastre um novo pacote de créditos."
+      edit:
+        title: "Editar pacote"
+        subtitle: "Editando o pacote %{name}."
+      form:
+        name: "Nome"
+        amount: "Quantidade de créditos"
+        amount_hint: "Número de créditos WhatsApp inclusos no pacote."
+        price_cents: "Preço (centavos)"
+        price_cents_hint: "Valor em centavos. Ex: 2500 = R$ 25,00."
+        position: "Posição"
+        active: "Ativo"
+        create: "Criar pacote"
+        update: "Atualizar pacote"
+        back: "Voltar para pacotes"
     subscription_overrides:
       title: "Alteração de assinatura"
       subtitle: "Alterações manuais de cobrança para %{name}."

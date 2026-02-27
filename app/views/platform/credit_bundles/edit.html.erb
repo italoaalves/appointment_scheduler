@@ -1,0 +1,9 @@
+<div class="space-y-6">
+  <%= render "application/shared/page_header",
+             title:    t("platform.credit_bundles.edit.title"),
+             subtitle: t("platform.credit_bundles.edit.subtitle", name: @bundle.name) %>
+
+  <%= render layout: "application/shared/card" do %>
+    <%= render "form", bundle: @bundle %>
+  <% end %>
+</div>
