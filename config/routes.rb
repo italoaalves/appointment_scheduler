@@ -75,6 +75,7 @@ Rails.application.routes.draw do
     post "impersonation/stop", to: "impersonations#stop", as: :stop_impersonation
 
     resources :billing, only: [ :index ], controller: "billing"
+    resources :plans, except: :destroy
     resources :spaces do
       resources :appointments, only: [ :index, :show ], controller: "space_appointments"
       resources :customers, only: [ :index, :show ], controller: "space_customers"

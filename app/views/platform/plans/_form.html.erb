@@ -1,0 +1,140 @@
+<%= form_with model: plan,
+             scope: :billing_plan,
+             url: plan.persisted? ? platform_plan_path(plan) : platform_plans_path,
+             method: plan.persisted? ? :patch : :post,
+             class: "space-y-6" do |f| %>
+  <%= render "application/shared/error_messages", resource: plan %>
+
+  <%# ── Identity ──────────────────────────────────────────────────────── %>
+  <fieldset class="space-y-4">
+    <legend class="text-sm font-semibold text-slate-800"><%= t("platform.plans.form.identity") %></legend>
+
+    <div>
+      <%= f.label :name, t("platform.plans.form.name"), class: form_label_classes %>
+      <%= f.text_field :name, required: true, class: form_input_classes %>
+    </div>
+
+    <div>
+      <%= f.label :slug, t("platform.plans.form.slug"), class: form_label_classes %>
+      <% if plan.persisted? %>
+        <%= f.text_field :slug, disabled: true, class: form_input_classes("max-w-xs") %>
+        <p class="mt-1 text-xs text-slate-500"><%= t("platform.plans.form.slug_immutable") %></p>
+      <% else %>
+        <%= f.text_field :slug, required: true, class: form_input_classes("max-w-xs"),
+              pattern: "[a-z0-9_]+", placeholder: "e.g. starter" %>
+        <p class="mt-1 text-xs text-slate-500"><%= t("platform.plans.form.slug_hint") %></p>
+      <% end %>
+    </div>
+
+    <div>
+      <%= f.label :price_cents, t("platform.plans.form.price_cents"), class: form_label_classes %>
+      <%= f.number_field :price_cents, min: 0, required: true, class: form_input_classes("max-w-xs") %>
+      <p class="mt-1 text-xs text-slate-500"><%= t("platform.plans.form.price_cents_hint") %></p>
+    </div>
+  </fieldset>
+
+  <%# ── Limits ────────────────────────────────────────────────────────── %>
+  <fieldset class="space-y-4 border-t border-slate-200 pt-6">
+    <legend class="text-sm font-semibold text-slate-800"><%= t("platform.plans.form.limits") %></legend>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div>
+        <%= f.label :max_team_members, t("platform.plans.form.max_team_members"), class: form_label_classes %>
+        <%= f.number_field :max_team_members, min: 0, placeholder: t("platform.plans.form.unlimited"),
+              class: form_input_classes("max-w-none") %>
+      </div>
+      <div>
+        <%= f.label :max_customers, t("platform.plans.form.max_customers"), class: form_label_classes %>
+        <%= f.number_field :max_customers, min: 0, placeholder: t("platform.plans.form.unlimited"),
+              class: form_input_classes("max-w-none") %>
+      </div>
+      <div>
+        <%= f.label :max_scheduling_links, t("platform.plans.form.max_scheduling_links"), class: form_label_classes %>
+        <%= f.number_field :max_scheduling_links, min: 0, placeholder: t("platform.plans.form.unlimited"),
+              class: form_input_classes("max-w-none") %>
+      </div>
+      <div>
+        <%= f.label :whatsapp_monthly_quota, t("platform.plans.form.whatsapp_monthly_quota"), class: form_label_classes %>
+        <%= f.number_field :whatsapp_monthly_quota, min: 0, placeholder: t("platform.plans.form.whatsapp_quota_hint"),
+              class: form_input_classes("max-w-none") %>
+      </div>
+    </div>
+  </fieldset>
+
+  <%# ── Features ──────────────────────────────────────────────────────── %>
+  <fieldset class="space-y-3 border-t border-slate-200 pt-6">
+    <legend class="text-sm font-semibold text-slate-800"><%= t("platform.plans.form.features") %></legend>
+
+    <%# Hidden field ensures empty array is submitted when nothing is checked %>
+    <input type="hidden" name="billing_plan[features][]" value="" />
+
+    <% Billing::Plan::KNOWN_FEATURES.each do |feature| %>
+      <label class="flex items-center gap-2">
+        <%= check_box_tag "billing_plan[features][]", feature,
+              plan.features.include?(feature),
+              id: "feature_#{feature}",
+              class: "h-4 w-4 rounded border-slate-300 accent-slate-700" %>
+        <span class="text-sm text-slate-700"><%= feature.humanize %></span>
+      </label>
+    <% end %>
+  </fieldset>
+
+  <%# ── Allowed payment methods ───────────────────────────────────────── %>
+  <fieldset class="space-y-3 border-t border-slate-200 pt-6">
+    <legend class="text-sm font-semibold text-slate-800"><%= t("platform.plans.form.allowed_payment_methods") %></legend>
+    <p class="text-xs text-slate-500"><%= t("platform.plans.form.payment_methods_hint") %></p>
+
+    <input type="hidden" name="billing_plan[allowed_payment_methods][]" value="" />
+
+    <% [ ["pix", "PIX"], ["credit_card", t("platform.plans.form.credit_card")], ["boleto", "Boleto"] ].each do |value, label| %>
+      <label class="flex items-center gap-2">
+        <%= check_box_tag "billing_plan[allowed_payment_methods][]", value,
+              plan.allowed_payment_methods.include?(value),
+              id: "payment_method_#{value}",
+              class: "h-4 w-4 rounded border-slate-300 accent-slate-700" %>
+        <span class="text-sm text-slate-700"><%= label %></span>
+      </label>
+    <% end %>
+  </fieldset>
+
+  <%# ── Display & flags ───────────────────────────────────────────────── %>
+  <fieldset class="space-y-4 border-t border-slate-200 pt-6">
+    <legend class="text-sm font-semibold text-slate-800"><%= t("platform.plans.form.display") %></legend>
+
+    <div>
+      <%= f.label :position, t("platform.plans.form.position"), class: form_label_classes %>
+      <%= f.number_field :position, min: 0, required: true, class: form_input_classes("max-w-xs") %>
+    </div>
+
+    <div class="space-y-3">
+      <label class="flex items-center gap-2">
+        <%= f.check_box :public, class: "h-4 w-4 rounded border-slate-300 accent-slate-700" %>
+        <span class="text-sm text-slate-700"><%= t("platform.plans.form.public") %></span>
+      </label>
+
+      <label class="flex items-center gap-2">
+        <%= f.check_box :highlighted, class: "h-4 w-4 rounded border-slate-300 accent-slate-700" %>
+        <span class="text-sm text-slate-700"><%= t("platform.plans.form.highlighted") %></span>
+      </label>
+
+      <label class="flex items-center gap-2">
+        <%= f.check_box :trial_default, class: "h-4 w-4 rounded border-slate-300 accent-slate-700" %>
+        <span class="text-sm text-slate-700"><%= t("platform.plans.form.trial_default") %></span>
+      </label>
+      <p class="ml-6 text-xs text-amber-600"><%= t("platform.plans.form.trial_default_warning") %></p>
+
+      <label class="flex items-center gap-2">
+        <%= f.check_box :active, class: "h-4 w-4 rounded border-slate-300 accent-slate-700" %>
+        <span class="text-sm text-slate-700"><%= t("platform.plans.form.active") %></span>
+      </label>
+    </div>
+  </fieldset>
+
+  <%# ── Actions ───────────────────────────────────────────────────────── %>
+  <div class="flex flex-wrap gap-3 border-t border-slate-200 pt-6">
+    <%= f.submit plan.persisted? ? t("platform.plans.form.update") : t("platform.plans.form.create"),
+          class: "#{button_classes(:primary)} cursor-pointer",
+          data: { turbo_submits_with: t("shared.submitting") } %>
+    <%= link_to t("platform.plans.form.back"), platform_plans_path, class: button_classes(:secondary) %>
+  </div>
+<% end %>

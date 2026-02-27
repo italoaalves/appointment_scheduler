@@ -1,0 +1,48 @@
+<div class="space-y-4">
+  <% page_actions = capture do %>
+    <%= link_to t("platform.plans.index.new_button"), new_platform_plan_path, class: button_classes(:primary) %>
+  <% end %>
+  <%= render "application/shared/page_header",
+             title:   t("platform.plans.index.title"),
+             subtitle: t("platform.plans.index.subtitle"),
+             actions: page_actions %>
+
+  <% if @plans.any? %>
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead class="bg-slate-50">
+          <tr>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.plans.index.table.position") %></th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.plans.index.table.name") %></th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.plans.index.table.slug") %></th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.plans.index.table.price") %></th>
+            <th scope="col" class="px-4 py-2 text-center text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.plans.index.table.active") %></th>
+            <th scope="col" class="px-4 py-2 text-center text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.plans.index.table.public") %></th>
+            <th scope="col" class="px-4 py-2 text-center text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.plans.index.table.highlighted") %></th>
+            <th scope="col" class="px-4 py-2 text-center text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.plans.index.table.trial") %></th>
+            <th scope="col" class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.plans.index.table.actions") %></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <% @plans.each do |plan| %>
+            <tr class="hover:bg-slate-50 <%= 'opacity-50' unless plan.active? %>">
+              <td class="px-4 py-2 text-slate-500"><%= plan.position %></td>
+              <td class="px-4 py-2 font-medium text-slate-900"><%= plan.name %></td>
+              <td class="px-4 py-2 font-mono text-xs text-slate-500"><%= plan.slug %></td>
+              <td class="px-4 py-2 text-slate-700"><%= number_to_currency(plan.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
+              <td class="px-4 py-2 text-center"><%= plan.active? ? "✓" : "—" %></td>
+              <td class="px-4 py-2 text-center"><%= plan.public? ? "✓" : "—" %></td>
+              <td class="px-4 py-2 text-center"><%= plan.highlighted? ? "✓" : "—" %></td>
+              <td class="px-4 py-2 text-center"><%= plan.trial_default? ? "✓" : "—" %></td>
+              <td class="px-4 py-2 text-right">
+                <%= link_to t("platform.plans.index.edit"), edit_platform_plan_path(plan), class: button_classes(:table_link) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render "application/shared/empty_state", content: t("platform.plans.index.empty") %>
+  <% end %>
+</div>

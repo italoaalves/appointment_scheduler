@@ -1,0 +1,9 @@
+<div class="space-y-6">
+  <%= render "application/shared/page_header",
+             title:    t("platform.plans.edit.title"),
+             subtitle: t("platform.plans.edit.subtitle", name: @plan.name) %>
+
+  <%= render layout: "application/shared/card" do %>
+    <%= render "form", plan: @plan %>
+  <% end %>
+</div>
