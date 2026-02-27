@@ -16,6 +16,7 @@ class CreateOwnerSpace
     space.owner_id = @user.id
     space.save!
     SpaceMembership.create!(user_id: @user.id, space_id: space.id)
+    Billing::TrialManager.start_trial(space)
     space
   end
 end
