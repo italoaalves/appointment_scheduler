@@ -39,7 +39,7 @@
          class="min-h-0 flex-1 overflow-y-auto p-4"
          @scroll="checkOverflow()">
       <% %i[today week month].each do |period| %>
-        <% appointments = instance_variable_get("@calendar_#{period}") %>
+        <% appointments = periods_data[period] %>
         <div x-show="tab === '<%= period %>'"
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0"
@@ -49,7 +49,7 @@
           <% if appointments.any? %>
             <% case period %>
             <% when :today %>
-              <% today_groups = calendar_today_grouped(appointments, @calendar_space).select { |_, v| v.any? } %>
+              <% today_groups = calendar_today_grouped(appointments, calendar_space).select { |_, v| v.any? } %>
               <% today_groups.each_with_index do |(period_key, group_appointments), idx| %>
                 <div class="<%= idx < today_groups.size - 1 ? 'pb-4 mb-4 border-b border-slate-200' : '' %>">
                   <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -65,8 +65,8 @@
                 </div>
               <% end %>
             <% when :week, :month %>
-              <% grouped = period == :week ? calendar_week_grouped(appointments, @calendar_space) : calendar_month_grouped(appointments, @calendar_space) %>
-              <% today_in_space = Time.current.in_time_zone(TimezoneResolver.zone(@calendar_space)).to_date %>
+              <% grouped = period == :week ? calendar_week_grouped(appointments, calendar_space) : calendar_month_grouped(appointments, calendar_space) %>
+              <% today_in_space = Time.current.in_time_zone(TimezoneResolver.zone(calendar_space)).to_date %>
               <% grouped.each_with_index do |(date, group_appointments), idx| %>
                 <div class="<%= idx < grouped.size - 1 ? 'pb-4 mb-4 border-b border-slate-200' : '' %>">
                   <p class="mb-2 text-xs font-semibold uppercase tracking-wide <%= date == today_in_space ? 'text-indigo-600' : 'text-slate-500' %>">
@@ -118,7 +118,7 @@
 
     <footer class="shrink-0 border-t border-slate-100 bg-white px-4 py-3">
       <% %i[today week month].each do |period| %>
-        <% stats = instance_variable_get("@stats_#{period}") %>
+        <% stats = periods_stats[period] %>
         <div x-show="tab === '<%= period %>'"
              x-transition:enter="transition ease-out duration-150"
              x-transition:enter-start="opacity-0"
