@@ -40,6 +40,13 @@ Rails.application.routes.draw do
       resource :availability, only: [ :edit, :update ], controller: "space/availabilities"
       resource :policies, only: [ :edit, :update ], controller: "space/policies"
     end
+    resource :billing, only: [ :show, :edit, :update ], controller: "billing" do
+      member do
+        patch :cancel
+        patch :resubscribe
+      end
+    end
+    resource :credits, only: [ :show, :create ], controller: "credits"
   end
 
   namespace :billing do

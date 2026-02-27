@@ -1,0 +1,56 @@
+<div class="space-y-6">
+  <header>
+    <h1 class="text-2xl font-semibold tracking-tight text-slate-900"><%= t("billing.edit.title") %></h1>
+    <p class="mt-1 text-sm text-slate-600"><%= t("billing.edit.subtitle") %></p>
+  </header>
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <% @plans.each do |plan| %>
+      <% is_current = @subscription&.plan_id == plan.id %>
+      <div class="rounded-xl border <%= is_current ? 'border-indigo-400 ring-2 ring-indigo-200' : 'border-slate-200' %> bg-white p-5 shadow-sm">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-semibold text-slate-900"><%= plan.name %></h2>
+          <% if is_current %>
+            <span class="rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-700">
+              <%= t("billing.edit.current") %>
+            </span>
+          <% end %>
+        </div>
+
+        <p class="mt-2 text-2xl font-bold text-slate-900">
+          <%= plan.price_cents == 0 ? t("billing.edit.free") : number_to_currency(plan.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %>
+          <span class="text-sm font-normal text-slate-500">/ <%= t("billing.edit.month") %></span>
+        </p>
+
+        <ul class="mt-4 space-y-1.5 text-sm text-slate-700">
+          <li>✓ <%= t("billing.edit.team_members", count: plan.max_team_members == Float::INFINITY ? "∞" : plan.max_team_members) %></li>
+          <li>✓ <%= t("billing.edit.customers_limit", count: plan.max_customers == Float::INFINITY ? "∞" : plan.max_customers) %></li>
+          <li>✓ <%= t("billing.edit.links_limit", count: plan.max_scheduling_links == Float::INFINITY ? "∞" : plan.max_scheduling_links) %></li>
+          <% if plan.feature?(:personalized_booking_page) %>
+            <li>✓ <%= t("billing.edit.personalized_page") %></li>
+          <% end %>
+          <% if plan.feature?(:custom_appointment_policies) %>
+            <li>✓ <%= t("billing.edit.custom_policies") %></li>
+          <% end %>
+          <% if plan.whatsapp_monthly_quota > 0 %>
+            <li>✓ <%= t("billing.edit.whatsapp_quota", count: plan.whatsapp_monthly_quota) %></li>
+          <% end %>
+        </ul>
+
+        <% unless is_current %>
+          <div class="mt-4">
+            <%= button_to t("billing.edit.select_plan"),
+                          settings_billing_path,
+                          method: :patch,
+                          params: { plan_id: plan.id },
+                          class: "w-full rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="text-right">
+    <%= link_to t("billing.edit.back"), settings_billing_path, class: "text-sm text-slate-500 hover:underline" %>
+  </div>
+</div>

@@ -1,0 +1,126 @@
+<div class="space-y-6">
+  <header>
+    <h1 class="text-2xl font-semibold tracking-tight text-slate-900"><%= t("billing.show.title") %></h1>
+    <p class="mt-1 text-sm text-slate-600"><%= t("billing.show.subtitle") %></p>
+  </header>
+
+  <% if @subscription.nil? %>
+    <div class="rounded-xl border border-slate-200 bg-white p-6 text-center shadow-sm">
+      <p class="text-sm text-slate-600"><%= t("billing.show.no_subscription") %></p>
+    </div>
+  <% else %>
+
+    <%# Plan & status card %>
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-sm font-semibold text-slate-800"><%= t("billing.show.current_plan") %></h2>
+          <p class="mt-1 text-2xl font-bold text-slate-900"><%= @current_plan&.name %></p>
+        </div>
+        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
+          <%= @subscription.expired? || @subscription.canceled? ? 'bg-red-100 text-red-700' :
+              @subscription.past_due? ? 'bg-amber-100 text-amber-700' :
+              @subscription.trialing? ? 'bg-blue-100 text-blue-700' :
+              'bg-emerald-100 text-emerald-700' %>">
+          <%= @subscription.status.humanize %>
+        </span>
+      </div>
+
+      <% if @subscription.trialing? && @subscription.trial_ends_at %>
+        <p class="mt-3 text-sm text-slate-600">
+          <%= t("billing.show.trial_ends", date: l(@subscription.trial_ends_at.to_date, format: :long)) %>
+        </p>
+      <% elsif @subscription.current_period_start && @subscription.current_period_end %>
+        <p class="mt-3 text-sm text-slate-600">
+          <%= t("billing.show.billing_period",
+                from: l(@subscription.current_period_start.to_date, format: :long),
+                to:   l(@subscription.current_period_end.to_date, format: :long)) %>
+        </p>
+      <% end %>
+
+      <% if @subscription.expired? || @subscription.canceled? %>
+        <div class="mt-4">
+          <%= button_to t("billing.show.resubscribe"), resubscribe_settings_billing_path,
+                        method: :patch,
+                        class: "rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700" %>
+        </div>
+      <% else %>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <%= link_to t("billing.show.change_plan"), edit_settings_billing_path,
+                      class: "rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+          <%= button_to t("billing.show.cancel_subscription"), cancel_settings_billing_path,
+                        method: :patch,
+                        data: { turbo_confirm: t("billing.show.cancel_confirm") },
+                        class: "rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50" %>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Plan limits summary %>
+    <% if @current_plan %>
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 class="mb-3 text-sm font-semibold text-slate-800"><%= t("billing.show.plan_limits") %></h2>
+        <dl class="grid gap-3 sm:grid-cols-3">
+          <div>
+            <dt class="text-xs text-slate-500"><%= t("billing.show.team_members") %></dt>
+            <dd class="mt-0.5 text-sm font-medium text-slate-900">
+              <%= current_tenant.space_memberships.count %> /
+              <%= @current_plan.max_team_members == Float::INFINITY ? "∞" : @current_plan.max_team_members %>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-xs text-slate-500"><%= t("billing.show.customers") %></dt>
+            <dd class="mt-0.5 text-sm font-medium text-slate-900">
+              <%= current_tenant.customers.count %> /
+              <%= @current_plan.max_customers == Float::INFINITY ? "∞" : @current_plan.max_customers %>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-xs text-slate-500"><%= t("billing.show.scheduling_links") %></dt>
+            <dd class="mt-0.5 text-sm font-medium text-slate-900">
+              <%= current_tenant.scheduling_links.count %> /
+              <%= @current_plan.max_scheduling_links == Float::INFINITY ? "∞" : @current_plan.max_scheduling_links %>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    <% end %>
+
+    <%# Payment history %>
+    <% if @payments.any? %>
+      <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div class="border-b border-slate-200 px-5 py-3">
+          <h2 class="text-sm font-semibold text-slate-800"><%= t("billing.show.payment_history") %></h2>
+        </div>
+        <table class="min-w-full divide-y divide-slate-200 text-sm">
+          <thead class="bg-slate-50">
+            <tr>
+              <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("billing.show.payment_date") %></th>
+              <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("billing.show.payment_amount") %></th>
+              <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("billing.show.payment_status") %></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 bg-white">
+            <% @payments.each do |payment| %>
+              <tr>
+                <td class="px-4 py-2 text-slate-700">
+                  <%= payment.paid_at ? l(payment.paid_at.to_date, format: :long) : "—" %>
+                </td>
+                <td class="px-4 py-2 text-slate-700">
+                  <%= number_to_currency(payment.amount_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %>
+                </td>
+                <td class="px-4 py-2">
+                  <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium
+                    <%= payment.confirmed? || payment.received? ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600' %>">
+                    <%= payment.status.humanize %>
+                  </span>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+
+  <% end %>
+</div>
