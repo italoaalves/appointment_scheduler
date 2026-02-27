@@ -21,7 +21,7 @@
                             class: "mt-1 block w-full max-w-sm rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
       </div>
 
-      <div data-controller="scheduling-link-form">
+      <div x-data="{ linkType: '<%= @scheduling_link.link_type || "permanent" %>' }">
         <div>
           <%= form.label :link_type,
                          t("space.scheduling_links.edit.link_type_label"),
@@ -30,16 +30,20 @@
                           [ [ t("space.scheduling_links.types.permanent"), "permanent" ], [ t("space.scheduling_links.types.single_use"), "single_use" ] ],
                           {},
                           class: "mt-1 block w-full max-w-sm rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500",
-                          data: { action: "change->scheduling-link-form#toggleExpires" } %>
+                          "x-model": "linkType" %>
         </div>
 
-        <div id="expires_at_field" class="mt-4 <%= @scheduling_link.permanent? ? "hidden" : "" %>" data-scheduling-link-form-target="expiresField">
-        <%= form.label :expires_at,
-                       t("space.scheduling_links.edit.expires_at_label"),
-                       class: "block text-sm font-medium text-slate-700" %>
-        <%= form.datetime_local_field :expires_at,
-                                      min: 1.hour.from_now.iso8601,
-                                      class: "mt-1 block w-full max-w-sm rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+        <div id="expires_at_field"
+             class="mt-4"
+             x-show="linkType === 'single_use'"
+             x-transition
+             x-cloak>
+          <%= form.label :expires_at,
+                         t("space.scheduling_links.edit.expires_at_label"),
+                         class: "block text-sm font-medium text-slate-700" %>
+          <%= form.datetime_local_field :expires_at,
+                                        min: 1.hour.from_now.iso8601,
+                                        class: "mt-1 block w-full max-w-sm rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
         </div>
       </div>
 

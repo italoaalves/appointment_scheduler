@@ -31,27 +31,31 @@
             <%= t("space.settings.edit.slot_duration_notice") %>
           </p>
         </div>
-        <div data-controller="timezone-select">
+        <% show_other = @space.timezone.present? && !ApplicationHelper::COMMON_TIMEZONES.include?(@space.timezone) %>
+        <% tz_select_initial = show_other ? ApplicationHelper::OTHER_TIMEZONE_VALUE : (@space.timezone.presence || "") %>
+        <% tz_other_initial = show_other ? @space.timezone : "" %>
+        <div x-data="{ tzSelect: <%= tz_select_initial.to_json %>, tzOther: <%= tz_other_initial.to_json %> }">
           <label for="space_timezone"
                  class="block text-sm font-medium text-slate-700"><%= t("space.settings.edit.timezone_label") %></label>
-          <%= form.hidden_field :timezone, id: nil, data: { timezone_select_target: "input" } %>
+          <input type="hidden"
+                 name="space[timezone]"
+                 :value="tzSelect === '<%= ApplicationHelper::OTHER_TIMEZONE_VALUE %>' ? tzOther : tzSelect">
           <div class="mt-1 max-w-sm space-y-2">
             <select id="space_timezone"
-                    data-timezone-select-target="select"
+                    x-model="tzSelect"
                     class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500">
               <% options = common_timezone_options_for_select(@space.timezone) %>
-              <% show_other = @space.timezone.present? && !ApplicationHelper::COMMON_TIMEZONES.include?(@space.timezone) %>
               <% options.each do |label, value| %>
-                <option value="<%= value %>"<%= " selected" if (value == @space.timezone) || (show_other && value == ApplicationHelper::OTHER_TIMEZONE_VALUE) %>>
-                  <%= label %>
-                </option>
+                <option value="<%= value %>"><%= label %></option>
               <% end %>
             </select>
             <input type="text"
-                   data-timezone-select-target="otherField"
-                   value="<%= @space.timezone if @space.timezone.present? && !ApplicationHelper::COMMON_TIMEZONES.include?(@space.timezone) %>"
+                   x-show="tzSelect === '<%= ApplicationHelper::OTHER_TIMEZONE_VALUE %>'"
+                   x-transition
+                   x-cloak
+                   x-model="tzOther"
                    placeholder="<%= t('space.settings.edit.timezone_other_placeholder') %>"
-                   class="<%= 'hidden ' unless @space.timezone.present? && !ApplicationHelper::COMMON_TIMEZONES.include?(@space.timezone) %>block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" />
+                   class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" />
           </div>
         </div>
       </div>
