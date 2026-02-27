@@ -1,0 +1,297 @@
+# frozen_string_literal: true
+
+require "test_helper"
+
+module Billing
+  class SubscriptionManagerTest < ActiveSupport::TestCase
+    # ── Helpers ───────────────────────────────────────────────────────────────
+
+    # A simple fake AsaasClient that returns controlled responses or raises.
+    class FakeAsaasClient
+      attr_reader :calls
+
+      def initialize(responses = {})
+        @responses = responses
+        @calls     = []
+      end
+
+      def create_subscription(**_kwargs)
+        record_call(:create_subscription)
+        response_for(:create_subscription) || { "id" => "sub_asaas_001" }
+      end
+
+      def update_subscription(_id, _attrs)
+        record_call(:update_subscription)
+        response_for(:update_subscription) || { "id" => "sub_asaas_001" }
+      end
+
+      def cancel_subscription(_id)
+        record_call(:cancel_subscription)
+        response_for(:cancel_subscription) || { "deleted" => true }
+      end
+
+      private
+
+      def record_call(method)
+        @calls << method
+      end
+
+      def response_for(method)
+        val = @responses[method]
+        raise val if val.is_a?(Exception)
+
+        val
+      end
+    end
+
+    def fake_client(responses = {})
+      FakeAsaasClient.new(responses)
+    end
+
+    setup do
+      @space = Space.create!(name: "Manager Test Space #{SecureRandom.hex(4)}", timezone: "UTC")
+      Billing::TrialManager.start_trial(@space)
+      @subscription = @space.reload.subscription
+    end
+
+    # ── subscribe ─────────────────────────────────────────────────────────────
+
+    test "subscribe calls Asaas and updates local subscription" do
+      client = fake_client
+
+      result = Billing::SubscriptionManager.subscribe(
+        space:             @space,
+        plan_id:           "starter",
+        payment_method:    :pix,
+        asaas_customer_id: "cus_001",
+        asaas_client:      client
+      )
+
+      assert result[:success]
+      assert_includes client.calls, :create_subscription
+
+      @subscription.reload
+      assert_equal "cus_001",       @subscription.asaas_customer_id
+      assert_equal "sub_asaas_001", @subscription.asaas_subscription_id
+      assert_equal "starter",       @subscription.plan_id
+    end
+
+    test "subscribe logs subscription.activated BillingEvent" do
+      assert_difference -> { Billing::BillingEvent.where(event_type: "subscription.activated").count } do
+        Billing::SubscriptionManager.subscribe(
+          space:             @space,
+          plan_id:           "starter",
+          payment_method:    :pix,
+          asaas_customer_id: "cus_001",
+          asaas_client:      fake_client
+        )
+      end
+    end
+
+    test "subscribe returns error hash when Asaas API fails" do
+      error_client = fake_client(
+        create_subscription: Billing::AsaasClient::ApiError.new(422, '{"errors":[]}')
+      )
+
+      result = Billing::SubscriptionManager.subscribe(
+        space:             @space,
+        plan_id:           "starter",
+        payment_method:    :pix,
+        asaas_customer_id: "cus_001",
+        asaas_client:      error_client
+      )
+
+      assert_equal false, result[:success]
+      assert result[:error].present?
+    end
+
+    test "subscribe does not update local subscription when Asaas fails" do
+      original_plan = @subscription.plan_id
+      error_client  = fake_client(
+        create_subscription: Billing::AsaasClient::ApiError.new(500, "Server error")
+      )
+
+      Billing::SubscriptionManager.subscribe(
+        space:             @space,
+        plan_id:           "pro",
+        payment_method:    :pix,
+        asaas_customer_id: "cus_001",
+        asaas_client:      error_client
+      )
+
+      assert_equal original_plan, @subscription.reload.plan_id
+    end
+
+    # ── upgrade ───────────────────────────────────────────────────────────────
+
+    test "upgrade changes plan_id immediately" do
+      result = Billing::SubscriptionManager.upgrade(
+        subscription: @subscription,
+        new_plan_id:  "pro",
+        asaas_client: fake_client
+      )
+
+      assert result[:success]
+      assert_equal "pro", @subscription.reload.plan_id
+    end
+
+    test "upgrade clears pending_plan_id" do
+      @subscription.update_column(:pending_plan_id, "starter")
+
+      Billing::SubscriptionManager.upgrade(
+        subscription: @subscription,
+        new_plan_id:  "pro",
+        asaas_client: fake_client
+      )
+
+      assert_nil @subscription.reload.pending_plan_id
+    end
+
+    test "upgrade logs plan.changed BillingEvent with from/to metadata" do
+      assert_difference -> { Billing::BillingEvent.where(event_type: "plan.changed").count } do
+        Billing::SubscriptionManager.upgrade(
+          subscription: @subscription,
+          new_plan_id:  "pro",
+          asaas_client: fake_client
+        )
+      end
+
+      event = Billing::BillingEvent.where(event_type: "plan.changed").last
+      assert_equal "pro", event.metadata["plan_id"] || event.metadata["to"]
+    end
+
+    test "upgrade returns error hash when Asaas fails" do
+      @subscription.update_column(:asaas_subscription_id, "sub_asaas_001")
+
+      error_client = fake_client(
+        update_subscription: Billing::AsaasClient::ApiError.new(422, "error")
+      )
+
+      result = Billing::SubscriptionManager.upgrade(
+        subscription: @subscription,
+        new_plan_id:  "pro",
+        asaas_client: error_client
+      )
+
+      assert_equal false, result[:success]
+    end
+
+    test "upgrade does not update local record when Asaas fails" do
+      @subscription.update_column(:asaas_subscription_id, "sub_asaas_001")
+      original_plan = @subscription.plan_id
+
+      error_client = fake_client(
+        update_subscription: Billing::AsaasClient::ApiError.new(500, "error")
+      )
+
+      Billing::SubscriptionManager.upgrade(
+        subscription: @subscription,
+        new_plan_id:  "pro",
+        asaas_client: error_client
+      )
+
+      assert_equal original_plan, @subscription.reload.plan_id
+    end
+
+    # ── downgrade ─────────────────────────────────────────────────────────────
+
+    test "downgrade sets pending_plan_id without changing current plan_id" do
+      result = Billing::SubscriptionManager.downgrade(
+        subscription: @subscription,
+        new_plan_id:  "starter"
+      )
+
+      assert result[:success]
+      assert_equal "pro",     @subscription.reload.plan_id
+      assert_equal "starter", @subscription.pending_plan_id
+    end
+
+    test "downgrade logs plan.downgrade_scheduled BillingEvent" do
+      assert_difference -> { Billing::BillingEvent.where(event_type: "plan.downgrade_scheduled").count } do
+        Billing::SubscriptionManager.downgrade(
+          subscription: @subscription,
+          new_plan_id:  "starter"
+        )
+      end
+
+      event = Billing::BillingEvent.where(event_type: "plan.downgrade_scheduled").last
+      assert_equal "starter", event.metadata["to"]
+      assert_equal "pro",     event.metadata["from"]
+    end
+
+    test "downgrade raises ArgumentError for unknown new_plan_id" do
+      assert_raises(ArgumentError) do
+        Billing::SubscriptionManager.downgrade(
+          subscription: @subscription,
+          new_plan_id:  "enterprise"
+        )
+      end
+    end
+
+    # ── cancel ────────────────────────────────────────────────────────────────
+
+    test "cancel sets status to canceled and records canceled_at" do
+      freeze_time do
+        result = Billing::SubscriptionManager.cancel(
+          subscription: @subscription,
+          asaas_client: fake_client
+        )
+
+        assert result[:success]
+        @subscription.reload
+        assert @subscription.canceled?
+        assert_in_delta Time.current.to_i, @subscription.canceled_at.to_i, 2
+      end
+    end
+
+    test "cancel logs subscription.canceled BillingEvent" do
+      assert_difference -> { Billing::BillingEvent.where(event_type: "subscription.canceled").count } do
+        Billing::SubscriptionManager.cancel(
+          subscription: @subscription,
+          asaas_client: fake_client
+        )
+      end
+    end
+
+    test "cancel calls Asaas when asaas_subscription_id present" do
+      @subscription.update_column(:asaas_subscription_id, "sub_asaas_001")
+      client = fake_client
+
+      Billing::SubscriptionManager.cancel(
+        subscription: @subscription,
+        asaas_client: client
+      )
+
+      assert_includes client.calls, :cancel_subscription
+    end
+
+    test "cancel skips Asaas call when asaas_subscription_id is nil" do
+      @subscription.update_column(:asaas_subscription_id, nil)
+      client = fake_client
+
+      Billing::SubscriptionManager.cancel(
+        subscription: @subscription,
+        asaas_client: client
+      )
+
+      assert_not_includes client.calls, :cancel_subscription
+      assert @subscription.reload.canceled?
+    end
+
+    test "cancel returns error hash when Asaas fails" do
+      @subscription.update_column(:asaas_subscription_id, "sub_asaas_001")
+
+      error_client = fake_client(
+        cancel_subscription: Billing::AsaasClient::ApiError.new(500, "error")
+      )
+
+      result = Billing::SubscriptionManager.cancel(
+        subscription: @subscription,
+        asaas_client: error_client
+      )
+
+      assert_equal false, result[:success]
+      assert @subscription.reload.trialing?
+    end
+  end
+end
