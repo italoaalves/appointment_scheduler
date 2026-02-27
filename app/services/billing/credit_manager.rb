@@ -26,6 +26,8 @@ module Billing
 
     def purchase(amount:, actor: nil)
       ActiveRecord::Base.transaction do
+        Billing::CreditBundle.available.find_by!(amount: amount)
+
         credit = Billing::MessageCredit.find_or_initialize_by(space_id: @space.id)
         credit.balance ||= 0
         credit.monthly_quota_remaining ||= 0
@@ -44,6 +46,9 @@ module Billing
     end
 
     def deduct
+      plan = @space.subscription&.plan
+      return { success: true, source: :unlimited } if plan&.whatsapp_unlimited?
+
       ActiveRecord::Base.transaction do
         lock_key = Zlib.crc32("message_credits:#{@space.id}")
         ActiveRecord::Base.connection.execute("SELECT pg_advisory_xact_lock(#{lock_key})")
@@ -64,6 +69,8 @@ module Billing
     end
 
     def refund(source:)
+      return { success: true } if source == :unlimited
+
       ActiveRecord::Base.transaction do
         credit = Billing::MessageCredit.find_by(space_id: @space.id)
         return { success: true } if credit.nil?
@@ -80,6 +87,9 @@ module Billing
     end
 
     def sufficient?
+      plan = @space.subscription&.plan
+      return true if plan&.whatsapp_unlimited?
+
       credit = Billing::MessageCredit.find_by(space_id: @space.id)
       return false if credit.nil?
 

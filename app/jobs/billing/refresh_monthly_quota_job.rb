@@ -6,6 +6,8 @@ module Billing
 
     def perform
       Billing::Subscription.where(status: :active).find_each do |subscription|
+        next if subscription.plan.whatsapp_unlimited?
+
         credit = subscription.space.message_credit
         next unless credit
         next if credit.quota_refreshed_at.present? &&

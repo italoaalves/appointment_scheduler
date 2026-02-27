@@ -75,5 +75,28 @@ module Billing
       assert_equal 0, credit.monthly_quota_remaining,
                    "Trialing subscription quota should not be refreshed"
     end
+
+    test "skips enterprise (unlimited) active subscriptions without touching credits" do
+      enterprise_space = Space.create!(name: "Enterprise Quota Space", timezone: "UTC")
+      Billing::Subscription.create!(
+        space:                enterprise_space,
+        billing_plan:         billing_plans(:enterprise),
+        status:               :active,
+        current_period_start: 1.day.ago,
+        current_period_end:   29.days.from_now
+      )
+      enterprise_credit = Billing::MessageCredit.create!(
+        space:                   enterprise_space,
+        balance:                 0,
+        monthly_quota_remaining: 0,
+        quota_refreshed_at:      nil
+      )
+
+      Billing::RefreshMonthlyQuotaJob.new.perform
+
+      enterprise_credit.reload
+      assert_equal 0, enterprise_credit.monthly_quota_remaining,
+                   "Enterprise unlimited quota should not be refreshed"
+    end
   end
 end

@@ -35,7 +35,7 @@ module Billing
       Billing::MessageCredit.create!(
         space_id:                space.id,
         balance:                 0,
-        monthly_quota_remaining: plan.whatsapp_monthly_quota,
+        monthly_quota_remaining: plan.whatsapp_monthly_quota || 0,
         quota_refreshed_at:      now
       )
 
@@ -43,7 +43,7 @@ module Billing
         space_id:        space.id,
         subscription_id: subscription.id,
         event_type:      "subscription.created",
-        metadata:        { plan_id: plan.slug, trial_ends_at: trial_ends.iso8601 }
+        metadata:        { plan_slug: plan.slug, trial_ends_at: trial_ends.iso8601 }
       )
 
       subscription

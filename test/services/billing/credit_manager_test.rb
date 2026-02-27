@@ -12,30 +12,44 @@ module Billing
     # ── purchase ──────────────────────────────────────────────────────────────
 
     test "purchase increases balance by the given amount" do
-      result = Billing::CreditManager.purchase(space: @space, amount: 10)
+      result = Billing::CreditManager.purchase(space: @space, amount: 50)
 
       @credit.reload
       assert result[:success]
-      assert_equal 60, @credit.balance
-      assert_equal 60, result[:new_balance]
+      assert_equal 100, @credit.balance
+      assert_equal 100, result[:new_balance]
     end
 
     test "purchase logs a BillingEvent with credits.purchased" do
       assert_difference "Billing::BillingEvent.count", 1 do
-        Billing::CreditManager.purchase(space: @space, amount: 25)
+        Billing::CreditManager.purchase(space: @space, amount: 100)
       end
 
       event = Billing::BillingEvent.order(:created_at).last
       assert_equal "credits.purchased", event.event_type
-      assert_equal 25, event.metadata["amount"]
+      assert_equal 100, event.metadata["amount"]
     end
 
     test "purchase with actor records actor_id on the event" do
       actor = users(:manager)
-      Billing::CreditManager.purchase(space: @space, amount: 5, actor: actor)
+      Billing::CreditManager.purchase(space: @space, amount: 50, actor: actor)
 
       event = Billing::BillingEvent.order(:created_at).last
       assert_equal actor.id, event.actor_id
+    end
+
+    test "purchase raises RecordNotFound for an amount with no active bundle" do
+      assert_raises ActiveRecord::RecordNotFound do
+        Billing::CreditManager.purchase(space: @space, amount: 999)
+      end
+    end
+
+    test "purchase raises RecordNotFound for an inactive bundle" do
+      credit_bundles(:fifty).update!(active: false)
+
+      assert_raises ActiveRecord::RecordNotFound do
+        Billing::CreditManager.purchase(space: @space, amount: 50)
+      end
     end
 
     # ── deduct ────────────────────────────────────────────────────────────────
@@ -79,6 +93,21 @@ module Billing
       assert result[:success]
     end
 
+    test "deduct returns unlimited source and skips credit record for unlimited plan" do
+      enterprise_space = Space.create!(name: "Enterprise Space", timezone: "UTC")
+      Billing::Subscription.create!(
+        space:        enterprise_space,
+        billing_plan: billing_plans(:enterprise),
+        status:       :active
+      )
+
+      result = Billing::CreditManager.deduct(space: enterprise_space)
+
+      assert result[:success]
+      assert_equal :unlimited, result[:source]
+      assert_nil Billing::MessageCredit.find_by(space_id: enterprise_space.id)
+    end
+
     # ── refund ────────────────────────────────────────────────────────────────
 
     test "refund with :quota source increments monthly_quota_remaining" do
@@ -99,6 +128,15 @@ module Billing
       result = Billing::CreditManager.refund(space: @space, source: :quota)
 
       assert result[:success]
+    end
+
+    test "refund with :unlimited source is a no-op and returns success" do
+      result = Billing::CreditManager.refund(space: @space, source: :unlimited)
+
+      assert result[:success]
+      @credit.reload
+      assert_equal 50,  @credit.balance
+      assert_equal 150, @credit.monthly_quota_remaining
     end
 
     # ── sufficient? ───────────────────────────────────────────────────────────
@@ -129,6 +167,17 @@ module Billing
       @credit.delete
 
       assert_not Billing::CreditManager.sufficient?(space: @space)
+    end
+
+    test "sufficient? returns true for unlimited plan regardless of credits" do
+      enterprise_space = Space.create!(name: "Enterprise Sufficient Space", timezone: "UTC")
+      Billing::Subscription.create!(
+        space:        enterprise_space,
+        billing_plan: billing_plans(:enterprise),
+        status:       :active
+      )
+
+      assert Billing::CreditManager.sufficient?(space: enterprise_space)
     end
 
     # ── advisory lock ─────────────────────────────────────────────────────────

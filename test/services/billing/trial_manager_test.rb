@@ -51,7 +51,7 @@ module Billing
       end
 
       event = Billing::BillingEvent.where(space_id: @space.id, event_type: "subscription.created").last
-      assert_equal "pro", event.metadata["plan_id"]
+      assert_equal "pro", event.metadata["plan_slug"]
       assert event.metadata["trial_ends_at"].present?
     end
 
