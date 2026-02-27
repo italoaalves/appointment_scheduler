@@ -12,7 +12,7 @@ module Onboarding
     layout "onboarding"
     before_action :authenticate_user!
     before_action :ensure_space_owner!
-    before_action :ensure_not_complete!, only: [ :show ]
+    before_action :ensure_not_complete!, only: [ :show, :update_step1, :update_step2, :skip ]
 
     def show
       @step = [ current_tenant.onboarding_step + 1, 3 ].min

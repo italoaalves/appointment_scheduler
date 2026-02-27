@@ -100,12 +100,18 @@ en:
     email_confirmation_banner:
       message: "Please confirm your email address. Check your inbox or"
       resend_link: "resend confirmation email"
+    booking_share:
+      copy_link: "Copy Link"
+      copied: "Copied!"
+      share_whatsapp: "Share on WhatsApp"
+      whatsapp_message: "Book your appointment with %{name}: %{url}"
 
   onboarding:
     owner_only: "Only the space owner can complete onboarding."
     skip_link: "Skip and go to dashboard"
     next: "Next"
     progress:
+      label: "Onboarding progress"
       step1: "Tell us about your business"
       step2: "Confirm your availability"
       step3: "Your booking page is ready"

@@ -17,30 +17,13 @@
     </p>
   </div>
 
-  <div data-controller="clipboard" class="space-y-3">
+  <div class="space-y-3">
     <label class="<%= form_label_classes %>"><%= t("onboarding.step3.url_label") %></label>
-    <div class="flex flex-wrap items-center gap-2">
-      <code data-clipboard-target="source"
-            class="block flex-1 min-w-0 rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-800">
-        <%= @booking_url %>
-      </code>
-      <button type="button"
-              data-action="click->clipboard#copy"
-              class="<%= button_classes(:primary) %>">
-        <%= t("onboarding.step3.copy_link") %>
-      </button>
-      <span data-clipboard-target="feedback"
-            class="hidden text-sm font-medium text-emerald-600">
-        <%= t("onboarding.step3.copied") %>
-      </span>
-    </div>
-    <div class="flex flex-wrap gap-2">
-      <a href="https://wa.me/?text=<%= ERB::Util.url_encode(t("onboarding.step3.share_whatsapp_message", name: current_tenant.name, url: @booking_url)) %>"
-         target="_blank"
-         rel="noopener noreferrer"
-         class="<%= button_classes(:success) %>">
-        <%= t("onboarding.step3.share_whatsapp") %>
-      </a>
+    <div class="flex flex-wrap items-start gap-2">
+      <%= render "shared/booking_share_actions",
+                 booking_url: @booking_url,
+                 business_name: current_tenant.name,
+                 show_url: true %>
       <%= link_to t("onboarding.step3.open_preview"),
                   book_by_slug_path(slug: @personalized_link.slug),
                   target: "_blank",

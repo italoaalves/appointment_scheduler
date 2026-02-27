@@ -18,20 +18,10 @@
     <p class="mt-1 text-sm text-slate-600">
       <%= t("dashboard.welcome_card.body") %>
     </p>
-    <div class="mt-4 flex flex-wrap items-center gap-2">
-      <code data-clipboard-target="source" class="hidden"><%= booking_url %></code>
-      <span data-clipboard-target="feedback" class="hidden text-sm font-medium text-emerald-600"><%= t("onboarding.step3.copied") %></span>
-      <button type="button"
-              data-action="click->clipboard#copy"
-              class="<%= button_classes(:primary) %>">
-        <%= t("dashboard.welcome_card.copy_link") %>
-      </button>
-      <a href="https://wa.me/?text=<%= ERB::Util.url_encode(t("onboarding.step3.share_whatsapp_message", name: current_tenant.name, url: booking_url)) %>"
-         target="_blank"
-         rel="noopener noreferrer"
-         class="<%= button_classes(:success) %>">
-        <%= t("dashboard.welcome_card.share_whatsapp") %>
-      </a>
+    <div class="mt-4">
+      <%= render "shared/booking_share_actions",
+                 booking_url: booking_url,
+                 business_name: current_tenant.name %>
     </div>
     <p class="mt-3">
       <%= link_to t("dashboard.welcome_card.help_link"), "#", class: "text-sm text-emerald-700 hover:text-emerald-900 hover:underline" %>

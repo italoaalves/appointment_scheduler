@@ -1,0 +1,29 @@
+<%# Shared partial for copy link + WhatsApp share. Locals: booking_url, business_name, show_url (optional, default false) %>
+<% booking_url = local_assigns[:booking_url] %>
+<% business_name = local_assigns[:business_name] %>
+<% show_url = local_assigns.fetch(:show_url, false) %>
+
+<% if booking_url.present? %>
+  <div data-controller="clipboard" class="<%= "space-y-3" if show_url %>">
+    <div class="flex flex-wrap items-center gap-2">
+      <code data-clipboard-target="source"
+            class="<%= show_url ? "block flex-1 min-w-0 rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-800" : "hidden" %>">
+        <%= booking_url %>
+      </code>
+      <span data-clipboard-target="feedback" class="hidden text-sm font-medium text-emerald-600">
+        <%= t("shared.booking_share.copied") %>
+      </span>
+      <button type="button"
+              data-action="click->clipboard#copy"
+              class="<%= button_classes(:primary) %>">
+        <%= t("shared.booking_share.copy_link") %>
+      </button>
+      <a href="https://wa.me/?text=<%= ERB::Util.url_encode(t("shared.booking_share.whatsapp_message", name: business_name, url: booking_url)) %>"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="<%= button_classes(:success) %>">
+        <%= t("shared.booking_share.share_whatsapp") %>
+      </a>
+    </div>
+  </div>
+<% end %>

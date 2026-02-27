@@ -71,12 +71,18 @@ pt-BR:
     email_confirmation_banner:
       message: "Por favor, confirme seu e-mail. Verifique sua caixa de entrada ou"
       resend_link: "reenviar e-mail de confirmação"
+    booking_share:
+      copy_link: "Copiar link"
+      copied: "Copiado!"
+      share_whatsapp: "Compartilhar no WhatsApp"
+      whatsapp_message: "Agende sua consulta com %{name}: %{url}"
 
   onboarding:
     owner_only: "Apenas o dono do espaço pode concluir o onboarding."
     skip_link: "Pular e ir para o painel"
     next: "Próximo"
     progress:
+      label: "Progresso de configuração"
       step1: "Conte sobre seu negócio"
       step2: "Confirme sua disponibilidade"
       step3: "Sua página de agendamento está pronta"

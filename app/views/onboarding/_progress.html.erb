@@ -1,7 +1,7 @@
 <%# Renders onboarding wizard progress indicator.
     Locals: current_step (1–3) %>
 <% current_step = local_assigns[:current_step] || 1 %>
-<nav aria-label="<%= t("onboarding.progress.step1") %>" class="mb-8">
+<nav aria-label="<%= t("onboarding.progress.label") %>" class="mb-8">
   <ol class="flex items-center gap-2">
     <% [ 1, 2, 3 ].each do |step| %>
       <% completed = step < current_step %>
