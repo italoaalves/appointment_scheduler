@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_27_160000) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_27_162000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -235,7 +235,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_160000) do
 
   create_table "subscriptions", force: :cascade do |t|
     t.bigint "space_id", null: false
-    t.string "plan_id", null: false
     t.integer "status", default: 0, null: false
     t.string "asaas_subscription_id"
     t.string "asaas_customer_id"
@@ -246,8 +245,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_160000) do
     t.datetime "canceled_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "pending_plan_id"
+    t.bigint "billing_plan_id", null: false
+    t.bigint "pending_billing_plan_id"
     t.index ["asaas_subscription_id"], name: "index_subscriptions_on_asaas_subscription_id", unique: true, where: "(asaas_subscription_id IS NOT NULL)"
+    t.index ["billing_plan_id"], name: "index_subscriptions_on_billing_plan_id"
+    t.index ["pending_billing_plan_id"], name: "index_subscriptions_on_pending_billing_plan_id"
     t.index ["space_id"], name: "index_subscriptions_on_space_id"
     t.index ["space_id"], name: "index_subscriptions_on_space_id_active", unique: true, where: "(status <> 4)"
     t.index ["status", "trial_ends_at"], name: "index_subscriptions_on_status_and_trial_ends_at"
@@ -311,6 +313,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_160000) do
   add_foreign_key "space_memberships", "spaces"
   add_foreign_key "space_memberships", "users"
   add_foreign_key "spaces", "users", column: "owner_id"
+  add_foreign_key "subscriptions", "billing_plans"
+  add_foreign_key "subscriptions", "billing_plans", column: "pending_billing_plan_id"
   add_foreign_key "subscriptions", "spaces"
   add_foreign_key "user_permissions", "users"
   add_foreign_key "user_preferences", "users"

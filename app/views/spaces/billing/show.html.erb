@@ -23,10 +23,10 @@
         <div>
           <h2 class="text-sm font-semibold text-slate-800"><%= t("billing.show.current_plan") %></h2>
           <p class="mt-1 text-2xl font-bold text-slate-900"><%= @current_plan&.name %></p>
-          <% if @subscription.pending_plan_id.present? %>
+          <% if @subscription.pending_billing_plan.present? %>
             <p class="mt-1 text-sm text-amber-600">
               <%= t("billing.show.pending_downgrade",
-                    plan: Billing::Plan.find_by_slug!(@subscription.pending_plan_id).name,
+                    plan: @subscription.pending_billing_plan.name,
                     date: l(@subscription.current_period_end.to_date, format: :long)) %>
             </p>
           <% end %>

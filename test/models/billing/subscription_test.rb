@@ -6,9 +6,9 @@ module Billing
   class SubscriptionTest < ActiveSupport::TestCase
     def valid_attrs
       {
-        space: spaces(:one),
-        plan_id: "essential",
-        status: :trialing,
+        space:         spaces(:one),
+        billing_plan:  billing_plans(:essential),
+        status:        :trialing,
         trial_ends_at: 14.days.from_now
       }
     end
@@ -18,16 +18,10 @@ module Billing
       assert sub.valid?
     end
 
-    test "plan_id validates inclusion — rejects bogus" do
-      sub = Billing::Subscription.new(valid_attrs.merge(plan_id: "bogus"))
+    test "billing_plan is required" do
+      sub = Billing::Subscription.new(valid_attrs.merge(billing_plan: nil))
       assert_not sub.valid?
-      assert_includes sub.errors[:plan_id], I18n.t("errors.messages.inclusion")
-    end
-
-    test "plan_id is required" do
-      sub = Billing::Subscription.new(valid_attrs.merge(plan_id: nil))
-      assert_not sub.valid?
-      assert sub.errors[:plan_id].any?
+      assert sub.errors[:billing_plan].any?
     end
 
     test "status enum resolves trialing" do

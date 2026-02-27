@@ -13,9 +13,9 @@ module Billing
 
       unless status == :no_subscription
         Billing::Subscription.create!(
-          space_id: space.id,
-          plan_id:  plan_id,
-          status:   Billing::Subscription.statuses[status]
+          space_id:     space.id,
+          billing_plan: Billing::Plan.find_by_slug!(plan_id),
+          status:       Billing::Subscription.statuses[status]
         )
         space.reload  # clear has_one :subscription cache
       end

@@ -52,17 +52,18 @@ module Platform
     end
 
     def change_plan
-      new_plan_id  = params[:plan_id]
-      subscription = @space.subscription
-      old_plan_id  = subscription.plan_id
+      new_plan_id   = params[:plan_id]
+      subscription  = @space.subscription
+      old_plan_slug = subscription.billing_plan.slug
+      new_plan      = Billing::Plan.find_by_slug!(new_plan_id)
 
-      subscription.update!(plan_id: new_plan_id)
+      subscription.update!(billing_plan: new_plan)
 
       Billing::BillingEvent.create!(
         space:        @space,
         subscription: subscription,
         event_type:   "manual_override",
-        metadata:     { action: "change_plan", from: old_plan_id, to: new_plan_id },
+        metadata:     { action: "change_plan", from: old_plan_slug, to: new_plan_id },
         actor_id:     current_user.id
       )
 

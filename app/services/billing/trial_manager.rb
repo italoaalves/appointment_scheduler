@@ -25,7 +25,7 @@ module Billing
 
       subscription = Billing::Subscription.create!(
         space_id:             space.id,
-        plan_id:              plan.slug,
+        billing_plan:         plan,
         status:               :trialing,
         trial_ends_at:        trial_ends,
         current_period_start: now,

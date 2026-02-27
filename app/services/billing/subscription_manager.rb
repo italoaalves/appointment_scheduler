@@ -46,7 +46,7 @@ module Billing
       ActiveRecord::Base.transaction do
         subscription = find_or_initialize_subscription(space)
         subscription.assign_attributes(
-          plan_id:               plan_id,
+          billing_plan:          plan,
           status:                :active,
           payment_method:        payment_method,
           asaas_subscription_id: asaas_subscription_id,
@@ -71,8 +71,8 @@ module Billing
     end
 
     def upgrade(subscription:, new_plan_id:)
-      old_plan_id = subscription.plan_id
-      new_plan    = Billing::Plan.find_by_slug!(new_plan_id)
+      old_plan_slug = subscription.billing_plan.slug
+      new_plan      = Billing::Plan.find_by_slug!(new_plan_id)
 
       if subscription.asaas_subscription_id.present?
         @client.update_subscription(
@@ -82,13 +82,13 @@ module Billing
       end
 
       ActiveRecord::Base.transaction do
-        subscription.update!(plan_id: new_plan_id, pending_plan_id: nil)
+        subscription.update!(billing_plan: new_plan, pending_billing_plan: nil)
 
         Billing::BillingEvent.create!(
           space_id:        subscription.space_id,
           subscription_id: subscription.id,
           event_type:      "plan.changed",
-          metadata:        { from: old_plan_id, to: new_plan_id }
+          metadata:        { from: old_plan_slug, to: new_plan_id }
         )
       end
 
@@ -98,17 +98,17 @@ module Billing
     end
 
     def downgrade(subscription:, new_plan_id:)
-      Billing::Plan.find_by_slug!(new_plan_id)
+      new_plan = Billing::Plan.find_by_slug!(new_plan_id)
 
       ActiveRecord::Base.transaction do
-        subscription.update!(pending_plan_id: new_plan_id)
+        subscription.update!(pending_billing_plan: new_plan)
 
         Billing::BillingEvent.create!(
           space_id:        subscription.space_id,
           subscription_id: subscription.id,
           event_type:      "plan.downgrade_scheduled",
           metadata:        {
-            from:         subscription.plan_id,
+            from:         subscription.billing_plan.slug,
             to:           new_plan_id,
             effective_at: subscription.current_period_end&.iso8601
           }

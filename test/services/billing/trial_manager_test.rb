@@ -16,7 +16,7 @@ module Billing
 
       assert sub.persisted?
       assert sub.trialing?
-      assert_equal "pro", sub.plan_id
+      assert_equal "pro", sub.billing_plan.slug
     end
 
     test "start_trial sets trial_ends_at to 14 days from now" do

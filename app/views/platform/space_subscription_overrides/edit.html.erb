@@ -15,7 +15,7 @@
       <dl class="grid gap-2 text-sm sm:grid-cols-3">
         <div>
           <dt class="text-xs text-slate-500"><%= t("platform.subscription_overrides.plan_label") %></dt>
-          <dd class="font-medium text-slate-900"><%= @subscription.plan_id.capitalize %></dd>
+          <dd class="font-medium text-slate-900"><%= @subscription.billing_plan.name %></dd>
         </div>
         <div>
           <dt class="text-xs text-slate-500"><%= t("platform.spaces.show.subscription.status") %></dt>
@@ -60,7 +60,7 @@
       <%= hidden_field_tag :override_action, "change_plan" %>
       <div class="max-w-xs flex-1">
         <%= label_tag :plan_id, t("platform.subscription_overrides.plan_label"), class: form_label_classes %>
-        <%= select_tag :plan_id, options_for_select(@plans.map { |p| [p.name, p.id] }, @subscription&.plan_id), class: form_input_classes("max-w-[8rem]") %>
+        <%= select_tag :plan_id, options_for_select(@plans.map { |p| [p.name, p.slug] }, @subscription&.billing_plan&.slug), class: form_input_classes("max-w-[8rem]") %>
       </div>
       <button type="submit" class="<%= button_classes(:secondary) %>" data-turbo-submits-with="<%= t("shared.submitting") %>"><%= t("platform.subscription_overrides.change_button") %></button>
     <% end %>

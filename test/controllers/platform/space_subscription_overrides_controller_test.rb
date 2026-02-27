@@ -80,7 +80,7 @@ module Platform
       end
 
       assert_redirected_to platform_space_path(@space)
-      assert_equal "pro", @subscription.reload.plan_id
+      assert_equal "pro", @subscription.reload.billing_plan.slug
 
       event = Billing::BillingEvent.order(:created_at).last
       assert_equal "manual_override", event.event_type

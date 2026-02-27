@@ -8,7 +8,7 @@ module Platform
       @total_expired  = Billing::Subscription.where(status: :expired).count
       @total_canceled = Billing::Subscription.where(status: :canceled).count
 
-      @mrr_cents = Billing::Subscription.where(status: :active).sum do |sub|
+      @mrr_cents = Billing::Subscription.where(status: :active).includes(:billing_plan).sum do |sub|
         sub.plan.price_cents
       end
 

@@ -40,7 +40,7 @@
               <td class="px-4 py-2 font-medium text-slate-900">
                 <%= link_to sub.space&.name, platform_space_path(sub.space), class: "hover:underline" %>
               </td>
-              <td class="px-4 py-2 text-slate-700"><%= sub.plan_id.capitalize %></td>
+              <td class="px-4 py-2 text-slate-700"><%= sub.billing_plan.name %></td>
               <td class="px-4 py-2">
                 <%= render "application/shared/status_badge",
                            status: sub.status,

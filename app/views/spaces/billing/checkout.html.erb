@@ -1,5 +1,5 @@
 <%
-  default_plan = @subscription&.plan_id.presence || "pro"
+  default_plan = @subscription&.billing_plan&.slug || "pro"
   plan_prices  = @plans.to_h { |p| [p.slug, p.price_cents] }
 %>
 <% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [

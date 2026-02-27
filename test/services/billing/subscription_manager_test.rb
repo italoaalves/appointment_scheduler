@@ -89,7 +89,7 @@ module Billing
       @subscription.reload
       assert_equal "cus_001",       @subscription.asaas_customer_id
       assert_equal "sub_asaas_001", @subscription.asaas_subscription_id
-      assert_equal "pro",           @subscription.plan_id
+      assert_equal "pro",           @subscription.billing_plan.slug
     end
 
     test "subscribe logs subscription.activated BillingEvent" do
@@ -122,8 +122,8 @@ module Billing
     end
 
     test "subscribe does not update local subscription when Asaas fails" do
-      original_plan = @subscription.plan_id
-      error_client  = fake_client(
+      original_plan_id = @subscription.billing_plan_id
+      error_client     = fake_client(
         create_subscription: Billing::AsaasClient::ApiError.new(500, "Server error")
       )
 
@@ -135,12 +135,12 @@ module Billing
         asaas_client:      error_client
       )
 
-      assert_equal original_plan, @subscription.reload.plan_id
+      assert_equal original_plan_id, @subscription.reload.billing_plan_id
     end
 
     # ── upgrade ───────────────────────────────────────────────────────────────
 
-    test "upgrade changes plan_id immediately" do
+    test "upgrade changes billing_plan immediately" do
       result = Billing::SubscriptionManager.upgrade(
         subscription: @subscription,
         new_plan_id:  "pro",
@@ -148,11 +148,11 @@ module Billing
       )
 
       assert result[:success]
-      assert_equal "pro", @subscription.reload.plan_id
+      assert_equal "pro", @subscription.reload.billing_plan.slug
     end
 
-    test "upgrade clears pending_plan_id" do
-      @subscription.update_column(:pending_plan_id, "essential")
+    test "upgrade clears pending_billing_plan" do
+      @subscription.update_column(:pending_billing_plan_id, billing_plans(:essential).id)
 
       Billing::SubscriptionManager.upgrade(
         subscription: @subscription,
@@ -160,7 +160,7 @@ module Billing
         asaas_client: fake_client
       )
 
-      assert_nil @subscription.reload.pending_plan_id
+      assert_nil @subscription.reload.pending_billing_plan_id
     end
 
     test "upgrade logs plan.changed BillingEvent with from/to metadata" do
@@ -194,7 +194,7 @@ module Billing
 
     test "upgrade does not update local record when Asaas fails" do
       @subscription.update_column(:asaas_subscription_id, "sub_asaas_001")
-      original_plan = @subscription.plan_id
+      original_plan_id = @subscription.billing_plan_id
 
       error_client = fake_client(
         update_subscription: Billing::AsaasClient::ApiError.new(500, "error")
@@ -206,20 +206,21 @@ module Billing
         asaas_client: error_client
       )
 
-      assert_equal original_plan, @subscription.reload.plan_id
+      assert_equal original_plan_id, @subscription.reload.billing_plan_id
     end
 
     # ── downgrade ─────────────────────────────────────────────────────────────
 
-    test "downgrade sets pending_plan_id without changing current plan_id" do
+    test "downgrade sets pending_billing_plan without changing current billing_plan" do
       result = Billing::SubscriptionManager.downgrade(
         subscription: @subscription,
         new_plan_id:  "essential"
       )
 
       assert result[:success]
-      assert_equal "pro",       @subscription.reload.plan_id
-      assert_equal "essential", @subscription.pending_plan_id
+      @subscription.reload
+      assert_equal "pro",       @subscription.billing_plan.slug
+      assert_equal "essential", @subscription.pending_billing_plan.slug
     end
 
     test "downgrade logs plan.downgrade_scheduled BillingEvent" do
