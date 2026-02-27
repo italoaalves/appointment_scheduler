@@ -1,0 +1,15 @@
+<div x-data="{ show: true }"
+     x-show="show"
+     x-transition
+     class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 bg-amber-100 px-4 py-2 text-sm text-amber-900">
+  <span><%= t("shared.email_confirmation_banner.message") %></span>
+  <%= link_to t("shared.email_confirmation_banner.resend_link"),
+              new_user_confirmation_path,
+              class: "font-medium underline hover:text-amber-950" %>
+  <button type="button"
+          class="ml-auto shrink-0 p-1 text-amber-700 hover:text-amber-950"
+          aria-label="Dismiss"
+          @click="show = false">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>

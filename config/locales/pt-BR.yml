@@ -67,6 +67,11 @@ pt-BR:
     update:
       notice: "Preferências atualizadas."
 
+  shared:
+    email_confirmation_banner:
+      message: "Por favor, confirme seu e-mail. Verifique sua caixa de entrada ou"
+      resend_link: "reenviar e-mail de confirmação"
+
   onboarding:
     owner_only: "Apenas o dono do espaço pode concluir o onboarding."
     skip_link: "Pular e ir para o painel"

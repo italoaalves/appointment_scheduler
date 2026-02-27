@@ -96,6 +96,11 @@ en:
     update:
       notice: "Preferences updated."
 
+  shared:
+    email_confirmation_banner:
+      message: "Please confirm your email address. Check your inbox or"
+      resend_link: "resend confirmation email"
+
   onboarding:
     owner_only: "Only the space owner can complete onboarding."
     skip_link: "Skip and go to dashboard"

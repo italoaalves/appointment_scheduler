@@ -9,6 +9,7 @@
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
   </head>
   <body class="min-h-screen bg-slate-50">
+    <%= render "shared/email_confirmation_banner" if user_signed_in? && !current_user.confirmed? %>
     <header class="border-b border-slate-200 bg-white px-4 py-3">
       <%= link_to t("layout.app_name"), root_path, class: "text-sm font-semibold text-slate-900" %>
     </header>

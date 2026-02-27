@@ -23,6 +23,7 @@
   </head>
 
   <body class="min-h-screen bg-slate-50 text-slate-900">
+    <%= render "shared/email_confirmation_banner" if user_signed_in? && !current_user.confirmed? %>
     <% if user_signed_in? %>
       <% if impersonating? %>
         <div class="flex items-center justify-center gap-3 bg-amber-500 px-4 py-2 text-sm font-medium text-amber-900">
