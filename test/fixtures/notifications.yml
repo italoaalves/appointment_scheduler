@@ -1,8 +1,15 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
+booking_received:
   user: manager
-  title: Test notification
-  body: Test body
+  title: "New appointment request"
+  body: "John requested an appointment on Feb 28 at 10:00"
   read: false
+  event_type: appointment_booked
+  notifiable: one (Appointment)
+
+old_read:
+  user: manager
+  title: "Appointment confirmed"
+  body: "Your appointment has been confirmed"
+  read: true
+  event_type: appointment_confirmed
   notifiable: one (Appointment)
