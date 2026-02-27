@@ -18,7 +18,9 @@ module Notifications
     end
 
     test "performs appointment_booked and sends email to owner and customer" do
-      SendNotificationJob.perform_now(event: :appointment_booked, appointment_id: @appointment.id)
+      assert_difference "Notification.count", 1 do
+        SendNotificationJob.perform_now(event: :appointment_booked, appointment_id: @appointment.id)
+      end
 
       assert_equal 2, ActionMailer::Base.deliveries.size
       recipients = ActionMailer::Base.deliveries.flat_map(&:to)

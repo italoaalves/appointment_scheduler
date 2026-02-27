@@ -31,12 +31,16 @@ module Spaces
       case @event
       when :appointment_booked
         recipients = []
-        recipients << [ owner, [ :email ] ] if owner.present? && owner.email.present?
+        if owner.present? && owner.email.present?
+          recipients << [ owner, [ :email, :in_app ] ]
+        end
         recipients << [ @appointment.customer, [ :email ] ] if @appointment.customer&.email.present?
         recipients
       when :appointment_confirmed, :appointment_cancelled, :appointment_rescheduled
         return [] if @appointment.customer.blank?
-        [ [ @appointment.customer, channels_for_customer ] ]
+        channels = channels_for_customer
+        channels << :in_app if @appointment.customer.user.present?
+        [ [ @appointment.customer, channels ] ]
       else
         []
       end
@@ -48,7 +52,7 @@ module Spaces
 
     def channels_for_customer
       channels = []
-      channels << :email  if @appointment.customer&.email.present?
+      channels << :email    if @appointment.customer&.email.present?
       channels << :whatsapp if whatsapp_available?
       channels
     end
@@ -63,11 +67,39 @@ module Spaces
     def dispatch_to(recipient:, channel:)
       return if recipient.blank?
 
-      if @event == :appointment_booked && channel == :email && recipient.is_a?(Customer)
-        send_customer_confirmation(recipient)
+      case channel
+      when :in_app
+        create_in_app_notification(recipient)
+      when :email
+        if @event == :appointment_booked && recipient.is_a?(Customer)
+          send_customer_confirmation(recipient)
+        else
+          send_owner_notification(recipient, channel)
+        end
       else
         send_owner_notification(recipient, channel)
       end
+    end
+
+    def create_in_app_notification(recipient)
+      user = case recipient
+      when User     then recipient
+      when Customer then recipient.user
+      end
+      return if user.nil?
+
+      Notification.create!(
+        user:       user,
+        notifiable: @appointment,
+        event_type: @event.to_s,
+        title:      I18n.t("notifications.in_app.#{@event}.title"),
+        body:       I18n.t("notifications.in_app.#{@event}.body", **in_app_template_params)
+      )
+    rescue ActiveRecord::RecordInvalid => e
+      Rails.logger.error(
+        "[Notifications] in_app_creation_failed event=#{@event} " \
+        "user_id=#{user&.id} error=#{e.message}"
+      )
     end
 
     def send_customer_confirmation(customer)
@@ -84,10 +116,10 @@ module Spaces
       body    = build_body(channel)
 
       result = Messaging::DeliveryService.call(
-        channel: channel,
-        to:     recipient,
-        body:   body,
-        subject: channel == :email ? subject : nil
+        channel:  channel,
+        to:       recipient,
+        body:     body,
+        subject:  channel == :email ? subject : nil
       )
 
       return if result[:success]
@@ -107,12 +139,25 @@ module Spaces
     end
 
     def template_params
-      tz    = TimezoneResolver.zone(@space)
-      dt    = @appointment.scheduled_at&.in_time_zone(tz)
-      date  = dt ? I18n.l(dt.to_date, format: :long) : "—"
-      time  = dt ? dt.strftime("%H:%M") : "—"
+      tz   = TimezoneResolver.zone(@space)
+      dt   = @appointment.scheduled_at&.in_time_zone(tz)
+      date = dt ? I18n.l(dt.to_date, format: :long) : "—"
+      time = dt ? dt.strftime("%H:%M") : "—"
       {
         customer_name: @appointment.customer&.name.presence || "A customer",
+        date:          date,
+        time:          time
+      }
+    end
+
+    def in_app_template_params
+      tz   = TimezoneResolver.zone(@space)
+      dt   = @appointment.scheduled_at&.in_time_zone(tz)
+      date = dt ? I18n.l(dt.to_date, format: :long) : "—"
+      time = dt ? dt.strftime("%H:%M") : "—"
+      {
+        customer_name: @appointment.customer&.name.presence || "A customer",
+        business_name: @space.name,
         date:          date,
         time:          time
       }
