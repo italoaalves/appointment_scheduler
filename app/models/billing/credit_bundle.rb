@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "ostruct"
+
 module Billing
   class CreditBundle < ApplicationRecord
     self.table_name = "credit_bundles"
@@ -13,7 +15,7 @@ module Billing
     # Backward-compatible shim — still used by CreditsController and CreditManager.
     # Remove in task 24.
     def self.bundles
-      available.map { |b| OpenStruct.new(amount: b.amount, price_cents: b.price_cents) }.freeze
+      available.map { |b| ::OpenStruct.new(amount: b.amount, price_cents: b.price_cents) }.freeze
     end
   end
 end

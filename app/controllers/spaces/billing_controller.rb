@@ -52,6 +52,7 @@ module Spaces
     def checkout
       @subscription = current_tenant.subscription
       @plans        = Billing::Plan.visible
+      @current_plan = @subscription&.plan
     end
 
     def subscribe
