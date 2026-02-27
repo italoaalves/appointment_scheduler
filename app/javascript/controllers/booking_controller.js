@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 import flatpickr from "flatpickr"
 
 export default class extends Controller {
-  static targets = ["dateInput", "slotsList", "slotsContainer", "scheduledAt", "submitBtn", "slotTemplate"]
+  static targets = ["dateInput", "slotsList", "slotsContainer", "scheduledAt", "submitBtn", "slotTemplate", "errorTemplate"]
 
   connect() {
     this.initFlatpickr()
@@ -89,9 +89,7 @@ export default class extends Controller {
           : (container.dataset.chooseText || "Choose a time:")
         this.slotsListTarget.innerHTML = ""
         slots.forEach(slot => {
-          const btn = document.createElement("button")
-          btn.type = "button"
-          btn.className = "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:border-slate-400 slot-btn"
+          const btn = this.slotTemplateTarget.content.cloneNode(true).querySelector("button")
           btn.dataset.slotValue = slot.value
           btn.dataset.slotLabel = slot.label
           btn.textContent = slot.label.split(" at ").pop() || slot.label
@@ -104,30 +102,20 @@ export default class extends Controller {
 
   showError() {
     const container = this.slotsContainerTarget
-    const errorText = container.dataset.errorText || "Could not load available times."
-    const retryText = container.dataset.retryText || "Try again"
-    container.querySelector("p").textContent = ""
-    const wrapper = document.createElement("div")
-    wrapper.className = "col-span-full space-y-2"
-    const errP = document.createElement("p")
-    errP.className = "text-sm text-red-600"
-    errP.textContent = errorText
-    wrapper.appendChild(errP)
-    const retryBtn = document.createElement("button")
-    retryBtn.type = "button"
-    retryBtn.className = "text-sm font-medium text-slate-700 underline hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-1 rounded"
-    retryBtn.textContent = retryText
+    const error = this.errorTemplateTarget.content.cloneNode(true)
+    const p = error.querySelector("p")
+    const retryBtn = error.querySelector("button")
+    p.textContent = container.dataset.errorText || "Could not load available times."
+    retryBtn.textContent = container.dataset.retryText || "Try again"
     retryBtn.addEventListener("click", () => this.loadSlots())
-    wrapper.appendChild(retryBtn)
+    container.querySelector("p").textContent = ""
     this.slotsListTarget.innerHTML = ""
-    this.slotsListTarget.appendChild(wrapper)
+    this.slotsListTarget.appendChild(error)
   }
 
   selectSlot(btn) {
-    this.slotsListTarget.querySelectorAll(".slot-btn").forEach(b => {
-      b.classList.remove("ring-2", "ring-slate-900", "border-slate-900")
-    })
-    btn.classList.add("ring-2", "ring-slate-900", "border-slate-900")
+    this.slotsListTarget.querySelectorAll(".slot-btn").forEach(b => b.classList.remove("slot-btn-selected"))
+    btn.classList.add("slot-btn-selected")
     this.scheduledAtTarget.value = btn.dataset.slotValue
     this.submitBtnTarget.disabled = false
   }

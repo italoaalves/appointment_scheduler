@@ -1,1 +1,39 @@
 @import "tailwindcss";
+
+/* Alpine.js x-cloak: hide until initialized */
+[x-cloak] {
+  display: none !important;
+}
+
+/* Booking slot buttons */
+.slot-btn {
+  @apply rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:border-slate-400;
+}
+
+.slot-btn-selected {
+  @apply ring-2 ring-slate-900 border-slate-900;
+}
+
+/* Kaminari pagination - polished design */
+nav.pagination {
+  @apply flex flex-wrap justify-center items-center gap-2;
+}
+nav.pagination > span,
+nav.pagination > a {
+  @apply inline-flex items-center justify-center min-w-[2.25rem] h-10 px-3 text-sm font-medium rounded-lg border transition-all duration-150;
+}
+nav.pagination > a {
+  @apply border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-400;
+}
+nav.pagination > a:hover {
+  @apply shadow-sm;
+}
+nav.pagination > span.current {
+  @apply border-slate-900 bg-slate-900 text-white shadow-sm;
+}
+nav.pagination > span.disabled {
+  @apply border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed opacity-70;
+}
+nav.pagination .gap {
+  @apply px-1 text-slate-400;
+}
