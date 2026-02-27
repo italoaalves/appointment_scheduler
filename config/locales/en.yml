@@ -103,6 +103,7 @@ en:
       preferences: "Preferences"
       billing: "Billing"
       credits: "Credits"
+      platform_billing: "Billing"
       language:
         en: "EN"
         pt: "PT"

@@ -47,6 +47,41 @@
     </dl>
   </div>
 
+  <%# Subscription summary %>
+  <% sub = @space.subscription %>
+  <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div class="flex items-center justify-between">
+      <h2 class="text-sm font-semibold text-slate-800">Subscription</h2>
+      <%= link_to "Manage", edit_platform_space_subscription_override_path(@space),
+                  class: "text-xs font-medium text-indigo-600 hover:underline" %>
+    </div>
+    <% if sub %>
+      <dl class="mt-2 grid gap-2 text-sm sm:grid-cols-3">
+        <div>
+          <dt class="text-xs text-slate-500">Plan</dt>
+          <dd class="font-medium text-slate-900"><%= sub.plan_id.capitalize %></dd>
+        </div>
+        <div>
+          <dt class="text-xs text-slate-500">Status</dt>
+          <dd>
+            <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium
+              <%= sub.active? ? 'bg-emerald-100 text-emerald-700' :
+                  sub.trialing? ? 'bg-blue-100 text-blue-700' :
+                  'bg-red-100 text-red-700' %>">
+              <%= sub.status.humanize %>
+            </span>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs text-slate-500">Trial ends</dt>
+          <dd class="font-medium text-slate-900"><%= sub.trial_ends_at&.to_date || "—" %></dd>
+        </div>
+      </dl>
+    <% else %>
+      <p class="mt-2 text-sm text-slate-500">No subscription.</p>
+    <% end %>
+  </div>
+
   <div class="flex flex-wrap gap-2">
     <%= link_to t("platform.spaces.show.view_appointments"), platform_space_appointments_path(@space), class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>
     <%= link_to t("platform.spaces.show.view_customers"), platform_space_customers_path(@space), class: "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm hover:bg-slate-50" %>

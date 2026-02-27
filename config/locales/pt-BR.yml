@@ -74,6 +74,7 @@ pt-BR:
       preferences: "Preferências"
       billing: "Cobrança"
       credits: "Créditos"
+      platform_billing: "Cobrança"
       language:
         en: "EN"
         pt: "PT"

@@ -1,0 +1,95 @@
+<div class="space-y-6">
+  <header>
+    <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Billing Overview</h1>
+    <p class="mt-1 text-sm text-slate-600">Subscription stats and recent billing events across all tenants.</p>
+  </header>
+
+  <%# Stats cards %>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <% [
+      ["MRR", number_to_currency(@mrr_cents / 100.0, unit: "R$", separator: ",", delimiter: "."), "bg-indigo-50 text-indigo-700"],
+      ["Active", @total_active, "bg-emerald-50 text-emerald-700"],
+      ["Trialing", @total_trialing, "bg-blue-50 text-blue-700"],
+      ["Expired / Canceled", "#{@total_expired} / #{@total_canceled}", "bg-red-50 text-red-700"]
+    ].each do |label, value, cls| %>
+      <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <p class="text-xs font-medium text-slate-500"><%= label %></p>
+        <p class="mt-1 text-2xl font-bold <%= cls.split.last %>"><%= value %></p>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Subscription list %>
+  <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div class="border-b border-slate-200 px-5 py-3">
+      <h2 class="text-sm font-semibold text-slate-800">All Subscriptions</h2>
+    </div>
+    <% if @subscriptions.any? %>
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Space</th>
+            <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Plan</th>
+            <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
+            <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Period</th>
+            <th class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Override</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200 bg-white">
+          <% @subscriptions.each do |sub| %>
+            <tr>
+              <td class="px-4 py-2 font-medium text-slate-900">
+                <%= link_to sub.space&.name, platform_space_path(sub.space), class: "hover:underline" %>
+              </td>
+              <td class="px-4 py-2 text-slate-700"><%= sub.plan_id.capitalize %></td>
+              <td class="px-4 py-2">
+                <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium
+                  <%= sub.active? ? 'bg-emerald-100 text-emerald-700' :
+                      sub.trialing? ? 'bg-blue-100 text-blue-700' :
+                      'bg-red-100 text-red-700' %>">
+                  <%= sub.status.humanize %>
+                </span>
+              </td>
+              <td class="px-4 py-2 text-xs text-slate-500">
+                <% if sub.current_period_start && sub.current_period_end %>
+                  <%= sub.current_period_start.to_date %> — <%= sub.current_period_end.to_date %>
+                <% elsif sub.trial_ends_at %>
+                  Trial ends <%= sub.trial_ends_at.to_date %>
+                <% else %>
+                  —
+                <% end %>
+              </td>
+              <td class="px-4 py-2 text-right">
+                <%= link_to "Override", edit_platform_space_subscription_override_path(sub.space),
+                            class: "text-xs text-indigo-600 hover:underline" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <div class="px-4 py-3">
+        <%= paginate @subscriptions %>
+      </div>
+    <% else %>
+      <p class="px-5 py-4 text-sm text-slate-500">No subscriptions yet.</p>
+    <% end %>
+  </div>
+
+  <%# Recent events %>
+  <% if @recent_events.any? %>
+    <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div class="border-b border-slate-200 px-5 py-3">
+        <h2 class="text-sm font-semibold text-slate-800">Recent Billing Events</h2>
+      </div>
+      <ul class="divide-y divide-slate-200">
+        <% @recent_events.each do |event| %>
+          <li class="flex items-center justify-between gap-4 px-5 py-2.5 text-sm">
+            <span class="font-medium text-slate-800"><%= event.event_type %></span>
+            <span class="text-slate-500"><%= event.space&.name %></span>
+            <span class="text-xs text-slate-400"><%= l(event.created_at, format: :long) %></span>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+</div>

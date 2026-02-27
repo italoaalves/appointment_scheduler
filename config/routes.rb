@@ -58,10 +58,12 @@ Rails.application.routes.draw do
 
     post "impersonation/stop", to: "impersonations#stop", as: :stop_impersonation
 
+    resources :billing, only: [ :index ], controller: "billing"
     resources :spaces do
       resources :appointments, only: [ :index, :show ], controller: "space_appointments"
       resources :customers, only: [ :index, :show ], controller: "space_customers"
       resources :scheduling_links, only: [ :index, :show ], controller: "space_scheduling_links"
+      resource :subscription_override, only: [ :edit, :update ], controller: "space_subscription_overrides"
     end
     resources :users do
       member do
