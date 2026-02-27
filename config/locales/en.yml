@@ -97,6 +97,9 @@ en:
       notice: "Preferences updated."
 
   shared:
+    submitting: "Saving…"
+    deleting: "Deleting…"
+    removing: "Removing…"
     email_confirmation_banner:
       message: "Please confirm your email address. Check your inbox or"
       resend_link: "resend confirmation email"
@@ -123,6 +126,7 @@ en:
       business_type: "Business type"
       phone_number: "Phone number"
       next: "Next"
+      submit_loading: "Saving…"
       business_types:
         clinic: "Clinic"
         barbershop: "Barbershop"
@@ -142,6 +146,7 @@ en:
       opens_at: "Opens at"
       closes_at: "Closes at"
       next: "Next"
+      submit_loading: "Saving…"
       timezones:
         america_sao_paulo: "São Paulo"
         america_manaus: "Manaus"
@@ -830,6 +835,7 @@ en:
     address_label: "Address (optional)"
     address_placeholder: "Your address"
     submit: "Request appointment"
+    submit_loading: "Booking…"
     create:
       success: "Your appointment request has been submitted. We'll contact you to confirm."
     thank_you:

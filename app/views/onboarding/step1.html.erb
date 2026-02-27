@@ -34,7 +34,7 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-4 pt-2">
-        <%= form.submit t("onboarding.step1.next"), class: button_classes(:primary) %>
+        <%= form.submit t("onboarding.step1.next"), class: button_classes(:primary), data: { turbo_submits_with: t("onboarding.step1.submit_loading") } %>
         <%= button_to t("onboarding.skip_link"), skip_onboarding_wizard_path, method: :post, class: "text-sm text-slate-500 underline hover:text-slate-700", form_class: "inline" %>
       </div>
     <% end %>

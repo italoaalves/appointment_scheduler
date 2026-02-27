@@ -68,6 +68,9 @@ pt-BR:
       notice: "Preferências atualizadas."
 
   shared:
+    submitting: "Salvando…"
+    deleting: "Excluindo…"
+    removing: "Removendo…"
     email_confirmation_banner:
       message: "Por favor, confirme seu e-mail. Verifique sua caixa de entrada ou"
       resend_link: "reenviar e-mail de confirmação"
@@ -94,6 +97,7 @@ pt-BR:
       business_type: "Tipo de negócio"
       phone_number: "Telefone"
       next: "Próximo"
+      submit_loading: "Salvando…"
       business_types:
         clinic: "Clínica"
         barbershop: "Barbearia"
@@ -113,6 +117,7 @@ pt-BR:
       opens_at: "Abre às"
       closes_at: "Fecha às"
       next: "Próximo"
+      submit_loading: "Salvando…"
       timezones:
         america_sao_paulo: "São Paulo"
         america_manaus: "Manaus"
@@ -801,6 +806,7 @@ pt-BR:
     address_label: "Endereço (opcional)"
     address_placeholder: "Seu endereço"
     submit: "Solicitar consulta"
+    submit_loading: "Solicitando…"
     create:
       success: "Sua solicitação foi enviada. Entraremos em contato para confirmar."
     thank_you:
