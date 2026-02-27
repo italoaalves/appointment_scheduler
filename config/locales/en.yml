@@ -206,6 +206,17 @@ en:
     preferences: "Preferences"
     invite: "Invite"
 
+  settings:
+    sidebar:
+      label: "Settings navigation"
+      business: "Business"
+      space: "Space"
+      availability: "Availability"
+      policies: "Policies"
+      billing_section: "Billing"
+      billing: "Billing"
+      credits: "Credits"
+
   layout:
     app_name: "Appointment Scheduler"
     nav:

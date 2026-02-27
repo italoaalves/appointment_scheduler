@@ -1,0 +1,31 @@
+<%# Desktop: vertical sidebar; Mobile: horizontal scrollable tabs %>
+<%# Desktop sidebar %>
+<nav aria-label="<%= t("settings.sidebar.label") %>" class="settings-sidebar-desktop w-48 shrink-0">
+  <ul class="space-y-1">
+    <li class="px-3 py-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
+      <%= t("settings.sidebar.business") %>
+    </li>
+    <%= settings_sidebar_link t("settings.sidebar.space"), edit_settings_space_path, :space %>
+    <%= settings_sidebar_link t("settings.sidebar.availability"), edit_settings_space_availability_path, :availability %>
+    <%= settings_sidebar_link t("settings.sidebar.policies"), edit_settings_space_policies_path, :policies %>
+
+    <li class="my-2 border-t border-slate-200"></li>
+
+    <li class="px-3 py-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
+      <%= t("settings.sidebar.billing_section") %>
+    </li>
+    <%= settings_sidebar_link t("settings.sidebar.billing"), settings_billing_path, :billing %>
+    <%= settings_sidebar_link t("settings.sidebar.credits"), settings_credits_path, :credits %>
+  </ul>
+</nav>
+
+<%# Mobile: horizontal tabs %>
+<nav aria-label="<%= t("settings.sidebar.label") %>" class="settings-sidebar-mobile mb-4 overflow-x-auto" style="-webkit-overflow-scrolling: touch">
+  <ul class="flex min-w-max gap-1 border-b border-slate-200">
+    <%= settings_sidebar_link t("settings.sidebar.space"), edit_settings_space_path, :space, variant: :mobile %>
+    <%= settings_sidebar_link t("settings.sidebar.availability"), edit_settings_space_availability_path, :availability, variant: :mobile %>
+    <%= settings_sidebar_link t("settings.sidebar.policies"), edit_settings_space_policies_path, :policies, variant: :mobile %>
+    <%= settings_sidebar_link t("settings.sidebar.billing"), settings_billing_path, :billing, variant: :mobile %>
+    <%= settings_sidebar_link t("settings.sidebar.credits"), settings_credits_path, :credits, variant: :mobile %>
+  </ul>
+</nav>

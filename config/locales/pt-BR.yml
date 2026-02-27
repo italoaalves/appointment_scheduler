@@ -177,6 +177,17 @@ pt-BR:
     preferences: "Preferências"
     invite: "Convidar"
 
+  settings:
+    sidebar:
+      label: "Menu de configurações"
+      business: "Negócio"
+      space: "Espaço"
+      availability: "Disponibilidade"
+      policies: "Políticas"
+      billing_section: "Cobrança"
+      billing: "Cobrança"
+      credits: "Créditos"
+
   layout:
     app_name: "Agendador de Consultas"
     nav:

@@ -3,6 +3,9 @@
   { label: t("breadcrumbs.settings"), path: edit_settings_space_path },
   { label: t("breadcrumbs.availability") }
 ] } %>
+<% content_for(:settings_sidebar) do %>
+  <%= render "shared/settings_sidebar" %>
+<% end %>
 <div class="space-y-6">
   <header>
     <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
@@ -70,12 +73,6 @@
       <%= form.submit t("space.availability.edit.submit"),
                       class: button_classes(:primary),
                       data: { turbo_submits_with: t("shared.submitting") } %>
-      <%= link_to t("space.availability.edit.back_to_space"),
-                  edit_settings_space_path,
-                  class: button_classes(:secondary) %>
-      <%= link_to t("space.settings.edit.back_to_appointments"),
-                  appointments_path,
-                  class: button_classes(:secondary) %>
     </div>
   <% end %>
 </div>
