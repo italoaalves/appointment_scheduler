@@ -20,6 +20,9 @@ module Spaces
     end
 
     def create
+      unless Billing::PlanEnforcer.can?(current_tenant, :create_scheduling_link)
+        redirect_to scheduling_links_path, alert: t("billing.limits.scheduling_links_exceeded") and return
+      end
       @scheduling_link = current_tenant.scheduling_links.build(scheduling_link_params)
       @scheduling_link.expires_at = nil if @scheduling_link.permanent?
 

@@ -11,5 +11,11 @@ module Spaces
       customer ||= space.customers.create!(name: name, phone: phone, email: email, address: address)
       customer
     end
+
+    def self.find_existing(space:, email: nil, phone: nil)
+      customer = space.customers.find_by("LOWER(email) = LOWER(?)", email) if email.present?
+      customer ||= space.customers.find_by(phone: phone) if phone.present? && customer.nil?
+      customer
+    end
   end
 end

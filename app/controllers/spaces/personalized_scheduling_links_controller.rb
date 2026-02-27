@@ -8,6 +8,9 @@ module Spaces
     before_action :set_personalized_link, only: [ :edit, :update, :destroy ]
 
     def new
+      unless Billing::PlanEnforcer.can?(current_tenant, :access_personalized_booking_page)
+        redirect_to scheduling_links_path, alert: t("billing.limits.feature_not_available") and return
+      end
       if current_tenant.personalized_scheduling_link.present?
         redirect_to edit_personalized_scheduling_link_path, alert: t("space.personalized_scheduling_links.new.already_exists")
         return
@@ -16,6 +19,9 @@ module Spaces
     end
 
     def create
+      unless Billing::PlanEnforcer.can?(current_tenant, :access_personalized_booking_page)
+        redirect_to scheduling_links_path, alert: t("billing.limits.feature_not_available") and return
+      end
       @personalized_link = current_tenant.build_personalized_scheduling_link(personalized_link_params)
       if @personalized_link.save
         redirect_to scheduling_links_path, notice: t("space.personalized_scheduling_links.create.notice")

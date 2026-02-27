@@ -15,11 +15,17 @@ module Spaces
     end
 
     def new
+      if plan_limit_reached?(:create_team_member)
+        redirect_to users_path, alert: t("billing.limits.team_members_exceeded") and return
+      end
       @user = User.new
       @user.space_id = current_tenant.id
     end
 
     def create
+      if plan_limit_reached?(:create_team_member)
+        redirect_to users_path, alert: t("billing.limits.team_members_exceeded") and return
+      end
       @user = User.new(user_params)
       @user.space_id = current_tenant.id
       @user.password = SecureRandom.hex(32)
@@ -56,6 +62,10 @@ module Spaces
 
     def set_user
       @user = current_tenant.users.find(params[:id])
+    end
+
+    def plan_limit_reached?(action)
+      !Billing::PlanEnforcer.can?(current_tenant, action)
     end
 
     def user_params

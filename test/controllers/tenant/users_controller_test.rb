@@ -41,7 +41,9 @@ module Tenant
     end
 
     test "manager can create secretary" do
-      sign_in @manager
+      # spaces(:two) is on Pro plan (max 5 members, currently 1) — no plan limit block
+      manager_pro = users(:manager_two)
+      sign_in manager_pro
       assert_difference "User.count", 1 do
         post users_url, params: {
           user: {
@@ -59,7 +61,7 @@ module Tenant
       assert new_user.can?(:access_space_dashboard)
       assert new_user.can?(:manage_customers)
       refute new_user.can?(:manage_team)
-      assert_equal @manager.space&.id, new_user.space&.id
+      assert_equal manager_pro.space&.id, new_user.space&.id
     end
 
     test "secretary cannot create team member" do

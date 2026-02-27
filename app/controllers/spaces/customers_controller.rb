@@ -25,6 +25,9 @@ module Spaces
     end
 
     def create
+      unless Billing::PlanEnforcer.can?(current_tenant, :create_customer)
+        redirect_to customers_path, alert: t("billing.limits.customers_exceeded") and return
+      end
       @customer = current_tenant.customers.build(customer_params)
 
       if @customer.save

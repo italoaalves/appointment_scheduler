@@ -602,6 +602,11 @@ en:
         notice: "Policies updated."
 
   billing:
+    limits:
+      team_members_exceeded: "Your plan's team member limit has been reached. Upgrade to add more."
+      customers_exceeded: "Your plan's customer limit has been reached. Upgrade to add more."
+      scheduling_links_exceeded: "Your plan's scheduling link limit has been reached. Upgrade to add more."
+      feature_not_available: "This feature is not available on your current plan. Upgrade to access it."
     restricted_mode:
       banner: "Your subscription has expired. Subscribe to continue managing your business."
       write_blocked: "This action is not available. Please subscribe to a plan to continue."
@@ -632,6 +637,7 @@ en:
     invalid:
       title: "Invalid link"
       body: "This booking link doesn't exist or has been removed."
+    space_at_capacity: "This space is not accepting new customers at this time."
     invalid_slot: "Please select a valid time slot."
     slot_outside_window: "This time slot is not available for booking. It may be outside the allowed booking window."
     expired:

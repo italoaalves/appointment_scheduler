@@ -1,7 +1,11 @@
 <div class="space-y-4">
   <% page_actions = capture do %>
     <% if current_user.can?(:manage_team) %>
-      <%= link_to t("space.users.index.new_button"), new_user_path, class: button_classes(:primary) %>
+      <% if Billing::PlanEnforcer.can?(current_tenant, :create_team_member) %>
+        <%= link_to t("space.users.index.new_button"), new_user_path, class: button_classes(:primary) %>
+      <% else %>
+        <span class="text-sm text-slate-500"><%= t("billing.limits.team_members_exceeded") %></span>
+      <% end %>
     <% end %>
     <%= link_to t("space.users.index.all_appointments"), appointments_path, class: button_classes(:secondary) %>
   <% end %>

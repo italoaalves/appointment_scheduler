@@ -94,12 +94,22 @@ class BookingController < ApplicationController
   end
 
   def find_or_create_customer
-    bp = booking_params
+    bp    = booking_params
+    email = bp[:customer_email].to_s.strip.presence
+    phone = bp[:customer_phone].to_s.strip.presence
+
+    existing = Spaces::CustomerFinder.find_existing(space: @space, email: email, phone: phone)
+    if existing.nil? && !Billing::PlanEnforcer.can?(@space, :create_customer)
+      flash.now[:alert] = t("booking.space_at_capacity")
+      render :show, status: :unprocessable_entity
+      return nil
+    end
+
     Spaces::CustomerFinder.find_or_create(
-      space: @space,
-      email: bp[:customer_email].to_s.strip.presence,
-      name: bp[:customer_name].to_s.strip.presence,
-      phone: bp[:customer_phone].to_s.strip.presence,
+      space:   @space,
+      email:   email,
+      name:    bp[:customer_name].to_s.strip.presence,
+      phone:   phone,
       address: bp[:customer_address].to_s.strip.presence
     )
   rescue ArgumentError

@@ -573,6 +573,11 @@ pt-BR:
         notice: "Políticas atualizadas."
 
   billing:
+    limits:
+      team_members_exceeded: "O limite de membros do seu plano foi atingido. Faça upgrade para adicionar mais."
+      customers_exceeded: "O limite de clientes do seu plano foi atingido. Faça upgrade para adicionar mais."
+      scheduling_links_exceeded: "O limite de links de agendamento do seu plano foi atingido. Faça upgrade para adicionar mais."
+      feature_not_available: "Este recurso não está disponível no seu plano atual. Faça upgrade para acessá-lo."
     restricted_mode:
       banner: "Sua assinatura expirou. Assine um plano para continuar gerenciando seu negócio."
       write_blocked: "Esta ação não está disponível. Assine um plano para continuar."
@@ -603,6 +608,7 @@ pt-BR:
     invalid:
       title: "Link inválido"
       body: "Este link não existe ou foi removido."
+    space_at_capacity: "Este espaço não está aceitando novos clientes no momento."
     invalid_slot: "Selecione um horário válido."
     slot_outside_window: "Este horário não está disponível para agendamento. Pode estar fora da janela permitida."
     expired:
