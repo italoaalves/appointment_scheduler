@@ -1,3 +1,8 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("breadcrumbs.settings"), path: edit_settings_space_path },
+  { label: t("breadcrumbs.credits") }
+] } %>
 <div class="space-y-4">
   <%= render "application/shared/page_header",
              title:   t("billing.credits.show.title"),

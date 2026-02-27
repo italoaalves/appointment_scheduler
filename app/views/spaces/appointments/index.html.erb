@@ -1,8 +1,11 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("breadcrumbs.appointments") }
+] } %>
 <div class="space-y-6">
   <div class="space-y-4">
   <% page_actions = capture do %>
     <%= link_to t("space.appointments.index.new_button"), new_appointment_path, class: button_classes(:primary) %>
-    <%= link_to t("space.appointments.index.manage_customers"), customers_path, class: button_classes(:secondary) %>
   <% end %>
   <%= render "application/shared/page_header", title: t("space.appointments.index.title"), actions: page_actions %>
 

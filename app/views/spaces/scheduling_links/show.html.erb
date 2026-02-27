@@ -1,3 +1,8 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("breadcrumbs.booking_links"), path: scheduling_links_path },
+  { label: @scheduling_link.name.presence || t("space.scheduling_links.show.untitled") }
+] } %>
 <div class="space-y-4">
   <header class="flex items-center justify-between gap-3">
     <div>
@@ -17,9 +22,6 @@
       <%= link_to t("space.scheduling_links.show.edit"),
                   edit_scheduling_link_path(@scheduling_link),
                   class: button_classes(:primary) %>
-      <%= link_to t("space.scheduling_links.show.back"),
-                  scheduling_links_path,
-                  class: button_classes(:secondary) %>
     </div>
   </header>
 

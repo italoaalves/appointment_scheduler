@@ -1,3 +1,7 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("breadcrumbs.customers") }
+] } %>
 <div class="space-y-4">
   <% page_actions = capture do %>
     <% if Billing::PlanEnforcer.can?(current_tenant, :create_customer) %>
@@ -5,7 +9,6 @@
     <% else %>
       <span class="text-sm text-slate-500"><%= t("billing.limits.customers_exceeded") %></span>
     <% end %>
-    <%= link_to t("space.customers.index.all_appointments"), appointments_path, class: button_classes(:secondary) %>
   <% end %>
   <%= render "application/shared/page_header", title: t("space.customers.index.title"), actions: page_actions %>
 

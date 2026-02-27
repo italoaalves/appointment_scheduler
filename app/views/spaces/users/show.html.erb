@@ -1,3 +1,8 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("breadcrumbs.team"), path: users_path },
+  { label: @user.name.presence || @user.email }
+] } %>
 <div class="space-y-6">
   <header class="flex items-center justify-between gap-3">
     <div>
@@ -47,9 +52,6 @@
                       class: button_classes(:danger) %>
       <% end %>
     <% end %>
-    <%= link_to t("space.users.show.all_team"),
-                users_path,
-                class: button_classes(:secondary) %>
   </div>
 
   <section class="space-y-3">

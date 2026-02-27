@@ -1,3 +1,8 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("breadcrumbs.settings"), path: edit_settings_space_path },
+  { label: t("breadcrumbs.availability") }
+] } %>
 <div class="space-y-6">
   <header>
     <h1 class="text-2xl font-semibold tracking-tight text-slate-900">

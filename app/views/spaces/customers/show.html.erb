@@ -1,3 +1,8 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("breadcrumbs.customers"), path: customers_path },
+  { label: @customer.name.presence || "—" }
+] } %>
 <div class="space-y-6">
   <header class="flex items-center justify-between gap-3">
     <div>
@@ -35,9 +40,6 @@
     <%= link_to t("space.customers.show.edit_customer"),
                 edit_customer_path(@customer),
                 class: button_classes(:primary) %>
-    <%= link_to t("space.customers.show.all_customers"),
-                customers_path,
-                class: button_classes(:secondary) %>
     <%= button_to t("space.customers.show.delete_customer"),
                   customer_path(@customer),
                   method: :delete,

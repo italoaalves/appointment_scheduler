@@ -1,3 +1,7 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("breadcrumbs.team") }
+] } %>
 <div class="space-y-4">
   <% page_actions = capture do %>
     <% if current_user.can?(:manage_team) %>
@@ -7,7 +11,6 @@
         <span class="text-sm text-slate-500"><%= t("billing.limits.team_members_exceeded") %></span>
       <% end %>
     <% end %>
-    <%= link_to t("space.users.index.all_appointments"), appointments_path, class: button_classes(:secondary) %>
   <% end %>
   <%= render "application/shared/page_header", title: t("space.users.index.title"), actions: page_actions %>
 

@@ -1,3 +1,8 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("breadcrumbs.appointments"), path: appointments_path },
+  { label: @appointment.customer&.name || "—" }
+] } %>
 <div class="space-y-4">
   <header class="flex items-center justify-between gap-3">
     <div>
@@ -46,7 +51,6 @@
     <% unless @appointment.cancelled? %>
       <%= link_to t("space.appointments.show.edit_reschedule"), edit_appointment_path(@appointment), class: button_classes(:primary) unless @appointment.rescheduled_from.present? %>
     <% end %>
-    <%= link_to t("space.appointments.show.back_to_appointments"), appointments_path, class: button_classes(:secondary) %>
 
     <% if @appointment.pending? %>
       <%= button_to t("space.appointments.index.confirm"), confirm_appointment_path(@appointment), method: :patch, class: button_classes(:success) %>

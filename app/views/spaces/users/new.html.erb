@@ -1,3 +1,8 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("breadcrumbs.team"), path: users_path },
+  { label: t("breadcrumbs.invite") }
+] } %>
 <div class="space-y-6">
   <%= render "application/shared/page_header", title: t("space.users.new.title"), subtitle: t("space.users.new.subtitle") %>
 
@@ -34,9 +39,6 @@
         <%= form.submit t("space.users.new.submit"),
                         class: button_classes(:primary),
                         data: { turbo_submits_with: t("shared.submitting") } %>
-        <%= link_to t("space.users.new.back_to_team"),
-                    users_path,
-                    class: button_classes(:secondary) %>
       </div>
     <% end %>
   <% end %>

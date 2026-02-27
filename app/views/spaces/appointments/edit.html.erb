@@ -1,3 +1,9 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("breadcrumbs.appointments"), path: appointments_path },
+  { label: @appointment.customer&.name || "—", path: appointment_path(@appointment) },
+  { label: t("breadcrumbs.edit") }
+] } %>
 <div class="space-y-6">
   <header>
     <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
@@ -52,12 +58,6 @@
         <%= form.submit t("space.appointments.edit.submit"),
                         class: button_classes(:primary),
                         data: { turbo_submits_with: t("shared.submitting") } %>
-        <%= link_to t("space.appointments.edit.back_to_appointment"),
-                    appointment_path(@appointment),
-                    class: button_classes(:secondary) %>
-        <%= link_to t("space.appointments.edit.all_appointments"),
-                    appointments_path,
-                    class: button_classes(:secondary) %>
       </div>
     <% end %>
   </div>
