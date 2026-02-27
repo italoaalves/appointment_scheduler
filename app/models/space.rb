@@ -17,6 +17,11 @@ class Space < ApplicationRecord
   has_many :scheduling_links, dependent: :destroy
   has_one :personalized_scheduling_link, dependent: :destroy
 
+  has_one  :subscription,    class_name: "Billing::Subscription",  dependent: :destroy
+  has_one  :message_credit,  class_name: "Billing::MessageCredit", dependent: :destroy
+  has_many :payments,        class_name: "Billing::Payment",       dependent: :destroy
+  has_many :billing_events,  class_name: "Billing::BillingEvent",  dependent: :destroy
+
   # business_hours: cached display string; updated by AvailabilitySchedule callback. Read-only.
 
   # Returns array of weekday integers (0=Sunday..6=Saturday) when the space has availability.

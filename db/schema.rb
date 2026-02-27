@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_26_160000) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_26_200000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -54,6 +54,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_160000) do
     t.index ["availability_schedule_id"], name: "index_availability_windows_on_availability_schedule_id"
   end
 
+  create_table "billing_events", force: :cascade do |t|
+    t.bigint "space_id", null: false
+    t.bigint "subscription_id"
+    t.string "event_type", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.integer "actor_id"
+    t.datetime "created_at", null: false
+    t.index ["event_type"], name: "index_billing_events_on_event_type"
+    t.index ["space_id", "created_at"], name: "index_billing_events_on_space_id_and_created_at"
+    t.index ["space_id"], name: "index_billing_events_on_space_id"
+    t.index ["subscription_id"], name: "index_billing_events_on_subscription_id"
+  end
+
   create_table "customers", force: :cascade do |t|
     t.bigint "space_id", null: false
     t.string "name", null: false
@@ -66,6 +79,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_160000) do
     t.index "space_id, lower((email)::text)", name: "index_customers_on_space_id_lower_email", where: "(email IS NOT NULL)"
     t.index ["space_id"], name: "index_customers_on_space_id"
     t.index ["user_id"], name: "index_customers_on_user_id"
+  end
+
+  create_table "message_credits", force: :cascade do |t|
+    t.bigint "space_id", null: false
+    t.integer "balance", default: 0, null: false
+    t.integer "monthly_quota_remaining", default: 0, null: false
+    t.datetime "quota_refreshed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["space_id"], name: "index_message_credits_on_space_id"
+    t.index ["space_id"], name: "index_message_credits_on_space_id_unique", unique: true
   end
 
   create_table "messages", force: :cascade do |t|
@@ -97,6 +121,22 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_160000) do
     t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable"
     t.index ["user_id", "read"], name: "index_notifications_on_user_id_and_read"
     t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.bigint "subscription_id", null: false
+    t.bigint "space_id", null: false
+    t.string "asaas_payment_id", null: false
+    t.integer "amount_cents", null: false
+    t.integer "payment_method", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "paid_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["asaas_payment_id"], name: "index_payments_on_asaas_payment_id", unique: true
+    t.index ["space_id"], name: "index_payments_on_space_id"
+    t.index ["subscription_id", "created_at"], name: "index_payments_on_subscription_id_and_created_at"
+    t.index ["subscription_id"], name: "index_payments_on_subscription_id"
   end
 
   create_table "personalized_scheduling_links", force: :cascade do |t|
@@ -156,6 +196,25 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_160000) do
     t.index ["owner_id"], name: "index_spaces_on_owner_id"
   end
 
+  create_table "subscriptions", force: :cascade do |t|
+    t.bigint "space_id", null: false
+    t.string "plan_id", null: false
+    t.integer "status", default: 0, null: false
+    t.string "asaas_subscription_id"
+    t.string "asaas_customer_id"
+    t.integer "payment_method"
+    t.datetime "current_period_start"
+    t.datetime "current_period_end"
+    t.datetime "trial_ends_at"
+    t.datetime "canceled_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["asaas_subscription_id"], name: "index_subscriptions_on_asaas_subscription_id", unique: true, where: "(asaas_subscription_id IS NOT NULL)"
+    t.index ["space_id"], name: "index_subscriptions_on_space_id"
+    t.index ["space_id"], name: "index_subscriptions_on_space_id_active", unique: true, where: "(status <> 4)"
+    t.index ["status", "trial_ends_at"], name: "index_subscriptions_on_status_and_trial_ends_at"
+  end
+
   create_table "user_permissions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "permission", null: false
@@ -192,16 +251,22 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_160000) do
   add_foreign_key "appointments", "customers"
   add_foreign_key "appointments", "spaces"
   add_foreign_key "availability_windows", "availability_schedules"
+  add_foreign_key "billing_events", "spaces"
+  add_foreign_key "billing_events", "subscriptions"
   add_foreign_key "customers", "spaces"
   add_foreign_key "customers", "users"
+  add_foreign_key "message_credits", "spaces"
   add_foreign_key "messages", "users", column: "recipient_id"
   add_foreign_key "messages", "users", column: "sender_id"
   add_foreign_key "notifications", "users"
+  add_foreign_key "payments", "spaces"
+  add_foreign_key "payments", "subscriptions"
   add_foreign_key "personalized_scheduling_links", "spaces"
   add_foreign_key "scheduling_links", "spaces"
   add_foreign_key "space_memberships", "spaces"
   add_foreign_key "space_memberships", "users"
   add_foreign_key "spaces", "users", column: "owner_id"
+  add_foreign_key "subscriptions", "spaces"
   add_foreign_key "user_permissions", "users"
   add_foreign_key "user_preferences", "users"
 end

@@ -1,0 +1,19 @@
+_fixture:
+  model_class: Billing::Payment
+
+one:
+  subscription: one
+  space: one
+  asaas_payment_id: "pay_001"
+  amount_cents: 9900
+  payment_method: 0
+  status: 1
+  paid_at: <%= Time.current %>
+
+two:
+  subscription: two
+  space: two
+  asaas_payment_id: "pay_002"
+  amount_cents: 19900
+  payment_method: 1
+  status: 0

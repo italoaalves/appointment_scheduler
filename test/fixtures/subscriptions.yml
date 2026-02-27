@@ -1,0 +1,15 @@
+_fixture:
+  model_class: Billing::Subscription
+
+one:
+  space: one
+  plan_id: "starter"
+  status: 0
+  trial_ends_at: <%= 14.days.from_now %>
+
+two:
+  space: two
+  plan_id: "pro"
+  status: 1
+  current_period_start: <%= Time.current %>
+  current_period_end: <%= 30.days.from_now %>

@@ -1,0 +1,16 @@
+_fixture:
+  model_class: Billing::BillingEvent
+
+one:
+  space: one
+  subscription: one
+  event_type: "subscription.created"
+  metadata: {}
+  created_at: <%= Time.current %>
+
+two:
+  space: one
+  subscription: one
+  event_type: "payment.confirmed"
+  metadata: {}
+  created_at: <%= Time.current %>
