@@ -13,8 +13,14 @@ module Onboarding
     end
 
     def update_step1
-      current_tenant.update!(onboarding_step: 1)
-      redirect_to onboarding_wizard_path
+      if current_tenant.update(step1_params)
+        current_user.update(phone_number: step1_params[:phone]) if step1_params[:phone].present?
+        current_tenant.update_column(:onboarding_step, 1)
+        redirect_to onboarding_wizard_path
+      else
+        @step = 1
+        render "onboarding/step1", status: :unprocessable_entity
+      end
     end
 
     def update_step2
@@ -44,6 +50,10 @@ module Onboarding
       return unless current_tenant.onboarding_complete?
 
       redirect_to root_path
+    end
+
+    def step1_params
+      params.require(:space).permit(:name, :business_type, :phone)
     end
   end
 end

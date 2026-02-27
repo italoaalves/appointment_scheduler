@@ -9,7 +9,10 @@ class Space < ApplicationRecord
   has_many :space_memberships, dependent: :destroy
   has_many :users, through: :space_memberships
 
+  BUSINESS_TYPES = %w[clinic barbershop salon consultancy law_office fitness therapy other].freeze
+
   validates :name, presence: true
+  validates :business_type, inclusion: { in: BUSINESS_TYPES }, allow_nil: true
   validates :slot_duration_minutes, numericality: { only_integer: true, greater_than: 0 }
   validates :timezone, presence: true
   has_many :customers, dependent: :destroy

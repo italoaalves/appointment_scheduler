@@ -81,10 +81,26 @@ pt-BR:
       step2: "Confirme sua disponibilidade"
       step3: "Sua página de agendamento está pronta"
     step1_placeholder: "Etapa 1 em breve."
-    step3:
-      completed_notice: "Seu espaço está pronto! Agora você pode compartilhar seu link de agendamento."
+    step1:
+      title: "Conte sobre seu negócio"
+      subtitle: "Isso nos ajuda a personalizar sua página de agendamento."
+      business_name: "Nome do negócio"
+      business_type: "Tipo de negócio"
+      phone_number: "Telefone"
+      next: "Próximo"
+      business_types:
+        clinic: "Clínica"
+        barbershop: "Barbearia"
+        salon: "Salão"
+        consultancy: "Consultoria"
+        law_office: "Escritório de advocacia"
+        fitness: "Academia"
+        therapy: "Terapia"
+        other: "Outro"
     step2_placeholder: "Etapa 2 em breve."
     step3_placeholder: "Etapa 3 em breve."
+    step3:
+      completed_notice: "Seu espaço está pronto! Agora você pode compartilhar seu link de agendamento."
 
   layout:
     app_name: "Agendador de Consultas"

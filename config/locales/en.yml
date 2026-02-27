@@ -110,10 +110,26 @@ en:
       step2: "Confirm your availability"
       step3: "Your booking page is ready"
     step1_placeholder: "Step 1 coming soon."
-    step3:
-      completed_notice: "Your space is ready! You can now share your booking link."
+    step1:
+      title: "Tell us about your business"
+      subtitle: "This helps us personalize your booking page."
+      business_name: "Business name"
+      business_type: "Business type"
+      phone_number: "Phone number"
+      next: "Next"
+      business_types:
+        clinic: "Clinic"
+        barbershop: "Barbershop"
+        salon: "Salon"
+        consultancy: "Consultancy"
+        law_office: "Law office"
+        fitness: "Fitness"
+        therapy: "Therapy"
+        other: "Other"
     step2_placeholder: "Step 2 coming soon."
     step3_placeholder: "Step 3 coming soon."
+    step3:
+      completed_notice: "Your space is ready! You can now share your booking link."
 
   layout:
     app_name: "Appointment Scheduler"
