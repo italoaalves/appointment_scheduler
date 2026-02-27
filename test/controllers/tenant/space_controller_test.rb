@@ -34,7 +34,7 @@ module Tenant
       patch settings_space_url, params: {
         space: {
           name: "Updated Space",
-          business_type: "Dental clinic",
+          business_type: "clinic",
           address: "123 Main St",
           phone: "+5511999999999",
           email: "contact@space.com",
@@ -45,7 +45,7 @@ module Tenant
       assert_redirected_to edit_settings_space_url
       @space.reload
       assert_equal "Updated Space", @space.name
-      assert_equal "Dental clinic", @space.business_type
+      assert_equal "clinic", @space.business_type
       assert_equal "123 Main St", @space.address
       assert_equal "+5511999999999", @space.phone
       assert_equal "contact@space.com", @space.email

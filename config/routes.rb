@@ -23,9 +23,6 @@ Rails.application.routes.draw do
 
   scope module: "spaces" do
     resources :appointments do
-      collection do
-        get :pending
-      end
       member do
         patch :confirm
         patch :cancel

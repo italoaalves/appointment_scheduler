@@ -5,7 +5,7 @@ module Spaces
     include FilterableByDateRange
     include RequirePermission
 
-    require_permission :manage_appointments, except: [ :index, :pending, :show ], redirect_to: :appointments_path
+    require_permission :manage_appointments, except: [ :index, :show ], redirect_to: :appointments_path
     require_permission :destroy_appointments, only: [ :destroy ], redirect_to: :appointments_path
     before_action :set_appointment, only: [ :show, :edit, :update, :destroy, :confirm, :cancel, :no_show, :finish_form, :finish ]
 
@@ -14,14 +14,6 @@ module Spaces
       base = apply_status_filter(base)
       base = apply_date_range_filter(base, timezone: current_tenant)
       @appointments = base.order(scheduled_at: :desc, created_at: :desc).page(params[:page]).per(20)
-    end
-
-    def pending
-      @appointments = current_tenant.appointments
-                                   .pending
-                                   .includes(:customer, :space)
-                                   .order(updated_at: :desc)
-                                   .page(params[:page]).per(20)
     end
 
     def show

@@ -17,11 +17,13 @@ module Notifications
       end
     end
 
-    test "performs appointment_booked and sends email to owner" do
+    test "performs appointment_booked and sends email to owner and customer" do
       SendNotificationJob.perform_now(event: :appointment_booked, appointment_id: @appointment.id)
 
-      assert_equal 1, ActionMailer::Base.deliveries.size
-      assert_equal [ users(:manager).email ], ActionMailer::Base.deliveries.first.to
+      assert_equal 2, ActionMailer::Base.deliveries.size
+      recipients = ActionMailer::Base.deliveries.flat_map(&:to)
+      assert_includes recipients, users(:manager).email
+      assert_includes recipients, customers(:one).email
     end
 
     test "performs appointment_confirmed and sends email" do

@@ -35,12 +35,6 @@ module Tenant
       assert_response :success
     end
 
-    test "manager can get pending" do
-      sign_in @manager
-      get pending_appointments_url
-      assert_response :success
-    end
-
     test "manager can show appointment" do
       sign_in @manager
       get appointment_url(@appointment)
