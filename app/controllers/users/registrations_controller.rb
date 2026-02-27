@@ -9,7 +9,7 @@ module Users
     end
 
     def after_sign_up_path_for(_resource)
-      onboarding_path
+      onboarding_wizard_path
     end
   end
 end

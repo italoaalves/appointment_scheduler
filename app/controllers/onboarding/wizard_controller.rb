@@ -5,11 +5,31 @@ module Onboarding
     layout "onboarding"
     before_action :authenticate_user!
     before_action :ensure_space_owner!
-    before_action :ensure_not_complete!
+    before_action :ensure_not_complete!, only: [ :show ]
 
     def show
       @step = [ current_tenant.onboarding_step + 1, 3 ].min
       render "onboarding/step#{@step}"
+    end
+
+    def update_step1
+      current_tenant.update!(onboarding_step: 1)
+      redirect_to onboarding_wizard_path
+    end
+
+    def update_step2
+      current_tenant.update!(onboarding_step: 2)
+      redirect_to onboarding_wizard_path
+    end
+
+    def update_step3
+      current_tenant.update!(onboarding_step: 3, completed_onboarding_at: Time.current)
+      redirect_to root_path, notice: t("onboarding.step3.completed_notice")
+    end
+
+    def skip
+      current_tenant.update!(completed_onboarding_at: Time.current)
+      redirect_to root_path
     end
 
     private

@@ -37,7 +37,16 @@ Rails.application.routes.draw do
     resources :users, path: "team"
   end
 
-  get "onboarding", to: "onboarding/wizard#show", as: :onboarding
+  get "onboarding", to: redirect("/onboarding/wizard"), as: :onboarding
+
+  namespace :onboarding do
+    resource :wizard, only: [ :show ], controller: "wizard" do
+      patch :update_step1
+      patch :update_step2
+      patch :update_step3
+      post  :skip
+    end
+  end
 
   scope path: "settings", module: "spaces", as: "settings" do
     resource :space, only: [ :edit, :update ], controller: "space" do

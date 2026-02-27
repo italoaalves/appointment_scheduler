@@ -104,11 +104,14 @@ en:
   onboarding:
     owner_only: "Only the space owner can complete onboarding."
     skip_link: "Skip and go to dashboard"
+    next: "Next"
     progress:
       step1: "Tell us about your business"
       step2: "Confirm your availability"
       step3: "Your booking page is ready"
     step1_placeholder: "Step 1 coming soon."
+    step3:
+      completed_notice: "Your space is ready! You can now share your booking link."
     step2_placeholder: "Step 2 coming soon."
     step3_placeholder: "Step 3 coming soon."
 
