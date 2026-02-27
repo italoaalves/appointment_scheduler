@@ -44,6 +44,12 @@ module UiHelper
     when "no_show", "finished" then "bg-slate-100 text-slate-700"
     when "cancelled"   then "bg-red-100 text-red-800"
     when "rescheduled" then "bg-blue-100 text-blue-800"
+    when "trialing"    then "bg-blue-100 text-blue-700"
+    when "active"     then "bg-emerald-100 text-emerald-700"
+    when "past_due"    then "bg-amber-100 text-amber-700"
+    when "canceled", "expired" then "bg-red-100 text-red-700"
+    when "received", "overdue" then "bg-amber-100 text-amber-700"
+    when "refunded", "failed" then "bg-slate-100 text-slate-600"
     else "bg-slate-100 text-slate-700"
     end
   end

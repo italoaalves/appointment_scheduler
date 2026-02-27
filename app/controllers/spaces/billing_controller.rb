@@ -20,7 +20,10 @@ module Spaces
 
     def edit
       @subscription = current_tenant.subscription
-      @plans        = Billing::Plan.all
+      unless @subscription&.active?
+        redirect_to checkout_settings_billing_path and return
+      end
+      @plans = Billing::Plan.all
     end
 
     def update
@@ -28,18 +31,49 @@ module Spaces
       subscription = current_tenant.subscription
 
       if upgrade?(subscription, new_plan_id)
-        result = Billing::SubscriptionManager.upgrade(subscription: subscription, new_plan_id: new_plan_id)
+        result       = Billing::SubscriptionManager.upgrade(subscription: subscription, new_plan_id: new_plan_id)
+        success_key  = "billing.plan_changed"
       elsif downgrade?(subscription, new_plan_id)
-        result = Billing::SubscriptionManager.downgrade(subscription: subscription, new_plan_id: new_plan_id)
+        result       = Billing::SubscriptionManager.downgrade(subscription: subscription, new_plan_id: new_plan_id)
+        success_key  = "billing.downgrade_scheduled"
       else
         redirect_to settings_billing_path, alert: I18n.t("billing.no_change") and return
       end
 
       if result[:success]
-        redirect_to settings_billing_path, notice: I18n.t("billing.plan_changed")
+        redirect_to settings_billing_path, notice: I18n.t(success_key)
       else
         redirect_to settings_billing_path, alert: result[:error]
       end
+    end
+
+    def checkout
+      @subscription = current_tenant.subscription
+      @plans        = Billing::Plan.all
+    end
+
+    def subscribe
+      plan_id        = params[:plan_id]
+      payment_method = params[:payment_method]
+      plan           = Billing::Plan.find(plan_id)
+      subscription   = current_tenant.subscription
+
+      asaas_customer_id = resolve_asaas_customer(subscription)
+
+      result = Billing::SubscriptionManager.subscribe(
+        space:             current_tenant,
+        plan_id:           plan_id,
+        payment_method:    payment_method&.to_sym,
+        asaas_customer_id: asaas_customer_id
+      )
+
+      if result[:success]
+        redirect_to settings_billing_path, notice: I18n.t("billing.checkout.success")
+      else
+        redirect_to checkout_settings_billing_path, alert: result[:error]
+      end
+    rescue Billing::AsaasClient::ApiError => e
+      redirect_to checkout_settings_billing_path, alert: e.message
     end
 
     def cancel
@@ -52,7 +86,7 @@ module Spaces
     end
 
     def resubscribe
-      redirect_to settings_billing_path, alert: I18n.t("billing.resubscribe_unavailable")
+      redirect_to checkout_settings_billing_path
     end
 
     private
@@ -63,6 +97,24 @@ module Spaces
 
     def downgrade?(subscription, new_plan_id)
       subscription&.plan_id == "pro" && new_plan_id == "starter"
+    end
+
+    def resolve_asaas_customer(subscription)
+      return subscription.asaas_customer_id if subscription&.asaas_customer_id.present?
+
+      plan = Billing::Plan.find(params[:plan_id])
+      return nil if plan.price_cents == 0
+
+      owner = current_tenant.users.find_by(id: current_tenant.owner_id) || current_user
+      result = Billing::AsaasClient.new.create_customer(
+        name:               owner.name,
+        email:              owner.email,
+        cpf_cnpj:           "",
+        external_reference: "space_#{current_tenant.id}"
+      )
+      customer_id = result["id"]
+      subscription&.update_column(:asaas_customer_id, customer_id)
+      customer_id
     end
   end
 end

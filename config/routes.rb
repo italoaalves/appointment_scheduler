@@ -44,6 +44,8 @@ Rails.application.routes.draw do
       member do
         patch :cancel
         patch :resubscribe
+        get   :checkout
+        post  :subscribe
       end
     end
     resource :credits, only: [ :show, :create ], controller: "credits"

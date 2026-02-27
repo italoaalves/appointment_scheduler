@@ -1,4 +1,7 @@
 <div class="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
   <h1 class="text-xl font-semibold text-slate-900"><%= t("booking.unavailable.title") %></h1>
   <p class="mt-2 text-sm text-slate-600"><%= t("booking.unavailable.body") %></p>
+  <p class="mt-4">
+    <%= link_to t("booking.unavailable.go_back"), "javascript:history.back()", class: "text-sm font-medium text-slate-600 hover:text-slate-900 underline" %>
+  </p>
 </div>

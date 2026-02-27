@@ -9,6 +9,7 @@ module Spaces
     def show
       @credit       = current_tenant.message_credit
       @subscription = current_tenant.subscription
+      @bundles      = Billing::CreditBundle.bundles
       @events       = Billing::BillingEvent
                         .where(space_id: current_tenant.id)
                         .where("event_type LIKE 'credits.%'")
@@ -18,7 +19,8 @@ module Spaces
 
     def create
       amount = params[:amount].to_i
-      unless [ 50, 100, 200 ].include?(amount)
+      valid_amounts = Billing::CreditBundle.bundles.map(&:amount)
+      unless valid_amounts.include?(amount)
         redirect_to settings_credits_path, alert: I18n.t("billing.credits.invalid_amount") and return
       end
 

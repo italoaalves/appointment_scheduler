@@ -1,0 +1,92 @@
+<%
+  default_plan = @subscription&.plan_id.presence || "pro"
+  plan_prices  = @plans.to_h { |p| [p.id, p.price_cents] }
+%>
+<div class="space-y-4"
+     x-data="{
+       selectedPlan: '<%= default_plan %>',
+       planPrices: { <%= plan_prices.map { |id, price| "'#{id}': #{price}" }.join(", ") %> },
+       get isPaid() { return (this.planPrices[this.selectedPlan] || 0) > 0 }
+     }">
+
+  <%= render "application/shared/page_header",
+             title:   t("billing.checkout.title"),
+             subtitle: t("billing.checkout.subtitle") %>
+
+  <%= form_with url: subscribe_settings_billing_path, method: :post, class: "space-y-4" do |f| %>
+
+    <%# Plan cards %>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <% @plans.each do |plan| %>
+        <label class="relative cursor-pointer rounded-xl border-2 p-5 shadow-sm transition"
+               :class="selectedPlan === '<%= plan.id %>'
+                         ? 'border-slate-700 bg-slate-50'
+                         : 'border-slate-200 bg-white hover:border-slate-300'">
+
+          <input type="radio" name="plan_id" value="<%= plan.id %>"
+                 x-model="selectedPlan"
+                 class="sr-only" />
+
+          <div class="flex items-center justify-between">
+            <span class="flex items-center gap-1.5 text-sm font-semibold text-slate-900">
+              <%= plan.name %>
+              <% if plan.id == "pro" %>
+                <span class="ml-1 inline-flex items-center rounded-full bg-slate-200 px-2 py-0.5 text-xs font-medium text-slate-800">✦ Pro</span>
+              <% end %>
+            </span>
+            <span class="text-sm font-semibold text-slate-700">
+              <% if plan.price_cents == 0 %>
+                <%= t("billing.checkout.free") %>
+              <% else %>
+                <%= number_to_currency(plan.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %>/mo
+              <% end %>
+            </span>
+          </div>
+
+          <%# Selected checkmark %>
+          <div class="absolute right-3 top-3 h-5 w-5 rounded-full border-2 flex items-center justify-center"
+               :class="selectedPlan === '<%= plan.id %>'
+                         ? 'border-slate-900 bg-slate-900'
+                         : 'border-slate-300 bg-white'">
+            <svg x-show="selectedPlan === '<%= plan.id %>'" class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 12 12">
+              <path d="M3.5 6.5l2 2 3.5-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+
+          <ul class="mt-4 space-y-1.5 text-xs text-slate-600">
+            <li>≤ <%= plan.max_team_members == Float::INFINITY ? "∞" : plan.max_team_members %> <%= t("billing.checkout.team_members") %></li>
+            <li>≤ <%= plan.max_customers == Float::INFINITY ? "∞" : plan.max_customers %> <%= t("billing.checkout.customers") %></li>
+            <li>≤ <%= plan.max_scheduling_links == Float::INFINITY ? "∞" : plan.max_scheduling_links %> <%= t("billing.checkout.scheduling_links") %></li>
+            <% plan.features.each do |feature| %>
+              <li class="text-slate-700">✓ <%= t("billing.features.#{feature}", default: feature.to_s.humanize) %></li>
+            <% end %>
+          </ul>
+        </label>
+      <% end %>
+    </div>
+
+    <%# Payment method — only for paid plans %>
+    <div x-show="isPaid" x-transition class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <h2 class="mb-3 text-sm font-semibold text-slate-800"><%= t("billing.checkout.payment_method") %></h2>
+      <div class="flex flex-wrap gap-3">
+        <% [["pix", t("billing.checkout.pix")], ["credit_card", t("billing.checkout.credit_card")], ["boleto", t("billing.checkout.boleto")]].each_with_index do |(value, label), i| %>
+          <label class="flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-2.5 transition
+                         has-[:checked]:border-slate-700 has-[:checked]:bg-slate-50 has-[:checked]:text-slate-800
+                         border-slate-200 hover:border-slate-300">
+            <input type="radio" name="payment_method" value="<%= value %>"
+                   <%= i == 0 ? "checked" : "" %>
+                   class="h-4 w-4 accent-slate-700" />
+            <span class="text-sm font-medium"><%= label %></span>
+          </label>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <%= f.submit t("billing.checkout.subscribe_button"),
+                   class: "#{button_classes(:primary)} cursor-pointer" %>
+      <%= link_to t("billing.checkout.back"), settings_billing_path,
+                  class: "text-sm font-medium text-slate-500 hover:text-slate-900" %>
+    </div>
+  <% end %>
+</div>

@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<div class="space-y-4">
   <header class="flex items-center justify-between gap-3">
     <div>
       <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
@@ -51,34 +51,31 @@
   <% sub = @space.subscription %>
   <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
     <div class="flex items-center justify-between">
-      <h2 class="text-sm font-semibold text-slate-800">Subscription</h2>
-      <%= link_to "Manage", edit_platform_space_subscription_override_path(@space),
-                  class: "text-xs font-medium text-indigo-600 hover:underline" %>
+      <h2 class="text-sm font-semibold text-slate-800"><%= t("platform.spaces.show.subscription.title") %></h2>
+      <%= link_to t("platform.spaces.show.subscription.manage"), edit_platform_space_subscription_override_path(@space),
+                  class: "text-xs font-medium text-slate-700 hover:underline" %>
     </div>
     <% if sub %>
       <dl class="mt-2 grid gap-2 text-sm sm:grid-cols-3">
         <div>
-          <dt class="text-xs text-slate-500">Plan</dt>
+          <dt class="text-xs text-slate-500"><%= t("platform.spaces.show.subscription.plan") %></dt>
           <dd class="font-medium text-slate-900"><%= sub.plan_id.capitalize %></dd>
         </div>
         <div>
-          <dt class="text-xs text-slate-500">Status</dt>
+          <dt class="text-xs text-slate-500"><%= t("platform.spaces.show.subscription.status") %></dt>
           <dd>
-            <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium
-              <%= sub.active? ? 'bg-emerald-100 text-emerald-700' :
-                  sub.trialing? ? 'bg-blue-100 text-blue-700' :
-                  'bg-red-100 text-red-700' %>">
-              <%= sub.status.humanize %>
-            </span>
+            <%= render "application/shared/status_badge",
+                       status: sub.status,
+                       label:  sub.status.humanize %>
           </dd>
         </div>
         <div>
-          <dt class="text-xs text-slate-500">Trial ends</dt>
-          <dd class="font-medium text-slate-900"><%= sub.trial_ends_at&.to_date || "—" %></dd>
+          <dt class="text-xs text-slate-500"><%= t("platform.spaces.show.subscription.trial_ends") %></dt>
+          <dd class="font-medium text-slate-900"><%= sub.trial_ends_at ? l(sub.trial_ends_at.to_date, format: :short) : "—" %></dd>
         </div>
       </dl>
     <% else %>
-      <p class="mt-2 text-sm text-slate-500">No subscription.</p>
+      <p class="mt-2 text-sm text-slate-500"><%= t("platform.spaces.show.subscription.none") %></p>
     <% end %>
   </div>
 

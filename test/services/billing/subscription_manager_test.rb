@@ -56,12 +56,46 @@ module Billing
 
     # ── subscribe ─────────────────────────────────────────────────────────────
 
-    test "subscribe calls Asaas and updates local subscription" do
+    test "subscribe sets status to active and clears trial_ends_at" do
+      @subscription.update_column(:trial_ends_at, 14.days.from_now)
+
+      Billing::SubscriptionManager.subscribe(
+        space:             @space,
+        plan_id:           "pro",
+        payment_method:    :pix,
+        asaas_customer_id: "cus_001",
+        asaas_client:      fake_client
+      )
+
+      @subscription.reload
+      assert @subscription.active?
+      assert_nil @subscription.trial_ends_at
+    end
+
+    test "subscribe for free plan skips Asaas call and activates immediately" do
       client = fake_client
 
       result = Billing::SubscriptionManager.subscribe(
         space:             @space,
         plan_id:           "starter",
+        payment_method:    nil,
+        asaas_customer_id: nil,
+        asaas_client:      client
+      )
+
+      assert result[:success]
+      assert_not_includes client.calls, :create_subscription
+      @subscription.reload
+      assert @subscription.active?
+      assert_nil @subscription.trial_ends_at
+    end
+
+    test "subscribe calls Asaas and updates local subscription" do
+      client = fake_client
+
+      result = Billing::SubscriptionManager.subscribe(
+        space:             @space,
+        plan_id:           "pro",
         payment_method:    :pix,
         asaas_customer_id: "cus_001",
         asaas_client:      client
@@ -73,14 +107,14 @@ module Billing
       @subscription.reload
       assert_equal "cus_001",       @subscription.asaas_customer_id
       assert_equal "sub_asaas_001", @subscription.asaas_subscription_id
-      assert_equal "starter",       @subscription.plan_id
+      assert_equal "pro",           @subscription.plan_id
     end
 
     test "subscribe logs subscription.activated BillingEvent" do
       assert_difference -> { Billing::BillingEvent.where(event_type: "subscription.activated").count } do
         Billing::SubscriptionManager.subscribe(
           space:             @space,
-          plan_id:           "starter",
+          plan_id:           "pro",
           payment_method:    :pix,
           asaas_customer_id: "cus_001",
           asaas_client:      fake_client
@@ -95,7 +129,7 @@ module Billing
 
       result = Billing::SubscriptionManager.subscribe(
         space:             @space,
-        plan_id:           "starter",
+        plan_id:           "pro",
         payment_method:    :pix,
         asaas_customer_id: "cus_001",
         asaas_client:      error_client

@@ -60,7 +60,7 @@ module Spaces
       patch settings_billing_path, params: { plan_id: "starter" }
 
       assert_redirected_to settings_billing_path
-      assert_equal I18n.t("billing.plan_changed"), flash[:notice]
+      assert_equal I18n.t("billing.downgrade_scheduled"), flash[:notice]
     end
 
     # ── cancel ────────────────────────────────────────────────────────────────
@@ -73,6 +73,87 @@ module Spaces
       assert_redirected_to settings_billing_path
       assert_equal I18n.t("billing.canceled"), flash[:notice]
       assert subscriptions(:two).reload.canceled?
+    end
+
+    # ── checkout ──────────────────────────────────────────────────────────────
+
+    test "GET checkout renders plan selection form" do
+      sign_in @manager  # trialing subscription
+
+      get checkout_settings_billing_path
+
+      assert_response :success
+    end
+
+    test "GET edit redirects to checkout when subscription is trialing" do
+      sign_in @manager  # subscriptions(:one) is trialing
+
+      get edit_settings_billing_path
+
+      assert_redirected_to checkout_settings_billing_path
+    end
+
+    test "GET edit renders plan comparison when subscription is active" do
+      sign_in @manager2  # subscriptions(:two) is active
+
+      get edit_settings_billing_path
+
+      assert_response :success
+    end
+
+    # ── resubscribe ───────────────────────────────────────────────────────────
+
+    test "PATCH resubscribe redirects to checkout page" do
+      subscriptions(:one).update!(status: :expired)
+      sign_in @manager
+
+      patch resubscribe_settings_billing_path
+
+      assert_redirected_to checkout_settings_billing_path
+    end
+
+    # ── subscribe (free plan) ─────────────────────────────────────────────────
+
+    test "POST subscribe with free plan activates subscription without Asaas" do
+      sign_in @manager  # trialing on starter
+
+      post subscribe_settings_billing_path, params: { plan_id: "starter" }
+
+      assert_redirected_to settings_billing_path
+      assert subscriptions(:one).reload.active?
+    end
+
+    # ── subscribe (paid plan) ─────────────────────────────────────────────────
+
+    test "POST subscribe with paid plan calls SubscriptionManager and redirects" do
+      sign_in @manager
+      subscriptions(:one).update_column(:asaas_customer_id, "cus_existing")
+
+      fake_result = { success: true, subscription: subscriptions(:one) }
+      Billing::SubscriptionManager.stub(:subscribe, fake_result) do
+        post subscribe_settings_billing_path, params: {
+          plan_id: "pro",
+          payment_method: "pix"
+        }
+      end
+
+      assert_redirected_to settings_billing_path
+      assert_equal I18n.t("billing.checkout.success"), flash[:notice]
+    end
+
+    test "POST subscribe with paid plan on failure renders error" do
+      sign_in @manager
+      subscriptions(:one).update_column(:asaas_customer_id, "cus_existing")
+
+      fake_result = { success: false, error: "API unavailable" }
+      Billing::SubscriptionManager.stub(:subscribe, fake_result) do
+        post subscribe_settings_billing_path, params: {
+          plan_id: "pro",
+          payment_method: "pix"
+        }
+      end
+
+      assert_redirected_to checkout_settings_billing_path
     end
   end
 end

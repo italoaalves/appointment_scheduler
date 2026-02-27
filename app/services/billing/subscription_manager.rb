@@ -31,14 +31,19 @@ module Billing
     def subscribe(space:, plan_id:, payment_method:, asaas_customer_id:)
       plan = Billing::Plan.find(plan_id)
 
-      asaas_result = @client.create_subscription(
-        customer_id:        asaas_customer_id,
-        billing_type:       payment_method.to_sym,
-        value:              plan.price_cents / 100.0,
-        next_due_date:      Date.current.to_s,
-        description:        plan.name,
-        external_reference: "space_#{space.id}"
-      )
+      asaas_subscription_id = nil
+
+      unless plan.price_cents == 0
+        asaas_result = @client.create_subscription(
+          customer_id:        asaas_customer_id,
+          billing_type:       payment_method.to_sym,
+          value:              plan.price_cents / 100.0,
+          next_due_date:      Date.current.to_s,
+          description:        plan.name,
+          external_reference: "space_#{space.id}"
+        )
+        asaas_subscription_id = asaas_result["id"]
+      end
 
       subscription = nil
 
@@ -46,11 +51,13 @@ module Billing
         subscription = find_or_initialize_subscription(space)
         subscription.assign_attributes(
           plan_id:               plan_id,
+          status:                :active,
           payment_method:        payment_method,
-          asaas_subscription_id: asaas_result["id"],
+          asaas_subscription_id: asaas_subscription_id,
           asaas_customer_id:     asaas_customer_id,
           current_period_start:  Time.current,
-          current_period_end:    30.days.from_now
+          current_period_end:    30.days.from_now,
+          trial_ends_at:         nil
         )
         subscription.save!
 

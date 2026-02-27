@@ -40,7 +40,7 @@ module Billing
     PRO = new(
       id:                    "pro",
       name:                  "Pro",
-      price_cents:           0,
+      price_cents:           9900,
       max_team_members:      5,
       max_customers:         Float::INFINITY,
       max_scheduling_links:  Float::INFINITY,
