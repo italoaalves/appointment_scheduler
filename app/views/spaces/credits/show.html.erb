@@ -48,7 +48,7 @@
       <ul class="divide-y divide-slate-200">
         <% @events.each do |event| %>
           <li class="flex items-center justify-between px-5 py-3">
-            <span class="text-sm text-slate-700"><%= t("billing.event_types.#{event.event_type.tr('.', '_')}", default: event.event_type.humanize) %></span>
+            <span class="text-sm text-slate-700"><%= billing_event_label(event.event_type) %></span>
             <span class="text-xs text-slate-400"><%= l(event.created_at, format: :long) %></span>
           </li>
         <% end %>

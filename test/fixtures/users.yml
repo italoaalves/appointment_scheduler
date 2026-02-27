@@ -9,21 +9,25 @@ admin:
   name: "Platform Admin"
   role: ""
   system_role: 0
+  confirmed_at: <%= Time.current %>
 
 manager:
   email: "manager@example.com"
   encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
   name: "Dr. Owner"
   role: "Manager"
+  confirmed_at: <%= Time.current %>
 
 manager_two:
   email: "manager2@example.com"
   encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
   name: "Other Manager"
   role: "Manager"
+  confirmed_at: <%= Time.current %>
 
 secretary:
   email: "secretary@example.com"
   encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
   name: "Jane Secretary"
   role: "Secretary"
+  confirmed_at: <%= Time.current %>

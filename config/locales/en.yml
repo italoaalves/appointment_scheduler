@@ -317,6 +317,7 @@ en:
         notice: "Customer updated."
       destroy:
         notice: "Customer deleted."
+        has_active_appointments: "Cannot delete: this customer has %{count} active appointment(s). Cancel or finish them first."
       index:
         title: "Customers"
         new_button: "New customer"
@@ -461,6 +462,7 @@ en:
         back_to_appointments: "Appointments"
         table:
           name: "Name"
+          url: "URL"
           type: "Type"
           status: "Status"
           actions: "Actions"

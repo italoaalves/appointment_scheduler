@@ -26,6 +26,23 @@ module Spaces
       assert_equal I18n.t("billing.limits.customers_exceeded"), flash[:alert]
     end
 
+    # ── Destroy with active appointments ──────────────────────────────────────
+
+    test "DELETE destroy redirects with alert when customer has active appointments" do
+      sign_in @manager_starter
+      customer = customers(:one)
+      appointments(:one).update!(customer: customer, status: :confirmed)
+      assert customer.appointments.where(status: Appointment::SLOT_BLOCKING_STATUSES).any?
+
+      assert_no_difference "Customer.count" do
+        delete customer_url(customer)
+      end
+
+      assert_redirected_to customer_path(customer)
+      assert flash[:alert].present?
+      assert_includes flash[:alert], "1"
+    end
+
     # ── Pro plan — unlimited ──────────────────────────────────────────────────
 
     test "POST create succeeds when Pro plan has no customer limit" do

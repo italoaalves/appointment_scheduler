@@ -49,6 +49,11 @@ module Spaces
     end
 
     def destroy
+      active_count = @customer.appointments.where(status: Appointment::SLOT_BLOCKING_STATUSES).count
+      if active_count > 0
+        redirect_to customer_path(@customer), alert: t("space.customers.destroy.has_active_appointments", count: active_count) and return
+      end
+
       @customer.destroy
       redirect_to customers_path, notice: t("space.customers.destroy.notice")
     end

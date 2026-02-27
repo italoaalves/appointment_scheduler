@@ -80,7 +80,7 @@
       <ul class="divide-y divide-slate-200">
         <% @recent_events.each do |event| %>
           <li class="flex items-center justify-between gap-4 px-5 py-2.5 text-sm">
-            <span class="font-medium text-slate-800"><%= t("billing.event_types.#{event.event_type.tr('.', '_')}", default: event.event_type) %></span>
+            <span class="font-medium text-slate-800"><%= billing_event_label(event.event_type) %></span>
             <span class="text-slate-500"><%= event.space&.name %></span>
             <span class="text-xs text-slate-400"><%= l(event.created_at, format: :long) %></span>
           </li>

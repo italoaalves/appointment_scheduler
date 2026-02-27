@@ -46,6 +46,9 @@
               <%= t("space.scheduling_links.index.table.name") %>
             </th>
             <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <%= t("space.scheduling_links.index.table.url") %>
+            </th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
               <%= t("space.scheduling_links.index.table.type") %>
             </th>
             <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -58,9 +61,22 @@
         </thead>
         <tbody class="divide-y divide-slate-200">
           <% @scheduling_links.each do |link| %>
+            <% booking_url = book_url(token: link.token) %>
             <tr class="hover:bg-slate-50">
               <td class="px-4 py-2 align-top text-slate-900">
                 <%= link.name.presence || "—" %>
+              </td>
+              <td class="px-4 py-2 align-top">
+                <div class="flex items-center gap-1 max-w-[220px]">
+                  <span class="truncate text-xs text-slate-600" title="<%= booking_url %>"><%= truncate(booking_url, length: 45) %></span>
+                  <button type="button"
+                          data-controller="clipboard"
+                          data-clipboard-text-value="<%= booking_url %>"
+                          data-action="click->clipboard#copy"
+                          class="<%= button_classes(:table_link) %> shrink-0">
+                    <%= t("space.scheduling_links.show.copy") %>
+                  </button>
+                </div>
               </td>
               <td class="px-4 py-2 align-top">
                 <%= render "application/shared/status_badge", status: nil, label: link.link_type.humanize %>

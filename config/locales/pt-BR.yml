@@ -288,6 +288,7 @@ pt-BR:
         notice: "Cliente atualizado."
       destroy:
         notice: "Cliente excluído."
+        has_active_appointments: "Não é possível excluir: este cliente tem %{count} consulta(s) ativa(s). Cancele ou finalize-as antes."
       index:
         title: "Clientes"
         new_button: "Novo cliente"
@@ -432,6 +433,7 @@ pt-BR:
         back_to_appointments: "Consultas"
         table:
           name: "Nome"
+          url: "URL"
           type: "Tipo"
           status: "Status"
           actions: "Ações"
