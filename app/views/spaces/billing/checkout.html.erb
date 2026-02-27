@@ -15,7 +15,7 @@
        step: 1,
        slug: '',
        isPaid: false,
-       prices: <%= prices_json.html_safe %>,
+       prices: <%= prices_json %>,
        pick(s) { this.slug = s; this.isPaid = (this.prices[s] || 0) > 0; this.step = 2; }
      }">
 
