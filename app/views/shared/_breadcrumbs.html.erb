@@ -1,0 +1,23 @@
+<%# Renders breadcrumb trail.
+    Locals: crumbs — array of hashes: { label: "...", path: "..." }
+    Last crumb has no path (current page). %>
+<% return if local_assigns[:crumbs].blank? %>
+
+<nav aria-label="<%= t("breadcrumbs.label") %>" class="mb-4">
+  <ol class="flex flex-wrap items-center gap-1 text-sm text-slate-500">
+    <% crumbs.each_with_index do |crumb, i| %>
+      <li class="flex items-center gap-1">
+        <% if i > 0 %>
+          <span aria-hidden="true" class="text-slate-300">›</span>
+        <% end %>
+        <% if crumb[:path].present? %>
+          <%= link_to crumb[:label], crumb[:path],
+              class: "text-slate-600 hover:text-slate-800 hover:underline" %>
+        <% else %>
+          <span class="text-slate-800 font-medium truncate max-w-[200px]"
+                aria-current="page"><%= crumb[:label] %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ol>
+</nav>

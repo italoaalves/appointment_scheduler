@@ -153,6 +153,30 @@ pt-BR:
       go_to_dashboard: "Ir para o Painel"
       completed_notice: "Seu espaço está pronto! Agora você pode compartilhar seu link de agendamento."
 
+  breadcrumbs:
+    label: "Navegação"
+    dashboard: "Painel"
+    appointments: "Agendamentos"
+    pending: "Pendentes"
+    new: "Novo"
+    edit: "Editar"
+    finish: "Finalizar"
+    customers: "Clientes"
+    team: "Equipe"
+    booking_links: "Links de Agendamento"
+    personalized_link: "Link Personalizado"
+    settings: "Configurações"
+    space: "Espaço"
+    availability: "Disponibilidade"
+    policies: "Políticas"
+    billing: "Cobrança"
+    change_plan: "Trocar Plano"
+    checkout: "Checkout"
+    credits: "Créditos"
+    profile: "Perfil"
+    preferences: "Preferências"
+    invite: "Convidar"
+
   layout:
     app_name: "Agendador de Consultas"
     nav:

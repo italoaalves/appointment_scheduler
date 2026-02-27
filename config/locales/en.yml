@@ -182,6 +182,30 @@ en:
       go_to_dashboard: "Go to Dashboard"
       completed_notice: "Your space is ready! You can now share your booking link."
 
+  breadcrumbs:
+    label: "Breadcrumb"
+    dashboard: "Dashboard"
+    appointments: "Appointments"
+    pending: "Pending"
+    new: "New"
+    edit: "Edit"
+    finish: "Finish"
+    customers: "Customers"
+    team: "Team"
+    booking_links: "Booking Links"
+    personalized_link: "Personalized Link"
+    settings: "Settings"
+    space: "Space"
+    availability: "Availability"
+    policies: "Policies"
+    billing: "Billing"
+    change_plan: "Change Plan"
+    checkout: "Checkout"
+    credits: "Credits"
+    profile: "Profile"
+    preferences: "Preferences"
+    invite: "Invite"
+
   layout:
     app_name: "Appointment Scheduler"
     nav:
