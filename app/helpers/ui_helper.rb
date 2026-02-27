@@ -40,6 +40,51 @@ module UiHelper
     [ base, width ].join(" ")
   end
 
+  def nav_active?(section)
+    case section.to_sym
+    when :dashboard
+      controller_path == "dashboard" && action_name == "index"
+    when :appointments
+      controller_path.start_with?("spaces/appointments")
+    when :booking_links
+      controller_path.start_with?("spaces/scheduling_links") ||
+        controller_path.start_with?("spaces/personalized_scheduling_links")
+    when :customers
+      controller_path.start_with?("spaces/customers")
+    when :team
+      controller_path.start_with?("spaces/users")
+    when :settings
+      request.path.start_with?("/settings")
+    else
+      false
+    end
+  end
+
+  def nav_active_classes(section, variant: :desktop)
+    active = nav_active?(section)
+    case variant.to_sym
+    when :desktop
+      if active
+        "text-white border-b-2 border-indigo-400"
+      else
+        "text-slate-200 hover:text-white hover:bg-slate-800"
+      end
+    when :mobile
+      if active
+        "bg-indigo-900/40 text-white font-medium"
+      else
+        "text-slate-100 hover:bg-slate-800"
+      end
+    else
+      active ? "text-white" : "text-slate-200 hover:text-white hover:bg-slate-800"
+    end
+  end
+
+  def pending_appointments_count
+    return 0 unless tenant_staff?
+    @_pending_count ||= current_tenant.appointments.pending.count
+  end
+
   def status_badge_classes(status)
     case status.to_s
     when "pending"     then "bg-amber-100 text-amber-800"

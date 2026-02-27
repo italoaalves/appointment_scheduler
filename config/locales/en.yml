@@ -194,6 +194,7 @@ en:
       booking_links: "Booking links"
       team: "Team"
       dashboard: "Dashboard"
+      pending_count: "%{count} pending"
       space: "Space"
       availability: "Availability"
       tenants: "Tenants"
