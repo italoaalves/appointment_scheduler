@@ -1,50 +1,40 @@
 <div class="flex max-h-[65vh] min-h-0 flex-col rounded-xl border border-slate-200 bg-white shadow-sm"
-     x-data="{
-       tab: 'today',
-       scrollable: false,
-       atBottom: false,
-       checkOverflow() {
-         const el = this.$refs.scrollArea;
-         if (!el) return;
-         this.scrollable = el.scrollHeight > el.clientHeight;
-         this.atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 2;
-       }
-     }"
-     x-init="$nextTick(() => { checkOverflow(); const el = $refs.scrollArea; const self = this; if (el) new ResizeObserver(() => self.$nextTick(() => self.checkOverflow())).observe(el); })">
+     data-controller="calendar-tabs">
   <div class="shrink-0 border-b border-slate-200">
     <nav class="flex -mb-px">
       <button type="button"
-              @click="tab = 'today'; $nextTick(() => checkOverflow())"
-              :class="tab === 'today' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'"
-              class="border-b-2 px-4 py-3 text-sm font-medium">
+              data-calendar-tabs-target="tab"
+              data-action="click->calendar-tabs#switchTab"
+              data-calendar-tabs-tab-param="today"
+              class="border-b-2 px-4 py-3 text-sm font-medium border-slate-900 text-slate-900">
         <%= t("admin.appointments.calendar.today") %>
       </button>
       <button type="button"
-              @click="tab = 'week'; $nextTick(() => checkOverflow())"
-              :class="tab === 'week' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'"
-              class="border-b-2 px-4 py-3 text-sm font-medium">
+              data-calendar-tabs-target="tab"
+              data-action="click->calendar-tabs#switchTab"
+              data-calendar-tabs-tab-param="week"
+              class="border-b-2 px-4 py-3 text-sm font-medium border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700">
         <%= t("admin.appointments.calendar.week") %>
       </button>
       <button type="button"
-              @click="tab = 'month'; $nextTick(() => checkOverflow())"
-              :class="tab === 'month' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'"
-              class="border-b-2 px-4 py-3 text-sm font-medium">
+              data-calendar-tabs-target="tab"
+              data-action="click->calendar-tabs#switchTab"
+              data-calendar-tabs-tab-param="month"
+              class="border-b-2 px-4 py-3 text-sm font-medium border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700">
         <%= t("admin.appointments.calendar.month") %>
       </button>
     </nav>
   </div>
 
   <div class="relative min-h-0 flex-1 flex flex-col">
-    <div x-ref="scrollArea"
-         class="min-h-0 flex-1 overflow-y-auto p-4"
-         @scroll="checkOverflow()">
+    <div data-calendar-tabs-target="scrollArea"
+         data-action="scroll->calendar-tabs#checkOverflow"
+         class="min-h-0 flex-1 overflow-y-auto p-4">
       <% %i[today week month].each do |period| %>
         <% appointments = periods_data[period] %>
-        <div x-show="tab === '<%= period %>'"
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             style="<%= period == :today ? '' : 'display: none;' %>"
+        <div data-calendar-tabs-target="panel"
+             data-tab="<%= period %>"
+             <%= 'hidden' if period != :today %>
              class="space-y-4">
           <% if appointments.any? %>
             <% case period %>
@@ -105,26 +95,19 @@
       <% end %>
     </div>
 
-    <div x-show="scrollable && !atBottom"
-         x-transition:enter="transition ease-out duration-150"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-100"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
+    <div data-calendar-tabs-target="fadeOverlay"
+         hidden
          class="pointer-events-none absolute left-0 right-0 z-10 h-8 bg-gradient-to-t from-white via-white/80 to-transparent"
-         style="display: none; bottom: 52px;">
+         style="bottom: 52px;">
     </div>
 
     <footer class="shrink-0 border-t border-slate-100 bg-white px-4 py-3">
       <% %i[today week month].each do |period| %>
         <% stats = periods_stats[period] %>
-        <div x-show="tab === '<%= period %>'"
-             x-transition:enter="transition ease-out duration-150"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             class="flex flex-wrap gap-4 text-xs text-slate-600"
-             style="<%= period == :today ? '' : 'display: none;' %>">
+        <div data-calendar-tabs-target="stats"
+             data-tab="<%= period %>"
+             <%= 'hidden' if period != :today %>
+             class="flex flex-wrap gap-4 text-xs text-slate-600">
           <span><%= t("admin.appointments.calendar.stats.total") %>: <strong class="text-slate-900"><%= stats[:total] %></strong></span>
           <span><%= t("admin.appointments.calendar.stats.empty_slots") %>: <strong class="text-slate-900"><%= stats[:empty_slots] %></strong></span>
           <span><%= t("admin.appointments.calendar.stats.pending") %>: <strong class="text-amber-700"><%= stats[:pending] %></strong></span>
