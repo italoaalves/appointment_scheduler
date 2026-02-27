@@ -42,6 +42,10 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :billing do
+    resources :webhooks, only: [ :create ]
+  end
+
   namespace :platform do
     root to: "dashboard#index", as: :root
 
