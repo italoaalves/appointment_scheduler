@@ -123,6 +123,35 @@ module Billing
       assert Billing::PlanEnforcer.can?(space, :create_customer)
     end
 
+    # ── :create_scheduling_link ───────────────────────────────────────────────
+
+    test "Essential with 2 scheduling links: create_scheduling_link returns true" do
+      space = make_space(plan_id: "essential")
+      SchedulingLink.insert_all(
+        2.times.map { |i| { space_id: space.id, token: "tok_#{i}_#{SecureRandom.hex(4)}", created_at: Time.current, updated_at: Time.current } }
+      )
+
+      assert Billing::PlanEnforcer.can?(space, :create_scheduling_link)
+    end
+
+    test "Essential with 3 scheduling links: create_scheduling_link returns false (max is 3)" do
+      space = make_space(plan_id: "essential")
+      SchedulingLink.insert_all(
+        3.times.map { |i| { space_id: space.id, token: "tok_#{i}_#{SecureRandom.hex(4)}", created_at: Time.current, updated_at: Time.current } }
+      )
+
+      assert_not Billing::PlanEnforcer.can?(space, :create_scheduling_link)
+    end
+
+    test "Pro with 10 scheduling links: create_scheduling_link returns true (unlimited)" do
+      space = make_space(plan_id: "pro", status: :active)
+      SchedulingLink.insert_all(
+        10.times.map { |i| { space_id: space.id, token: "tok_#{i}_#{SecureRandom.hex(4)}", created_at: Time.current, updated_at: Time.current } }
+      )
+
+      assert Billing::PlanEnforcer.can?(space, :create_scheduling_link)
+    end
+
     # ── :access_personalized_booking_page ────────────────────────────────────
 
     test "Essential plan: access_personalized_booking_page returns false" do
@@ -180,6 +209,45 @@ module Billing
       assert Billing::PlanEnforcer.can?(space, :send_whatsapp)
     end
 
+    test "Enterprise plan: send_whatsapp returns true without credit check (unlimited quota)" do
+      space = make_space(plan_id: "enterprise", status: :active)
+      # No MessageCredit record — unlimited plans skip the credit check entirely
+
+      assert Billing::PlanEnforcer.can?(space, :send_whatsapp)
+    end
+
+    # ── Enterprise plan (unlimited on all limits) ─────────────────────────────
+
+    test "Enterprise with many team members: create_team_member returns true (unlimited)" do
+      space = make_space(plan_id: "enterprise", status: :active)
+      [ users(:manager), users(:secretary), users(:manager_two), users(:admin) ].each do |u|
+        SpaceMembership.create!(space: space, user: u)
+      end
+
+      assert Billing::PlanEnforcer.can?(space, :create_team_member)
+    end
+
+    test "Enterprise with 100 customers: create_customer returns true (unlimited)" do
+      space = make_space(plan_id: "enterprise", status: :active)
+      Customer.insert_all(
+        100.times.map { |i| { space_id: space.id, name: "Ent Cust #{i}", created_at: Time.current, updated_at: Time.current } }
+      )
+
+      assert Billing::PlanEnforcer.can?(space, :create_customer)
+    end
+
+    test "Enterprise plan: access_personalized_booking_page returns true" do
+      space = make_space(plan_id: "enterprise", status: :active)
+
+      assert Billing::PlanEnforcer.can?(space, :access_personalized_booking_page)
+    end
+
+    test "Enterprise plan: access_custom_policies returns true" do
+      space = make_space(plan_id: "enterprise", status: :active)
+
+      assert Billing::PlanEnforcer.can?(space, :access_custom_policies)
+    end
+
     # ── limit_for ─────────────────────────────────────────────────────────────
 
     test "limit_for returns the plan's max_team_members" do
@@ -199,6 +267,12 @@ module Billing
 
       assert_equal 1,   Billing::PlanEnforcer.limit_for(space, :max_team_members)
       assert_equal 100, Billing::PlanEnforcer.limit_for(space, :max_customers)
+    end
+
+    test "limit_for returns nil for Enterprise max_team_members (unlimited)" do
+      space = make_space(plan_id: "enterprise", status: :active)
+
+      assert_nil Billing::PlanEnforcer.limit_for(space, :max_team_members)
     end
 
     # ── Unknown action ────────────────────────────────────────────────────────

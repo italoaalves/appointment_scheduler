@@ -22,14 +22,11 @@ module Billing
 
       case action
       when :create_team_member
-        max = plan.max_team_members
-        max.nil? || @space.space_memberships.count < max
+        !plan.limit_reached?(:max_team_members, @space.space_memberships.count)
       when :create_customer
-        max = plan.max_customers
-        max.nil? || @space.customers.count < max
+        !plan.limit_reached?(:max_customers, @space.customers.count)
       when :create_scheduling_link
-        max = plan.max_scheduling_links
-        max.nil? || @space.scheduling_links.count < max
+        !plan.limit_reached?(:max_scheduling_links, @space.scheduling_links.count)
       when :access_personalized_booking_page
         plan.feature?(:personalized_booking_page)
       when :access_custom_policies
