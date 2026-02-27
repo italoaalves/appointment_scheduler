@@ -10,7 +10,11 @@ class ApplicationController < ActionController::Base
   before_action :set_locale
 
   helper UiHelper
-  helper_method :current_tenant, :tenant_staff?
+  helper_method :current_tenant, :tenant_staff?, :current_subscription
+
+  def current_subscription
+    Current.subscription
+  end
 
   def after_sign_in_path_for(resource)
     return platform_root_path if resource.super_admin?

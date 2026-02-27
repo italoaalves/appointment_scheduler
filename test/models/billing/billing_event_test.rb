@@ -28,14 +28,14 @@ module Billing
       assert event.valid?
     end
 
-    test "persisted events are readonly — update raises ActiveRecord::ReadOnlyRecord" do
+    test "persisted events cannot be updated — raises ActiveRecord::ReadOnlyRecord" do
       event = billing_events(:one)
       assert_raises(ActiveRecord::ReadOnlyRecord) do
         event.update!(event_type: "plan.changed")
       end
     end
 
-    test "persisted events are readonly — save raises ActiveRecord::ReadOnlyRecord" do
+    test "persisted events cannot be saved after mutation — raises ActiveRecord::ReadOnlyRecord" do
       event = billing_events(:one)
       event.event_type = "plan.changed"
       assert_raises(ActiveRecord::ReadOnlyRecord) { event.save! }

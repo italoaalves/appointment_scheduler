@@ -12,7 +12,8 @@ module Spaces
     private
 
     def set_current_space
-      Current.space = current_tenant
+      Current.space        = current_tenant
+      Current.subscription = current_tenant&.subscription
     end
 
     def require_space_staff

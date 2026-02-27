@@ -11,8 +11,6 @@ module Billing
 
     validates :event_type, presence: true
 
-    def readonly?
-      persisted?
-    end
+    before_update { raise ActiveRecord::ReadOnlyRecord, "#{self.class} is append-only and cannot be updated" }
   end
 end
