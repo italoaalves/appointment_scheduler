@@ -98,6 +98,28 @@ pt-BR:
         therapy: "Terapia"
         other: "Outro"
     step2_placeholder: "Etapa 2 em breve."
+    step2:
+      title: "Confirme sua disponibilidade"
+      subtitle: "Estes são seus horários padrão. Você pode alterá-los a qualquer momento em Configurações."
+      timezone: "Fuso horário"
+      duration: "Duração da consulta"
+      weekly_grid_title: "Horários semanais"
+      opens_at: "Abre às"
+      closes_at: "Fecha às"
+      next: "Próximo"
+      timezones:
+        america_sao_paulo: "São Paulo"
+        america_manaus: "Manaus"
+        america_belem: "Belém"
+        america_recife: "Recife"
+        america_bahia: "Salvador (Bahia)"
+        america_fortaleza: "Fortaleza"
+        america_cuiaba: "Cuiabá"
+        america_porto_velho: "Porto Velho"
+        america_rio_branco: "Rio Branco"
+      duration_options:
+        one: "1 minuto"
+        other: "%{count} minutos"
     step3_placeholder: "Etapa 3 em breve."
     step3:
       completed_notice: "Seu espaço está pronto! Agora você pode compartilhar seu link de agendamento."

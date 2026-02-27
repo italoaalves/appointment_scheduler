@@ -1,11 +1,77 @@
 <%= render "onboarding/progress", current_step: 2 %>
-<div class="space-y-6">
-  <h1 class="text-2xl font-semibold text-slate-900">
-    <%= t("onboarding.progress.step2") %>
-  </h1>
-  <p class="text-slate-600"><%= t("onboarding.step2_placeholder") %></p>
-  <div class="flex flex-wrap items-center gap-4">
-    <%= button_to t("onboarding.next"), update_step2_onboarding_wizard_path, method: :patch, class: button_classes(:primary) %>
-    <%= button_to t("onboarding.skip_link"), skip_onboarding_wizard_path, method: :post, class: "text-sm text-slate-500 underline hover:text-slate-700", form_class: "inline" %>
-  </div>
+<% schedule = current_tenant.availability_schedule %>
+<% weekdays = [ [ 1, t("space.settings.edit.weekday_mon") ], [ 2, t("space.settings.edit.weekday_tue") ], [ 3, t("space.settings.edit.weekday_wed") ], [ 4, t("space.settings.edit.weekday_thu") ], [ 5, t("space.settings.edit.weekday_fri") ], [ 6, t("space.settings.edit.weekday_sat") ], [ 0, t("space.settings.edit.weekday_sun") ] ] %>
+<div class="mx-auto max-w-lg">
+  <%= render layout: "application/shared/card" do %>
+    <%= form_with url: update_step2_onboarding_wizard_path, method: :patch, class: "space-y-4" do |form| %>
+      <h1 class="text-2xl font-semibold text-slate-900">
+        <%= t("onboarding.step2.title") %>
+      </h1>
+      <p class="text-slate-600"><%= t("onboarding.step2.subtitle") %></p>
+
+      <div>
+        <label for="timezone" class="<%= form_label_classes %>"><%= t("onboarding.step2.timezone") %></label>
+        <%= select_tag :timezone,
+            options_for_select(
+              @brazilian_timezones.map { |tz| [ t("onboarding.step2.timezones.#{tz.parameterize(separator: '_')}"), tz ] },
+              current_tenant.timezone
+            ),
+            class: form_input_classes,
+            id: "timezone" %>
+      </div>
+
+      <div>
+        <label for="slot_duration_minutes" class="<%= form_label_classes %>"><%= t("onboarding.step2.duration") %></label>
+        <%= select_tag :slot_duration_minutes,
+            options_for_select(
+              @duration_options.map { |m| [ t("onboarding.step2.duration_options", count: m), m ] },
+              current_tenant.slot_duration_minutes
+            ),
+            class: form_input_classes,
+            id: "slot_duration_minutes" %>
+      </div>
+
+      <div>
+        <h3 class="mb-2 text-sm font-medium text-slate-700"><%= t("onboarding.step2.weekly_grid_title") %></h3>
+        <div class="space-y-3">
+          <% weekdays.each do |wday, label| %>
+            <% window = schedule&.availability_windows&.find { |w| w.weekday == wday } %>
+            <% day_enabled = window.present? %>
+            <% opens_val = window&.opens_at&.strftime("%H:%M") || "09:00" %>
+            <% closes_val = window&.closes_at&.strftime("%H:%M") || "17:00" %>
+            <div class="flex flex-wrap items-center gap-2 gap-y-3 rounded-md border border-slate-200 bg-slate-50 p-3"
+                 x-data="{ enabled: <%= day_enabled %> }">
+              <input type="hidden" name="days[<%= wday %>][enabled]" value="0">
+              <label class="flex w-24 shrink-0 items-center gap-2 text-sm font-medium text-slate-700">
+                <input type="checkbox"
+                       name="days[<%= wday %>][enabled]"
+                       value="1"
+                       <%= "checked" if day_enabled %>
+                       x-model="enabled"
+                       class="rounded border-slate-300">
+                <%= label %>
+              </label>
+              <input type="time"
+                     name="days[<%= wday %>][opens_at]"
+                     value="<%= opens_val %>"
+                     :disabled="!enabled"
+                     class="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                     aria-label="<%= t("onboarding.step2.opens_at") %>">
+              <input type="time"
+                     name="days[<%= wday %>][closes_at]"
+                     value="<%= closes_val %>"
+                     :disabled="!enabled"
+                     class="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                     aria-label="<%= t("onboarding.step2.closes_at") %>">
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4 pt-2">
+        <%= form.submit t("onboarding.step2.next"), class: button_classes(:primary) %>
+        <%= button_to t("onboarding.skip_link"), skip_onboarding_wizard_path, method: :post, class: "text-sm text-slate-500 underline hover:text-slate-700", form_class: "inline" %>
+      </div>
+    <% end %>
+  <% end %>
 </div>

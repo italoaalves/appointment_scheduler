@@ -127,6 +127,28 @@ en:
         therapy: "Therapy"
         other: "Other"
     step2_placeholder: "Step 2 coming soon."
+    step2:
+      title: "Confirm your availability"
+      subtitle: "These are your default hours. You can change them anytime in Settings."
+      timezone: "Timezone"
+      duration: "Appointment duration"
+      weekly_grid_title: "Weekly hours"
+      opens_at: "Opens at"
+      closes_at: "Closes at"
+      next: "Next"
+      timezones:
+        america_sao_paulo: "São Paulo"
+        america_manaus: "Manaus"
+        america_belem: "Belém"
+        america_recife: "Recife"
+        america_bahia: "Salvador (Bahia)"
+        america_fortaleza: "Fortaleza"
+        america_cuiaba: "Cuiabá"
+        america_porto_velho: "Porto Velho"
+        america_rio_branco: "Rio Branco"
+      duration_options:
+        one: "1 minute"
+        other: "%{count} minutes"
     step3_placeholder: "Step 3 coming soon."
     step3:
       completed_notice: "Your space is ready! You can now share your booking link."
