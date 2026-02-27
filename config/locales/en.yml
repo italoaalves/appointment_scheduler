@@ -768,7 +768,7 @@ en:
 
   billing:
     plan_changed: "Your plan has been upgraded."
-    downgrade_scheduled: "Your plan will switch to %{plan} at the end of your current billing period."
+    downgrade_scheduled: "Your plan will change at the end of your current billing period."
     canceled: "Your subscription has been canceled. Access continues until the end of your billing period."
     no_change: "You're already on this plan."
     resubscribe_unavailable: "Please contact support to resubscribe."
@@ -792,6 +792,9 @@ en:
       back: "Back"
       success: "Subscription activated successfully."
       payment_method_not_allowed: "This plan does not accept the selected payment method."
+      recommended: "Recommended"
+      current_plan: "Current Plan"
+      credit_card_only_notice: "This plan requires credit card payment."
     show:
       title: "Billing"
       subtitle: "Manage your subscription, plan, and payment history."
@@ -828,11 +831,13 @@ en:
       priority_support: "Priority support"
       recommended: "Recommended"
       select_plan: "Select plan"
+      description_label: "Plan description"
       back: "Back to billing"
     features:
       personalized_booking_page: "Personalized booking page"
       whatsapp_included_quota: "WhatsApp messages included"
       custom_appointment_policies: "Custom appointment policies"
+      priority_support: "Priority support"
     event_types:
       subscription_created: "Subscription created"
       subscription_activated: "Subscription activated"
@@ -858,10 +863,16 @@ en:
         purchase: "Buy"
         history_title: "Credit history"
         no_history: "No credit history yet."
+        messaging_status: "Messaging"
+        unlimited: "Unlimited"
+        unlimited_hint: "Your plan includes unlimited WhatsApp messaging."
+        topup_title: "Top up credits"
+        topup_hint: "Need more messages beyond your monthly quota? Purchase additional credits."
     limits:
       team_members_exceeded: "Your plan's team member limit has been reached. Upgrade to add more."
       customers_exceeded: "Your plan's customer limit has been reached. Upgrade to add more."
       scheduling_links_exceeded: "Your plan's scheduling link limit has been reached. Upgrade to add more."
+      unlimited: "Unlimited"
       feature_not_available: "This feature is not available on your current plan. Upgrade to access it."
     restricted_mode:
       banner: "Your subscription has expired. Subscribe to continue managing your business."

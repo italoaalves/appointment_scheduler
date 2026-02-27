@@ -34,7 +34,7 @@ module Spaces
         success_msg = I18n.t("billing.plan_changed")
       elsif downgrade?(subscription, new_plan)
         result      = Billing::SubscriptionManager.downgrade(subscription: subscription, new_billing_plan_id: new_plan.id)
-        success_msg = I18n.t("billing.downgrade_scheduled", plan: new_plan.name)
+        success_msg = I18n.t("billing.downgrade_scheduled")
       else
         redirect_to settings_billing_path, alert: I18n.t("billing.no_change") and return
       end

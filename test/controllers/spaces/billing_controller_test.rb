@@ -61,7 +61,7 @@ module Spaces
       patch settings_billing_path, params: { billing_plan_id: essential.id }
 
       assert_redirected_to settings_billing_path
-      assert_equal I18n.t("billing.downgrade_scheduled", plan: essential.name), flash[:notice]
+      assert_equal I18n.t("billing.downgrade_scheduled"), flash[:notice]
     end
 
     # ── cancel ────────────────────────────────────────────────────────────────

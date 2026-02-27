@@ -38,7 +38,7 @@
             <div class="mb-3 flex flex-wrap gap-1.5 min-h-[1.5rem]">
               <% if plan.highlighted? %>
                 <span class="inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-semibold text-white">
-                  ✦ Recomendado
+                  ✦ <%= t("billing.checkout.recommended") %>
                 </span>
               <% end %>
               <% if is_current %>

@@ -739,7 +739,7 @@ pt-BR:
 
   billing:
     plan_changed: "Seu plano foi atualizado com sucesso."
-    downgrade_scheduled: "Seu plano será alterado para %{plan} ao final do período atual."
+    downgrade_scheduled: "Seu plano será alterado ao final do período de cobrança atual."
     canceled: "Sua assinatura foi cancelada. O acesso continua até o fim do período de cobrança."
     no_change: "Você já está neste plano."
     resubscribe_unavailable: "Entre em contato com o suporte para reativar sua assinatura."
@@ -747,6 +747,7 @@ pt-BR:
       personalized_booking_page: "Página de agendamento personalizada"
       whatsapp_included_quota: "Mensagens WhatsApp incluídas"
       custom_appointment_policies: "Políticas de agendamento customizadas"
+      priority_support: "Suporte prioritário"
     event_types:
       subscription_created: "Assinatura criada"
       subscription_activated: "Assinatura ativada"
@@ -772,6 +773,11 @@ pt-BR:
         purchase: "Comprar"
         history_title: "Histórico de créditos"
         no_history: "Nenhum histórico de créditos ainda."
+        messaging_status: "Mensagens"
+        unlimited: "Ilimitado"
+        unlimited_hint: "Seu plano inclui mensagens WhatsApp ilimitadas."
+        topup_title: "Recarregar créditos"
+        topup_hint: "Precisa de mais mensagens além da cota mensal? Compre créditos adicionais."
     checkout:
       submit_loading: "Assinando…"
       title: "Escolha seu plano"
@@ -792,6 +798,9 @@ pt-BR:
       back: "Voltar"
       success: "Assinatura ativada com sucesso."
       payment_method_not_allowed: "Este plano não aceita a forma de pagamento selecionada."
+      recommended: "Recomendado"
+      current_plan: "Plano Atual"
+      credit_card_only_notice: "Este plano exige pagamento por cartão de crédito."
     show:
       title: "Cobrança"
       subtitle: "Gerencie sua assinatura, plano e histórico de pagamentos."
@@ -828,11 +837,13 @@ pt-BR:
       priority_support: "Suporte prioritário"
       recommended: "Recomendado"
       select_plan: "Selecionar plano"
+      description_label: "Descrição do plano"
       back: "Voltar para cobrança"
     limits:
       team_members_exceeded: "O limite de membros do seu plano foi atingido. Faça upgrade para adicionar mais."
       customers_exceeded: "O limite de clientes do seu plano foi atingido. Faça upgrade para adicionar mais."
       scheduling_links_exceeded: "O limite de links de agendamento do seu plano foi atingido. Faça upgrade para adicionar mais."
+      unlimited: "Ilimitado"
       feature_not_available: "Este recurso não está disponível no seu plano atual. Faça upgrade para acessá-lo."
     restricted_mode:
       banner: "Sua assinatura expirou. Assine um plano para continuar gerenciando seu negócio."
