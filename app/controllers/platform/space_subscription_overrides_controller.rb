@@ -7,7 +7,7 @@ module Platform
     def edit
       @subscription = @space.subscription
       @credit       = @space.message_credit
-      @plans        = Billing::Plan.all
+      @plans        = Billing::Plan.visible
     end
 
     def update

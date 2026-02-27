@@ -21,11 +21,11 @@ module Billing
 
       now        = Time.current
       trial_ends = now + TRIAL_DURATION
-      plan       = Billing::Plan.find("pro")
+      plan       = Billing::Plan.trial_plan
 
       subscription = Billing::Subscription.create!(
         space_id:             space.id,
-        plan_id:              plan.id,
+        plan_id:              plan.slug,
         status:               :trialing,
         trial_ends_at:        trial_ends,
         current_period_start: now,
@@ -43,7 +43,7 @@ module Billing
         space_id:        space.id,
         subscription_id: subscription.id,
         event_type:      "subscription.created",
-        metadata:        { plan_id: plan.id, trial_ends_at: trial_ends.iso8601 }
+        metadata:        { plan_id: plan.slug, trial_ends_at: trial_ends.iso8601 }
       )
 
       subscription

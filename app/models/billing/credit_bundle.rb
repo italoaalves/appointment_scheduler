@@ -1,13 +1,19 @@
 # frozen_string_literal: true
 
 module Billing
-  CreditBundle = Struct.new(:amount, :price_cents, keyword_init: true) do
+  class CreditBundle < ApplicationRecord
+    self.table_name = "credit_bundles"
+
+    validates :name,        presence: true
+    validates :amount,      presence: true, numericality: { only_integer: true, greater_than: 0 }
+    validates :price_cents, presence: true, numericality: { only_integer: true, greater_than: 0 }
+
+    scope :available, -> { where(active: true).order(:position) }
+
+    # Backward-compatible shim — still used by CreditsController and CreditManager.
+    # Remove in task 24.
     def self.bundles
-      @bundles ||= [
-        new(amount: 50,  price_cents: 2500),
-        new(amount: 100, price_cents: 4500),
-        new(amount: 200, price_cents: 8000)
-      ].freeze
+      available.map { |b| OpenStruct.new(amount: b.amount, price_cents: b.price_cents) }.freeze
     end
   end
 end

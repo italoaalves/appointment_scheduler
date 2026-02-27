@@ -12,7 +12,7 @@ module Spaces
 
     def show
       @subscription = current_tenant.subscription
-      @plans        = Billing::Plan.all
+      @plans        = Billing::Plan.visible
       @current_plan = @subscription&.plan
       @payments     = current_tenant.payments.order(created_at: :desc).limit(10)
       @credit       = current_tenant.message_credit
@@ -23,7 +23,7 @@ module Spaces
       unless @subscription&.active?
         redirect_to checkout_settings_billing_path and return
       end
-      @plans = Billing::Plan.all
+      @plans = Billing::Plan.visible
     end
 
     def update
@@ -49,13 +49,13 @@ module Spaces
 
     def checkout
       @subscription = current_tenant.subscription
-      @plans        = Billing::Plan.all
+      @plans        = Billing::Plan.visible
     end
 
     def subscribe
       plan_id        = params[:plan_id]
       payment_method = params[:payment_method]
-      plan           = Billing::Plan.find(plan_id)
+      plan           = Billing::Plan.find_by_slug!(plan_id)
       subscription   = current_tenant.subscription
 
       if plan.price_cents > 0
@@ -106,17 +106,27 @@ module Spaces
     private
 
     def upgrade?(subscription, new_plan_id)
-      subscription&.plan_id == "starter" && new_plan_id == "pro"
+      return false if subscription.nil?
+      current  = subscription.plan
+      new_plan = Billing::Plan.find_by_slug!(new_plan_id)
+      new_plan.price_cents > current.price_cents
+    rescue ActiveRecord::RecordNotFound
+      false
     end
 
     def downgrade?(subscription, new_plan_id)
-      subscription&.plan_id == "pro" && new_plan_id == "starter"
+      return false if subscription.nil?
+      current  = subscription.plan
+      new_plan = Billing::Plan.find_by_slug!(new_plan_id)
+      new_plan.price_cents < current.price_cents
+    rescue ActiveRecord::RecordNotFound
+      false
     end
 
     def resolve_asaas_customer(subscription)
       return subscription.asaas_customer_id if subscription&.asaas_customer_id.present?
 
-      plan = Billing::Plan.find(params[:plan_id])
+      plan = Billing::Plan.find_by_slug!(params[:plan_id])
       return nil if plan.price_cents == 0
 
       owner = current_tenant.users.find_by(id: current_tenant.owner_id) || current_user

@@ -7,7 +7,7 @@ module Platform
     setup do
       @admin = users(:admin)
       @space = spaces(:one)
-      @subscription = subscriptions(:one)  # starter, trialing, trial_ends_at: 14 days from now
+      @subscription = subscriptions(:one)  # essential, trialing, trial_ends_at: 14 days from now
     end
 
     # ── edit ─────────────────────────────────────────────────────────────────

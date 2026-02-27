@@ -72,24 +72,6 @@ module Billing
       assert_nil @subscription.trial_ends_at
     end
 
-    test "subscribe for free plan skips Asaas call and activates immediately" do
-      client = fake_client
-
-      result = Billing::SubscriptionManager.subscribe(
-        space:             @space,
-        plan_id:           "starter",
-        payment_method:    nil,
-        asaas_customer_id: nil,
-        asaas_client:      client
-      )
-
-      assert result[:success]
-      assert_not_includes client.calls, :create_subscription
-      @subscription.reload
-      assert @subscription.active?
-      assert_nil @subscription.trial_ends_at
-    end
-
     test "subscribe calls Asaas and updates local subscription" do
       client = fake_client
 
@@ -170,7 +152,7 @@ module Billing
     end
 
     test "upgrade clears pending_plan_id" do
-      @subscription.update_column(:pending_plan_id, "starter")
+      @subscription.update_column(:pending_plan_id, "essential")
 
       Billing::SubscriptionManager.upgrade(
         subscription: @subscription,
@@ -232,32 +214,32 @@ module Billing
     test "downgrade sets pending_plan_id without changing current plan_id" do
       result = Billing::SubscriptionManager.downgrade(
         subscription: @subscription,
-        new_plan_id:  "starter"
+        new_plan_id:  "essential"
       )
 
       assert result[:success]
-      assert_equal "pro",     @subscription.reload.plan_id
-      assert_equal "starter", @subscription.pending_plan_id
+      assert_equal "pro",       @subscription.reload.plan_id
+      assert_equal "essential", @subscription.pending_plan_id
     end
 
     test "downgrade logs plan.downgrade_scheduled BillingEvent" do
       assert_difference -> { Billing::BillingEvent.where(event_type: "plan.downgrade_scheduled").count } do
         Billing::SubscriptionManager.downgrade(
           subscription: @subscription,
-          new_plan_id:  "starter"
+          new_plan_id:  "essential"
         )
       end
 
       event = Billing::BillingEvent.where(event_type: "plan.downgrade_scheduled").last
-      assert_equal "starter", event.metadata["to"]
-      assert_equal "pro",     event.metadata["from"]
+      assert_equal "essential", event.metadata["to"]
+      assert_equal "pro",       event.metadata["from"]
     end
 
-    test "downgrade raises ArgumentError for unknown new_plan_id" do
-      assert_raises(ArgumentError) do
+    test "downgrade raises ActiveRecord::RecordNotFound for unknown new_plan_id" do
+      assert_raises(ActiveRecord::RecordNotFound) do
         Billing::SubscriptionManager.downgrade(
           subscription: @subscription,
-          new_plan_id:  "enterprise"
+          new_plan_id:  "bogus_plan"
         )
       end
     end

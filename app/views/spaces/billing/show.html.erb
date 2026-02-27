@@ -26,7 +26,7 @@
           <% if @subscription.pending_plan_id.present? %>
             <p class="mt-1 text-sm text-amber-600">
               <%= t("billing.show.pending_downgrade",
-                    plan: Billing::Plan.find(@subscription.pending_plan_id).name,
+                    plan: Billing::Plan.find_by_slug!(@subscription.pending_plan_id).name,
                     date: l(@subscription.current_period_end.to_date, format: :long)) %>
             </p>
           <% end %>
@@ -75,21 +75,21 @@
             <dt class="text-xs text-slate-500"><%= t("billing.show.team_members") %></dt>
             <dd class="mt-0.5 text-sm font-medium text-slate-900">
               <%= current_tenant.space_memberships.count %> /
-              <%= @current_plan.max_team_members == Float::INFINITY ? "∞" : @current_plan.max_team_members %>
+              <%= @current_plan.max_team_members.nil? ? "∞" : @current_plan.max_team_members %>
             </dd>
           </div>
           <div>
             <dt class="text-xs text-slate-500"><%= t("billing.show.customers") %></dt>
             <dd class="mt-0.5 text-sm font-medium text-slate-900">
               <%= current_tenant.customers.count %> /
-              <%= @current_plan.max_customers == Float::INFINITY ? "∞" : @current_plan.max_customers %>
+              <%= @current_plan.max_customers.nil? ? "∞" : @current_plan.max_customers %>
             </dd>
           </div>
           <div>
             <dt class="text-xs text-slate-500"><%= t("billing.show.scheduling_links") %></dt>
             <dd class="mt-0.5 text-sm font-medium text-slate-900">
               <%= current_tenant.scheduling_links.count %> /
-              <%= @current_plan.max_scheduling_links == Float::INFINITY ? "∞" : @current_plan.max_scheduling_links %>
+              <%= @current_plan.max_scheduling_links.nil? ? "∞" : @current_plan.max_scheduling_links %>
             </dd>
           </div>
         </dl>

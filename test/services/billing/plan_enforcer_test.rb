@@ -22,23 +22,23 @@ module Billing
       space
     end
 
-    # ── No subscription — defaults to Starter ─────────────────────────────────
+    # ── No subscription — defaults to Essential ────────────────────────────────
 
-    test "no subscription treats space as Starter (create_team_member with 1 member returns false)" do
-      space = make_space(plan_id: "starter", status: :no_subscription)
+    test "no subscription treats space as Essential (create_team_member with 1 member returns false)" do
+      space = make_space(plan_id: "essential", status: :no_subscription)
       SpaceMembership.create!(space: space, user: users(:manager))
 
       assert_not Billing::PlanEnforcer.can?(space, :create_team_member)
     end
 
-    test "no subscription treats space as Starter (create_customer with 0 returns true)" do
-      space = make_space(plan_id: "starter", status: :no_subscription)
+    test "no subscription treats space as Essential (create_customer with 0 returns true)" do
+      space = make_space(plan_id: "essential", status: :no_subscription)
 
       assert Billing::PlanEnforcer.can?(space, :create_customer)
     end
 
-    test "no subscription treats space as Starter (access_personalized_booking_page returns false)" do
-      space = make_space(plan_id: "starter", status: :no_subscription)
+    test "no subscription treats space as Essential (access_personalized_booking_page returns false)" do
+      space = make_space(plan_id: "essential", status: :no_subscription)
 
       assert_not Billing::PlanEnforcer.can?(space, :access_personalized_booking_page)
     end
@@ -56,25 +56,17 @@ module Billing
 
     # ── :create_team_member ───────────────────────────────────────────────────
 
-    test "Starter with 1 team member: create_team_member returns false (max is 1)" do
-      space = make_space(plan_id: "starter")
+    test "Essential with 1 team member: create_team_member returns false (max is 1)" do
+      space = make_space(plan_id: "essential")
       SpaceMembership.create!(space: space, user: users(:manager))
 
       assert_not Billing::PlanEnforcer.can?(space, :create_team_member)
     end
 
-    test "Starter with 0 team members: create_team_member returns false (owner counts as the 1)" do
-      # Starter max is 1; even empty, adding the first member means count goes 0→1 which is allowed
-      # but spec says owner is already 1 — we verify by checking count < max: 0 < 1 = true
-      # Re-reading spec: "Starter plan with 0 team members (owner only): returns false
-      # (Starter allows 1, owner is already 1)" — so we must count the owner in memberships.
-      # In this app, owner IS a space_membership. With 0 memberships, 0 < 1 = true (can add).
-      # The spec note is that the owner occupies that 1 slot.
-      # Test: create 1 membership (owner) → count = 1 → false
-      space = make_space(plan_id: "starter")
-      SpaceMembership.create!(space: space, user: users(:secretary))
+    test "Essential with 0 team members: create_team_member returns true (count 0 < max 1)" do
+      space = make_space(plan_id: "essential")
 
-      assert_not Billing::PlanEnforcer.can?(space, :create_team_member)
+      assert Billing::PlanEnforcer.can?(space, :create_team_member)
     end
 
     test "Pro with 4 team members: create_team_member returns true" do
@@ -107,14 +99,14 @@ module Billing
 
     # ── :create_customer ──────────────────────────────────────────────────────
 
-    test "Starter with 0 customers: create_customer returns true" do
-      space = make_space(plan_id: "starter")
+    test "Essential with 0 customers: create_customer returns true" do
+      space = make_space(plan_id: "essential")
 
       assert Billing::PlanEnforcer.can?(space, :create_customer)
     end
 
-    test "Starter with 100 customers: create_customer returns false" do
-      space = make_space(plan_id: "starter")
+    test "Essential with 100 customers: create_customer returns false" do
+      space = make_space(plan_id: "essential")
       Customer.insert_all(
         100.times.map { |i| { space_id: space.id, name: "Customer #{i}", created_at: Time.current, updated_at: Time.current } }
       )
@@ -122,7 +114,7 @@ module Billing
       assert_not Billing::PlanEnforcer.can?(space, :create_customer)
     end
 
-    test "Pro with 1000 customers: create_customer returns true (unlimited)" do
+    test "Pro with 100 customers: create_customer returns true (unlimited)" do
       space = make_space(plan_id: "pro", status: :active)
       Customer.insert_all(
         100.times.map { |i| { space_id: space.id, name: "Cust #{i}", created_at: Time.current, updated_at: Time.current } }
@@ -133,8 +125,8 @@ module Billing
 
     # ── :access_personalized_booking_page ────────────────────────────────────
 
-    test "Starter plan: access_personalized_booking_page returns false" do
-      space = make_space(plan_id: "starter")
+    test "Essential plan: access_personalized_booking_page returns false" do
+      space = make_space(plan_id: "essential")
 
       assert_not Billing::PlanEnforcer.can?(space, :access_personalized_booking_page)
     end
@@ -147,8 +139,8 @@ module Billing
 
     # ── :access_custom_policies ───────────────────────────────────────────────
 
-    test "Starter plan: access_custom_policies returns false" do
-      space = make_space(plan_id: "starter")
+    test "Essential plan: access_custom_policies returns false" do
+      space = make_space(plan_id: "essential")
 
       assert_not Billing::PlanEnforcer.can?(space, :access_custom_policies)
     end
@@ -191,21 +183,21 @@ module Billing
     # ── limit_for ─────────────────────────────────────────────────────────────
 
     test "limit_for returns the plan's max_team_members" do
-      space = make_space(plan_id: "starter")
-
-      assert_equal 1,             Billing::PlanEnforcer.limit_for(space, :max_team_members)
-    end
-
-    test "limit_for returns Float::INFINITY for Pro max_customers" do
-      space = make_space(plan_id: "pro", status: :active)
-
-      assert_equal Float::INFINITY, Billing::PlanEnforcer.limit_for(space, :max_customers)
-    end
-
-    test "limit_for returns Starter limits when no subscription" do
-      space = make_space(plan_id: "starter", status: :no_subscription)
+      space = make_space(plan_id: "essential")
 
       assert_equal 1, Billing::PlanEnforcer.limit_for(space, :max_team_members)
+    end
+
+    test "limit_for returns nil for Pro max_customers (unlimited)" do
+      space = make_space(plan_id: "pro", status: :active)
+
+      assert_nil Billing::PlanEnforcer.limit_for(space, :max_customers)
+    end
+
+    test "limit_for returns Essential limits when no subscription" do
+      space = make_space(plan_id: "essential", status: :no_subscription)
+
+      assert_equal 1,   Billing::PlanEnforcer.limit_for(space, :max_team_members)
       assert_equal 100, Billing::PlanEnforcer.limit_for(space, :max_customers)
     end
 

@@ -20,7 +20,7 @@ module Billing
       Billing::RefreshMonthlyQuotaJob.new.perform
 
       @credit.reload
-      assert_equal Billing::Plan.pro.whatsapp_monthly_quota, @credit.monthly_quota_remaining
+      assert_equal billing_plans(:pro).whatsapp_monthly_quota, @credit.monthly_quota_remaining
     end
 
     test "sets quota_refreshed_at to current time on refresh" do
@@ -39,7 +39,7 @@ module Billing
 
       event = Billing::BillingEvent.order(:created_at).last
       assert_equal "credits.quota_refreshed", event.event_type
-      assert_equal Billing::Plan.pro.whatsapp_monthly_quota, event.metadata["quota"]
+      assert_equal billing_plans(:pro).whatsapp_monthly_quota, event.metadata["quota"]
     end
 
     test "does not refresh when quota_refreshed_at is within the current billing period" do

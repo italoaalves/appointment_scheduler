@@ -1,0 +1,23 @@
+_fixture:
+  model_class: Billing::CreditBundle
+
+fifty:
+  name: "50 credits"
+  amount: 50
+  price_cents: 2500
+  position: 0
+  active: true
+
+hundred:
+  name: "100 credits"
+  amount: 100
+  price_cents: 4500
+  position: 1
+  active: true
+
+two_hundred:
+  name: "200 credits"
+  amount: 200
+  price_cents: 8000
+  position: 2
+  active: true

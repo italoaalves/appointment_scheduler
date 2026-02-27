@@ -29,21 +29,17 @@ module Billing
     end
 
     def subscribe(space:, plan_id:, payment_method:, asaas_customer_id:)
-      plan = Billing::Plan.find(plan_id)
+      plan = Billing::Plan.find_by_slug!(plan_id)
 
-      asaas_subscription_id = nil
-
-      unless plan.price_cents == 0
-        asaas_result = @client.create_subscription(
-          customer_id:        asaas_customer_id,
-          billing_type:       payment_method.to_sym,
-          value:              plan.price_cents / 100.0,
-          next_due_date:      Date.current.to_s,
-          description:        plan.name,
-          external_reference: "space_#{space.id}"
-        )
-        asaas_subscription_id = asaas_result["id"]
-      end
+      asaas_result = @client.create_subscription(
+        customer_id:        asaas_customer_id,
+        billing_type:       payment_method.to_sym,
+        value:              plan.price_cents / 100.0,
+        next_due_date:      Date.current.to_s,
+        description:        plan.name,
+        external_reference: "space_#{space.id}"
+      )
+      asaas_subscription_id = asaas_result["id"]
 
       subscription = nil
 
@@ -76,7 +72,7 @@ module Billing
 
     def upgrade(subscription:, new_plan_id:)
       old_plan_id = subscription.plan_id
-      new_plan    = Billing::Plan.find(new_plan_id)
+      new_plan    = Billing::Plan.find_by_slug!(new_plan_id)
 
       if subscription.asaas_subscription_id.present?
         @client.update_subscription(
@@ -102,7 +98,7 @@ module Billing
     end
 
     def downgrade(subscription:, new_plan_id:)
-      Billing::Plan.find(new_plan_id)
+      Billing::Plan.find_by_slug!(new_plan_id)
 
       ActiveRecord::Base.transaction do
         subscription.update!(pending_plan_id: new_plan_id)
@@ -151,7 +147,7 @@ module Billing
       Billing::Subscription
         .where(space_id: space.id)
         .order(created_at: :desc)
-        .first_or_initialize(space_id: space.id, plan_id: "starter", status: :trialing)
+        .first_or_initialize(space_id: space.id, status: :trialing)
     end
   end
 end

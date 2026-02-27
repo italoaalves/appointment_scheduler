@@ -7,7 +7,7 @@ module Billing
     def valid_attrs
       {
         space: spaces(:one),
-        plan_id: "starter",
+        plan_id: "essential",
         status: :trialing,
         trial_ends_at: 14.days.from_now
       }
@@ -43,12 +43,12 @@ module Billing
     test "#plan returns the Billing::Plan object" do
       sub = subscriptions(:one)
       assert_instance_of Billing::Plan, sub.plan
-      assert_equal "starter", sub.plan.id
+      assert_equal "essential", sub.plan.slug
     end
 
     test "#plan returns pro plan for pro subscription" do
       sub = subscriptions(:two)
-      assert_equal "pro", sub.plan.id
+      assert_equal "pro", sub.plan.slug
     end
   end
 end

@@ -5,7 +5,7 @@ require "test_helper"
 module Spaces
   class BillingControllerTest < ActionDispatch::IntegrationTest
     setup do
-      @manager  = users(:manager)       # spaces(:one) — Starter plan, trialing
+      @manager  = users(:manager)       # spaces(:one) — Essential plan, trialing
       @manager2 = users(:manager_two)   # spaces(:two) — Pro plan, active
     end
 
@@ -35,7 +35,7 @@ module Spaces
 
     # ── update (upgrade) ──────────────────────────────────────────────────────
 
-    test "PATCH update with upgrade from starter to pro redirects with success" do
+    test "PATCH update with upgrade from essential to pro redirects with success" do
       sign_in @manager
 
       # subscriptions(:one) has no asaas_subscription_id → no API call
@@ -46,18 +46,18 @@ module Spaces
     end
 
     test "PATCH update with same plan redirects with no_change alert" do
-      sign_in @manager  # already on starter
+      sign_in @manager  # already on essential
 
-      patch settings_billing_path, params: { plan_id: "starter" }
+      patch settings_billing_path, params: { plan_id: "essential" }
 
       assert_redirected_to settings_billing_path
       assert_equal I18n.t("billing.no_change"), flash[:alert]
     end
 
-    test "PATCH update with downgrade from pro to starter schedules downgrade" do
+    test "PATCH update with downgrade from pro to essential schedules downgrade" do
       sign_in @manager2  # on pro
 
-      patch settings_billing_path, params: { plan_id: "starter" }
+      patch settings_billing_path, params: { plan_id: "essential" }
 
       assert_redirected_to settings_billing_path
       assert_equal I18n.t("billing.downgrade_scheduled"), flash[:notice]
@@ -110,17 +110,6 @@ module Spaces
       patch resubscribe_settings_billing_path
 
       assert_redirected_to checkout_settings_billing_path
-    end
-
-    # ── subscribe (free plan) ─────────────────────────────────────────────────
-
-    test "POST subscribe with free plan activates subscription without Asaas" do
-      sign_in @manager  # trialing on starter
-
-      post subscribe_settings_billing_path, params: { plan_id: "starter" }
-
-      assert_redirected_to settings_billing_path
-      assert subscriptions(:one).reload.active?
     end
 
     # ── subscribe (paid plan) ─────────────────────────────────────────────────

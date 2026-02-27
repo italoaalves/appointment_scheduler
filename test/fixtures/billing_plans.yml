@@ -1,0 +1,45 @@
+_fixture:
+  model_class: Billing::Plan
+
+essential:
+  slug: essential
+  name: Essential
+  price_cents: 4999
+  max_team_members: 1
+  max_customers: 100
+  max_scheduling_links: 3
+  whatsapp_monthly_quota: 0
+  features: []
+  allowed_payment_methods: []
+  position: 1
+  public: true
+  highlighted: false
+  trial_default: false
+  active: true
+
+pro:
+  slug: pro
+  name: Pro
+  price_cents: 11990
+  max_team_members: 5
+  whatsapp_monthly_quota: 200
+  features: [personalized_booking_page, custom_appointment_policies, whatsapp_included_quota]
+  allowed_payment_methods: []
+  position: 2
+  public: true
+  highlighted: true
+  trial_default: true
+  active: true
+
+enterprise:
+  slug: enterprise
+  name: Enterprise
+  price_cents: 29999
+  whatsapp_monthly_quota: ~
+  features: [personalized_booking_page, custom_appointment_policies, whatsapp_included_quota, priority_support]
+  allowed_payment_methods: [credit_card]
+  position: 3
+  public: true
+  highlighted: false
+  trial_default: false
+  active: true

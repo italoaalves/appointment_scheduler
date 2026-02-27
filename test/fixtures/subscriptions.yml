@@ -3,7 +3,7 @@ _fixture:
 
 one:
   space: one
-  plan_id: "starter"
+  plan_id: "essential"
   status: 0
   trial_ends_at: <%= 14.days.from_now %>
 

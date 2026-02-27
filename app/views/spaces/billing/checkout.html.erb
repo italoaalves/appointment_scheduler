@@ -1,6 +1,6 @@
 <%
   default_plan = @subscription&.plan_id.presence || "pro"
-  plan_prices  = @plans.to_h { |p| [p.id, p.price_cents] }
+  plan_prices  = @plans.to_h { |p| [p.slug, p.price_cents] }
 %>
 <% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
   { label: t("breadcrumbs.dashboard"), path: root_path },
@@ -14,7 +14,7 @@
 <div class="space-y-4"
      x-data="{
        selectedPlan: '<%= default_plan %>',
-       planPrices: { <%= plan_prices.map { |id, price| "'#{id}': #{price}" }.join(", ") %> },
+       planPrices: { <%= plan_prices.map { |slug, price| "'#{slug}': #{price}" }.join(", ") %> },
        get isPaid() { return (this.planPrices[this.selectedPlan] || 0) > 0 }
      }">
 
@@ -28,19 +28,19 @@
     <div class="grid gap-4 sm:grid-cols-2">
       <% @plans.each do |plan| %>
         <label class="relative cursor-pointer rounded-xl border-2 p-5 shadow-sm transition"
-               :class="selectedPlan === '<%= plan.id %>'
+               :class="selectedPlan === '<%= plan.slug %>'
                          ? 'border-slate-700 bg-slate-50'
                          : 'border-slate-200 bg-white hover:border-slate-300'">
 
-          <input type="radio" name="plan_id" value="<%= plan.id %>"
+          <input type="radio" name="plan_id" value="<%= plan.slug %>"
                  x-model="selectedPlan"
                  class="sr-only" />
 
           <div class="flex items-center justify-between">
             <span class="flex items-center gap-1.5 text-sm font-semibold text-slate-900">
               <%= plan.name %>
-              <% if plan.id == "pro" %>
-                <span class="ml-1 inline-flex items-center rounded-full bg-slate-200 px-2 py-0.5 text-xs font-medium text-slate-800">✦ Pro</span>
+              <% if plan.highlighted %>
+                <span class="ml-1 inline-flex items-center rounded-full bg-slate-200 px-2 py-0.5 text-xs font-medium text-slate-800">✦ <%= plan.name %></span>
               <% end %>
             </span>
             <span class="text-sm font-semibold text-slate-700">
@@ -54,18 +54,18 @@
 
           <%# Selected checkmark %>
           <div class="absolute right-3 top-3 h-5 w-5 rounded-full border-2 flex items-center justify-center"
-               :class="selectedPlan === '<%= plan.id %>'
+               :class="selectedPlan === '<%= plan.slug %>'
                          ? 'border-slate-900 bg-slate-900'
                          : 'border-slate-300 bg-white'">
-            <svg x-show="selectedPlan === '<%= plan.id %>'" class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 12 12">
+            <svg x-show="selectedPlan === '<%= plan.slug %>'" class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 12 12">
               <path d="M3.5 6.5l2 2 3.5-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
             </svg>
           </div>
 
           <ul class="mt-4 space-y-1.5 text-xs text-slate-600">
-            <li>≤ <%= plan.max_team_members == Float::INFINITY ? "∞" : plan.max_team_members %> <%= t("billing.checkout.team_members") %></li>
-            <li>≤ <%= plan.max_customers == Float::INFINITY ? "∞" : plan.max_customers %> <%= t("billing.checkout.customers") %></li>
-            <li>≤ <%= plan.max_scheduling_links == Float::INFINITY ? "∞" : plan.max_scheduling_links %> <%= t("billing.checkout.scheduling_links") %></li>
+            <li>≤ <%= plan.max_team_members.nil? ? "∞" : plan.max_team_members %> <%= t("billing.checkout.team_members") %></li>
+            <li>≤ <%= plan.max_customers.nil? ? "∞" : plan.max_customers %> <%= t("billing.checkout.customers") %></li>
+            <li>≤ <%= plan.max_scheduling_links.nil? ? "∞" : plan.max_scheduling_links %> <%= t("billing.checkout.scheduling_links") %></li>
             <% plan.features.each do |feature| %>
               <li class="text-slate-700">✓ <%= t("billing.features.#{feature}", default: feature.to_s.humanize) %></li>
             <% end %>

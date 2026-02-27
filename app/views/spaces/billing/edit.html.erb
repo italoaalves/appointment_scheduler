@@ -14,7 +14,7 @@
 
   <div class="grid gap-4 sm:grid-cols-2">
     <% @plans.each do |plan| %>
-      <% is_current = @subscription&.plan_id == plan.id %>
+      <% is_current = @subscription&.plan_id == plan.slug %>
       <div class="rounded-xl border <%= is_current ? 'border-slate-400 ring-2 ring-slate-200' : 'border-slate-200' %> bg-white p-5 shadow-sm">
         <div class="flex items-center justify-between">
           <h2 class="text-lg font-semibold text-slate-900"><%= plan.name %></h2>
@@ -31,16 +31,16 @@
         </p>
 
         <ul class="mt-4 space-y-1.5 text-sm text-slate-700">
-          <li>✓ <%= t("billing.edit.team_members", count: plan.max_team_members == Float::INFINITY ? "∞" : plan.max_team_members) %></li>
-          <li>✓ <%= t("billing.edit.customers_limit", count: plan.max_customers == Float::INFINITY ? "∞" : plan.max_customers) %></li>
-          <li>✓ <%= t("billing.edit.links_limit", count: plan.max_scheduling_links == Float::INFINITY ? "∞" : plan.max_scheduling_links) %></li>
+          <li>✓ <%= t("billing.edit.team_members", count: plan.max_team_members.nil? ? "∞" : plan.max_team_members) %></li>
+          <li>✓ <%= t("billing.edit.customers_limit", count: plan.max_customers.nil? ? "∞" : plan.max_customers) %></li>
+          <li>✓ <%= t("billing.edit.links_limit", count: plan.max_scheduling_links.nil? ? "∞" : plan.max_scheduling_links) %></li>
           <% if plan.feature?(:personalized_booking_page) %>
             <li>✓ <%= t("billing.edit.personalized_page") %></li>
           <% end %>
           <% if plan.feature?(:custom_appointment_policies) %>
             <li>✓ <%= t("billing.edit.custom_policies") %></li>
           <% end %>
-          <% if plan.whatsapp_monthly_quota > 0 %>
+          <% if plan.whatsapp_monthly_quota.to_i > 0 %>
             <li>✓ <%= t("billing.edit.whatsapp_quota", count: plan.whatsapp_monthly_quota) %></li>
           <% end %>
         </ul>
@@ -50,7 +50,7 @@
             <%= button_to t("billing.edit.select_plan"),
                           settings_billing_path,
                           method: :patch,
-                          params: { plan_id: plan.id },
+                          params: { plan_id: plan.slug },
                           class: "w-full #{button_classes(:primary)}" %>
           </div>
         <% end %>

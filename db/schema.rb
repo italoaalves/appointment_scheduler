@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_27_142512) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_27_160000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -65,6 +65,40 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_142512) do
     t.index ["space_id", "created_at"], name: "index_billing_events_on_space_id_and_created_at"
     t.index ["space_id"], name: "index_billing_events_on_space_id"
     t.index ["subscription_id"], name: "index_billing_events_on_subscription_id"
+  end
+
+  create_table "billing_plans", force: :cascade do |t|
+    t.string "slug", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.integer "price_cents", default: 0, null: false
+    t.integer "max_team_members"
+    t.integer "max_customers"
+    t.integer "max_scheduling_links"
+    t.integer "whatsapp_monthly_quota"
+    t.jsonb "features", default: [], null: false
+    t.jsonb "allowed_payment_methods", default: [], null: false
+    t.integer "position", default: 0, null: false
+    t.boolean "public", default: true, null: false
+    t.boolean "highlighted", default: false, null: false
+    t.boolean "trial_default", default: false, null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["position"], name: "index_billing_plans_on_position"
+    t.index ["slug"], name: "index_billing_plans_on_slug", unique: true
+    t.index ["trial_default"], name: "index_billing_plans_on_trial_default", unique: true, where: "(trial_default = true)"
+  end
+
+  create_table "credit_bundles", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "amount", null: false
+    t.integer "price_cents", null: false
+    t.integer "position", default: 0, null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["position"], name: "index_credit_bundles_on_position"
   end
 
   create_table "customers", force: :cascade do |t|

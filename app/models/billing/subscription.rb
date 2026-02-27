@@ -13,12 +13,12 @@ module Billing
     enum :status, { trialing: 0, active: 1, past_due: 2, canceled: 3, expired: 4 }
     enum :payment_method, { pix: 0, credit_card: 1, boleto: 2 }, prefix: true
 
-    validates :plan_id,   presence: true,
-                          inclusion: { in: ->(_) { Billing::Plan.all.map(&:id) } }
-    validates :space_id,  presence: true
+    validates :plan_id,  presence: true,
+                         inclusion: { in: ->(_) { Billing::Plan.pluck(:slug) } }
+    validates :space_id, presence: true
 
     def plan
-      Billing::Plan.find(plan_id)
+      Billing::Plan.find_by_slug!(plan_id)
     end
   end
 end
