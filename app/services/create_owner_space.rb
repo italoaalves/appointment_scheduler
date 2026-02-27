@@ -10,6 +10,7 @@ class CreateOwnerSpace
   end
 
   def call
+    return if @user.super_admin?
     return unless @user.can?(:own_space) && !SpaceMembership.exists?(user_id: @user.id)
 
     space = Space.new(name: @user.name.presence || @user.email)

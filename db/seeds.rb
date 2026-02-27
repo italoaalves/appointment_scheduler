@@ -6,9 +6,14 @@ end
 
 puts "🌱 Seeding database..."
 
+Billing::BillingEvent.destroy_all
+Billing::Payment.destroy_all
+Billing::Subscription.destroy_all
+Billing::MessageCredit.destroy_all
 Appointment.destroy_all
 Customer.destroy_all
 UserPreference.destroy_all
+Space.update_all(owner_id: nil)  # break circular FK (spaces.owner_id → users)
 User.destroy_all
 Space.destroy_all
 
@@ -36,6 +41,46 @@ manager = User.new(
 end
 manager.save!
 space = manager.reload.space
+
+# ---- BILLING: upgrade auto-created trial to active Pro subscription ----
+subscription = space.subscription
+subscription.update!(
+  status: :active,
+  plan_id: "pro",
+  current_period_start: Time.current,
+  current_period_end: 30.days.from_now,
+  trial_ends_at: nil
+)
+
+credit = space.message_credit
+credit.update!(
+  balance: 25,
+  monthly_quota_remaining: 180
+)
+
+Billing::Payment.create!(
+  subscription: subscription,
+  space: space,
+  asaas_payment_id: "pay_seed_001",
+  amount_cents: 9900,
+  payment_method: :pix,
+  status: :confirmed,
+  paid_at: 2.days.ago
+)
+
+Billing::BillingEvent.create!(
+  space: space,
+  subscription: subscription,
+  event_type: "subscription.activated",
+  metadata: { plan_id: "pro", payment_method: "pix" }
+)
+
+Billing::BillingEvent.create!(
+  space: space,
+  subscription: subscription,
+  event_type: "credits.purchased",
+  metadata: { amount: 25 }
+)
 
 # Default timezone and business hours (Mon–Fri 9:00–17:00)
 space.update!(timezone: "America/Sao_Paulo")
@@ -149,3 +194,5 @@ puts "✅ Seed completed!"
 puts "SaaS admin: admin@example.com / password123"
 puts "Manager (tenant owner): manager@example.com / password123"
 puts "Secretary: secretary@example.com / password123"
+puts "Billing: Active Pro subscription for #{space.name}"
+puts "Credits: #{credit.balance} purchased + #{credit.monthly_quota_remaining} monthly quota"
