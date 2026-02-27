@@ -33,6 +33,10 @@ class Space < ApplicationRecord
     availability_configured? && scheduling_links.any?
   end
 
+  def onboarding_complete?
+    completed_onboarding_at.present?
+  end
+
   # Returns array of weekday integers (0=Sunday..6=Saturday) when the space has availability.
   def business_weekdays
     return [] unless availability_schedule

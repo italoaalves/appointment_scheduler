@@ -51,6 +51,7 @@ pt-BR:
       password: "Senha"
       password_confirmation: "Confirme a senha"
       sign_up_button: "Cadastrar"
+      trial_message: "Comece seu trial gratuito de 14 dias. Não precisa de cartão de crédito."
       already_account: "Já tem uma conta?"
       sign_in_link: "Entrar"
     sessions:

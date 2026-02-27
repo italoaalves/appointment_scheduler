@@ -67,6 +67,17 @@ pt-BR:
     update:
       notice: "Preferências atualizadas."
 
+  onboarding:
+    owner_only: "Apenas o dono do espaço pode concluir o onboarding."
+    skip_link: "Pular e ir para o painel"
+    progress:
+      step1: "Conte sobre seu negócio"
+      step2: "Confirme sua disponibilidade"
+      step3: "Sua página de agendamento está pronta"
+    step1_placeholder: "Etapa 1 em breve."
+    step2_placeholder: "Etapa 2 em breve."
+    step3_placeholder: "Etapa 3 em breve."
+
   layout:
     app_name: "Agendador de Consultas"
     nav:

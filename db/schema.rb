@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_27_032748) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_27_035602) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -193,6 +193,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_032748) do
     t.integer "reschedule_min_hours_before"
     t.integer "request_max_days_ahead"
     t.integer "request_min_hours_ahead"
+    t.integer "onboarding_step", default: 0, null: false
+    t.datetime "completed_onboarding_at"
+    t.datetime "onboarding_nudge_sent_at"
     t.index ["owner_id"], name: "index_spaces_on_owner_id"
   end
 
@@ -230,6 +233,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_032748) do
     t.string "locale", default: "pt-BR", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "dismissed_welcome_card", default: false, null: false
     t.index ["user_id"], name: "index_user_preferences_on_user_id", unique: true
   end
 

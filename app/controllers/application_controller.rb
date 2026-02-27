@@ -22,7 +22,12 @@ class ApplicationController < ActionController::Base
 
   def after_sign_in_path_for(resource)
     return platform_root_path if resource.super_admin?
-    return root_path if resource.can?(:access_space_dashboard)
+
+    if resource.can?(:access_space_dashboard)
+      space = resource.space
+      return onboarding_path if space.present? && !space.onboarding_complete? && resource.space_owner?
+      return root_path
+    end
 
     stored_location_for(resource) || root_path
   end

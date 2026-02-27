@@ -64,6 +64,7 @@ module Tenant
 
     test "manager can destroy customer" do
       sign_in @manager
+      @customer.appointments.update_all(status: Appointment.statuses[:cancelled])
       assert_difference "Customer.count", -1 do
         delete customer_url(@customer)
       end

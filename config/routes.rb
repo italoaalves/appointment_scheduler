@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
-  devise_for :users
+  devise_for :users, controllers: { registrations: "users/registrations" }
   root "dashboard#index"
 
   resource :profile, only: [ :edit, :update ], controller: "profiles"
@@ -36,6 +36,8 @@ Rails.application.routes.draw do
     resource :personalized_scheduling_link, only: [ :new, :create, :edit, :update, :destroy ], path: "personalized_link"
     resources :users, path: "team"
   end
+
+  get "onboarding", to: "onboarding/wizard#show", as: :onboarding
 
   scope path: "settings", module: "spaces", as: "settings" do
     resource :space, only: [ :edit, :update ], controller: "space" do
