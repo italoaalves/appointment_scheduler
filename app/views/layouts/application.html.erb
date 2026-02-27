@@ -196,36 +196,7 @@
 
     <%= render "shared/billing_banner" %>
 
-    <% if notice.present? || alert.present? %>
-      <div class="mx-auto mt-4 max-w-4xl px-4 space-y-2">
-        <% if notice.present? %>
-          <div x-data="{ show: true }"
-               x-show="show"
-               x-transition
-               class="flex items-start justify-between rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
-            <span><%= notice %></span>
-            <button type="button"
-                    class="ml-3 text-emerald-700 hover:text-emerald-900"
-                    @click="show = false">
-              &times;
-            </button>
-          </div>
-        <% end %>
-        <% if alert.present? %>
-          <div x-data="{ show: true }"
-               x-show="show"
-               x-transition
-               class="flex items-start justify-between rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
-            <span><%= alert %></span>
-            <button type="button"
-                    class="ml-3 text-red-700 hover:text-red-900"
-                    @click="show = false">
-              &times;
-            </button>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
+    <%= render "shared/flash_messages" %>
 
     <main class="mx-auto px-4 py-8 <%= content_for?(:settings_sidebar) ? 'max-w-5xl' : 'max-w-4xl' %>">
       <%= yield(:breadcrumbs) if content_for?(:breadcrumbs) %>

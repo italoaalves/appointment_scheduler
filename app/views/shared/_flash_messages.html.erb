@@ -1,0 +1,33 @@
+<%# Renders notice/alert flash messages.
+    Locals:
+      dismissible:     (Boolean, default: true)  — wrap in Alpine x-data for dismiss button
+      container_class: (String, default: "max-w-4xl") — max-width of the outer container
+%>
+<% dismissible     = local_assigns.fetch(:dismissible, true) %>
+<% container_class = local_assigns.fetch(:container_class, "max-w-4xl") %>
+<% if notice.present? || alert.present? %>
+  <div class="mx-auto mt-4 <%= container_class %> px-4 space-y-2">
+    <% { notice: notice, alert: alert }.compact_blank.each do |type, message| %>
+      <% colors = type == :notice \
+           ? { border: "border-emerald-200", bg: "bg-emerald-50", text: "text-emerald-800", btn: "text-emerald-700 hover:text-emerald-900" } \
+           : { border: "border-red-200",     bg: "bg-red-50",     text: "text-red-800",     btn: "text-red-700 hover:text-red-900" } %>
+      <% if dismissible %>
+        <div x-data="{ show: true }"
+             x-show="show"
+             x-transition
+             class="flex items-start justify-between rounded-lg border <%= colors[:border] %> <%= colors[:bg] %> px-3 py-2 text-sm <%= colors[:text] %>">
+          <span><%= message %></span>
+          <button type="button"
+                  class="ml-3 <%= colors[:btn] %>"
+                  @click="show = false">
+            &times;
+          </button>
+        </div>
+      <% else %>
+        <div class="rounded-lg border <%= colors[:border] %> <%= colors[:bg] %> px-3 py-2 text-sm <%= colors[:text] %>">
+          <%= message %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
