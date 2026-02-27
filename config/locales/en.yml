@@ -148,6 +148,11 @@ en:
       customers_title: "Customers"
       customers_body: "Create, edit, or remove customer accounts and view their history."
       customers_cta: "Manage customers"
+    onboarding:
+      checklist_title: "Welcome! Let's get your space ready for booking."
+      set_business_hours: "Set your business hours"
+      create_booking_link: "Create your first booking link"
+      trial_active: "Your 14-day Pro trial is active"
     customer:
       my_appointments_title: "My appointments"
       my_appointments_body: "Review the status and details of all your requests."
@@ -465,7 +470,8 @@ en:
         edit: "Edit"
         delete: "Delete"
         delete_confirm: "Delete this booking link?"
-        empty: "No booking links yet. Create one to let customers schedule appointments without logging in."
+        empty: "You don't have any booking links yet. Create one to start accepting appointments."
+        create_cta: "Create booking link"
       show:
         untitled: "Booking link"
         active: "Active"

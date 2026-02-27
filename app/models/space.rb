@@ -24,6 +24,15 @@ class Space < ApplicationRecord
 
   # business_hours: cached display string; updated by AvailabilitySchedule callback. Read-only.
 
+  def availability_configured?
+    availability_schedule.present? &&
+      availability_schedule.availability_windows.where.not(opens_at: nil).where.not(closes_at: nil).exists?
+  end
+
+  def setup_complete?
+    availability_configured? && scheduling_links.any?
+  end
+
   # Returns array of weekday integers (0=Sunday..6=Saturday) when the space has availability.
   def business_weekdays
     return [] unless availability_schedule

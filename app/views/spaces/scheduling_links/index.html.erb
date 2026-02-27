@@ -85,6 +85,9 @@
       </table>
     </div>
   <% else %>
-    <%= render "application/shared/empty_state", content: t("space.scheduling_links.index.empty") %>
+    <%= render "application/shared/empty_state",
+               content: t("space.scheduling_links.index.empty"),
+               cta_path: (new_scheduling_link_path if Billing::PlanEnforcer.can?(current_tenant, :create_scheduling_link)),
+               cta_text: t("space.scheduling_links.index.create_cta") %>
   <% end %>
 </div>

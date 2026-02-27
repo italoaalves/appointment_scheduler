@@ -1,0 +1,42 @@
+<%
+  space = local_assigns.fetch(:space)
+  availability_done = space.availability_configured?
+  scheduling_link_done = space.scheduling_links.any?
+  subscription = space.subscription
+  trial_active = subscription&.trialing?
+%>
+<div class="rounded-xl border border-indigo-200 bg-indigo-50 p-6 shadow-sm">
+  <h2 class="text-lg font-semibold text-slate-900">
+    <%= t("dashboard.onboarding.checklist_title") %>
+  </h2>
+  <ul class="mt-4 space-y-3">
+    <li class="flex items-start gap-3">
+      <% if availability_done %>
+        <span class="mt-0.5 shrink-0 text-emerald-600" aria-hidden="true">✓</span>
+        <span class="text-sm text-slate-600"><%= t("dashboard.onboarding.set_business_hours") %></span>
+      <% else %>
+        <span class="mt-0.5 shrink-0 text-slate-400" aria-hidden="true">☐</span>
+        <%= link_to t("dashboard.onboarding.set_business_hours"),
+                    edit_settings_space_availability_path,
+                    class: "text-sm font-medium text-indigo-700 hover:text-indigo-900 hover:underline" %>
+      <% end %>
+    </li>
+    <li class="flex items-start gap-3">
+      <% if scheduling_link_done %>
+        <span class="mt-0.5 shrink-0 text-emerald-600" aria-hidden="true">✓</span>
+        <span class="text-sm text-slate-600"><%= t("dashboard.onboarding.create_booking_link") %></span>
+      <% else %>
+        <span class="mt-0.5 shrink-0 text-slate-400" aria-hidden="true">☐</span>
+        <%= link_to t("dashboard.onboarding.create_booking_link"),
+                    new_scheduling_link_path,
+                    class: "text-sm font-medium text-indigo-700 hover:text-indigo-900 hover:underline" %>
+      <% end %>
+    </li>
+    <% if trial_active %>
+      <li class="flex items-start gap-3">
+        <span class="mt-0.5 shrink-0 text-emerald-600" aria-hidden="true">✓</span>
+        <span class="text-sm text-slate-600"><%= t("dashboard.onboarding.trial_active") %></span>
+      </li>
+    <% end %>
+  </ul>
+</div>

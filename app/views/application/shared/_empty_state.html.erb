@@ -1,3 +1,8 @@
 <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-sm text-slate-600">
-  <%= content %>
+  <div><%= content %></div>
+  <% if local_assigns[:cta_path].present? && local_assigns[:cta_text].present? %>
+    <div class="mt-4">
+      <%= link_to cta_text, cta_path, class: button_classes(:primary) %>
+    </div>
+  <% end %>
 </div>

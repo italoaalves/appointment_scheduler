@@ -119,6 +119,11 @@ pt-BR:
       customers_title: "Clientes"
       customers_body: "Crie, edite ou remova clientes e veja o histórico deles."
       customers_cta: "Gerenciar clientes"
+    onboarding:
+      checklist_title: "Bem-vindo! Vamos preparar seu espaço para agendamentos."
+      set_business_hours: "Definir horário de funcionamento"
+      create_booking_link: "Criar seu primeiro link de agendamento"
+      trial_active: "Seu trial Pro de 14 dias está ativo"
     customer:
       my_appointments_title: "Minhas consultas"
       my_appointments_body: "Revise o status e detalhes de todos os seus pedidos."
@@ -436,7 +441,8 @@ pt-BR:
         edit: "Editar"
         delete: "Excluir"
         delete_confirm: "Excluir este link de agendamento?"
-        empty: "Nenhum link ainda. Crie um para que clientes agendem sem fazer login."
+        empty: "Você ainda não tem links de agendamento. Crie um para começar a receber consultas."
+        create_cta: "Criar link de agendamento"
       show:
         untitled: "Link de agendamento"
         active: "Ativo"
@@ -912,7 +918,8 @@ pt-BR:
         active: "Ativo"
         inactive: "Inativo"
         view: "Ver"
-        empty: "Nenhum link ainda. Crie um para que clientes agendem sem fazer login."
+        empty: "Você ainda não tem links de agendamento. Crie um para começar a receber consultas."
+        create_cta: "Criar link de agendamento"
       show:
         untitled: "Link de agendamento"
         active: "Ativo"

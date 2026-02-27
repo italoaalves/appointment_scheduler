@@ -6,6 +6,12 @@
     </p>
   </header>
 
+  <% if !current_tenant.setup_complete? %>
+    <div class="mb-6">
+      <%= render "dashboard/setup_checklist", space: current_tenant %>
+    </div>
+  <% end %>
+
   <div class="mb-6">
     <%= render "calendar_overview" %>
   </div>
