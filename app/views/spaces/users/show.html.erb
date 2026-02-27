@@ -43,7 +43,7 @@
         <%= button_to t("space.users.show.delete_team_member"),
                       user_path(@user),
                       method: :delete,
-                      data: { turbo_confirm: t("space.users.show.delete_team_member_confirm") },
+                      data: { turbo_confirm: t("space.users.show.delete_team_member_confirm"), turbo_submits_with: t("shared.deleting") },
                       class: button_classes(:danger) %>
       <% end %>
     <% end %>

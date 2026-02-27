@@ -34,7 +34,7 @@
                 <div class="flex flex-wrap justify-end gap-1">
                   <%= link_to t("space.customers.index.view"), customer_path(customer), class: button_classes(:table_link) %>
                   <%= link_to t("space.customers.index.edit"), edit_customer_path(customer), class: button_classes(:table_link) %>
-                  <%= button_to t("space.customers.index.delete"), customer_path(customer), method: :delete, data: { turbo_confirm: t("space.customers.index.delete_confirm") }, class: button_classes(:danger) %>
+                  <%= button_to t("space.customers.index.delete"), customer_path(customer), method: :delete, data: { turbo_confirm: t("space.customers.index.delete_confirm"), turbo_submits_with: t("shared.deleting") }, class: button_classes(:danger) %>
                 </div>
               </td>
             </tr>

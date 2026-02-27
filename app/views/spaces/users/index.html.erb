@@ -48,7 +48,7 @@
                   <% if current_user.can?(:manage_team) %>
                     <%= link_to t("space.users.index.edit"), edit_user_path(user), class: button_classes(:table_link) %>
                     <% unless user.space_owner?(current_tenant) %>
-                      <%= button_to t("space.users.index.delete"), user_path(user), method: :delete, data: { turbo_confirm: t("space.users.index.delete_confirm") }, class: button_classes(:table_danger) %>
+                      <%= button_to t("space.users.index.delete"), user_path(user), method: :delete, data: { turbo_confirm: t("space.users.index.delete_confirm"), turbo_submits_with: t("shared.deleting") }, class: button_classes(:table_danger) %>
                     <% end %>
                   <% end %>
                 </div>

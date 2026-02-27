@@ -36,7 +36,7 @@
       <%= date_field_tag :date_to, params[:date_to], class: "rounded-md border-slate-300 text-sm focus:border-slate-500 focus:ring-slate-500" %>
     </div>
     <div class="flex gap-2">
-      <%= submit_tag t("space.appointments.filters.apply"), class: button_classes(:primary) %>
+      <%= submit_tag t("space.appointments.filters.apply"), class: button_classes(:primary), data: { turbo_submits_with: t("shared.submitting") } %>
       <%= link_to t("space.appointments.filters.clear"), appointments_path, class: button_classes(:secondary) %>
     </div>
   <% end %>
@@ -93,7 +93,7 @@
                     <%= button_to t("space.appointments.index.cancel"), cancel_appointment_path(appointment), method: :patch, data: { turbo_confirm: t("space.appointments.index.cancel_confirm") }, class: button_classes(:table_cancel) %>
                   <% end %>
                   <% if current_user.can?(:destroy_appointments) %>
-                    <%= button_to t("space.appointments.index.delete"), appointment_path(appointment), method: :delete, data: { turbo_confirm: t("space.appointments.index.delete_confirm") }, class: button_classes(:table_danger) %>
+                    <%= button_to t("space.appointments.index.delete"), appointment_path(appointment), method: :delete, data: { turbo_confirm: t("space.appointments.index.delete_confirm"), turbo_submits_with: t("shared.deleting") }, class: button_classes(:table_danger) %>
                   <% end %>
                 </div>
               </td>

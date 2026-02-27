@@ -35,7 +35,7 @@
       <%= date_field_tag :date_to, params[:date_to], class: "rounded-md border-slate-300 text-sm focus:border-slate-500 focus:ring-slate-500" %>
     </div>
     <div class="flex gap-2">
-      <%= submit_tag t("platform.appointments.filters.apply"), class: button_classes(:primary) %>
+      <%= submit_tag t("platform.appointments.filters.apply"), class: button_classes(:primary), data: { turbo_submits_with: t("shared.submitting") } %>
       <%= link_to t("platform.appointments.filters.clear"), platform_space_appointments_path(@space), class: button_classes(:secondary) %>
     </div>
   <% end %>

@@ -65,7 +65,7 @@
     <% end %>
 
     <% if current_user.can?(:destroy_appointments) %>
-      <%= button_to t("space.appointments.index.delete"), appointment_path(@appointment), method: :delete, data: { turbo_confirm: t("space.appointments.index.delete_confirm") }, class: button_classes(:danger) %>
+      <%= button_to t("space.appointments.index.delete"), appointment_path(@appointment), method: :delete, data: { turbo_confirm: t("space.appointments.index.delete_confirm"), turbo_submits_with: t("shared.deleting") }, class: button_classes(:danger) %>
     <% end %>
   </div>
 </div>

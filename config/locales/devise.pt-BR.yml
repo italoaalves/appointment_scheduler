@@ -3,6 +3,7 @@
 pt-BR:
   devise:
     confirmations:
+      submit_loading: "Enviando…"
       confirmed: "Sua conta foi confirmada com sucesso. Você está logado."
       send_instructions: "Dentro de minutos, você receberá um e-mail com instruções para a confirmação da sua conta."
       send_paranoid_instructions: "Se o seu endereço de e-mail estiver cadastrado, você receberá uma mensagem com instruções para confirmação da sua conta."
@@ -31,6 +32,8 @@ pt-BR:
       failure: "Não foi possível autenticá-lo como %{kind} porque %{reason}."
       success: "Autenticado com sucesso com uma conta de %{kind}."
     passwords:
+      submit_loading: "Enviando…"
+      change_loading: "Alterando…"
       no_token: "Você só pode acessar essa página através de um e-mail de troca de senha. Se já estiver acessando por um e-mail, verifique se a URL fornecida está completa."
       send_instructions: "Dentro de minutos, você receberá um e-mail com instruções para a troca da sua senha."
       send_paranoid_instructions: "Se o seu endereço de e-mail estiver cadastrado, você receberá um link de recuperação da senha via e-mail."
@@ -52,6 +55,8 @@ pt-BR:
       password_confirmation: "Confirme a senha"
       sign_up_button: "Cadastrar"
       submit_loading: "Criando conta…"
+      update_loading: "Atualizando…"
+      cancel_loading: "Cancelando…"
       trial_message: "Comece seu trial gratuito de 14 dias. Não precisa de cartão de crédito."
       already_account: "Já tem uma conta?"
       sign_in_link: "Entrar"
@@ -69,6 +74,7 @@ pt-BR:
       sign_up_link: "Cadastre-se"
       forgot_password_link: "Esqueceu sua senha?"
     unlocks:
+      submit_loading: "Enviando…"
       send_instructions: "Dentro de minutos, você receberá um email com instruções para o desbloqueio da sua conta."
       send_paranoid_instructions: "Se sua conta existir, você receberá um e-mail com instruções para desbloqueá-la em alguns minutos."
       unlocked: "Sua conta foi desbloqueada com sucesso. Efetue login para continuar."

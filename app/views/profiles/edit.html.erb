@@ -36,7 +36,7 @@
       </div>
 
       <div class="flex flex-wrap gap-3 pt-2">
-        <%= form.submit t("profiles.edit.submit"), class: button_classes(:primary) %>
+        <%= form.submit t("profiles.edit.submit"), class: button_classes(:primary), data: { turbo_submits_with: t("shared.submitting") } %>
         <%= link_to t("profiles.edit.back"), root_path, class: button_classes(:secondary) %>
       </div>
     <% end %>

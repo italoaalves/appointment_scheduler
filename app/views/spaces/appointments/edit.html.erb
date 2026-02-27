@@ -50,7 +50,8 @@
 
       <div class="flex flex-wrap gap-3">
         <%= form.submit t("space.appointments.edit.submit"),
-                        class: button_classes(:primary) %>
+                        class: button_classes(:primary),
+                        data: { turbo_submits_with: t("shared.submitting") } %>
         <%= link_to t("space.appointments.edit.back_to_appointment"),
                     appointment_path(@appointment),
                     class: button_classes(:secondary) %>

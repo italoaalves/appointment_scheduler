@@ -56,7 +56,7 @@
                   <% end %>
                   <%= link_to t("platform.users.index.view"), platform_user_path(user, space_id: params[:space_id].presence), class: button_classes(:table_link) %>
                   <%= link_to t("platform.users.index.edit"), edit_platform_user_path(user, space_id: params[:space_id].presence), class: button_classes(:table_link) %>
-                  <%= button_to t("platform.users.index.delete"), platform_user_path(user), method: :delete, params: { space_id: params[:space_id].presence }, data: { turbo_confirm: t("platform.users.index.delete_confirm") }, class: button_classes(:danger) %>
+                  <%= button_to t("platform.users.index.delete"), platform_user_path(user), method: :delete, params: { space_id: params[:space_id].presence }, data: { turbo_confirm: t("platform.users.index.delete_confirm"), turbo_submits_with: t("shared.deleting") }, class: button_classes(:danger) %>
                 </div>
               </td>
             </tr>

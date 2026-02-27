@@ -6,7 +6,7 @@
       <%= render "permission_fields", form: form %>
 
       <div class="flex flex-wrap gap-3">
-        <%= form.submit t("space.users.edit.submit"), class: button_classes(:primary) %>
+        <%= form.submit t("space.users.edit.submit"), class: button_classes(:primary), data: { turbo_submits_with: t("shared.submitting") } %>
         <%= link_to t("space.users.edit.back_to_user"), user_path(@user), class: button_classes(:secondary) %>
         <%= link_to t("space.users.edit.all_team"), users_path, class: button_classes(:secondary) %>
       </div>

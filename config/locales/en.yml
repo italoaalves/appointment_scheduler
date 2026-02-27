@@ -731,6 +731,7 @@ en:
     no_change: "You're already on this plan."
     resubscribe_unavailable: "Please contact support to resubscribe."
     checkout:
+      submit_loading: "Subscribing…"
       title: "Choose your plan"
       subtitle: "Select a plan and payment method to start your subscription."
       free: "Free"

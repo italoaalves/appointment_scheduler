@@ -51,7 +51,7 @@
                   platform_user_path(@user),
                   method: :delete,
                   params: { space_id: params[:space_id].presence },
-                  data: { turbo_confirm: t("platform.users.show.delete_confirm") },
+                  data: { turbo_confirm: t("platform.users.show.delete_confirm"), turbo_submits_with: t("shared.deleting") },
                   class: button_classes(:danger) %>
   </div>
 </div>

@@ -731,6 +731,7 @@ pt-BR:
         history_title: "Histórico de créditos"
         no_history: "Nenhum histórico de créditos ainda."
     checkout:
+      submit_loading: "Assinando…"
       title: "Escolha seu plano"
       subtitle: "Selecione um plano e forma de pagamento para iniciar sua assinatura."
       free: "Gratuito"

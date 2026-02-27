@@ -49,7 +49,7 @@
         <%= label_tag :days, t("platform.subscription_overrides.days_label"), class: form_label_classes %>
         <%= number_field_tag :days, nil, min: 1, placeholder: "e.g. 14", class: form_input_classes("max-w-[8rem]") %>
       </div>
-      <button type="submit" class="<%= button_classes(:primary) %>"><%= t("platform.subscription_overrides.extend_button") %></button>
+      <button type="submit" class="<%= button_classes(:primary) %>" data-turbo-submits-with="<%= t("shared.submitting") %>"><%= t("platform.subscription_overrides.extend_button") %></button>
     <% end %>
   <% end %>
 
@@ -62,7 +62,7 @@
         <%= label_tag :plan_id, t("platform.subscription_overrides.plan_label"), class: form_label_classes %>
         <%= select_tag :plan_id, options_for_select(@plans.map { |p| [p.name, p.id] }, @subscription&.plan_id), class: form_input_classes("max-w-[8rem]") %>
       </div>
-      <button type="submit" class="<%= button_classes(:secondary) %>"><%= t("platform.subscription_overrides.change_button") %></button>
+      <button type="submit" class="<%= button_classes(:secondary) %>" data-turbo-submits-with="<%= t("shared.submitting") %>"><%= t("platform.subscription_overrides.change_button") %></button>
     <% end %>
   <% end %>
 
@@ -75,7 +75,7 @@
         <%= label_tag :amount, t("platform.subscription_overrides.amount_label"), class: form_label_classes %>
         <%= number_field_tag :amount, nil, min: 1, placeholder: "e.g. 100", class: form_input_classes("max-w-[8rem]") %>
       </div>
-      <button type="submit" class="<%= button_classes(:success) %>"><%= t("platform.subscription_overrides.grant_button") %></button>
+      <button type="submit" class="<%= button_classes(:success) %>" data-turbo-submits-with="<%= t("shared.submitting") %>"><%= t("platform.subscription_overrides.grant_button") %></button>
     <% end %>
   <% end %>
 </div>

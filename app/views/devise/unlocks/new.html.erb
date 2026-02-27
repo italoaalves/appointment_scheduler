@@ -9,7 +9,7 @@
   </div>
 
   <div class="actions">
-    <%= f.submit "Resend unlock instructions" %>
+    <%= f.submit "Resend unlock instructions", data: { turbo_submits_with: t("devise.unlocks.submit_loading") } %>
   </div>
 <% end %>
 

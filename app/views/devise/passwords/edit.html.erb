@@ -18,7 +18,7 @@
   </div>
 
   <div class="actions">
-    <%= f.submit "Change my password" %>
+    <%= f.submit "Change my password", data: { turbo_submits_with: t("devise.passwords.change_loading") } %>
   </div>
 <% end %>
 

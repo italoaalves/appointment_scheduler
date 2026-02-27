@@ -28,7 +28,8 @@
       <div class="flex flex-wrap gap-3">
         <% if changes_left > 0 %>
           <%= form.submit t("space.personalized_scheduling_links.edit.submit"),
-                        class: button_classes(:primary) %>
+                        class: button_classes(:primary),
+                        data: { turbo_submits_with: t("shared.submitting") } %>
         <% end %>
         <%= link_to t("space.personalized_scheduling_links.edit.cancel"),
                     scheduling_links_path,
@@ -43,7 +44,7 @@
     <%= button_to t("space.personalized_scheduling_links.edit.remove"),
                   personalized_scheduling_link_path,
                   method: :delete,
-                  data: { turbo_confirm: t("space.personalized_scheduling_links.edit.remove_confirm") },
+                  data: { turbo_confirm: t("space.personalized_scheduling_links.edit.remove_confirm"), turbo_submits_with: t("shared.removing") },
                   class: "mt-3 #{button_classes(:destructive)}" %>
   </div>
 </div>

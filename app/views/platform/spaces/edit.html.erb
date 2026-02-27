@@ -16,7 +16,7 @@
       </div>
 
       <div class="flex flex-wrap gap-3">
-        <%= form.submit t("platform.spaces.edit.submit"), class: button_classes(:primary) %>
+        <%= form.submit t("platform.spaces.edit.submit"), class: button_classes(:primary), data: { turbo_submits_with: t("shared.submitting") } %>
         <%= link_to t("platform.spaces.edit.back"), platform_space_path(@space), class: button_classes(:secondary) %>
         <%= link_to t("platform.spaces.edit.all_spaces"), platform_spaces_path, class: button_classes(:secondary) %>
       </div>

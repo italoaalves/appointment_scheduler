@@ -34,7 +34,7 @@
                   <%= link_to t("platform.spaces.index.view"), platform_space_path(space), class: button_classes(:table_link) %>
                   <%= link_to t("platform.spaces.index.edit"), edit_platform_space_path(space), class: button_classes(:table_link) %>
                   <%= link_to t("platform.spaces.index.manage_users"), platform_users_path(space_id: space.id), class: button_classes(:table_link) %>
-                  <%= button_to t("platform.spaces.index.delete"), platform_space_path(space), method: :delete, data: { turbo_confirm: t("platform.spaces.index.delete_confirm") }, class: button_classes(:danger) %>
+                  <%= button_to t("platform.spaces.index.delete"), platform_space_path(space), method: :delete, data: { turbo_confirm: t("platform.spaces.index.delete_confirm"), turbo_submits_with: t("shared.deleting") }, class: button_classes(:danger) %>
                 </div>
               </td>
             </tr>

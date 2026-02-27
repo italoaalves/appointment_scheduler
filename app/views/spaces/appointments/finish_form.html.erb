@@ -24,7 +24,8 @@
 
       <div class="flex flex-wrap gap-3">
         <%= form.submit t("space.appointments.finish.submit"),
-                        class: button_classes(:success) %>
+                        class: button_classes(:success),
+                        data: { turbo_submits_with: t("shared.submitting") } %>
         <%= link_to t("space.appointments.finish.cancel"),
                     appointment_path(@appointment),
                     class: button_classes(:secondary) %>

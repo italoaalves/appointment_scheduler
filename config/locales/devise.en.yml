@@ -3,6 +3,7 @@
 en:
   devise:
     confirmations:
+      submit_loading: "Sending…"
       confirmed: "Your email address has been successfully confirmed."
       send_instructions: "You will receive an email with instructions for how to confirm your email address in a few minutes."
       send_paranoid_instructions: "If your email address exists in our database, you will receive an email with instructions for how to confirm your email address in a few minutes."
@@ -31,6 +32,8 @@ en:
       failure: "Could not authenticate you from %{kind} because \"%{reason}\"."
       success: "Successfully authenticated from %{kind} account."
     passwords:
+      submit_loading: "Sending…"
+      change_loading: "Changing…"
       no_token: "You can't access this page without coming from a password reset email. If you do come from a password reset email, please make sure you used the full URL provided."
       send_instructions: "You will receive an email with instructions on how to reset your password in a few minutes."
       send_paranoid_instructions: "If your email address exists in our database, you will receive a password recovery link at your email address in a few minutes."
@@ -52,6 +55,8 @@ en:
       password_confirmation: "Password Confirmation"
       sign_up_button: "Sign Up"
       submit_loading: "Creating account…"
+      update_loading: "Updating…"
+      cancel_loading: "Canceling…"
       trial_message: "Start your 14-day free trial. No credit card required."
       already_account: "Already have an account?"
       sign_in_link: "Sign In"
@@ -69,6 +74,7 @@ en:
       sign_up_link: "Sign Up"
       forgot_password_link: "Forgot your password?"
     unlocks:
+      submit_loading: "Sending…"
       send_instructions: "You will receive an email with instructions for how to unlock your account in a few minutes."
       send_paranoid_instructions: "If your account exists, you will receive an email with instructions for how to unlock it in a few minutes."
       unlocked: "Your account has been unlocked successfully. Please sign in to continue."

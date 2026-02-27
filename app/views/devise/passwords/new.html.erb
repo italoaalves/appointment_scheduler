@@ -9,7 +9,7 @@
   </div>
 
   <div class="actions">
-    <%= f.submit "Send me password reset instructions" %>
+    <%= f.submit "Send me password reset instructions", data: { turbo_submits_with: t("devise.passwords.submit_loading") } %>
   </div>
 <% end %>
 

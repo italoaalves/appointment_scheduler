@@ -41,7 +41,7 @@
     <%= button_to t("space.customers.show.delete_customer"),
                   customer_path(@customer),
                   method: :delete,
-                  data: { turbo_confirm: t("space.customers.show.delete_customer_confirm") },
+                  data: { turbo_confirm: t("space.customers.show.delete_customer_confirm"), turbo_submits_with: t("shared.deleting") },
                   class: button_classes(:danger) %>
   </div>
 
