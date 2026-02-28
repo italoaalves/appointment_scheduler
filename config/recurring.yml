@@ -25,6 +25,14 @@ default: &default
     class: Billing::SyncSubscriptionStateJob
     queue: default
     schedule: at 4am every day
+  billing_trial_ending_reminder:
+    class: Billing::TrialEndingReminderJob
+    queue: default
+    schedule: at 9am every day
+  billing_credits_low_check:
+    class: Billing::CreditsLowCheckJob
+    queue: default
+    schedule: at 10am every day
 
 development:
   <<: *default

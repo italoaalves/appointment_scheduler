@@ -63,6 +63,12 @@ module Billing
         metadata:        { expired_at: Time.current.iso8601 }
       )
 
+      Notifications::BillingNotifier.notify(
+        event_type: :subscription_expired,
+        user:       subscription.space.owner,
+        notifiable: subscription
+      )
+
       true
     end
   end

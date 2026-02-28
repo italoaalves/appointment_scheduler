@@ -92,6 +92,21 @@ module Billing
       end
     end
 
+    test "expire_trial creates a subscription_expired in-app notification for owner" do
+      @space.update!(owner_id: users(:manager).id)
+      sub = Billing::TrialManager.start_trial(@space)
+      sub.update_column(:trial_ends_at, 1.minute.ago)
+
+      assert_difference "Notification.count", 1 do
+        Billing::TrialManager.expire_trial(sub)
+      end
+
+      notif = Notification.last
+      assert_equal @space.owner,           notif.user
+      assert_equal sub,                    notif.notifiable
+      assert_equal "subscription_expired", notif.event_type
+    end
+
     test "expire_trial returns false and does nothing when subscription is active" do
       sub = Billing::TrialManager.start_trial(@space)
       sub.update_column(:status, Billing::Subscription.statuses[:active])
