@@ -1,5 +1,6 @@
 <% ongoing = appointment_ongoing?(appointment) %>
-<div class="flex items-center justify-between gap-2 py-3 -mx-2 px-2 rounded-lg transition-colors relative <%= ongoing ? 'bg-blue-50 border-l-4 border-l-blue-400' : '' %>">
+<div id="<%= dom_id(appointment) %>"
+     class="flex items-center justify-between gap-2 py-3 -mx-2 px-2 rounded-lg transition-colors relative <%= ongoing ? 'bg-blue-50 border-l-4 border-l-blue-400' : '' %>">
   <%= link_to appointment_path(appointment),
               class: "min-w-0 flex-1 #{ongoing ? 'hover:bg-blue-100/50 -mx-2 px-2 py-1 rounded' : 'hover:bg-slate-50 -mx-2 px-2 py-1 rounded'}" do %>
     <div class="flex items-center gap-2">
@@ -30,6 +31,7 @@
       <%= button_to t("space.appointments.calendar.mark_no_show"),
                     no_show_appointment_path(appointment),
                     method: :patch,
+                    params: { source: "calendar" },
                     data: { turbo_confirm: t("space.appointments.index.no_show_confirm") },
                     class: "inline-flex items-center rounded px-2 py-1 text-[11px] font-medium text-slate-600 hover:bg-slate-200/80 hover:text-slate-900" %>
     <% end %>

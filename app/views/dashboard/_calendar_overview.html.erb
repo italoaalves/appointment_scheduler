@@ -104,7 +104,8 @@
     <footer class="shrink-0 border-t border-slate-100 bg-white px-4 py-3">
       <% %i[today week month].each do |period| %>
         <% stats = periods_stats[period] %>
-        <div data-calendar-tabs-target="stats"
+        <div id="calendar_stats_<%= period %>"
+             data-calendar-tabs-target="stats"
              data-tab="<%= period %>"
              <%= 'hidden' if period != :today %>
              class="flex flex-wrap gap-4 text-xs text-slate-600">
