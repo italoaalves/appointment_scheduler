@@ -69,6 +69,7 @@ en:
         view_all: "View all"
         empty: "No notifications"
         time_ago: "%{time} ago"
+        dismiss: "Dismiss notification"
 
   activerecord:
     errors:

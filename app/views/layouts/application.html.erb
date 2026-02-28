@@ -80,7 +80,10 @@
                 <% end %>
               </div>
             </div>
-            <div class="hidden md:flex items-center">
+            <div class="hidden md:flex items-center gap-2">
+              <% if tenant_staff? %>
+                <%= render "shared/notification_dropdown" %>
+              <% end %>
               <div class="relative" x-data="{ profileOpen: false }">
                 <button type="button"
                         class="inline-flex items-center justify-center rounded-full bg-slate-800 p-2 text-slate-200 hover:bg-slate-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-900"
@@ -169,6 +172,14 @@
                 <% end %>
               <% else %>
                 <%# Customers: profile/logout only; book via scheduling links %>
+              <% end %>
+              <% if tenant_staff? && unread_notifications_count > 0 %>
+                <%= link_to notifications_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" do %>
+                  <%= t("notifications.in_app.dropdown.title") %>
+                  <span class="ml-1.5 inline-flex items-center rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                    <%= unread_notifications_count %>
+                  </span>
+                <% end %>
               <% end %>
               <div class="border-t border-slate-800 mt-2 pt-2 space-y-1 px-3 pb-2">
                 <%= link_to edit_profile_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" do %>

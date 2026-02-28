@@ -40,6 +40,7 @@ pt-BR:
         view_all: "Ver tudo"
         empty: "Sem notificações"
         time_ago: "há %{time}"
+        dismiss: "Dispensar notificação"
 
   activerecord:
     errors:

@@ -1,4 +1,10 @@
 module ApplicationHelper
+  def unread_notifications_count
+    return 0 unless user_signed_in?
+
+    @_unread_notifications_count ||= current_user.notifications.unread.count
+  end
+
   def timezone_for(space_or_timezone)
     TimezoneResolver.zone(space_or_timezone)
   end

@@ -1,0 +1,4 @@
+<%= turbo_stream.update "notifications_dropdown" do %>
+  <%= render "list", notifications: @notifications, unread_count: @unread_count %>
+<% end %>
+<%= turbo_stream.update "notification_badge" do %><%# @unread_count is 0 after marking all as read — badge is cleared %><% end %>

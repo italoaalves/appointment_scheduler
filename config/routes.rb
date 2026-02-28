@@ -36,6 +36,16 @@ Rails.application.routes.draw do
     resources :scheduling_links
     resource :personalized_scheduling_link, only: [ :new, :create, :edit, :update, :destroy ], path: "personalized_link"
     resources :users, path: "team"
+
+    resources :notifications, only: [ :index ] do
+      member do
+        patch :mark_as_read
+        patch :dismiss
+      end
+      collection do
+        patch :mark_all_as_read
+      end
+    end
   end
 
   get "onboarding", to: redirect("/onboarding/wizard"), as: :onboarding

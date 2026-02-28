@@ -1,0 +1,39 @@
+<div class="relative" x-data="{ notifOpen: false }">
+  <button type="button"
+          class="relative inline-flex items-center justify-center rounded-full bg-slate-800 p-2 text-slate-200 hover:bg-slate-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-900"
+          @click="notifOpen = !notifOpen"
+          aria-haspopup="true"
+          :aria-expanded="notifOpen"
+          aria-label="<%= t('notifications.in_app.dropdown.title') %>">
+    <%= render "shared/icons/bell" %>
+    <span id="notification_badge">
+      <% if unread_notifications_count > 0 %>
+        <span class="absolute -top-0.5 -right-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white leading-none"
+              aria-label="<%= t('notifications.in_app.dropdown.title') %>: <%= unread_notifications_count %>">
+          <%= unread_notifications_count > 9 ? "9+" : unread_notifications_count %>
+        </span>
+      <% end %>
+    </span>
+  </button>
+
+  <div x-show="notifOpen"
+       @click.outside="notifOpen = false"
+       x-transition:enter="transition ease-out duration-100"
+       x-transition:enter-start="opacity-0 scale-95"
+       x-transition:enter-end="opacity-100 scale-100"
+       x-transition:leave="transition ease-in duration-75"
+       x-transition:leave-start="opacity-100 scale-100"
+       x-transition:leave-end="opacity-0 scale-95"
+       x-cloak
+       class="absolute right-0 top-full z-50 mt-2 w-80 rounded-md bg-white shadow-lg ring-1 ring-slate-200 overflow-hidden">
+    <div class="border-b border-slate-100 px-4 py-2.5">
+      <p class="text-sm font-semibold text-slate-900"><%= t("notifications.in_app.dropdown.title") %></p>
+    </div>
+
+    <%= turbo_frame_tag "notifications_dropdown", src: notifications_path, loading: :lazy do %>
+      <div class="px-4 py-6 text-center">
+        <div class="animate-pulse text-sm text-slate-400">...</div>
+      </div>
+    <% end %>
+  </div>
+</div>
