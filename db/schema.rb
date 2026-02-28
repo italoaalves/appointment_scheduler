@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_27_235140) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_28_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -99,6 +99,23 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_235140) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["position"], name: "index_credit_bundles_on_position"
+  end
+
+  create_table "credit_purchases", force: :cascade do |t|
+    t.bigint "space_id", null: false
+    t.bigint "credit_bundle_id", null: false
+    t.integer "amount", null: false
+    t.integer "price_cents", null: false
+    t.integer "status", default: 0, null: false
+    t.integer "actor_id"
+    t.string "asaas_payment_id"
+    t.string "invoice_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["asaas_payment_id"], name: "index_credit_purchases_on_asaas_payment_id", unique: true, where: "(asaas_payment_id IS NOT NULL)"
+    t.index ["credit_bundle_id"], name: "index_credit_purchases_on_credit_bundle_id"
+    t.index ["space_id", "status"], name: "index_credit_purchases_on_space_id_and_status"
+    t.index ["space_id"], name: "index_credit_purchases_on_space_id"
   end
 
   create_table "customers", force: :cascade do |t|
@@ -302,6 +319,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_235140) do
   add_foreign_key "availability_windows", "availability_schedules"
   add_foreign_key "billing_events", "spaces"
   add_foreign_key "billing_events", "subscriptions"
+  add_foreign_key "credit_purchases", "credit_bundles"
+  add_foreign_key "credit_purchases", "spaces"
   add_foreign_key "customers", "spaces"
   add_foreign_key "customers", "users"
   add_foreign_key "message_credits", "spaces"

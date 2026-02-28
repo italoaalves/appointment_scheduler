@@ -180,6 +180,135 @@ module Billing
       assert Billing::CreditManager.sufficient?(space: enterprise_space)
     end
 
+    # ── initiate_purchase ─────────────────────────────────────────────────────
+
+    test "initiate_purchase creates a pending CreditPurchase and returns invoice_url" do
+      @space.subscription.update_columns(asaas_customer_id: "cus_test_001", payment_method: :pix)
+
+      fake_client = Object.new
+      fake_client.define_singleton_method(:create_payment) do |**_|
+        { "id" => "pay_cp_001", "invoiceUrl" => "https://asaas.com/inv/pay_cp_001" }
+      end
+
+      result = Billing::CreditManager.initiate_purchase(
+        space:        @space,
+        amount:       50,
+        actor:        users(:manager),
+        asaas_client: fake_client
+      )
+
+      assert result[:success]
+      assert_equal "https://asaas.com/inv/pay_cp_001", result[:invoice_url]
+
+      purchase = Billing::CreditPurchase.find_by(asaas_payment_id: "pay_cp_001")
+      assert_not_nil purchase
+      assert purchase.pending?
+      assert_equal 50, purchase.amount
+      assert_equal users(:manager).id, purchase.actor_id
+    end
+
+    test "initiate_purchase does NOT immediately add balance" do
+      @space.subscription.update_columns(asaas_customer_id: "cus_test_002", payment_method: :pix)
+
+      fake_client = Object.new
+      fake_client.define_singleton_method(:create_payment) do |**_|
+        { "id" => "pay_cp_002", "invoiceUrl" => "https://asaas.com/inv/pay_cp_002" }
+      end
+
+      assert_no_difference -> { @credit.reload.balance } do
+        Billing::CreditManager.initiate_purchase(space: @space, amount: 50, asaas_client: fake_client)
+      end
+    end
+
+    test "initiate_purchase returns error when subscription has no asaas_customer_id" do
+      # subscriptions(:one) has no asaas_customer_id by default
+
+      result = Billing::CreditManager.initiate_purchase(space: @space, amount: 50)
+
+      assert_not result[:success]
+      assert_equal I18n.t("billing.credits.no_subscription"), result[:error]
+      assert_equal 0, Billing::CreditPurchase.where(space: @space).count
+    end
+
+    test "initiate_purchase returns error for invalid amount" do
+      @space.subscription.update_columns(asaas_customer_id: "cus_test_003", payment_method: :pix)
+
+      result = Billing::CreditManager.initiate_purchase(space: @space, amount: 999)
+
+      assert_not result[:success]
+      assert_equal I18n.t("billing.credits.invalid_amount"), result[:error]
+      assert_equal 0, Billing::CreditPurchase.where(space: @space).count
+    end
+
+    test "initiate_purchase marks CreditPurchase as failed when Asaas API errors" do
+      @space.subscription.update_columns(asaas_customer_id: "cus_test_004", payment_method: :pix)
+
+      failing_client = Object.new
+      failing_client.define_singleton_method(:create_payment) do |**_|
+        raise Billing::AsaasClient::ApiError.new(503, "Asaas is down")
+      end
+
+      result = Billing::CreditManager.initiate_purchase(
+        space:        @space,
+        amount:       50,
+        asaas_client: failing_client
+      )
+
+      assert_not result[:success]
+      assert_includes result[:error], "Asaas is down"
+
+      purchase = Billing::CreditPurchase.where(space: @space).last
+      assert_not_nil purchase
+      assert purchase.failed?
+    end
+
+    # ── fulfill_purchase ──────────────────────────────────────────────────────
+
+    test "fulfill_purchase grants credits and marks CreditPurchase as completed" do
+      purchase = Billing::CreditPurchase.create!(
+        space:         @space,
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :pending
+      )
+
+      result = Billing::CreditManager.fulfill_purchase(space: @space, credit_purchase: purchase)
+
+      assert result[:success]
+      assert purchase.reload.completed?
+      assert_equal 100, @credit.reload.balance  # was 50, now 100
+    end
+
+    test "fulfill_purchase is idempotent — calling twice does not double-grant credits" do
+      purchase = Billing::CreditPurchase.create!(
+        space:         @space,
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :pending
+      )
+
+      Billing::CreditManager.fulfill_purchase(space: @space, credit_purchase: purchase)
+      Billing::CreditManager.fulfill_purchase(space: @space, credit_purchase: purchase)
+
+      assert_equal 100, @credit.reload.balance  # added only once
+    end
+
+    test "fulfill_purchase returns success: true when already completed" do
+      purchase = Billing::CreditPurchase.create!(
+        space:         @space,
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :completed
+      )
+
+      result = Billing::CreditManager.fulfill_purchase(space: @space, credit_purchase: purchase)
+
+      assert result[:success]
+    end
+
     # ── advisory lock ─────────────────────────────────────────────────────────
 
     test "deduct executes advisory lock SQL inside transaction" do

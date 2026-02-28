@@ -12,6 +12,14 @@
              title:   t("billing.edit.title"),
              subtitle: t("billing.edit.subtitle") %>
 
+  <%# Payment method notice for PIX / Boleto subscribers %>
+  <% if @subscription&.payment_method_pix? || @subscription&.payment_method_boleto? %>
+    <div class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+      ⚠️ <%= t("billing.edit.payment_method_notice",
+               method: t("billing.checkout.#{@subscription.payment_method}")) %>
+    </div>
+  <% end %>
+
   <div class="grid gap-4 sm:grid-cols-3">
     <% @plans.each do |plan| %>
       <% is_current = @subscription&.billing_plan_id == plan.id %>

@@ -28,6 +28,30 @@
     </div>
   <% end %>
 
+  <%# Pending purchases — shown only when the user has payments awaiting settlement %>
+  <% if @pending_purchases.any? %>
+    <%= render "application/shared/card" do %>
+      <h2 class="mb-3 text-sm font-semibold text-slate-800"><%= t("billing.credits.show.pending_purchases") %></h2>
+      <ul class="divide-y divide-slate-200">
+        <% @pending_purchases.each do |purchase| %>
+          <li class="flex items-center justify-between py-3">
+            <div>
+              <p class="text-sm font-medium text-slate-900"><%= purchase.amount %> <%= t("billing.credits.show.credits") %></p>
+              <p class="text-xs text-slate-400"><%= l(purchase.created_at, format: :long) %></p>
+            </div>
+            <% if purchase.invoice_url.present? %>
+              <%= link_to t("billing.credits.show.pay_now"),
+                          purchase.invoice_url,
+                          target: "_blank",
+                          rel: "noopener noreferrer",
+                          class: button_classes(:primary) + " text-sm px-3 py-1.5" %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  <% end %>
+
   <%# Purchase bundles %>
   <%= render "application/shared/card" do %>
     <h2 class="mb-4 text-sm font-semibold text-slate-800"><%= t("billing.credits.show.purchase_title") %></h2>

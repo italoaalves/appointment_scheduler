@@ -772,6 +772,10 @@ pt-BR:
     canceled: "Sua assinatura foi cancelada. O acesso continua até o fim do período de cobrança."
     no_change: "Você já está neste plano."
     resubscribe_unavailable: "Entre em contato com o suporte para reativar sua assinatura."
+    plan_change_limit_reached: "Você já alterou seu plano duas vezes neste ciclo de cobrança. Você pode alterar novamente após o fim do período atual."
+    payment_method_action_required:
+      pix: "Uma nova cobrança PIX será gerada — pague antes do vencimento para manter sua assinatura ativa."
+      boleto: "Um novo boleto será gerado — pague antes do vencimento para manter sua assinatura ativa."
     features:
       personalized_booking_page: "Página de agendamento personalizada"
       whatsapp_included_quota: "Mensagens WhatsApp incluídas"
@@ -791,6 +795,8 @@ pt-BR:
     credits:
       purchased: "%{amount} créditos WhatsApp adicionados à sua conta."
       invalid_amount: "Valor de créditos inválido."
+      no_subscription: "Você precisa de uma assinatura ativa para comprar créditos."
+      purchase_initiated: "Sua compra está sendo processada. Conclua o pagamento usando o link abaixo."
       show:
         title: "Créditos WhatsApp"
         subtitle: "Veja seu saldo e compre mais créditos."
@@ -807,6 +813,8 @@ pt-BR:
         unlimited_hint: "Seu plano inclui mensagens WhatsApp ilimitadas."
         topup_title: "Recarregar créditos"
         topup_hint: "Precisa de mais mensagens além da cota mensal? Compre créditos adicionais."
+        pending_purchases: "Compras pendentes"
+        pay_now: "Pagar agora"
     checkout:
       submit_loading: "Assinando…"
       title: "Escolha seu plano"
@@ -867,6 +875,7 @@ pt-BR:
       recommended: "Recomendado"
       select_plan: "Selecionar plano"
       description_label: "Descrição do plano"
+      payment_method_notice: "Sua assinatura utiliza %{method}. Ao alterar o plano, uma nova cobrança será gerada e você precisará pagá-la manualmente."
       back: "Voltar para cobrança"
     limits:
       team_members_exceeded: "O limite de membros do seu plano foi atingido. Faça upgrade para adicionar mais."

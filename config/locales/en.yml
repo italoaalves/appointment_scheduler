@@ -801,6 +801,10 @@ en:
     canceled: "Your subscription has been canceled. Access continues until the end of your billing period."
     no_change: "You're already on this plan."
     resubscribe_unavailable: "Please contact support to resubscribe."
+    plan_change_limit_reached: "You've already changed your plan twice this billing cycle. You can change again after your current period ends."
+    payment_method_action_required:
+      pix: "A new PIX charge will be generated — please pay it before the due date to keep your subscription active."
+      boleto: "A new boleto will be generated — please pay it before the due date to keep your subscription active."
     checkout:
       submit_loading: "Subscribing…"
       title: "Choose your plan"
@@ -862,6 +866,7 @@ en:
       select_plan: "Select plan"
       description_label: "Plan description"
       back: "Back to billing"
+      payment_method_notice: "Your subscription currently uses %{method}. After changing plans, a new charge will be generated that you'll need to pay manually."
     features:
       personalized_booking_page: "Personalized booking page"
       whatsapp_included_quota: "WhatsApp messages included"
@@ -881,6 +886,8 @@ en:
     credits:
       purchased: "%{amount} WhatsApp credits added to your account."
       invalid_amount: "Invalid credit amount."
+      no_subscription: "You need an active subscription to purchase credits."
+      purchase_initiated: "Your purchase is being processed. Complete payment using the link below."
       show:
         title: "WhatsApp Credits"
         subtitle: "View your credit balance and purchase more."
@@ -897,6 +904,8 @@ en:
         unlimited_hint: "Your plan includes unlimited WhatsApp messaging."
         topup_title: "Top up credits"
         topup_hint: "Need more messages beyond your monthly quota? Purchase additional credits."
+        pending_purchases: "Pending purchases"
+        pay_now: "Pay now"
     limits:
       team_members_exceeded: "Your plan's team member limit has been reached. Upgrade to add more."
       customers_exceeded: "Your plan's customer limit has been reached. Upgrade to add more."

@@ -41,9 +41,12 @@ module Billing
     # ── Handlers ──────────────────────────────────────────────────────────────
 
     def handle_payment_confirmed
-      payment_data = @payload["payment"] || {}
+      payment_data     = @payload["payment"] || {}
       asaas_payment_id = payment_data["id"]
       return log_missing("asaas_payment_id", "PAYMENT_CONFIRMED") if asaas_payment_id.blank?
+
+      # Credit purchases are fulfilled via their own path, not the subscription payment path.
+      return fulfill_credit_purchase(payment_data) if credit_purchase_payment?(payment_data)
 
       return if already_processed?("webhook.payment_confirmed", asaas_payment_id)
 
@@ -66,6 +69,11 @@ module Billing
       payment_data     = @payload["payment"] || {}
       asaas_payment_id = payment_data["id"]
       return log_missing("asaas_payment_id", "PAYMENT_OVERDUE") if asaas_payment_id.blank?
+
+      if credit_purchase_payment?(payment_data)
+        mark_credit_purchase_failed(payment_data)
+        return
+      end
 
       return if already_processed?("webhook.payment_overdue", asaas_payment_id)
 
@@ -101,6 +109,11 @@ module Billing
       payment_data     = @payload["payment"] || {}
       asaas_payment_id = payment_data["id"]
       return if asaas_payment_id.blank?
+
+      if credit_purchase_payment?(payment_data)
+        mark_credit_purchase_failed(payment_data)
+        return
+      end
 
       payment = Billing::Payment.find_by(asaas_payment_id: asaas_payment_id)
       return unless payment
@@ -187,6 +200,39 @@ module Billing
         event_type:      event_type,
         metadata:        metadata.merge(plan_slug: subscription.plan.slug)
       )
+    end
+
+    # ── Credit purchase helpers ───────────────────────────────────────────────
+
+    def credit_purchase_payment?(payment_data)
+      payment_data["externalReference"].to_s.start_with?("credit_purchase_")
+    end
+
+    def fulfill_credit_purchase(payment_data)
+      credit_purchase = find_credit_purchase(payment_data)
+      unless credit_purchase
+        Rails.logger.warn("[Billing::WebhookProcessor] No CreditPurchase found for payment #{payment_data['id']} — skipping")
+        return
+      end
+
+      Billing::CreditManager.fulfill_purchase(space: credit_purchase.space, credit_purchase: credit_purchase)
+    end
+
+    def mark_credit_purchase_failed(payment_data)
+      credit_purchase = find_credit_purchase(payment_data)
+      return unless credit_purchase
+      credit_purchase.update!(status: :failed) unless credit_purchase.completed?
+    end
+
+    def find_credit_purchase(payment_data)
+      # Primary lookup: by asaas_payment_id stored on the record after initiate_purchase
+      purchase = Billing::CreditPurchase.find_by(asaas_payment_id: payment_data["id"])
+      return purchase if purchase
+
+      # Fallback: parse externalReference (handles edge case where webhook arrives
+      # before we store asaas_payment_id on the record)
+      purchase_id = payment_data["externalReference"].to_s.delete_prefix("credit_purchase_").to_i
+      Billing::CreditPurchase.find_by(id: purchase_id) if purchase_id.positive?
     end
 
     # ── Logging helpers ───────────────────────────────────────────────────────

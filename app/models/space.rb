@@ -20,11 +20,12 @@ class Space < ApplicationRecord
   has_many :scheduling_links, dependent: :destroy
   has_one :personalized_scheduling_link, dependent: :destroy
 
-  has_one  :subscription,    -> { includes(:billing_plan) },
-           class_name: "Billing::Subscription",  dependent: :destroy
-  has_one  :message_credit,  class_name: "Billing::MessageCredit", dependent: :destroy
-  has_many :payments,        class_name: "Billing::Payment",       dependent: :destroy
-  has_many :billing_events,  class_name: "Billing::BillingEvent",  dependent: :destroy
+  has_one  :subscription,      -> { includes(:billing_plan) },
+           class_name: "Billing::Subscription",    dependent: :destroy
+  has_one  :message_credit,    class_name: "Billing::MessageCredit",   dependent: :destroy
+  has_many :payments,          class_name: "Billing::Payment",          dependent: :destroy
+  has_many :billing_events,    class_name: "Billing::BillingEvent",     dependent: :destroy
+  has_many :credit_purchases,  class_name: "Billing::CreditPurchase",   dependent: :destroy
 
   # business_hours: cached display string; updated by AvailabilitySchedule callback. Read-only.
 

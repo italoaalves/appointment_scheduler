@@ -29,12 +29,16 @@ module Spaces
       new_plan     = Billing::Plan.find(params[:billing_plan_id])
       subscription = current_tenant.subscription
 
+      if plan_change_limit_reached?(subscription)
+        redirect_to settings_billing_path, alert: I18n.t("billing.plan_change_limit_reached") and return
+      end
+
       if upgrade?(subscription, new_plan)
         result      = Billing::SubscriptionManager.upgrade(subscription: subscription, new_billing_plan_id: new_plan.id)
-        success_msg = I18n.t("billing.plan_changed")
+        success_msg = plan_change_notice(:upgrade, subscription)
       elsif downgrade?(subscription, new_plan)
         result      = Billing::SubscriptionManager.downgrade(subscription: subscription, new_billing_plan_id: new_plan.id)
-        success_msg = I18n.t("billing.downgrade_scheduled")
+        success_msg = plan_change_notice(:downgrade, subscription)
       else
         redirect_to settings_billing_path, alert: I18n.t("billing.no_change") and return
       end
@@ -106,6 +110,27 @@ module Spaces
     end
 
     private
+
+    # Returns true once 2 plan changes have already been logged in the current period.
+    # Guards against abuse of the plan-change window.
+    def plan_change_limit_reached?(subscription)
+      return false unless subscription&.current_period_start
+
+      subscription.billing_events
+                  .where(event_type: %w[plan.changed plan.downgrade_scheduled])
+                  .where(created_at: subscription.current_period_start..)
+                  .count >= 2
+    end
+
+    # Builds the success flash message, appending a manual-payment reminder
+    # for PIX and Boleto subscriptions so customers know to act.
+    def plan_change_notice(type, subscription)
+      base   = I18n.t("billing.#{type == :upgrade ? 'plan_changed' : 'downgrade_scheduled'}")
+      method = subscription&.payment_method&.to_sym
+      return base unless method.in?(%i[pix boleto])
+
+      "#{base} #{I18n.t("billing.payment_method_action_required.#{method}")}"
+    end
 
     def upgrade?(subscription, new_plan)
       current_plan = subscription&.billing_plan

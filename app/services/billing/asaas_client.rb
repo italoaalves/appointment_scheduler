@@ -64,14 +64,25 @@ module Billing
     end
 
     def cancel_subscription(asaas_subscription_id)
-      delete("/subscriptions/#{asaas_subscription_id}/cancel")
+      delete("/subscriptions/#{asaas_subscription_id}")
     end
 
     def find_subscription(asaas_subscription_id)
       get("/subscriptions/#{asaas_subscription_id}")
     end
 
-    # ── Payments (read-only — Asaas creates these) ────────────────────────────
+    # ── Payments ──────────────────────────────────────────────────────────────
+
+    def create_payment(customer_id:, billing_type:, value:, due_date:, description:, external_reference:)
+      post("/payments", {
+        customer:          customer_id,
+        billingType:       map_billing_type(billing_type),
+        value:             value,
+        dueDate:           due_date,
+        description:       description,
+        externalReference: external_reference
+      })
+    end
 
     def find_payment(asaas_payment_id)
       get("/payments/#{asaas_payment_id}")

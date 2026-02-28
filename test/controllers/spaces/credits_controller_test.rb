@@ -23,60 +23,85 @@ module Spaces
       assert_redirected_to new_user_session_path
     end
 
-    # ── create ────────────────────────────────────────────────────────────────
+    # ── create — success path ─────────────────────────────────────────────────
 
-    test "POST create with valid amount (50) adds credits and redirects with notice" do
+    test "POST create with valid amount initiates purchase and redirects with notice" do
       sign_in @manager
-      credit = message_credits(:one)
-      initial_balance = credit.balance
+      spaces(:one).subscription.update_columns(asaas_customer_id: "cus_ctrl_001")
 
-      post settings_credits_path, params: { amount: 50 }
+      fake_result = {
+        success:      true,
+        credit_purchase: Billing::CreditPurchase.new,
+        invoice_url: "https://asaas.com/inv/pay_ctrl_001"
+      }
+
+      Billing::CreditManager.stub(:initiate_purchase, fake_result) do
+        post settings_credits_path, params: { amount: 50 }
+      end
 
       assert_redirected_to settings_credits_path
-      assert_equal I18n.t("billing.credits.purchased", amount: 50), flash[:notice]
-      assert_equal initial_balance + 50, credit.reload.balance
+      assert_equal I18n.t("billing.credits.purchase_initiated"), flash[:notice]
     end
 
-    test "POST create with valid amount (100) adds credits" do
+    test "POST create does NOT immediately add balance to MessageCredit" do
       sign_in @manager
-      credit = message_credits(:one)
+      credit          = message_credits(:one)
       initial_balance = credit.balance
 
-      post settings_credits_path, params: { amount: 100 }
+      fake_result = {
+        success:         true,
+        credit_purchase: Billing::CreditPurchase.new,
+        invoice_url:     "https://asaas.com/inv/pay_ctrl_002"
+      }
 
-      assert_redirected_to settings_credits_path
-      assert_equal initial_balance + 100, credit.reload.balance
-    end
+      Billing::CreditManager.stub(:initiate_purchase, fake_result) do
+        post settings_credits_path, params: { amount: 50 }
+      end
 
-    test "POST create with valid amount (200) adds credits" do
-      sign_in @manager
-      credit = message_credits(:one)
-      initial_balance = credit.balance
-
-      post settings_credits_path, params: { amount: 200 }
-
-      assert_redirected_to settings_credits_path
-      assert_equal initial_balance + 200, credit.reload.balance
-    end
-
-    test "POST create with invalid amount redirects with error" do
-      sign_in @manager
-      credit = message_credits(:one)
-      initial_balance = credit.balance
-
-      post settings_credits_path, params: { amount: 75 }
-
-      assert_redirected_to settings_credits_path
-      assert_equal I18n.t("billing.credits.invalid_amount"), flash[:alert]
       assert_equal initial_balance, credit.reload.balance
     end
 
-    test "POST create logs a BillingEvent" do
+    # ── create — failure paths ────────────────────────────────────────────────
+
+    test "POST create with invalid amount redirects with invalid_amount alert" do
       sign_in @manager
 
-      assert_difference "Billing::BillingEvent.count", 1 do
+      fake_result = { success: false, error: I18n.t("billing.credits.invalid_amount") }
+
+      Billing::CreditManager.stub(:initiate_purchase, fake_result) do
+        post settings_credits_path, params: { amount: 75 }
+      end
+
+      assert_redirected_to settings_credits_path
+      assert_equal I18n.t("billing.credits.invalid_amount"), flash[:alert]
+    end
+
+    test "POST create without asaas_customer_id redirects with no_subscription alert" do
+      sign_in @manager
+      # subscriptions(:one) has no asaas_customer_id by default
+
+      fake_result = { success: false, error: I18n.t("billing.credits.no_subscription") }
+
+      Billing::CreditManager.stub(:initiate_purchase, fake_result) do
         post settings_credits_path, params: { amount: 50 }
       end
+
+      assert_redirected_to settings_credits_path
+      assert_equal I18n.t("billing.credits.no_subscription"), flash[:alert]
+    end
+
+    test "POST create with Asaas error redirects with error message" do
+      sign_in @manager
+      spaces(:one).subscription.update_columns(asaas_customer_id: "cus_ctrl_003")
+
+      fake_result = { success: false, error: "Asaas API unavailable" }
+
+      Billing::CreditManager.stub(:initiate_purchase, fake_result) do
+        post settings_credits_path, params: { amount: 50 }
+      end
+
+      assert_redirected_to settings_credits_path
+      assert_equal "Asaas API unavailable", flash[:alert]
     end
   end
 end

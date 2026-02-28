@@ -166,13 +166,56 @@ module Billing
 
     # ── cancel_subscription ───────────────────────────────────────────────────
 
-    test "cancel_subscription sends DELETE to the cancel path" do
+    test "cancel_subscription sends DELETE to /subscriptions/:id (no /cancel suffix)" do
       client, captured = stub_client(status_code: 200, response_body: '{"deleted":true}')
 
       result = client.cancel_subscription("sub_001")
       assert result["deleted"]
       assert_kind_of Net::HTTP::Delete, captured[:request]
-      assert_includes captured[:request].path, "sub_001/cancel"
+      assert_includes captured[:request].path, "/subscriptions/sub_001"
+      assert_not_includes captured[:request].path, "/cancel"
+    end
+
+    # ── create_payment ────────────────────────────────────────────────────────
+
+    test "create_payment POSTs to /payments with correct body" do
+      client, captured = stub_client(
+        status_code: 200,
+        response_body: '{"id":"pay_001","invoiceUrl":"https://asaas.com/i/pay_001"}'
+      )
+
+      result = client.create_payment(
+        customer_id:        "cus_001",
+        billing_type:       :pix,
+        value:              25.0,
+        due_date:           "2026-03-01",
+        description:        "50 WhatsApp credits",
+        external_reference: "credit_purchase_42"
+      )
+
+      assert_equal "pay_001",                        result["id"]
+      assert_equal "https://asaas.com/i/pay_001",    result["invoiceUrl"]
+      assert_kind_of Net::HTTP::Post, captured[:request]
+      assert_includes captured[:request].path, "/payments"
+
+      body = JSON.parse(captured[:request].body)
+      assert_equal "cus_001",              body["customer"]
+      assert_equal "PIX",                  body["billingType"]
+      assert_equal 25.0,                   body["value"]
+      assert_equal "2026-03-01",           body["dueDate"]
+      assert_equal "50 WhatsApp credits",  body["description"]
+      assert_equal "credit_purchase_42",   body["externalReference"]
+    end
+
+    test "create_payment raises ArgumentError for unknown billing_type" do
+      client, = stub_client(status_code: 200, response_body: "{}")
+
+      assert_raises(ArgumentError) do
+        client.create_payment(
+          customer_id: "cus_001", billing_type: :wire, value: 25.0,
+          due_date: "2026-03-01", description: "credits", external_reference: "ref"
+        )
+      end
     end
   end
 end

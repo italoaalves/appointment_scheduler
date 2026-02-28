@@ -64,6 +64,77 @@ module Spaces
       assert_equal I18n.t("billing.downgrade_scheduled"), flash[:notice]
     end
 
+    # ── plan change rate limiting (Bug 3) ─────────────────────────────────────
+
+    test "PATCH update is blocked after 2 plan changes in current billing period" do
+      sign_in @manager2  # subscriptions(:two) has current_period_start set
+
+      sub = subscriptions(:two)
+      # Simulate 2 already-logged plan changes within this period
+      2.times do |i|
+        Billing::BillingEvent.create!(
+          space_id:        sub.space_id,
+          subscription_id: sub.id,
+          event_type:      "plan.changed",
+          metadata:        { from: "essential", to: "pro", note: "change #{i + 1}" }
+        )
+      end
+
+      patch settings_billing_path, params: { billing_plan_id: billing_plans(:essential).id }
+
+      assert_redirected_to settings_billing_path
+      assert_equal I18n.t("billing.plan_change_limit_reached"), flash[:alert]
+    end
+
+    test "PATCH update is allowed when only 1 plan change has happened this period" do
+      sign_in @manager2
+
+      sub = subscriptions(:two)
+      Billing::BillingEvent.create!(
+        space_id:        sub.space_id,
+        subscription_id: sub.id,
+        event_type:      "plan.changed",
+        metadata:        { from: "essential", to: "pro" }
+      )
+
+      patch settings_billing_path, params: { billing_plan_id: billing_plans(:essential).id }
+
+      assert_redirected_to settings_billing_path
+      assert_equal I18n.t("billing.downgrade_scheduled"), flash[:notice]
+    end
+
+    # ── payment method communication (Bug 4) ──────────────────────────────────
+
+    test "upgrade notice appends PIX reminder when subscription uses PIX" do
+      sign_in @manager2
+      subscriptions(:two).update!(payment_method: :pix)
+
+      patch settings_billing_path, params: { billing_plan_id: billing_plans(:enterprise).id }
+
+      assert_redirected_to settings_billing_path
+      assert_includes flash[:notice], I18n.t("billing.payment_method_action_required.pix")
+    end
+
+    test "upgrade notice appends boleto reminder when subscription uses boleto" do
+      sign_in @manager2
+      subscriptions(:two).update!(payment_method: :boleto)
+
+      patch settings_billing_path, params: { billing_plan_id: billing_plans(:enterprise).id }
+
+      assert_redirected_to settings_billing_path
+      assert_includes flash[:notice], I18n.t("billing.payment_method_action_required.boleto")
+    end
+
+    test "upgrade notice has no reminder for credit card subscriptions" do
+      sign_in @manager2
+      subscriptions(:two).update!(payment_method: :credit_card)
+
+      patch settings_billing_path, params: { billing_plan_id: billing_plans(:enterprise).id }
+
+      assert_redirected_to settings_billing_path
+      assert_equal I18n.t("billing.plan_changed"), flash[:notice]
+    end
+
     # ── cancel ────────────────────────────────────────────────────────────────
 
     test "PATCH cancel calls SubscriptionManager.cancel and redirects with notice" do

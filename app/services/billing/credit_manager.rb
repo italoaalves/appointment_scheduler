@@ -4,8 +4,21 @@ require "zlib"
 
 module Billing
   class CreditManager
+    # Direct credit grant — used by webhook fulfillment and platform admin overrides.
+    # Controllers must NOT call this directly; use initiate_purchase instead.
     def self.purchase(space:, amount:, actor: nil)
       new(space).purchase(amount: amount, actor: actor)
+    end
+
+    # Creates an Asaas charge and a pending CreditPurchase. Credits are NOT
+    # granted here; they are granted when the webhook confirms payment.
+    def self.initiate_purchase(space:, amount:, actor: nil, asaas_client: Billing::AsaasClient.new)
+      new(space).initiate_purchase(amount: amount, actor: actor, asaas_client: asaas_client)
+    end
+
+    # Grants credits after Asaas confirms the payment for a CreditPurchase.
+    def self.fulfill_purchase(space:, credit_purchase:)
+      new(space).fulfill_purchase(credit_purchase: credit_purchase)
     end
 
     def self.deduct(space:)
@@ -24,6 +37,7 @@ module Billing
       @space = space
     end
 
+    # Direct credit grant used only by webhooks and admin overrides.
     def purchase(amount:, actor: nil)
       ActiveRecord::Base.transaction do
         Billing::CreditBundle.available.find_by!(amount: amount)
@@ -43,6 +57,60 @@ module Billing
 
         { success: true, new_balance: credit.balance }
       end
+    end
+
+    # Creates a pending Asaas charge and a CreditPurchase record.
+    # Credits are NOT granted — the webhook calls fulfill_purchase after payment.
+    def initiate_purchase(amount:, actor: nil, asaas_client: Billing::AsaasClient.new)
+      bundle       = Billing::CreditBundle.available.find_by!(amount: amount)
+      subscription = @space.subscription
+
+      unless subscription&.asaas_customer_id.present?
+        return { success: false, error: I18n.t("billing.credits.no_subscription") }
+      end
+
+      credit_purchase = Billing::CreditPurchase.create!(
+        space:         @space,
+        credit_bundle: bundle,
+        amount:        amount,
+        price_cents:   bundle.price_cents,
+        actor_id:      actor&.id,
+        status:        :pending
+      )
+
+      result = asaas_client.create_payment(
+        customer_id:        subscription.asaas_customer_id,
+        billing_type:       subscription.payment_method.to_sym,
+        value:              bundle.price_cents / 100.0,
+        due_date:           Date.current.to_s,
+        description:        "#{amount} WhatsApp credits",
+        external_reference: "credit_purchase_#{credit_purchase.id}"
+      )
+
+      credit_purchase.update!(
+        asaas_payment_id: result["id"],
+        invoice_url:      result["invoiceUrl"]
+      )
+
+      { success: true, credit_purchase: credit_purchase, invoice_url: result["invoiceUrl"] }
+    rescue Billing::AsaasClient::ApiError => e
+      credit_purchase&.update_column(:status, :failed)
+      { success: false, error: e.message }
+    rescue ActiveRecord::RecordNotFound
+      { success: false, error: I18n.t("billing.credits.invalid_amount") }
+    end
+
+    # Grants credits after payment is confirmed. Idempotent — safe to call twice.
+    def fulfill_purchase(credit_purchase:)
+      return { success: true } if credit_purchase.completed?
+
+      purchase(amount: credit_purchase.amount)
+      credit_purchase.update!(status: :completed)
+
+      { success: true }
+    rescue => e
+      Rails.logger.error("[CreditManager] fulfill_purchase failed for #{credit_purchase.id}: #{e.message}")
+      { success: false, error: e.message }
     end
 
     def deduct
