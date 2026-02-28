@@ -81,6 +81,8 @@ class Appointment < ApplicationRecord
   # closing the TOCTOU window between the overlap query and the INSERT/UPDATE.
   def acquire_slot_advisory_lock!
     lock_key = Zlib.crc32("appointment_slot:#{space_id}:#{scheduled_at.to_date}")
-    self.class.connection.execute("SELECT pg_advisory_xact_lock(#{lock_key})")
+    self.class.connection.exec_query(
+      "SELECT pg_advisory_xact_lock($1)", "AdvisoryLock", [ lock_key ]
+    )
   end
 end

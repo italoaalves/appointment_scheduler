@@ -69,7 +69,38 @@ module Platform
       end
     end
 
-    # Impersonation tests
+    # ── Mass assignment safety ─────────────────────────────────────────────
+
+    test "create ignores system_role in params (prevents privilege escalation)" do
+      sign_in @admin
+
+      post platform_users_url, params: {
+        user: {
+          email: "sneaky@example.com",
+          name: "Sneaky",
+          password: "password123",
+          password_confirmation: "password123",
+          system_role: "super_admin"
+        }
+      }
+
+      created = User.find_by(email: "sneaky@example.com")
+      assert created, "User should have been created"
+      assert_not created.super_admin?, "system_role must not be assignable via mass assignment"
+    end
+
+    test "update ignores system_role in params (prevents privilege escalation)" do
+      sign_in @admin
+
+      patch platform_user_url(@manager), params: {
+        user: { system_role: "super_admin" }
+      }
+
+      assert_not @manager.reload.super_admin?,
+        "system_role must not be escalated via mass assignment"
+    end
+
+    # ── Impersonation ──────────────────────────────────────────────────────
     test "admin can impersonate non-admin user" do
       sign_in @admin
       post impersonate_platform_user_url(@manager)

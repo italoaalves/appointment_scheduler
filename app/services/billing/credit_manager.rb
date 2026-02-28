@@ -51,7 +51,9 @@ module Billing
 
       ActiveRecord::Base.transaction do
         lock_key = Zlib.crc32("message_credits:#{@space.id}")
-        ActiveRecord::Base.connection.execute("SELECT pg_advisory_xact_lock(#{lock_key})")
+        ActiveRecord::Base.connection.exec_query(
+          "SELECT pg_advisory_xact_lock($1)", "AdvisoryLock", [ lock_key ]
+        )
 
         credit = Billing::MessageCredit.find_by(space_id: @space.id)
         return { success: false, reason: :insufficient_credits } if credit.nil?

@@ -55,6 +55,22 @@ module Billing
       end
     end
 
+    test "enqueued job receives the raw request body as payload" do
+      post billing_webhooks_url,
+           params:  VALID_PAYLOAD.to_json,
+           headers: { "asaas-access-token" => valid_token, "Content-Type" => "application/json" }
+
+      assert_response :ok
+
+      job = enqueued_jobs.find { |j| j["job_class"] == "Billing::ProcessWebhookJob" }
+      assert job, "Expected ProcessWebhookJob to be enqueued"
+
+      serialized_payload = job["arguments"].first["payload"]
+      parsed = JSON.parse(serialized_payload)
+      assert_equal "PAYMENT_CONFIRMED", parsed["event"]
+      assert_equal "pay_001", parsed.dig("payment", "id")
+    end
+
     test "invalid token does not enqueue ProcessWebhookJob" do
       assert_no_enqueued_jobs only: Billing::ProcessWebhookJob do
         post billing_webhooks_url,

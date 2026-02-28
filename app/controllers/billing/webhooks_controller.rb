@@ -7,7 +7,7 @@ module Billing
     before_action :verify_webhook_token
 
     def create
-      Billing::ProcessWebhookJob.perform_later(payload: webhook_params.to_json)
+      Billing::ProcessWebhookJob.perform_later(payload: request.raw_post)
       head :ok
     end
 
@@ -21,10 +21,6 @@ module Billing
       return head :unauthorized if token.blank?
       return head :unauthorized if expected.blank?
       head :unauthorized unless ActiveSupport::SecurityUtils.secure_compare(token, expected)
-    end
-
-    def webhook_params
-      params.permit!.to_h
     end
   end
 end

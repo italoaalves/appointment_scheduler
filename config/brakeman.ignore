@@ -1,0 +1,26 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "7ae7d0764b4b6d5b488c5b8672ebbdb7a2a775ece4ca061a45c6dac45245b417",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/platform/users_controller.rb",
+      "line": 86,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.require(:user).permit(:email, :name, :phone_number, :password, :password_confirmation, :role, :permission_names_param => ([]))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Platform::UsersController",
+        "method": "user_params"
+      },
+      "user_input": ":role",
+      "confidence": "Medium",
+      "note": ":role is a free-text display label (e.g. 'Manager'), not an authorization field. system_role (admin privilege) is explicitly excluded from permitted params. This controller is platform-admin-only, so elevation via :role is impossible."
+    }
+  ],
+  "updated": "2026-02-28 00:00:00 +0000",
+  "brakeman_version": "8.0.4"
+}

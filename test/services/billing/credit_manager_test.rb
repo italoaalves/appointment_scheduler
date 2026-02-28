@@ -183,8 +183,7 @@ module Billing
     # ── advisory lock ─────────────────────────────────────────────────────────
 
     test "deduct executes advisory lock SQL inside transaction" do
-      lock_key = Zlib.crc32("message_credits:#{@space.id}")
-      sql_log  = []
+      sql_log = []
 
       subscriber = ActiveSupport::Notifications.subscribe("sql.active_record") do |_, _, _, _, payload|
         sql_log << payload[:sql]
@@ -192,8 +191,12 @@ module Billing
 
       Billing::CreditManager.deduct(space: @space)
 
-      assert sql_log.any? { |sql| sql.include?("pg_advisory_xact_lock") && sql.include?(lock_key.to_s) },
-             "Expected pg_advisory_xact_lock(#{lock_key}) to appear in SQL log"
+      lock_sql = sql_log.find { |sql| sql.include?("pg_advisory_xact_lock") }
+      assert lock_sql, "Expected pg_advisory_xact_lock to appear in SQL log"
+
+      # Must use $1 bind parameter, not string interpolation
+      assert_match(/pg_advisory_xact_lock\(\$1\)/, lock_sql,
+        "Advisory lock must use a bind parameter ($1), not string interpolation")
     ensure
       ActiveSupport::Notifications.unsubscribe(subscriber)
     end

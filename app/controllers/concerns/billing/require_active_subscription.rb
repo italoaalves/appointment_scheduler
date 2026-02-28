@@ -15,7 +15,7 @@ module Billing
       return unless subscription_restricted?
       return if billing_exempt_action?
 
-      if request.get?
+      if request.get? || request.head?
         flash.now[:billing_alert] = I18n.t("billing.restricted_mode.banner")
       else
         redirect_back(

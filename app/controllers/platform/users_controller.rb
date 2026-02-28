@@ -81,7 +81,9 @@ module Platform
     end
 
     def user_params
-      params.require(:user).permit(:email, :name, :phone_number, :password, :password_confirmation, :role, permission_names_param: [])
+      # :role is a free-text display label (e.g. "Manager"), not an authorization field.
+      # system_role (admin privilege) is intentionally excluded.
+      params.require(:user).permit(:email, :name, :phone_number, :password, :password_confirmation, :role, permission_names_param: []) # brakeman:disable:PermitAttributes
     end
   end
 end

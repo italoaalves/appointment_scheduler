@@ -70,5 +70,13 @@ module Billing
       assert_response :redirect
       assert_equal I18n.t("billing.restricted_mode.write_blocked"), flash[:alert]
     end
+
+    test "HEAD is treated like GET when subscription is expired (no redirect)" do
+      @subscription.update!(status: :expired)
+      sign_in @manager
+
+      head appointments_url
+      assert_response :success
+    end
   end
 end

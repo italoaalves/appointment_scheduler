@@ -118,4 +118,31 @@ class AppointmentTest < ActiveSupport::TestCase
     appointment = @space.appointments.build(duration_minutes: nil)
     assert_equal @space.slot_duration_minutes, appointment.effective_duration_minutes
   end
+
+  # ── Advisory lock (SQL injection prevention) ───────────────────────────────
+
+  test "acquire_slot_advisory_lock uses parameterized query instead of interpolation" do
+    appointment = @space.appointments.build(
+      customer: @customer,
+      scheduled_at: 5.days.from_now.change(hour: 14),
+      status: :pending,
+      duration_minutes: 30
+    )
+
+    sql_log = []
+    subscriber = ActiveSupport::Notifications.subscribe("sql.active_record") do |*, payload|
+      sql_log << payload[:sql]
+    end
+
+    appointment.valid?
+
+    lock_sql = sql_log.find { |sql| sql.include?("pg_advisory_xact_lock") }
+    assert lock_sql, "Expected pg_advisory_xact_lock to appear in SQL log"
+
+    # Must use $1 bind parameter, not interpolated integer
+    assert_match(/pg_advisory_xact_lock\(\$1\)/, lock_sql,
+      "Advisory lock must use a bind parameter ($1), not string interpolation")
+  ensure
+    ActiveSupport::Notifications.unsubscribe(subscriber)
+  end
 end

@@ -31,7 +31,7 @@ module Impersonation
   private
 
   def audit_impersonation_write
-    return if request.get?
+    return if request.get? || request.head?
 
     Rails.logger.info(
       "[IMPERSONATION] write_action=true" \
