@@ -65,42 +65,7 @@
         </thead>
         <tbody class="divide-y divide-slate-200">
           <% @appointments.each do |appointment| %>
-            <tr class="hover:bg-slate-50">
-              <td class="px-4 py-2 align-top text-slate-900">
-                <%= appointment.customer&.name || "—" %>
-              </td>
-              <td class="px-4 py-2 align-top text-slate-700">
-                <%= format_appointment_time(appointment.scheduled_at, space: appointment.space, format: :short) || "—" %>
-              </td>
-              <td class="px-4 py-2 align-top">
-                <%= render "application/shared/status_badge", status: appointment.status %>
-              </td>
-              <td class="px-4 py-2 align-top">
-                <div class="flex flex-wrap justify-end gap-1">
-                  <%= link_to t("space.appointments.index.view"), appointment_path(appointment), class: button_classes(:table_link) %>
-                  <% unless appointment.cancelled? %>
-                    <%= link_to t("space.appointments.index.edit"), edit_appointment_path(appointment), class: button_classes(:table_link) unless appointment.rescheduled_from.present? %>
-                  <% end %>
-                  <% if appointment.pending? %>
-                    <%= button_to t("space.appointments.index.confirm"), confirm_appointment_path(appointment), method: :patch, class: button_classes(:table_success) %>
-                  <% end %>
-                  <% if appointment.confirmed? %>
-                    <% if appointment.scheduled_in_past? %>
-                      <%= button_to t("space.appointments.index.no_show"), no_show_appointment_path(appointment), method: :patch, data: { turbo_confirm: t("space.appointments.index.no_show_confirm") }, class: button_classes(:table_muted) %>
-                    <% end %>
-                    <% if appointment.scheduled_in_past? %>
-                      <%= link_to t("space.appointments.index.finish"), finish_form_appointment_path(appointment), class: button_classes(:table_success) %>
-                    <% end %>
-                  <% end %>
-                  <% if appointment.pending? || appointment.confirmed? %>
-                    <%= button_to t("space.appointments.index.cancel"), cancel_appointment_path(appointment), method: :patch, data: { turbo_confirm: t("space.appointments.index.cancel_confirm") }, class: button_classes(:table_cancel) %>
-                  <% end %>
-                  <% if current_user.can?(:destroy_appointments) %>
-                    <%= button_to t("space.appointments.index.delete"), appointment_path(appointment), method: :delete, data: { turbo_confirm: t("space.appointments.index.delete_confirm"), turbo_submits_with: t("shared.deleting") }, class: button_classes(:table_danger) %>
-                  <% end %>
-                </div>
-              </td>
-            </tr>
+            <%= render "appointment_row", appointment: appointment %>
           <% end %>
         </tbody>
       </table>
