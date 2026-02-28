@@ -52,15 +52,7 @@
                   <% end %>
                   <%= link_to appointments_path, class: nav_active_classes(:appointments), aria: { current: (nav_active?(:appointments) ? "page" : nil) } do %>
                     <%= t("layout.nav.all_appointments") %>
-                    <span id="pending_appointments_badge">
-                      <% if pending_appointments_count > 0 %>
-                        <span class="ml-1.5 inline-flex items-center justify-center rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-bold text-white leading-none"
-                              title="<%= t("layout.nav.pending_count", count: pending_appointments_count) %>"
-                              aria-label="<%= t("layout.nav.pending_count", count: pending_appointments_count) %>">
-                          <%= pending_appointments_count %>
-                        </span>
-                      <% end %>
-                    </span>
+                    <%= render "shared/pending_badge", count: pending_appointments_count %>
                   <% end %>
                   <%= link_to scheduling_links_path, class: nav_active_classes(:booking_links), aria: { current: (nav_active?(:booking_links) ? "page" : nil) } do %>
                     <%= t("layout.nav.booking_links") %>
@@ -151,11 +143,7 @@
                 <% end %>
                 <%= link_to appointments_path, class: nav_active_classes(:appointments, variant: :mobile), aria: { current: (nav_active?(:appointments) ? "page" : nil) } do %>
                   <%= t("layout.nav.all_appointments") %>
-                  <span id="pending_appointments_badge_mobile">
-                    <% if pending_appointments_count > 0 %>
-                      <span class="ml-1.5 inline-flex items-center rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-bold text-white" title="<%= t("layout.nav.pending_count", count: pending_appointments_count) %>" aria-label="<%= t("layout.nav.pending_count", count: pending_appointments_count) %>">(<%= pending_appointments_count %>)</span>
-                    <% end %>
-                  </span>
+                  <%= render "shared/pending_badge_mobile", count: pending_appointments_count %>
                 <% end %>
                 <%= link_to scheduling_links_path, class: nav_active_classes(:booking_links, variant: :mobile), aria: { current: (nav_active?(:booking_links) ? "page" : nil) } do %>
                   <%= t("layout.nav.booking_links") %>

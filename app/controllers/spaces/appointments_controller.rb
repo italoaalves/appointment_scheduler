@@ -4,6 +4,7 @@ module Spaces
   class AppointmentsController < Spaces::BaseController
     include FilterableByDateRange
     include RequirePermission
+    include ActionView::RecordIdentifier
 
     require_permission :manage_appointments, except: [ :index, :show ], redirect_to: :appointments_path
     require_permission :destroy_appointments, only: [ :destroy ], redirect_to: :appointments_path
@@ -154,17 +155,71 @@ module Spaces
 
     def handle_transition_result(result, notice:, success_redirect: nil, cannot_before_key: nil, policy_blocked_key: nil, cancelled_locked_key: nil)
       if result[:success]
-        redirect_to success_redirect.presence || appointments_path, notice: notice
-      elsif result[:error_key] == :cancelled_locked && cancelled_locked_key.present?
-        redirect_to appointment_path(@appointment), alert: t(cancelled_locked_key)
-      elsif result[:error_key] == :cannot_before_scheduled
-        key = cannot_before_key || "space.appointments.no_show.cannot_before_scheduled"
-        redirect_to appointment_path(@appointment), alert: t(key)
-      elsif result[:error_key] == :policy_cancellation_blocked && policy_blocked_key.present?
-        redirect_to appointment_path(@appointment), alert: t(policy_blocked_key)
+        respond_to do |format|
+          format.turbo_stream do
+            @appointment.reload
+            render turbo_stream: build_success_streams(notice: notice)
+          end
+          format.html { redirect_to success_redirect.presence || appointments_path, notice: notice }
+        end
       else
-        redirect_back fallback_location: appointments_path,
-                      alert: result[:errors]&.to_sentence || t("space.unauthorized")
+        error_message = resolve_error_message(result, cannot_before_key, policy_blocked_key, cancelled_locked_key)
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.prepend("flash_messages", partial: "shared/flash_stream", locals: { type: :alert, message: error_message })
+          end
+          format.html { redirect_to appointment_path(@appointment), alert: error_message }
+        end
+      end
+    end
+
+    def build_success_streams(notice:)
+      streams = []
+
+      source = params[:source]
+      if source == "index" && !@appointment.pending? && params[:status] == "pending"
+        streams << turbo_stream.remove(dom_id(@appointment))
+      elsif source == "index"
+        streams << turbo_stream.replace(
+          dom_id(@appointment),
+          partial: "spaces/appointments/appointment_row",
+          locals: { appointment: @appointment }
+        )
+      elsif source == "calendar"
+        streams << turbo_stream.replace(
+          dom_id(@appointment),
+          partial: "dashboard/calendar_appointment",
+          locals: { appointment: @appointment }
+        )
+      end
+
+      new_count = current_tenant.appointments.pending.count
+      streams << turbo_stream.replace(
+        "pending_appointments_badge",
+        partial: "shared/pending_badge",
+        locals: { count: new_count }
+      )
+      streams << turbo_stream.replace(
+        "pending_appointments_badge_mobile",
+        partial: "shared/pending_badge_mobile",
+        locals: { count: new_count }
+      )
+
+      streams << turbo_stream.prepend("flash_messages", partial: "shared/flash_stream", locals: { type: :notice, message: notice })
+      streams
+    end
+
+    def resolve_error_message(result, cannot_before_key, policy_blocked_key, cancelled_locked_key)
+      case result[:error_key]
+      when :cancelled_locked
+        cancelled_locked_key ? t(cancelled_locked_key) : t("space.unauthorized")
+      when :cannot_before_scheduled
+        key = cannot_before_key || "space.appointments.no_show.cannot_before_scheduled"
+        t(key)
+      when :policy_cancellation_blocked
+        policy_blocked_key ? t(policy_blocked_key) : t("space.unauthorized")
+      else
+        result[:errors]&.to_sentence || t("space.unauthorized")
       end
     end
   end
