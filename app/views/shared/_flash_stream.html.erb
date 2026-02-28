@@ -1,0 +1,16 @@
+<%# Renders a single flash message for Turbo Stream delivery.
+    Locals:
+      type:    :notice or :alert
+      message: the flash message string
+%>
+<% colors = type.to_sym == :notice \
+     ? { border: "border-emerald-200", bg: "bg-emerald-50", text: "text-emerald-800", btn: "text-emerald-700 hover:text-emerald-900" } \
+     : { border: "border-red-200",     bg: "bg-red-50",     text: "text-red-800",     btn: "text-red-700 hover:text-red-900" } %>
+<div x-data="{ show: true }"
+     x-show="show"
+     x-transition
+     x-init="setTimeout(() => show = false, 5000)"
+     class="flex items-start justify-between rounded-lg border <%= colors[:border] %> <%= colors[:bg] %> px-3 py-2 text-sm <%= colors[:text] %>">
+  <span><%= message %></span>
+  <button type="button" class="ml-3 <%= colors[:btn] %>" @click="show = false">&times;</button>
+</div>
