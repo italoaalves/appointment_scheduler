@@ -1,11 +1,11 @@
 namespace :bootstrap do
-  desc "Create the platform superuser. Set SUPERUSER_EMAIL and SUPERUSER_PASSWORD via environment variables."
+  desc "Create the platform superuser from Rails credentials (credentials.superuser.email / .password)"
   task superuser: :environment do
-    email    = ENV["SUPERUSER_EMAIL"]
-    password = ENV["SUPERUSER_PASSWORD"]
+    email    = Rails.application.credentials.dig(:superuser, :email)
+    password = Rails.application.credentials.dig(:superuser, :password)
 
-    abort "ERROR: SUPERUSER_EMAIL env variable is missing" if email.blank?
-    abort "ERROR: SUPERUSER_PASSWORD env variable is missing" if password.blank?
+    abort "ERROR: credentials.superuser.email is missing" if email.blank?
+    abort "ERROR: credentials.superuser.password is missing" if password.blank?
 
     user = User.find_or_initialize_by(email: email)
 
