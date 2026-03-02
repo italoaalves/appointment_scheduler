@@ -1,15 +1,11 @@
-require "io/console"
-
 namespace :bootstrap do
-  desc "Create the platform superuser (prompts for email and password interactively)"
+  desc "Create the platform superuser. Set SUPERUSER_EMAIL and SUPERUSER_PASSWORD via environment variables."
   task superuser: :environment do
-    $stdout.print "Superuser email: "
-    email = $stdin.gets.to_s.strip
+    email    = ENV["SUPERUSER_EMAIL"]
+    password = ENV["SUPERUSER_PASSWORD"]
 
-    abort "ERROR: email can't be blank" if email.blank?
-
-    password = $stdout.getpass("Password (input hidden): ").to_s.strip
-    abort "ERROR: password can't be blank" if password.blank?
+    abort "ERROR: SUPERUSER_EMAIL env variable is missing" if email.blank?
+    abort "ERROR: SUPERUSER_PASSWORD env variable is missing" if password.blank?
 
     user = User.find_or_initialize_by(email: email)
 
