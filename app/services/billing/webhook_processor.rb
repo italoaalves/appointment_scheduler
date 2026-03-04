@@ -61,6 +61,12 @@ module Billing
           subscription.update!(status: :active)
         end
 
+        confirmed_date = parse_date(payment_data["confirmedDate"]) || Time.current
+        subscription.update!(
+          current_period_start: confirmed_date,
+          current_period_end:   confirmed_date + 30.days
+        )
+
         log_webhook_event("webhook.payment_confirmed", subscription, asaas_payment_id: asaas_payment_id)
       end
     end

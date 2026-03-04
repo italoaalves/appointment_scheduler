@@ -65,6 +65,50 @@ module Billing
       assert_equal @subscription.plan.slug, event.metadata["plan_slug"]
     end
 
+    test "PAYMENT_CONFIRMED updates current_period_start to confirmedDate" do
+      freeze_time do
+        Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED"))
+
+        @subscription.reload
+        assert_equal Date.current.in_time_zone.to_i, @subscription.current_period_start.to_i
+      end
+    end
+
+    test "PAYMENT_CONFIRMED sets current_period_end to 30 days after confirmedDate" do
+      freeze_time do
+        Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED"))
+
+        @subscription.reload
+        assert_equal (Date.current.in_time_zone + 30.days).to_i, @subscription.current_period_end.to_i
+      end
+    end
+
+    test "PAYMENT_CONFIRMED for credit purchase does NOT update billing period" do
+      original_start = 5.days.ago
+      original_end   = 25.days.from_now
+      @subscription.update_columns(
+        current_period_start: original_start,
+        current_period_end:   original_end
+      )
+
+      purchase = Billing::CreditPurchase.create!(
+        space:            @space,
+        credit_bundle:    Billing::CreditBundle.available.find_by!(amount: 50),
+        amount:           50,
+        price_cents:      2500,
+        status:           :pending,
+        asaas_payment_id: "pay_cp_period_check"
+      )
+
+      Billing::WebhookProcessor.call(
+        credit_purchase_payload(event: "PAYMENT_CONFIRMED", payment_id: "pay_cp_period_check", purchase_id: purchase.id)
+      )
+
+      @subscription.reload
+      assert_in_delta original_start.to_i, @subscription.current_period_start.to_i, 1
+      assert_in_delta original_end.to_i,   @subscription.current_period_end.to_i,   1
+    end
+
     test "PAYMENT_CONFIRMED is idempotent — processing twice does not create duplicate BillingEvents" do
       Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED"))
       Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED"))
