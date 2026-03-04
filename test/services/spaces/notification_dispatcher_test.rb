@@ -5,7 +5,6 @@ require "test_helper"
 module Spaces
   class NotificationDispatcherTest < ActiveSupport::TestCase
     setup do
-      I18n.locale = :en
       ActionMailer::Base.deliveries.clear
       @space      = spaces(:one)
       @space.update!(owner_id: users(:manager).id) unless @space.owner_id.present?
@@ -50,7 +49,7 @@ module Spaces
       assert_equal 1, ActionMailer::Base.deliveries.size
       mail = ActionMailer::Base.deliveries.first
       assert_equal [ @customer.email ], mail.to
-      assert_includes mail.body.encoded, "confirmed"
+      assert_equal I18n.t("notifications.appointment_confirmed.subject"), mail.subject
     end
 
     test "appointment_cancelled sends email to customer" do
@@ -61,7 +60,7 @@ module Spaces
       assert_equal 1, ActionMailer::Base.deliveries.size
       mail = ActionMailer::Base.deliveries.first
       assert_equal [ @customer.email ], mail.to
-      assert_includes mail.body.encoded, "cancelled"
+      assert_equal I18n.t("notifications.appointment_cancelled.subject"), mail.subject
     end
 
     test "appointment_rescheduled sends email to customer" do
@@ -72,7 +71,7 @@ module Spaces
       assert_equal 1, ActionMailer::Base.deliveries.size
       mail = ActionMailer::Base.deliveries.first
       assert_equal [ @customer.email ], mail.to
-      assert_includes mail.body.encoded, "moved"
+      assert_equal I18n.t("notifications.appointment_rescheduled.subject"), mail.subject
     end
 
     test "customer events skip when customer is blank" do
@@ -96,7 +95,7 @@ module Spaces
       assert_equal @space.owner,       notif.user
       assert_equal @appointment,       notif.notifiable
       assert_equal "appointment_booked", notif.event_type
-      assert_equal "New appointment request", notif.title
+      assert_equal I18n.t("notifications.in_app.appointment_booked.title"), notif.title
       assert_includes notif.body, @customer.name
     end
 
