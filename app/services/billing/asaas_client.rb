@@ -92,6 +92,10 @@ module Billing
       get("/payments", { subscription: subscription_id })
     end
 
+    def pix_qr_code(asaas_payment_id)
+      get("/payments/#{asaas_payment_id}/pixQrCode")
+    end
+
     private
 
     def map_billing_type(billing_type)

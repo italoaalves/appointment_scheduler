@@ -43,6 +43,27 @@ module Spaces
       assert_equal I18n.t("billing.credits.purchase_initiated"), flash[:notice]
     end
 
+    test "POST create for PIX renders payment template with QR code" do
+      sign_in @manager
+      spaces(:one).subscription.update_columns(asaas_customer_id: "cus_ctrl_pix")
+
+      fake_result = {
+        success:         true,
+        credit_purchase: Billing::CreditPurchase.new,
+        invoice_url:     "https://asaas.com/inv/pay_ctrl_pix",
+        pix_qr_code:     "base64qr==",
+        pix_payload:     "00020101..."
+      }
+
+      Billing::CreditManager.stub(:initiate_purchase, fake_result) do
+        post settings_credits_path, params: { amount: 50 }
+      end
+
+      assert_response :success
+      assert_includes response.body, "base64qr=="
+      assert_includes response.body, "00020101..."
+    end
+
     test "POST create does NOT immediately add balance to MessageCredit" do
       sign_in @manager
       credit          = message_credits(:one)

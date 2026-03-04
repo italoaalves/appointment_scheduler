@@ -1,0 +1,43 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("breadcrumbs.settings"), path: edit_settings_space_path },
+  { label: t("breadcrumbs.credits"), path: settings_credits_path },
+  { label: t("billing.credits.waiting_payment") }
+] } %>
+<% content_for(:settings_sidebar) do %>
+  <%= render "shared/settings_sidebar" %>
+<% end %>
+<div class="space-y-4">
+  <%= render "application/shared/card", padding: "p-6" do %>
+    <div class="text-center space-y-4">
+      <p class="text-sm font-medium text-slate-700"><%= t("billing.credits.pix_instructions") %></p>
+
+      <% if @pix_qr_code.present? %>
+        <div class="flex justify-center">
+          <%= image_tag "data:image/png;base64,#{@pix_qr_code}",
+                        alt: "PIX QR Code",
+                        class: "w-48 h-48 border border-slate-200 rounded-lg" %>
+        </div>
+      <% end %>
+
+      <% if @pix_payload.present? %>
+        <div data-controller="clipboard" class="space-y-2">
+          <div class="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+            <code data-clipboard-target="source"
+                  class="flex-1 truncate text-xs text-slate-600 text-left"><%= @pix_payload %></code>
+            <button data-action="clipboard#copy"
+                    data-clipboard-success-content="<%= t("billing.credits.pix_copied") %>"
+                    class="shrink-0 text-xs font-medium text-indigo-600 hover:text-indigo-800">
+              <%= t("billing.credits.copy_pix_code") %>
+            </button>
+          </div>
+        </div>
+      <% end %>
+
+      <p class="text-xs text-slate-500"><%= t("billing.credits.waiting_payment") %></p>
+
+      <%= link_to t("billing.credits.back_to_credits"), settings_credits_path,
+                  class: "text-sm text-indigo-600 hover:underline" %>
+    </div>
+  <% end %>
+</div>

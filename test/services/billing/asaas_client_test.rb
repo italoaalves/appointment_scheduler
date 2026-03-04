@@ -217,5 +217,21 @@ module Billing
         )
       end
     end
+
+    # ── pix_qr_code ───────────────────────────────────────────────────────────
+
+    test "pix_qr_code sends GET to /payments/{id}/pixQrCode and returns parsed response" do
+      client, captured = stub_client(
+        status_code:   200,
+        response_body: '{"encodedImage":"base64img==","payload":"00020101021226..."}'
+      )
+
+      result = client.pix_qr_code("pay_001")
+
+      assert_equal "base64img==",       result["encodedImage"]
+      assert_equal "00020101021226...", result["payload"]
+      assert_kind_of Net::HTTP::Get, captured[:request]
+      assert_includes captured[:request].path, "/payments/pay_001/pixQrCode"
+    end
   end
 end

@@ -28,7 +28,14 @@ module Spaces
       )
 
       if result[:success]
-        redirect_to settings_credits_path, notice: I18n.t("billing.credits.purchase_initiated")
+        if result[:pix_qr_code].present?
+          @pix_qr_code = result[:pix_qr_code]
+          @pix_payload  = result[:pix_payload]
+          @invoice_url  = result[:invoice_url]
+          render :payment
+        else
+          redirect_to settings_credits_path, notice: I18n.t("billing.credits.purchase_initiated")
+        end
       else
         redirect_to settings_credits_path, alert: result[:error]
       end
