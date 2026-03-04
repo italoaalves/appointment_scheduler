@@ -406,5 +406,61 @@ module Billing
       assert_equal false, result[:success]
       assert @subscription.reload.trialing?
     end
+
+    # ── reactivate ────────────────────────────────────────────────────────────
+
+    test "reactivate sets status to active and clears canceled_at" do
+      @subscription.update!(status: :canceled, canceled_at: 1.day.ago,
+                             current_period_end: 10.days.from_now)
+
+      freeze_time do
+        result = Billing::SubscriptionManager.reactivate(subscription: @subscription)
+
+        assert result[:success]
+        @subscription.reload
+        assert @subscription.active?
+        assert_nil @subscription.canceled_at
+      end
+    end
+
+    test "reactivate logs a subscription.reactivated BillingEvent" do
+      @subscription.update!(status: :canceled, canceled_at: 1.day.ago,
+                             current_period_end: 10.days.from_now)
+
+      assert_difference -> { Billing::BillingEvent.where(event_type: "subscription.reactivated").count } do
+        Billing::SubscriptionManager.reactivate(subscription: @subscription)
+      end
+    end
+
+    test "reactivate fails when subscription is expired" do
+      @subscription.update!(status: :expired, canceled_at: 2.days.ago,
+                             current_period_end: 1.day.ago)
+
+      result = Billing::SubscriptionManager.reactivate(subscription: @subscription)
+
+      assert_equal false, result[:success]
+      assert result[:error].present?
+      assert @subscription.reload.expired?
+    end
+
+    test "reactivate fails when current_period_end has already passed" do
+      @subscription.update!(status: :canceled, canceled_at: 5.days.ago,
+                             current_period_end: 1.day.ago)
+
+      result = Billing::SubscriptionManager.reactivate(subscription: @subscription)
+
+      assert_equal false, result[:success]
+      assert @subscription.reload.canceled?
+    end
+
+    test "reactivate fails when current_period_end is nil" do
+      @subscription.update!(status: :canceled, canceled_at: 1.day.ago,
+                             current_period_end: nil)
+
+      result = Billing::SubscriptionManager.reactivate(subscription: @subscription)
+
+      assert_equal false, result[:success]
+      assert @subscription.reload.canceled?
+    end
   end
 end
