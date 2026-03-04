@@ -1,0 +1,8 @@
+default: &default
+  database: cache
+
+staging:
+  <<: *default
+
+production:
+  <<: *default

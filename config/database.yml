@@ -96,3 +96,24 @@ production:
     <<: *primary_production
     database: appointment_scheduler_production_cable
     migrations_paths: db/cable_migrate
+
+staging:
+  primary: &primary_staging
+    <<: *default
+    host:     <%= Rails.application.credentials.dig(:postgres, :hostname) %>
+    username: <%= Rails.application.credentials.dig(:postgres, :user) %>
+    password: <%= Rails.application.credentials.dig(:postgres, :password) %>
+    port:     <%= Rails.application.credentials.dig(:postgres, :port) %>
+    database: appointment_scheduler_staging
+  cache:
+    <<: *primary_staging
+    database: appointment_scheduler_staging_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_staging
+    database: appointment_scheduler_staging_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_staging
+    database: appointment_scheduler_staging_cable
+    migrations_paths: db/cable_migrate
