@@ -33,6 +33,10 @@ default: &default
     class: Billing::CreditsLowCheckJob
     queue: default
     schedule: at 10am every day
+  billing_process_cancellations:
+    class: Billing::ProcessCancellationJob
+    queue: default
+    schedule: at 2am every day
 
 development:
   <<: *default
