@@ -821,6 +821,8 @@ pt-BR:
         topup_hint: "Precisa de mais mensagens além da cota mensal? Compre créditos adicionais."
         pending_purchases: "Compras pendentes"
         pay_now: "Pagar agora"
+        view_boleto: "Ver Boleto"
+      boleto_clearing_warning: "Créditos serão adicionados após confirmação do pagamento (2-3 dias úteis)."
     checkout:
       submit_loading: "Assinando…"
       title: "Escolha seu plano"
