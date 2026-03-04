@@ -82,14 +82,17 @@ module Billing
         customer_id:        subscription.asaas_customer_id,
         billing_type:       subscription.payment_method.to_sym,
         value:              bundle.price_cents / 100.0,
-        due_date:           Date.current.to_s,
+        due_date:           boleto_due_date_for(subscription),
         description:        "#{amount} WhatsApp credits",
         external_reference: "credit_purchase_#{credit_purchase.id}"
       )
 
+      bank_slip_url = result["bankSlipUrl"] if subscription.payment_method_boleto?
+
       credit_purchase.update!(
         asaas_payment_id: result["id"],
-        invoice_url:      result["invoiceUrl"]
+        invoice_url:      result["invoiceUrl"],
+        bank_slip_url:    bank_slip_url
       )
 
       pix_data = asaas_client.pix_qr_code(result["id"]) if subscription.payment_method_pix?
@@ -98,6 +101,7 @@ module Billing
         success:         true,
         credit_purchase: credit_purchase,
         invoice_url:     result["invoiceUrl"],
+        bank_slip_url:   bank_slip_url,
         pix_qr_code:     pix_data&.dig("encodedImage"),
         pix_payload:     pix_data&.dig("payload")
       }
@@ -162,6 +166,19 @@ module Billing
 
         { success: true }
       end
+    end
+
+    def boleto_due_date_for(subscription)
+      return Date.current.to_s unless subscription.payment_method_boleto?
+
+      date = Date.current
+      added = 0
+      loop do
+        date += 1
+        added += 1 unless date.saturday? || date.sunday?
+        break if added >= 3
+      end
+      date.to_s
     end
 
     def sufficient?
