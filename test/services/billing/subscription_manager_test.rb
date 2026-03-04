@@ -8,32 +8,34 @@ module Billing
 
     # A simple fake AsaasClient that returns controlled responses or raises.
     class FakeAsaasClient
-      attr_reader :calls
+      attr_reader :calls, :call_args
 
       def initialize(responses = {})
         @responses = responses
         @calls     = []
+        @call_args = {}
       end
 
-      def create_subscription(**_kwargs)
-        record_call(:create_subscription)
+      def create_subscription(**kwargs)
+        record_call(:create_subscription, kwargs)
         response_for(:create_subscription) || { "id" => "sub_asaas_001" }
       end
 
-      def update_subscription(_id, _attrs)
-        record_call(:update_subscription)
+      def update_subscription(id, attrs)
+        record_call(:update_subscription, { id: id, attrs: attrs })
         response_for(:update_subscription) || { "id" => "sub_asaas_001" }
       end
 
-      def cancel_subscription(_id)
-        record_call(:cancel_subscription)
+      def cancel_subscription(id)
+        record_call(:cancel_subscription, { id: id })
         response_for(:cancel_subscription) || { "deleted" => true }
       end
 
       private
 
-      def record_call(method)
+      def record_call(method, args = {})
         @calls << method
+        @call_args[method] = args
       end
 
       def response_for(method)
@@ -231,6 +233,35 @@ module Billing
       )
 
       assert_equal false, result[:success]
+    end
+
+    test "upgrade passes updatePendingPayments: true to Asaas" do
+      @subscription.update_column(:asaas_subscription_id, "sub_asaas_001")
+      client = fake_client
+
+      Billing::SubscriptionManager.upgrade(
+        subscription:        @subscription,
+        new_billing_plan_id: billing_plans(:enterprise).id,
+        asaas_client:        client
+      )
+
+      attrs = client.call_args[:update_subscription][:attrs]
+      assert_equal true, attrs[:updatePendingPayments]
+    end
+
+    test "upgrade sends new plan price to Asaas" do
+      @subscription.update_column(:asaas_subscription_id, "sub_asaas_001")
+      client      = fake_client
+      enterprise  = billing_plans(:enterprise)
+
+      Billing::SubscriptionManager.upgrade(
+        subscription:        @subscription,
+        new_billing_plan_id: enterprise.id,
+        asaas_client:        client
+      )
+
+      attrs = client.call_args[:update_subscription][:attrs]
+      assert_equal enterprise.price_cents / 100.0, attrs[:value]
     end
 
     test "upgrade does not update local record when Asaas fails" do

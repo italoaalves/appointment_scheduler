@@ -81,7 +81,7 @@ module Billing
       if subscription.asaas_subscription_id.present?
         @client.update_subscription(
           subscription.asaas_subscription_id,
-          { value: new_plan.price_cents / 100.0 }
+          { value: new_plan.price_cents / 100.0, updatePendingPayments: true }
         )
       end
 
