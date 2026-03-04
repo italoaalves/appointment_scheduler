@@ -893,6 +893,11 @@ en:
       invalid_amount: "Invalid credit amount."
       no_subscription: "You need an active subscription to purchase credits."
       purchase_initiated: "Your purchase is being processed. Complete payment using the link below."
+      pix_instructions: "Scan the QR code or copy the PIX code below to complete your payment."
+      copy_pix_code: "Copy PIX code"
+      pix_copied: "Copied!"
+      waiting_payment: "Waiting for payment confirmation..."
+      back_to_credits: "Back to credits"
       show:
         title: "WhatsApp Credits"
         subtitle: "View your credit balance and purchase more."

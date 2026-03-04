@@ -92,7 +92,15 @@ module Billing
         invoice_url:      result["invoiceUrl"]
       )
 
-      { success: true, credit_purchase: credit_purchase, invoice_url: result["invoiceUrl"] }
+      pix_data = asaas_client.pix_qr_code(result["id"]) if subscription.payment_method_pix?
+
+      {
+        success:         true,
+        credit_purchase: credit_purchase,
+        invoice_url:     result["invoiceUrl"],
+        pix_qr_code:     pix_data&.dig("encodedImage"),
+        pix_payload:     pix_data&.dig("payload")
+      }
     rescue Billing::AsaasClient::ApiError => e
       credit_purchase&.update_column(:status, :failed)
       { success: false, error: e.message }

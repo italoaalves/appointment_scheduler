@@ -189,6 +189,9 @@ module Billing
       fake_client.define_singleton_method(:create_payment) do |**_|
         { "id" => "pay_cp_001", "invoiceUrl" => "https://asaas.com/inv/pay_cp_001" }
       end
+      fake_client.define_singleton_method(:pix_qr_code) do |_|
+        { "encodedImage" => "base64img==", "payload" => "pix_payload_string" }
+      end
 
       result = Billing::CreditManager.initiate_purchase(
         space:        @space,
@@ -214,6 +217,9 @@ module Billing
       fake_client.define_singleton_method(:create_payment) do |**_|
         { "id" => "pay_cp_002", "invoiceUrl" => "https://asaas.com/inv/pay_cp_002" }
       end
+      fake_client.define_singleton_method(:pix_qr_code) do |_|
+        { "encodedImage" => "base64img==", "payload" => "pix_payload_string" }
+      end
 
       assert_no_difference -> { @credit.reload.balance } do
         Billing::CreditManager.initiate_purchase(space: @space, amount: 50, asaas_client: fake_client)
@@ -238,6 +244,48 @@ module Billing
       assert_not result[:success]
       assert_equal I18n.t("billing.credits.invalid_amount"), result[:error]
       assert_equal 0, Billing::CreditPurchase.where(space: @space).count
+    end
+
+    test "initiate_purchase with PIX includes pix_qr_code and pix_payload in result" do
+      @space.subscription.update_columns(asaas_customer_id: "cus_test_pix", payment_method: :pix)
+
+      fake_client = Object.new
+      fake_client.define_singleton_method(:create_payment) do |**_|
+        { "id" => "pay_pix_001", "invoiceUrl" => "https://asaas.com/inv/pay_pix_001" }
+      end
+      fake_client.define_singleton_method(:pix_qr_code) do |_|
+        { "encodedImage" => "base64qr==", "payload" => "00020101..." }
+      end
+
+      result = Billing::CreditManager.initiate_purchase(
+        space: @space, amount: 50, asaas_client: fake_client
+      )
+
+      assert result[:success]
+      assert_equal "base64qr==",  result[:pix_qr_code]
+      assert_equal "00020101...", result[:pix_payload]
+    end
+
+    test "initiate_purchase with credit_card does NOT include pix_qr_code in result" do
+      @space.subscription.update_columns(asaas_customer_id: "cus_test_cc", payment_method: :credit_card)
+
+      pix_called = false
+      fake_client = Object.new
+      fake_client.define_singleton_method(:create_payment) do |**_|
+        { "id" => "pay_cc_001", "invoiceUrl" => "https://asaas.com/inv/pay_cc_001" }
+      end
+      fake_client.define_singleton_method(:pix_qr_code) do |_|
+        pix_called = true
+        { "encodedImage" => "should_not_be_called", "payload" => "nope" }
+      end
+
+      result = Billing::CreditManager.initiate_purchase(
+        space: @space, amount: 50, asaas_client: fake_client
+      )
+
+      assert result[:success]
+      assert_nil result[:pix_qr_code]
+      assert_not pix_called, "pix_qr_code should not be called for credit_card payments"
     end
 
     test "initiate_purchase marks CreditPurchase as failed when Asaas API errors" do
