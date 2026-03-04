@@ -37,6 +37,10 @@ default: &default
     class: Billing::ProcessCancellationJob
     queue: default
     schedule: at 2am every day
+  billing_apply_downgrades:
+    class: Billing::ApplyDowngradeJob
+    queue: default
+    schedule: at 5am every day
 
 development:
   <<: *default
