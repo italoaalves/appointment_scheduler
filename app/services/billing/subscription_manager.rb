@@ -125,18 +125,28 @@ module Billing
     end
 
     def cancel(subscription:)
-      if subscription.asaas_subscription_id.present?
-        @client.cancel_subscription(subscription.asaas_subscription_id)
-      end
-
       ActiveRecord::Base.transaction do
-        subscription.update!(status: :canceled, canceled_at: Time.current)
+        if subscription.trialing?
+          # Trial: no payment was made — delete from Asaas immediately and expire.
+          if subscription.asaas_subscription_id.present?
+            @client.cancel_subscription(subscription.asaas_subscription_id)
+          end
+          subscription.update!(status: :expired, canceled_at: Time.current)
+        else
+          # Paid: customer has paid for the current period — defer Asaas deletion.
+          # Access continues until current_period_end. A separate job handles
+          # the actual Asaas DELETE once the period ends (task 39).
+          subscription.update!(status: :canceled, canceled_at: Time.current)
+        end
 
         Billing::BillingEvent.create!(
           space_id:        subscription.space_id,
           subscription_id: subscription.id,
           event_type:      "subscription.canceled",
-          metadata:        { canceled_at: Time.current.iso8601 }
+          metadata:        {
+            canceled_at: Time.current.iso8601,
+            deferred:    !subscription.expired?
+          }
         )
       end
 

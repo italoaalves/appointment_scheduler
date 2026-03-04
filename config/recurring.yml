@@ -37,5 +37,8 @@ default: &default
 development:
   <<: *default
 
+staging:
+  <<: *default
+
 production:
   <<: *default

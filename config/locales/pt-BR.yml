@@ -849,6 +849,8 @@ pt-BR:
       change_plan: "Alterar Plano"
       cancel_subscription: "Cancelar Assinatura"
       cancel_confirm: "Tem certeza que deseja cancelar sua assinatura?"
+      cancel_confirm_deferred: "Sua assinatura permanecerá ativa até %{date}. Após essa data, seu espaço entrará em modo somente leitura. Você pode reativar a qualquer momento até lá."
+      cancel_confirm_trial: "Seu período de avaliação será encerrado imediatamente e seu espaço será desativado. Tem certeza?"
       resubscribe: "Reativar Assinatura"
       plan_limits: "Uso do plano"
       team_members: "Membros"

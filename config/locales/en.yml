@@ -839,6 +839,8 @@ en:
       change_plan: "Change Plan"
       cancel_subscription: "Cancel Subscription"
       cancel_confirm: "Are you sure you want to cancel your subscription?"
+      cancel_confirm_deferred: "Your subscription will remain active until %{date}. After that, your workspace will enter read-only mode. You can resubscribe at any time before then."
+      cancel_confirm_trial: "Your trial will end immediately and your workspace will be deactivated. Are you sure?"
       resubscribe: "Resubscribe"
       plan_limits: "Plan usage"
       team_members: "Team members"

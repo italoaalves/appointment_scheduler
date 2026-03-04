@@ -288,7 +288,50 @@ module Billing
 
     # ── cancel ────────────────────────────────────────────────────────────────
 
-    test "cancel sets status to canceled and records canceled_at" do
+    # Trial path: immediate Asaas DELETE + expire
+    test "cancel (trial) sets status to expired immediately" do
+      freeze_time do
+        result = Billing::SubscriptionManager.cancel(
+          subscription: @subscription,
+          asaas_client: fake_client
+        )
+
+        assert result[:success]
+        @subscription.reload
+        assert @subscription.expired?
+        assert_in_delta Time.current.to_i, @subscription.canceled_at.to_i, 2
+      end
+    end
+
+    test "cancel (trial) calls Asaas DELETE when asaas_subscription_id present" do
+      @subscription.update_column(:asaas_subscription_id, "sub_asaas_001")
+      client = fake_client
+
+      Billing::SubscriptionManager.cancel(
+        subscription: @subscription,
+        asaas_client: client
+      )
+
+      assert_includes client.calls, :cancel_subscription
+    end
+
+    test "cancel (trial) skips Asaas call when asaas_subscription_id is nil" do
+      @subscription.update_column(:asaas_subscription_id, nil)
+      client = fake_client
+
+      Billing::SubscriptionManager.cancel(
+        subscription: @subscription,
+        asaas_client: client
+      )
+
+      assert_not_includes client.calls, :cancel_subscription
+      assert @subscription.reload.expired?
+    end
+
+    # Paid path: deferred — no Asaas DELETE, status = canceled
+    test "cancel (paid) sets status to canceled and records canceled_at" do
+      @subscription.update_column(:status, :active)
+
       freeze_time do
         result = Billing::SubscriptionManager.cancel(
           subscription: @subscription,
@@ -302,29 +345,9 @@ module Billing
       end
     end
 
-    test "cancel logs subscription.canceled BillingEvent" do
-      assert_difference -> { Billing::BillingEvent.where(event_type: "subscription.canceled").count } do
-        Billing::SubscriptionManager.cancel(
-          subscription: @subscription,
-          asaas_client: fake_client
-        )
-      end
-    end
-
-    test "cancel calls Asaas when asaas_subscription_id present" do
+    test "cancel (paid) does NOT call Asaas DELETE" do
+      @subscription.update_column(:status, :active)
       @subscription.update_column(:asaas_subscription_id, "sub_asaas_001")
-      client = fake_client
-
-      Billing::SubscriptionManager.cancel(
-        subscription: @subscription,
-        asaas_client: client
-      )
-
-      assert_includes client.calls, :cancel_subscription
-    end
-
-    test "cancel skips Asaas call when asaas_subscription_id is nil" do
-      @subscription.update_column(:asaas_subscription_id, nil)
       client = fake_client
 
       Billing::SubscriptionManager.cancel(
@@ -336,7 +359,39 @@ module Billing
       assert @subscription.reload.canceled?
     end
 
-    test "cancel returns error hash when Asaas fails" do
+    # BillingEvent
+    test "cancel logs subscription.canceled BillingEvent" do
+      assert_difference -> { Billing::BillingEvent.where(event_type: "subscription.canceled").count } do
+        Billing::SubscriptionManager.cancel(
+          subscription: @subscription,
+          asaas_client: fake_client
+        )
+      end
+    end
+
+    test "cancel BillingEvent has deferred: false for trial cancellation" do
+      Billing::SubscriptionManager.cancel(
+        subscription: @subscription,
+        asaas_client: fake_client
+      )
+
+      event = Billing::BillingEvent.where(event_type: "subscription.canceled").last
+      assert_equal false, event.metadata["deferred"]
+    end
+
+    test "cancel BillingEvent has deferred: true for paid cancellation" do
+      @subscription.update_column(:status, :active)
+
+      Billing::SubscriptionManager.cancel(
+        subscription: @subscription,
+        asaas_client: fake_client
+      )
+
+      event = Billing::BillingEvent.where(event_type: "subscription.canceled").last
+      assert_equal true, event.metadata["deferred"]
+    end
+
+    test "cancel returns error hash when Asaas fails on trial" do
       @subscription.update_column(:asaas_subscription_id, "sub_asaas_001")
 
       error_client = fake_client(

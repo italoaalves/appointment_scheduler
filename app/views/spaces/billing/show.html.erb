@@ -58,9 +58,15 @@
         <div class="mt-4 flex flex-wrap gap-3">
           <%= link_to t("billing.show.change_plan"), edit_settings_billing_path,
                       class: button_classes(:secondary) %>
+          <% cancel_confirm = if @subscription.trialing?
+                               t("billing.show.cancel_confirm_trial")
+                             else
+                               t("billing.show.cancel_confirm_deferred",
+                                 date: l(@subscription.current_period_end.to_date, format: :long))
+                             end %>
           <%= button_to t("billing.show.cancel_subscription"), cancel_settings_billing_path,
                         method: :patch,
-                        data: { turbo_confirm: t("billing.show.cancel_confirm") },
+                        data: { turbo_confirm: cancel_confirm },
                         class: button_classes(:destructive) %>
         </div>
       <% end %>
