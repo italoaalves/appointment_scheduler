@@ -106,7 +106,18 @@ module Spaces
     end
 
     def resubscribe
-      redirect_to checkout_settings_billing_path
+      subscription = current_tenant.subscription
+
+      if subscription&.canceled? && subscription.current_period_end&.future?
+        result = Billing::SubscriptionManager.reactivate(subscription: subscription)
+        if result[:success]
+          redirect_to settings_billing_path, notice: I18n.t("billing.reactivated")
+        else
+          redirect_to settings_billing_path, alert: result[:error]
+        end
+      else
+        redirect_to checkout_settings_billing_path
+      end
     end
 
     private

@@ -22,6 +22,10 @@ module Billing
       new(asaas_client).cancel(subscription: subscription)
     end
 
+    def self.reactivate(subscription:)
+      new(nil).reactivate(subscription: subscription)
+    end
+
     # ── Instance ─────────────────────────────────────────────────────────────
 
     def initialize(asaas_client)
@@ -153,6 +157,25 @@ module Billing
       { success: true }
     rescue Billing::AsaasClient::ApiError => e
       { success: false, error: e.message }
+    end
+
+    def reactivate(subscription:)
+      unless subscription.canceled? && subscription.current_period_end&.future?
+        return { success: false, error: I18n.t("billing.resubscribe_unavailable") }
+      end
+
+      ActiveRecord::Base.transaction do
+        subscription.update!(status: :active, canceled_at: nil)
+
+        Billing::BillingEvent.create!(
+          space_id:        subscription.space_id,
+          subscription_id: subscription.id,
+          event_type:      "subscription.reactivated",
+          metadata:        { reactivated_at: Time.current.iso8601 }
+        )
+      end
+
+      { success: true }
     end
 
     private

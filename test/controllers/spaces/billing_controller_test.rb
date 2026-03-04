@@ -175,8 +175,36 @@ module Spaces
 
     # ── resubscribe ───────────────────────────────────────────────────────────
 
-    test "PATCH resubscribe redirects to checkout page" do
+    test "PATCH resubscribe reactivates canceled subscription within paid period" do
+      subscriptions(:one).update!(
+        status:             :canceled,
+        canceled_at:        1.day.ago,
+        current_period_end: 10.days.from_now
+      )
+      sign_in @manager
+
+      patch resubscribe_settings_billing_path
+
+      assert_redirected_to settings_billing_path
+      assert_equal I18n.t("billing.reactivated"), flash[:notice]
+      assert subscriptions(:one).reload.active?
+    end
+
+    test "PATCH resubscribe redirects to checkout when subscription is expired" do
       subscriptions(:one).update!(status: :expired)
+      sign_in @manager
+
+      patch resubscribe_settings_billing_path
+
+      assert_redirected_to checkout_settings_billing_path
+    end
+
+    test "PATCH resubscribe redirects to checkout when canceled period has already passed" do
+      subscriptions(:one).update!(
+        status:             :canceled,
+        canceled_at:        5.days.ago,
+        current_period_end: 1.day.ago
+      )
       sign_in @manager
 
       patch resubscribe_settings_billing_path

@@ -772,6 +772,7 @@ pt-BR:
     canceled: "Sua assinatura foi cancelada. O acesso continua até o fim do período de cobrança."
     no_change: "Você já está neste plano."
     resubscribe_unavailable: "Entre em contato com o suporte para reativar sua assinatura."
+    reactivated: "Sua assinatura foi reativada."
     plan_change_limit_reached: "Você já alterou seu plano duas vezes neste ciclo de cobrança. Você pode alterar novamente após o fim do período atual."
     payment_method_action_required:
       pix: "Uma nova cobrança PIX será gerada — pague antes do vencimento para manter sua assinatura ativa."
@@ -852,6 +853,8 @@ pt-BR:
       cancel_confirm_deferred: "Sua assinatura permanecerá ativa até %{date}. Após essa data, seu espaço entrará em modo somente leitura. Você pode reativar a qualquer momento até lá."
       cancel_confirm_trial: "Seu período de avaliação será encerrado imediatamente e seu espaço será desativado. Tem certeza?"
       resubscribe: "Reativar Assinatura"
+      reactivate: "Reativar"
+      cancel_pending: "Cancelada. Acesso disponível até %{date}."
       plan_limits: "Uso do plano"
       team_members: "Membros"
       customers: "Clientes"

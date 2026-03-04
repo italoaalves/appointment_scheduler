@@ -801,6 +801,7 @@ en:
     canceled: "Your subscription has been canceled. Access continues until the end of your billing period."
     no_change: "You're already on this plan."
     resubscribe_unavailable: "Please contact support to resubscribe."
+    reactivated: "Your subscription has been reactivated."
     plan_change_limit_reached: "You've already changed your plan twice this billing cycle. You can change again after your current period ends."
     payment_method_action_required:
       pix: "A new PIX charge will be generated — please pay it before the due date to keep your subscription active."
@@ -842,6 +843,8 @@ en:
       cancel_confirm_deferred: "Your subscription will remain active until %{date}. After that, your workspace will enter read-only mode. You can resubscribe at any time before then."
       cancel_confirm_trial: "Your trial will end immediately and your workspace will be deactivated. Are you sure?"
       resubscribe: "Resubscribe"
+      reactivate: "Reactivate"
+      cancel_pending: "Canceled. Access continues until %{date}."
       plan_limits: "Plan usage"
       team_members: "Team members"
       customers: "Customers"

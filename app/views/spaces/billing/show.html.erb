@@ -48,7 +48,17 @@
         </p>
       <% end %>
 
-      <% if @subscription.expired? || @subscription.canceled? %>
+      <% if @subscription.canceled? && @subscription.current_period_end&.future? %>
+        <p class="mt-3 text-sm text-amber-600">
+          <%= t("billing.show.cancel_pending",
+                date: l(@subscription.current_period_end.to_date, format: :long)) %>
+        </p>
+        <div class="mt-4">
+          <%= button_to t("billing.show.reactivate"), resubscribe_settings_billing_path,
+                        method: :patch,
+                        class: button_classes(:primary) %>
+        </div>
+      <% elsif @subscription.expired? || @subscription.canceled? %>
         <div class="mt-4">
           <%= button_to t("billing.show.resubscribe"), resubscribe_settings_billing_path,
                         method: :patch,
