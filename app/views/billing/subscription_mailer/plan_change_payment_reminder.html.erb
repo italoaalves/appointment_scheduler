@@ -1,0 +1,9 @@
+<p><%= t("billing.subscription_mailer.plan_change_payment_reminder.greeting", space_name: @space.name) %></p>
+
+<p><%= t("billing.subscription_mailer.plan_change_payment_reminder.body_#{@payment_method}",
+         plan_name:  @new_plan.name,
+         price:      number_to_currency(@new_plan.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".")) %></p>
+
+<p style="margin-top: 1.5em; font-size: 12px; color: #666;">
+  <%= t("layout.app_name") %>
+</p>

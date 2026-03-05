@@ -1,0 +1,7 @@
+<%= t("billing.subscription_mailer.plan_change_payment_reminder.greeting", space_name: @space.name) %>
+
+<%= t("billing.subscription_mailer.plan_change_payment_reminder.body_#{@payment_method}",
+      plan_name:  @new_plan.name,
+      price:      number_to_currency(@new_plan.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".")) %>
+
+<%= t("layout.app_name") %>
