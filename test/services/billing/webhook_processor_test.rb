@@ -416,5 +416,69 @@ module Billing
 
       assert purchase.reload.completed?
     end
+
+    test "PAYMENT_RECEIVED for credit purchase fulfills it and adds balance" do
+      purchase = Billing::CreditPurchase.create!(
+        space:            @space,
+        credit_bundle:    Billing::CreditBundle.available.find_by!(amount: 50),
+        amount:           50,
+        price_cents:      2500,
+        status:           :pending,
+        asaas_payment_id: "pay_cp_recv_001"
+      )
+
+      Billing::WebhookProcessor.call(
+        credit_purchase_payload(event: "PAYMENT_RECEIVED", payment_id: "pay_cp_recv_001", purchase_id: purchase.id)
+      )
+
+      assert purchase.reload.completed?
+      assert_equal 50, Billing::MessageCredit.find_by!(space_id: @space.id).balance
+    end
+
+    test "fulfillment error propagates from WebhookProcessor when credit bundle is deactivated" do
+      bundle = Billing::CreditBundle.available.find_by!(amount: 50)
+      purchase = Billing::CreditPurchase.create!(
+        space:            @space,
+        credit_bundle:    bundle,
+        amount:           50,
+        price_cents:      2500,
+        status:           :pending,
+        asaas_payment_id: "pay_cp_err_001"
+      )
+
+      bundle.update!(active: false)
+
+      assert_raises(ActiveRecord::RecordNotFound) do
+        Billing::WebhookProcessor.call(
+          credit_purchase_payload(event: "PAYMENT_CONFIRMED", payment_id: "pay_cp_err_001", purchase_id: purchase.id)
+        )
+      end
+
+      assert purchase.reload.pending?  # credits NOT granted, status unchanged
+    end
+
+    test "fulfillment error leaves CreditPurchase pending — no partial grant" do
+      bundle = Billing::CreditBundle.available.find_by!(amount: 50)
+      purchase = Billing::CreditPurchase.create!(
+        space:            @space,
+        credit_bundle:    bundle,
+        amount:           50,
+        price_cents:      2500,
+        status:           :pending,
+        asaas_payment_id: "pay_cp_atomic_001"
+      )
+
+      bundle.update!(active: false)
+
+      assert_raises(ActiveRecord::RecordNotFound) do
+        Billing::WebhookProcessor.call(
+          credit_purchase_payload(event: "PAYMENT_CONFIRMED", payment_id: "pay_cp_atomic_001", purchase_id: purchase.id)
+        )
+      end
+
+      credit = Billing::MessageCredit.find_by(space_id: @space.id)
+      assert_equal 0, credit&.balance.to_i  # balance not incremented
+      assert purchase.reload.pending?        # status unchanged
+    end
   end
 end

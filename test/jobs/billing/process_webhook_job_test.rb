@@ -18,5 +18,13 @@ module Billing
     test "is queued on the default queue" do
       assert_equal "default", Billing::ProcessWebhookJob.new.queue_name
     end
+
+    test "propagates errors from WebhookProcessor so Solid Queue can retry" do
+      Billing::WebhookProcessor.stub(:call, ->(_) { raise StandardError, "transient DB failure" }) do
+        assert_raises(StandardError) do
+          Billing::ProcessWebhookJob.new.perform(payload: "{}")
+        end
+      end
+    end
   end
 end

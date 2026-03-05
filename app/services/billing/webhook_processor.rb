@@ -32,8 +32,8 @@ module Billing
       when "SUBSCRIPTION_DELETED"                   then handle_subscription_deleted
       else log_unknown_event(event_name)
       end
-    rescue => e
-      Rails.logger.error("[Billing::WebhookProcessor] Unhandled error for event=#{@payload['event']}: #{e.message}\n#{e.backtrace&.first(3)&.join("\n")}")
+      # Errors are intentionally NOT rescued here.
+      # Any unhandled exception propagates to ProcessWebhookJob so Solid Queue retries.
     end
 
     private

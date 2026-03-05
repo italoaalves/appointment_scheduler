@@ -117,18 +117,19 @@ module Billing
     end
 
     # Grants credits after payment is confirmed. Idempotent — safe to call twice.
+    # Errors are intentionally NOT rescued: they propagate to ProcessWebhookJob
+    # so Solid Queue can retry automatically.
     def fulfill_purchase(credit_purchase:)
       return { success: true } if credit_purchase.completed?
 
-      purchase(amount: credit_purchase.amount)
-      credit_purchase.update!(status: :completed)
+      ActiveRecord::Base.transaction do
+        purchase(amount: credit_purchase.amount)
+        credit_purchase.update!(status: :completed)
+      end
 
       Billing::CreditPurchaseFulfilledNotificationJob.perform_later(credit_purchase.id)
 
       { success: true }
-    rescue => e
-      Rails.logger.error("[CreditManager] fulfill_purchase failed for #{credit_purchase.id}: #{e.message}")
-      { success: false, error: e.message }
     end
 
     def deduct
