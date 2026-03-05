@@ -184,7 +184,7 @@ module Billing
 
     # ── initiate_purchase ─────────────────────────────────────────────────────
 
-    test "initiate_purchase creates a pending CreditPurchase and returns invoice_url" do
+    test "initiate_purchase creates a pending CreditPurchase and persists invoice_url on the record" do
       @space.subscription.update_columns(asaas_customer_id: "cus_test_001", payment_method: :pix)
 
       fake_client = Object.new
@@ -203,13 +203,13 @@ module Billing
       )
 
       assert result[:success]
-      assert_equal "https://asaas.com/inv/pay_cp_001", result[:invoice_url]
 
-      purchase = Billing::CreditPurchase.find_by(asaas_payment_id: "pay_cp_001")
+      purchase = result[:credit_purchase]
       assert_not_nil purchase
       assert purchase.pending?
       assert_equal 50, purchase.amount
       assert_equal users(:manager).id, purchase.actor_id
+      assert_equal "https://asaas.com/inv/pay_cp_001", purchase.invoice_url
     end
 
     test "initiate_purchase does NOT immediately add balance" do
@@ -248,7 +248,7 @@ module Billing
       assert_equal 0, Billing::CreditPurchase.where(space: @space).count
     end
 
-    test "initiate_purchase with PIX includes pix_qr_code and pix_payload in result" do
+    test "initiate_purchase with PIX persists pix_qr_code_base64 and pix_payload on the record" do
       @space.subscription.update_columns(asaas_customer_id: "cus_test_pix", payment_method: :pix)
 
       fake_client = Object.new
@@ -264,8 +264,9 @@ module Billing
       )
 
       assert result[:success]
-      assert_equal "base64qr==",  result[:pix_qr_code]
-      assert_equal "00020101...", result[:pix_payload]
+      purchase = result[:credit_purchase]
+      assert_equal "base64qr==",  purchase.pix_qr_code_base64
+      assert_equal "00020101...", purchase.pix_payload
     end
 
     test "initiate_purchase with credit_card does NOT include pix_qr_code in result" do

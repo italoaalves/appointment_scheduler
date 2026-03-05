@@ -93,21 +93,19 @@ module Billing
 
       bank_slip_url = result["bankSlipUrl"] if subscription.payment_method_boleto?
 
-      credit_purchase.update!(
-        asaas_payment_id: result["id"],
-        invoice_url:      result["invoiceUrl"],
-        bank_slip_url:    bank_slip_url
-      )
-
       pix_data = asaas_client.pix_qr_code(result["id"]) if subscription.payment_method_pix?
+
+      credit_purchase.update!(
+        asaas_payment_id:   result["id"],
+        invoice_url:        result["invoiceUrl"],
+        bank_slip_url:      bank_slip_url,
+        pix_qr_code_base64: pix_data&.dig("encodedImage"),
+        pix_payload:        pix_data&.dig("payload")
+      )
 
       {
         success:         true,
-        credit_purchase: credit_purchase,
-        invoice_url:     result["invoiceUrl"],
-        bank_slip_url:   bank_slip_url,
-        pix_qr_code:     pix_data&.dig("encodedImage"),
-        pix_payload:     pix_data&.dig("payload")
+        credit_purchase: credit_purchase
       }
     rescue Billing::AsaasClient::ApiError => e
       credit_purchase&.update_column(:status, :failed)

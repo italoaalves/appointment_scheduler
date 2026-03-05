@@ -43,25 +43,76 @@ module Spaces
       assert_equal I18n.t("billing.credits.purchase_initiated"), flash[:notice]
     end
 
-    test "POST create for PIX renders payment template with QR code" do
+    test "POST create for PIX redirects to the payment page" do
       sign_in @manager
       spaces(:one).subscription.update_columns(asaas_customer_id: "cus_ctrl_pix")
 
-      fake_result = {
-        success:         true,
-        credit_purchase: Billing::CreditPurchase.new,
-        invoice_url:     "https://asaas.com/inv/pay_ctrl_pix",
-        pix_qr_code:     "base64qr==",
-        pix_payload:     "00020101..."
-      }
+      purchase = spaces(:one).credit_purchases.create!(
+        credit_bundle:      credit_bundles(:fifty),
+        amount:             50,
+        price_cents:        2500,
+        status:             :pending,
+        pix_qr_code_base64: "base64qr==",
+        pix_payload:        "00020101..."
+      )
+
+      fake_result = { success: true, credit_purchase: purchase }
 
       Billing::CreditManager.stub(:initiate_purchase, fake_result) do
         post settings_credits_path, params: { amount: 50 }
       end
 
+      assert_redirected_to payment_settings_credits_path(purchase_id: purchase.id)
+    end
+
+    # ── payment ───────────────────────────────────────────────────────────────
+
+    test "GET payment shows the PIX QR code for a pending purchase" do
+      sign_in @manager
+
+      purchase = spaces(:one).credit_purchases.create!(
+        credit_bundle:      credit_bundles(:fifty),
+        amount:             50,
+        price_cents:        2500,
+        status:             :pending,
+        pix_qr_code_base64: "base64qr==",
+        pix_payload:        "00020101..."
+      )
+
+      get payment_settings_credits_path, params: { purchase_id: purchase.id }
+
       assert_response :success
       assert_includes response.body, "base64qr=="
       assert_includes response.body, "00020101..."
+    end
+
+    test "GET payment is scoped to current tenant" do
+      sign_in @manager
+
+      other_purchase = spaces(:two).credit_purchases.create!(
+        credit_bundle:      credit_bundles(:fifty),
+        amount:             50,
+        price_cents:        2500,
+        status:             :pending,
+        pix_qr_code_base64: "base64qr=="
+      )
+
+      get payment_settings_credits_path, params: { purchase_id: other_purchase.id }
+
+      assert_response :not_found
+    end
+
+    test "GET payment redirects unauthenticated users" do
+      purchase = spaces(:one).credit_purchases.create!(
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :pending
+      )
+
+      get payment_settings_credits_path, params: { purchase_id: purchase.id }
+
+      assert_redirected_to new_user_session_path
     end
 
     test "POST create does NOT immediately add balance to MessageCredit" do
