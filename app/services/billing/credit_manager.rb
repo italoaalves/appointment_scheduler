@@ -65,6 +65,10 @@ module Billing
       bundle       = Billing::CreditBundle.available.find_by!(amount: amount)
       subscription = @space.subscription
 
+      if Billing::CreditPurchase.where(space: @space, status: :pending).count >= 3
+        return { success: false, error: I18n.t("billing.credits.too_many_pending") }
+      end
+
       unless subscription&.asaas_customer_id.present?
         return { success: false, error: I18n.t("billing.credits.no_subscription") }
       end

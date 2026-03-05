@@ -823,6 +823,7 @@ pt-BR:
       purchased: "%{amount} créditos WhatsApp adicionados à sua conta."
       invalid_amount: "Valor de créditos inválido."
       no_subscription: "Você precisa de uma assinatura ativa para comprar créditos."
+      too_many_pending: "Você tem compras de créditos pendentes aguardando pagamento. Conclua-as antes de comprar mais."
       purchase_initiated: "Sua compra está sendo processada. Conclua o pagamento usando o link abaixo."
       pix_instructions: "Escaneie o QR code ou copie o código PIX abaixo para concluir o pagamento."
       copy_pix_code: "Copiar código PIX"
