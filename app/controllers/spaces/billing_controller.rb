@@ -26,15 +26,20 @@ module Spaces
     end
 
     def update
-      new_plan     = Billing::Plan.find(params[:billing_plan_id])
-      subscription = current_tenant.subscription
+      new_plan       = Billing::Plan.find(params[:billing_plan_id])
+      subscription   = current_tenant.subscription
+      payment_method = sanitize_payment_method(params[:payment_method])
 
       if plan_change_limit_reached?(subscription)
         redirect_to settings_billing_path, alert: I18n.t("billing.plan_change_limit_reached") and return
       end
 
       if upgrade?(subscription, new_plan)
-        result      = Billing::SubscriptionManager.upgrade(subscription: subscription, new_billing_plan_id: new_plan.id)
+        result      = Billing::SubscriptionManager.upgrade(
+          subscription:        subscription,
+          new_billing_plan_id: new_plan.id,
+          payment_method:      payment_method
+        )
         success_msg = plan_change_notice(:upgrade, subscription)
       elsif downgrade?(subscription, new_plan)
         result      = Billing::SubscriptionManager.downgrade(subscription: subscription, new_billing_plan_id: new_plan.id)
@@ -153,6 +158,12 @@ module Spaces
       current_plan = subscription&.billing_plan
       return false unless current_plan
       new_plan.price_cents < current_plan.price_cents
+    end
+
+    def sanitize_payment_method(param)
+      return nil if param.blank?
+      sym = param.to_sym
+      Billing::Subscription.payment_methods.key?(sym) ? sym : nil
     end
 
     def resolve_asaas_customer(subscription)

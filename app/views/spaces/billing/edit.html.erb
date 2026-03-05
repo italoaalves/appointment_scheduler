@@ -7,18 +7,18 @@
 <% content_for(:settings_sidebar) do %>
   <%= render "shared/settings_sidebar" %>
 <% end %>
-<div class="space-y-4">
+<div class="space-y-4" x-data="{ paymentMethod: '<%= @subscription&.payment_method %>' }">
   <%= render "application/shared/page_header",
              title:   t("billing.edit.title"),
              subtitle: t("billing.edit.subtitle") %>
 
-  <%# Payment method notice for PIX / Boleto subscribers %>
-  <% if @subscription&.payment_method_pix? || @subscription&.payment_method_boleto? %>
-    <div class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-      ⚠️ <%= t("billing.edit.payment_method_notice",
-               method: t("billing.checkout.#{@subscription.payment_method}")) %>
-    </div>
-  <% end %>
+  <%# Hidden form — submitted by Alpine when a plan is selected %>
+  <form x-ref="planForm" action="<%= settings_billing_path %>" method="post" style="display:none">
+    <input type="hidden" name="_method" value="patch">
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+    <input type="hidden" name="billing_plan_id" x-ref="planIdInput">
+    <input type="hidden" name="payment_method" :value="paymentMethod">
+  </form>
 
   <div class="grid gap-4 sm:grid-cols-3">
     <% @plans.each do |plan| %>
@@ -72,15 +72,31 @@
               <%= t("billing.edit.current") %>
             </button>
           <% else %>
-            <%= button_to t("billing.edit.select_plan"),
-                          settings_billing_path,
-                          method: :patch,
-                          params: { billing_plan_id: plan.id },
-                          class: "w-full #{button_classes(:primary)}" %>
+            <button type="button"
+                    @click="$refs.planIdInput.value = '<%= plan.id %>'; $refs.planForm.submit()"
+                    class="w-full <%= button_classes(:primary) %>">
+              <%= t("billing.edit.select_plan") %>
+            </button>
           <% end %>
         </div>
       </div>
     <% end %>
   </div>
 
+  <%# Payment method selector — always shown for active subscriptions %>
+  <%= render "application/shared/card" do %>
+    <h2 class="mb-3 text-sm font-semibold text-slate-800"><%= t("billing.edit.change_payment_method") %></h2>
+    <div class="flex flex-col gap-2 sm:flex-row sm:gap-6">
+      <% Billing::Subscription.payment_methods.each_key do |method| %>
+        <label class="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+          <input type="radio"
+                 name="payment_method"
+                 value="<%= method %>"
+                 x-model="paymentMethod"
+                 class="accent-slate-800">
+          <%= t("billing.payment_methods.#{method}") %>
+        </label>
+      <% end %>
+    </div>
+  <% end %>
 </div>

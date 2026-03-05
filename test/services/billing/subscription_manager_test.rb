@@ -319,6 +319,61 @@ module Billing
       end
     end
 
+    test "upgrade with payment_method sends billingType to Asaas when method changes" do
+      @subscription.update_columns(asaas_subscription_id: "sub_asaas_pm01", payment_method: :pix)
+      client = fake_client
+
+      Billing::SubscriptionManager.upgrade(
+        subscription:        @subscription,
+        new_billing_plan_id: billing_plans(:enterprise).id,
+        payment_method:      :credit_card,
+        asaas_client:        client
+      )
+
+      attrs = client.call_args[:update_subscription][:attrs]
+      assert_equal "CREDIT_CARD", attrs[:billingType]
+    end
+
+    test "upgrade with payment_method updates local payment_method" do
+      @subscription.update_columns(asaas_subscription_id: "sub_asaas_pm02", payment_method: :pix)
+
+      Billing::SubscriptionManager.upgrade(
+        subscription:        @subscription,
+        new_billing_plan_id: billing_plans(:enterprise).id,
+        payment_method:      :credit_card,
+        asaas_client:        fake_client
+      )
+
+      assert @subscription.reload.payment_method_credit_card?
+    end
+
+    test "upgrade without payment_method keeps current payment_method" do
+      @subscription.update_columns(asaas_subscription_id: "sub_asaas_pm03", payment_method: :pix)
+
+      Billing::SubscriptionManager.upgrade(
+        subscription:        @subscription,
+        new_billing_plan_id: billing_plans(:enterprise).id,
+        asaas_client:        fake_client
+      )
+
+      assert @subscription.reload.payment_method_pix?
+    end
+
+    test "upgrade with same payment_method does not include billingType in Asaas call" do
+      @subscription.update_columns(asaas_subscription_id: "sub_asaas_pm04", payment_method: :pix)
+      client = fake_client
+
+      Billing::SubscriptionManager.upgrade(
+        subscription:        @subscription,
+        new_billing_plan_id: billing_plans(:enterprise).id,
+        payment_method:      :pix,
+        asaas_client:        client
+      )
+
+      attrs = client.call_args[:update_subscription][:attrs]
+      assert_nil attrs[:billingType]
+    end
+
     # ── downgrade ─────────────────────────────────────────────────────────────
 
     test "downgrade sets pending_billing_plan without changing current billing_plan" do

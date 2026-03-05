@@ -135,6 +135,52 @@ module Spaces
       assert_equal I18n.t("billing.plan_changed"), flash[:notice]
     end
 
+    # ── payment method change during upgrade ─────────────────────────────────
+
+    test "PATCH update with payment_method param updates subscription payment method" do
+      sign_in @manager2
+      subscriptions(:two).update!(payment_method: :pix)
+
+      patch settings_billing_path, params: {
+        billing_plan_id: billing_plans(:enterprise).id,
+        payment_method:  "credit_card"
+      }
+
+      assert_redirected_to settings_billing_path
+      assert subscriptions(:two).reload.payment_method_credit_card?
+    end
+
+    test "PATCH update without payment_method param keeps current payment method" do
+      sign_in @manager2
+      subscriptions(:two).update!(payment_method: :pix)
+
+      patch settings_billing_path, params: { billing_plan_id: billing_plans(:enterprise).id }
+
+      assert subscriptions(:two).reload.payment_method_pix?
+    end
+
+    test "PATCH update ignores invalid payment_method param" do
+      sign_in @manager2
+      subscriptions(:two).update!(payment_method: :pix)
+
+      patch settings_billing_path, params: {
+        billing_plan_id: billing_plans(:enterprise).id,
+        payment_method:  "bitcoin"
+      }
+
+      assert_redirected_to settings_billing_path
+      assert subscriptions(:two).reload.payment_method_pix?
+    end
+
+    test "GET edit renders payment method radio buttons" do
+      sign_in @manager2
+
+      get edit_settings_billing_path
+
+      assert_response :success
+      assert_select "input[type=radio][name='payment_method']"
+    end
+
     # ── cancel ────────────────────────────────────────────────────────────────
 
     test "PATCH cancel calls SubscriptionManager.cancel and redirects with notice" do
