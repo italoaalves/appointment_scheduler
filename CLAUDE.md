@@ -107,6 +107,15 @@
 - Prefer request specs over controller specs.
 - Avoid over-mocking domain logic.
 
+## Front-End & Hotwire
+
+- **Turbo Drive / Frames / Streams + Stimulus** is the primary front-end stack. Use it for all page navigation, form flows, and stateful UI.
+- Successful form submissions (POST/PATCH/DELETE) must **redirect** (303), never `render` a 200 — Turbo expects the PRG pattern.
+- Use Turbo Frames to scope partial page updates (e.g., settings content area, modals).
+- Use Stimulus controllers for JS behavior tied to DOM elements.
+- **Alpine.js** is allowed only for lightweight, self-contained UI affordances (toggles, dropdowns, simple conditional visibility) where there is no Rails-native way to handle the state. Never use Alpine for page navigation, form submission flows, or stateful workflows that span requests.
+- When in doubt, prefer Turbo/Stimulus over Alpine.
+
 ## Code Style
 
 - Idiomatic Ruby. Readability over cleverness.

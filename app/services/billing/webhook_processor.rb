@@ -158,8 +158,12 @@ module Billing
                                          .find_by(asaas_subscription_id: asaas_subscription_id)
       return log_missing_subscription(asaas_subscription_id) unless subscription
 
+      # Already expired — Asaas confirming a deletion we already processed locally.
+      # Do not revert the status; idempotency guard above prevents duplicate BillingEvents.
+      return if subscription.expired?
+
       ActiveRecord::Base.transaction do
-        subscription.update!(status: :canceled, canceled_at: Time.current)
+        subscription.update!(status: :expired, canceled_at: subscription.canceled_at || Time.current)
         log_webhook_event("webhook.subscription_deleted", subscription,
                           asaas_subscription_id: asaas_subscription_id)
       end

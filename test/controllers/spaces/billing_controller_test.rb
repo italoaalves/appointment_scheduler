@@ -223,9 +223,10 @@ module Spaces
 
     test "PATCH resubscribe reactivates canceled subscription within paid period" do
       subscriptions(:one).update!(
-        status:             :canceled,
-        canceled_at:        1.day.ago,
-        current_period_end: 10.days.from_now
+        status:                :canceled,
+        canceled_at:           1.day.ago,
+        current_period_end:    10.days.from_now,
+        asaas_subscription_id: "sub_resubscribe_ctrl_001"
       )
       sign_in @manager
 

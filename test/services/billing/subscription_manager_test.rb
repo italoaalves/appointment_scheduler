@@ -535,7 +535,8 @@ module Billing
 
     test "reactivate sets status to active and clears canceled_at" do
       @subscription.update!(status: :canceled, canceled_at: 1.day.ago,
-                             current_period_end: 10.days.from_now)
+                             current_period_end: 10.days.from_now,
+                             asaas_subscription_id: "sub_reactivate_001")
 
       freeze_time do
         result = Billing::SubscriptionManager.reactivate(subscription: @subscription)
@@ -549,7 +550,8 @@ module Billing
 
     test "reactivate logs a subscription.reactivated BillingEvent" do
       @subscription.update!(status: :canceled, canceled_at: 1.day.ago,
-                             current_period_end: 10.days.from_now)
+                             current_period_end: 10.days.from_now,
+                             asaas_subscription_id: "sub_reactivate_002")
 
       assert_difference -> { Billing::BillingEvent.where(event_type: "subscription.reactivated").count } do
         Billing::SubscriptionManager.reactivate(subscription: @subscription)
@@ -584,6 +586,18 @@ module Billing
       result = Billing::SubscriptionManager.reactivate(subscription: @subscription)
 
       assert_equal false, result[:success]
+      assert @subscription.reload.canceled?
+    end
+
+    test "reactivate fails when asaas_subscription_id is blank" do
+      @subscription.update!(status: :canceled, canceled_at: 1.day.ago,
+                             current_period_end: 10.days.from_now,
+                             asaas_subscription_id: nil)
+
+      result = Billing::SubscriptionManager.reactivate(subscription: @subscription)
+
+      assert_equal false, result[:success]
+      assert result[:error].present?
       assert @subscription.reload.canceled?
     end
   end

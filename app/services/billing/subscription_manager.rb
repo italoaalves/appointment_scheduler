@@ -174,6 +174,13 @@ module Billing
         return { success: false, error: I18n.t("billing.resubscribe_unavailable") }
       end
 
+      # Safety: if the Asaas subscription was already deleted (e.g., SUBSCRIPTION_DELETED
+      # webhook received before the customer reactivated), reactivation is impossible —
+      # there is no active Asaas subscription to generate future charges.
+      if subscription.asaas_subscription_id.blank?
+        return { success: false, error: I18n.t("billing.resubscribe_unavailable") }
+      end
+
       ActiveRecord::Base.transaction do
         subscription.update!(status: :active, canceled_at: nil)
 
