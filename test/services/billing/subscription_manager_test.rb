@@ -4,6 +4,8 @@ require "test_helper"
 
 module Billing
   class SubscriptionManagerTest < ActiveSupport::TestCase
+    include ActiveJob::TestHelper
+
     # ── Helpers ───────────────────────────────────────────────────────────────
 
     # A simple fake AsaasClient that returns controlled responses or raises.
@@ -279,6 +281,42 @@ module Billing
       )
 
       assert_equal original_plan_id, @subscription.reload.billing_plan_id
+    end
+
+    test "upgrade with PIX enqueues PlanChangePaymentReminderJob" do
+      @subscription.update_column(:payment_method, Billing::Subscription.payment_methods[:pix])
+
+      assert_enqueued_with(job: Billing::PlanChangePaymentReminderJob) do
+        Billing::SubscriptionManager.upgrade(
+          subscription:        @subscription,
+          new_billing_plan_id: billing_plans(:enterprise).id,
+          asaas_client:        fake_client
+        )
+      end
+    end
+
+    test "upgrade with Boleto enqueues PlanChangePaymentReminderJob" do
+      @subscription.update_column(:payment_method, Billing::Subscription.payment_methods[:boleto])
+
+      assert_enqueued_with(job: Billing::PlanChangePaymentReminderJob) do
+        Billing::SubscriptionManager.upgrade(
+          subscription:        @subscription,
+          new_billing_plan_id: billing_plans(:enterprise).id,
+          asaas_client:        fake_client
+        )
+      end
+    end
+
+    test "upgrade with credit card does NOT enqueue PlanChangePaymentReminderJob" do
+      @subscription.update_column(:payment_method, Billing::Subscription.payment_methods[:credit_card])
+
+      assert_no_enqueued_jobs(only: Billing::PlanChangePaymentReminderJob) do
+        Billing::SubscriptionManager.upgrade(
+          subscription:        @subscription,
+          new_billing_plan_id: billing_plans(:enterprise).id,
+          asaas_client:        fake_client
+        )
+      end
     end
 
     # ── downgrade ─────────────────────────────────────────────────────────────

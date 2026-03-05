@@ -40,6 +40,9 @@ pt-BR:
       credits_failed:
         title: "Compra de %{amount} créditos falhou"
         body: "Sua compra de %{amount} créditos WhatsApp não pôde ser processada. Por favor, tente novamente."
+      plan_change_payment:
+        title: "Pagamento necessário para upgrade de plano"
+        body: "Você fez upgrade para o %{plan_name}. Conclua o pagamento via %{payment_method} para manter sua assinatura ativa."
       dropdown:
         title: "Notificações"
         mark_all_read: "Marcar tudo como lido"
@@ -773,6 +776,16 @@ pt-BR:
         notice: "Políticas atualizadas."
 
   billing:
+    payment_methods:
+      pix: "PIX"
+      boleto: "Boleto"
+      credit_card: "Cartão de crédito"
+    subscription_mailer:
+      plan_change_payment_reminder:
+        subject: "Ação necessária: Conclua o pagamento do %{plan_name}"
+        greeting: "Olá,"
+        body_pix: "Você fez upgrade para o plano %{plan_name} (%{price}/mês). Uma cobrança PIX foi gerada — conclua o pagamento antes do vencimento para ativar seu novo plano."
+        body_boleto: "Você fez upgrade para o plano %{plan_name} (%{price}/mês). Um boleto foi gerado — conclua o pagamento antes do vencimento para ativar seu novo plano."
     credits_mailer:
       fulfilled:
         subject: "Seus %{amount} créditos WhatsApp foram adicionados"

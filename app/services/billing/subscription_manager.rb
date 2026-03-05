@@ -100,6 +100,10 @@ module Billing
         )
       end
 
+      if subscription.payment_method_pix? || subscription.payment_method_boleto?
+        Billing::PlanChangePaymentReminderJob.perform_later(subscription.id, new_plan.id)
+      end
+
       { success: true }
     rescue Billing::AsaasClient::ApiError => e
       { success: false, error: e.message }
