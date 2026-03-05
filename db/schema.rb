@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_04_201438) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_05_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -113,6 +113,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_04_201438) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "bank_slip_url"
+    t.text "pix_qr_code_base64"
+    t.text "pix_payload"
     t.index ["asaas_payment_id"], name: "index_credit_purchases_on_asaas_payment_id", unique: true, where: "(asaas_payment_id IS NOT NULL)"
     t.index ["credit_bundle_id"], name: "index_credit_purchases_on_credit_bundle_id"
     t.index ["space_id", "status"], name: "index_credit_purchases_on_space_id_and_status"

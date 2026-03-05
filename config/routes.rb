@@ -72,7 +72,9 @@ Rails.application.routes.draw do
         post  :subscribe
       end
     end
-    resource :credits, only: [ :show, :create ], controller: "credits"
+    resource :credits, only: [ :show, :create ], controller: "credits" do
+      get :payment, on: :collection
+    end
   end
 
   namespace :billing do

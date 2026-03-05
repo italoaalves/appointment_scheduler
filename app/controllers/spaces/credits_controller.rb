@@ -28,17 +28,24 @@ module Spaces
       )
 
       if result[:success]
-        if result[:pix_qr_code].present?
-          @pix_qr_code = result[:pix_qr_code]
-          @pix_payload  = result[:pix_payload]
-          @invoice_url  = result[:invoice_url]
-          render :payment
+        purchase = result[:credit_purchase]
+        if purchase.pix_qr_code_base64.present?
+          redirect_to payment_settings_credits_path(purchase_id: purchase.id),
+                      status: :see_other
         else
-          redirect_to settings_credits_path, notice: I18n.t("billing.credits.purchase_initiated")
+          redirect_to settings_credits_path,
+                      notice: I18n.t("billing.credits.purchase_initiated")
         end
       else
         redirect_to settings_credits_path, alert: result[:error]
       end
+    end
+
+    def payment
+      @purchase    = current_tenant.credit_purchases.find(params[:purchase_id])
+      @pix_qr_code = @purchase.pix_qr_code_base64
+      @pix_payload  = @purchase.pix_payload
+      @invoice_url  = @purchase.invoice_url
     end
   end
 end
