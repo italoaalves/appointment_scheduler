@@ -213,6 +213,62 @@ module Billing
       end
     end
 
+    # ── SUBSCRIPTION_DELETED ──────────────────────────────────────────────────
+
+    def subscription_deleted_payload(asaas_subscription_id: "sub_asaas_test")
+      { "event" => "SUBSCRIPTION_DELETED", "subscription" => { "id" => asaas_subscription_id } }.to_json
+    end
+
+    test "SUBSCRIPTION_DELETED transitions subscription to expired" do
+      @subscription.update_column(:status, Billing::Subscription.statuses[:canceled])
+
+      Billing::WebhookProcessor.call(subscription_deleted_payload)
+
+      assert @subscription.reload.expired?
+    end
+
+    test "SUBSCRIPTION_DELETED sets canceled_at if not already set" do
+      @subscription.update_columns(status: Billing::Subscription.statuses[:canceled], canceled_at: nil)
+
+      freeze_time do
+        Billing::WebhookProcessor.call(subscription_deleted_payload)
+
+        assert_in_delta Time.current.to_i, @subscription.reload.canceled_at.to_i, 2
+      end
+    end
+
+    test "SUBSCRIPTION_DELETED on already-expired subscription does not change state" do
+      @subscription.update_columns(
+        status:      Billing::Subscription.statuses[:expired],
+        canceled_at: 5.days.ago
+      )
+      original_canceled_at = @subscription.canceled_at
+
+      Billing::WebhookProcessor.call(subscription_deleted_payload)
+
+      @subscription.reload
+      assert @subscription.expired?
+      assert_in_delta original_canceled_at.to_i, @subscription.canceled_at.to_i, 2
+    end
+
+    test "SUBSCRIPTION_DELETED is idempotent — does not create duplicate BillingEvents" do
+      @subscription.update_column(:status, Billing::Subscription.statuses[:canceled])
+
+      Billing::WebhookProcessor.call(subscription_deleted_payload)
+      Billing::WebhookProcessor.call(subscription_deleted_payload)
+
+      count = Billing::BillingEvent.where(event_type: "webhook.subscription_deleted")
+                                   .where("metadata->>'asaas_subscription_id' = ?", "sub_asaas_test")
+                                   .count
+      assert_equal 1, count
+    end
+
+    test "SUBSCRIPTION_DELETED for unknown asaas_subscription_id logs warning and returns gracefully" do
+      assert_nothing_raised do
+        Billing::WebhookProcessor.call(subscription_deleted_payload(asaas_subscription_id: "sub_unknown"))
+      end
+    end
+
     # ── Unknown / missing subscription ────────────────────────────────────────
 
     test "unknown event type is logged and does not raise" do
