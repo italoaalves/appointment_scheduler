@@ -918,6 +918,7 @@ en:
       purchased: "%{amount} WhatsApp credits added to your account."
       invalid_amount: "Invalid credit amount."
       no_subscription: "You need an active subscription to purchase credits."
+      too_many_pending: "You have pending credit purchases awaiting payment. Complete them before purchasing more."
       purchase_initiated: "Your purchase is being processed. Complete payment using the link below."
       pix_instructions: "Scan the QR code or copy the PIX code below to complete your payment."
       copy_pix_code: "Copy PIX code"
