@@ -24,7 +24,7 @@ class Notification < ApplicationRecord
       { controller: "spaces/appointments", action: "show", id: notifiable_id }
     when "Billing::Subscription"
       { controller: "spaces/billing", action: "show" }
-    when "Billing::MessageCredit"
+    when "Billing::MessageCredit", "Billing::CreditPurchase"
       { controller: "spaces/credits", action: "show" }
     end
   end

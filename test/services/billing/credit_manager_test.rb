@@ -4,6 +4,8 @@ require "test_helper"
 
 module Billing
   class CreditManagerTest < ActiveSupport::TestCase
+    include ActiveJob::TestHelper
+
     setup do
       @space  = spaces(:one)
       @credit = message_credits(:one)  # balance: 50, monthly_quota_remaining: 150
@@ -355,6 +357,34 @@ module Billing
       result = Billing::CreditManager.fulfill_purchase(space: @space, credit_purchase: purchase)
 
       assert result[:success]
+    end
+
+    test "fulfill_purchase enqueues CreditPurchaseFulfilledNotificationJob" do
+      purchase = Billing::CreditPurchase.create!(
+        space:         @space,
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :pending
+      )
+
+      assert_enqueued_with(job: Billing::CreditPurchaseFulfilledNotificationJob, args: [ purchase.id ]) do
+        Billing::CreditManager.fulfill_purchase(space: @space, credit_purchase: purchase)
+      end
+    end
+
+    test "fulfill_purchase does NOT enqueue notification when already completed" do
+      purchase = Billing::CreditPurchase.create!(
+        space:         @space,
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :completed
+      )
+
+      assert_no_enqueued_jobs(only: Billing::CreditPurchaseFulfilledNotificationJob) do
+        Billing::CreditManager.fulfill_purchase(space: @space, credit_purchase: purchase)
+      end
     end
 
     # ── advisory lock ─────────────────────────────────────────────────────────

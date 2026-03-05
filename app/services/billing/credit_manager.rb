@@ -115,6 +115,8 @@ module Billing
       purchase(amount: credit_purchase.amount)
       credit_purchase.update!(status: :completed)
 
+      Billing::CreditPurchaseFulfilledNotificationJob.perform_later(credit_purchase.id)
+
       { success: true }
     rescue => e
       Rails.logger.error("[CreditManager] fulfill_purchase failed for #{credit_purchase.id}: #{e.message}")

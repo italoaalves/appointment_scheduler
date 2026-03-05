@@ -4,6 +4,8 @@ require "test_helper"
 
 module Billing
   class WebhookProcessorTest < ActiveSupport::TestCase
+    include ActiveJob::TestHelper
+
     # ── Helpers ───────────────────────────────────────────────────────────────
 
     setup do
@@ -292,6 +294,42 @@ module Billing
       )
 
       assert purchase.reload.failed?
+    end
+
+    test "PAYMENT_OVERDUE for credit purchase enqueues CreditPurchaseFailedNotificationJob" do
+      purchase = Billing::CreditPurchase.create!(
+        space:            @space,
+        credit_bundle:    Billing::CreditBundle.available.find_by!(amount: 50),
+        amount:           50,
+        price_cents:      2500,
+        status:           :pending,
+        asaas_payment_id: "pay_cp_notif_001"
+      )
+
+      assert_enqueued_with(job: Billing::CreditPurchaseFailedNotificationJob, args: [ purchase.id ]) do
+        Billing::WebhookProcessor.call(
+          { "event" => "PAYMENT_OVERDUE",
+            "payment" => { "id" => "pay_cp_notif_001", "externalReference" => "credit_purchase_#{purchase.id}" } }.to_json
+        )
+      end
+    end
+
+    test "PAYMENT_DELETED for credit purchase enqueues CreditPurchaseFailedNotificationJob" do
+      purchase = Billing::CreditPurchase.create!(
+        space:            @space,
+        credit_bundle:    Billing::CreditBundle.available.find_by!(amount: 50),
+        amount:           50,
+        price_cents:      2500,
+        status:           :pending,
+        asaas_payment_id: "pay_cp_notif_002"
+      )
+
+      assert_enqueued_with(job: Billing::CreditPurchaseFailedNotificationJob, args: [ purchase.id ]) do
+        Billing::WebhookProcessor.call(
+          { "event" => "PAYMENT_DELETED",
+            "payment" => { "id" => "pay_cp_notif_002", "externalReference" => "credit_purchase_#{purchase.id}" } }.to_json
+        )
+      end
     end
 
     test "PAYMENT_OVERDUE for credit purchase does not affect subscription" do
