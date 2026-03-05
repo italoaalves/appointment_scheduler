@@ -154,6 +154,47 @@ module Billing
       assert_equal 1, count
     end
 
+    test "PAYMENT_OVERDUE after PAYMENT_CONFIRMED does NOT transition subscription to past_due" do
+      @subscription.update_column(:status, Billing::Subscription.statuses[:active])
+
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED", payment_id: "pay_ooo_01"))
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_OVERDUE",   payment_id: "pay_ooo_01"))
+
+      assert @subscription.reload.active?
+    end
+
+    test "PAYMENT_OVERDUE after PAYMENT_CONFIRMED does NOT change payment status to overdue" do
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED", payment_id: "pay_ooo_02"))
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_OVERDUE",   payment_id: "pay_ooo_02"))
+
+      payment = Billing::Payment.find_by(asaas_payment_id: "pay_ooo_02")
+      assert payment.confirmed?
+    end
+
+    test "PAYMENT_DELETED after PAYMENT_CONFIRMED does NOT mark payment as failed" do
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED", payment_id: "pay_ooo_03"))
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_DELETED",   payment_id: "pay_ooo_03"))
+
+      payment = Billing::Payment.find_by(asaas_payment_id: "pay_ooo_03")
+      assert payment.confirmed?
+    end
+
+    test "PAYMENT_DELETED with no prior payment record returns without error" do
+      assert_nothing_raised do
+        Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_DELETED", payment_id: "pay_ooo_04"))
+      end
+
+      assert_nil Billing::Payment.find_by(asaas_payment_id: "pay_ooo_04")
+    end
+
+    test "PAYMENT_DELETED with a pending payment marks it as failed" do
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CREATED", payment_id: "pay_ooo_05"))
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_DELETED", payment_id: "pay_ooo_05"))
+
+      payment = Billing::Payment.find_by(asaas_payment_id: "pay_ooo_05")
+      assert payment.failed?
+    end
+
     # ── PAYMENT_CREATED ───────────────────────────────────────────────────────
 
     test "PAYMENT_CREATED creates a local Payment record with pending status" do

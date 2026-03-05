@@ -88,6 +88,8 @@ module Billing
 
       ActiveRecord::Base.transaction do
         payment = find_or_create_payment(payment_data, subscription)
+        return if payment.confirmed? || payment.refunded?
+
         payment.update!(status: :overdue)
         subscription.update!(status: :past_due)
 
@@ -123,6 +125,7 @@ module Billing
 
       payment = Billing::Payment.find_by(asaas_payment_id: asaas_payment_id)
       return unless payment
+      return if payment.confirmed? || payment.refunded?
 
       payment.update!(status: :failed)
     end
