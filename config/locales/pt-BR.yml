@@ -915,6 +915,7 @@ pt-BR:
       select_plan: "Selecionar plano"
       description_label: "Descrição do plano"
       payment_method_notice: "Sua assinatura utiliza %{method}. Ao alterar o plano, uma nova cobrança será gerada e você precisará pagá-la manualmente."
+      change_payment_method: "Método de pagamento para esta alteração"
       back: "Voltar para cobrança"
     limits:
       team_members_exceeded: "O limite de membros do seu plano foi atingido. Faça upgrade para adicionar mais."

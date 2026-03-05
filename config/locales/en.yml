@@ -898,6 +898,7 @@ en:
       description_label: "Plan description"
       back: "Back to billing"
       payment_method_notice: "Your subscription currently uses %{method}. After changing plans, a new charge will be generated that you'll need to pay manually."
+      change_payment_method: "Payment method for this change"
     features:
       personalized_booking_page: "Personalized booking page"
       whatsapp_included_quota: "WhatsApp messages included"

@@ -9,9 +9,10 @@ module Billing
                                    asaas_customer_id: asaas_customer_id)
     end
 
-    def self.upgrade(subscription:, new_billing_plan_id:,
+    def self.upgrade(subscription:, new_billing_plan_id:, payment_method: nil,
                      asaas_client: Billing::AsaasClient.new)
-      new(asaas_client).upgrade(subscription: subscription, new_billing_plan_id: new_billing_plan_id)
+      new(asaas_client).upgrade(subscription: subscription, new_billing_plan_id: new_billing_plan_id,
+                                payment_method: payment_method)
     end
 
     def self.downgrade(subscription:, new_billing_plan_id:)
@@ -78,19 +79,24 @@ module Billing
       { success: false, error: e.message }
     end
 
-    def upgrade(subscription:, new_billing_plan_id:)
+    def upgrade(subscription:, new_billing_plan_id:, payment_method: nil)
       old_plan_slug = subscription.billing_plan.slug
       new_plan      = Billing::Plan.active.find(new_billing_plan_id)
 
       if subscription.asaas_subscription_id.present?
-        @client.update_subscription(
-          subscription.asaas_subscription_id,
-          { value: new_plan.price_cents / 100.0, updatePendingPayments: true }
-        )
+        attrs = { value: new_plan.price_cents / 100.0, updatePendingPayments: true }
+
+        if payment_method.present? && payment_method.to_s != subscription.payment_method
+          attrs[:billingType] = Billing::AsaasClient::BILLING_TYPES[payment_method.to_sym]
+        end
+
+        @client.update_subscription(subscription.asaas_subscription_id, attrs)
       end
 
       ActiveRecord::Base.transaction do
-        subscription.update!(billing_plan: new_plan, pending_billing_plan: nil)
+        update_attrs = { billing_plan: new_plan, pending_billing_plan: nil }
+        update_attrs[:payment_method] = payment_method if payment_method.present?
+        subscription.update!(update_attrs)
 
         Billing::BillingEvent.create!(
           space_id:        subscription.space_id,
