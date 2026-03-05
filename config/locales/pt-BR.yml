@@ -34,6 +34,12 @@ pt-BR:
       credits_low:
         title: "Créditos WhatsApp baixos"
         body: "Você tem %{count} créditos WhatsApp restantes. Compre mais para continuar enviando mensagens."
+      credits_fulfilled:
+        title: "%{amount} créditos adicionados!"
+        body: "Sua compra de %{amount} créditos WhatsApp foi confirmada e adicionada à sua conta."
+      credits_failed:
+        title: "Compra de %{amount} créditos falhou"
+        body: "Sua compra de %{amount} créditos WhatsApp não pôde ser processada. Por favor, tente novamente."
       dropdown:
         title: "Notificações"
         mark_all_read: "Marcar tudo como lido"
@@ -767,6 +773,13 @@ pt-BR:
         notice: "Políticas atualizadas."
 
   billing:
+    credits_mailer:
+      fulfilled:
+        subject: "Seus %{amount} créditos WhatsApp foram adicionados"
+        body: "Sua compra de %{amount} créditos WhatsApp foi confirmada e adicionada à sua conta."
+      failed:
+        subject: "Sua compra de créditos WhatsApp não pôde ser processada"
+        body: "Sua compra de %{amount} créditos WhatsApp não pôde ser processada. Acesse a página de créditos para tentar novamente."
     plan_changed: "Seu plano foi atualizado com sucesso."
     downgrade_scheduled: "Seu plano será alterado ao final do período de cobrança atual."
     canceled: "Sua assinatura foi cancelada. O acesso continua até o fim do período de cobrança."
@@ -822,7 +835,7 @@ pt-BR:
         pending_purchases: "Compras pendentes"
         pay_now: "Pagar agora"
         view_boleto: "Ver Boleto"
-      boleto_clearing_warning: "Créditos serão adicionados após confirmação do pagamento (2-3 dias úteis)."
+      boleto_clearing_warning: "Os créditos serão adicionados após a confirmação do pagamento (2-3 dias úteis)."
     checkout:
       submit_loading: "Assinando…"
       title: "Escolha seu plano"

@@ -63,6 +63,12 @@ en:
       credits_low:
         title: "Low WhatsApp credits"
         body: "You have %{count} WhatsApp credits remaining. Purchase more to keep sending messages."
+      credits_fulfilled:
+        title: "%{amount} credits added!"
+        body: "Your purchase of %{amount} WhatsApp credits has been confirmed and added to your account."
+      credits_failed:
+        title: "Credit purchase of %{amount} failed"
+        body: "Your purchase of %{amount} WhatsApp credits could not be processed. Please try again."
       dropdown:
         title: "Notifications"
         mark_all_read: "Mark all as read"
@@ -796,6 +802,13 @@ en:
         notice: "Policies updated."
 
   billing:
+    credits_mailer:
+      fulfilled:
+        subject: "Your %{amount} WhatsApp credits have been added"
+        body: "Your purchase of %{amount} WhatsApp credits has been confirmed and added to your account."
+      failed:
+        subject: "Your WhatsApp credit purchase could not be processed"
+        body: "Your purchase of %{amount} WhatsApp credits could not be processed. Please visit your credits page to try again."
     plan_changed: "Your plan has been upgraded."
     downgrade_scheduled: "Your plan will change at the end of your current billing period."
     canceled: "Your subscription has been canceled. Access continues until the end of your billing period."

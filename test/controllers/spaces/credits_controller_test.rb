@@ -82,6 +82,55 @@ module Spaces
       assert_equal initial_balance, credit.reload.balance
     end
 
+    test "show renders Boleto link for pending Boleto purchase" do
+      sign_in @manager
+      spaces(:one).credit_purchases.create!(
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :pending,
+        bank_slip_url: "https://asaas.com/boleto/slip_001.pdf"
+      )
+
+      get settings_credits_path
+
+      assert_response :success
+      assert_includes response.body, I18n.t("billing.credits.show.view_boleto")
+      assert_includes response.body, "https://asaas.com/boleto/slip_001.pdf"
+    end
+
+    test "show renders clearing warning for pending Boleto purchase" do
+      sign_in @manager
+      spaces(:one).credit_purchases.create!(
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :pending,
+        bank_slip_url: "https://asaas.com/boleto/slip_002.pdf"
+      )
+
+      get settings_credits_path
+
+      assert_response :success
+      assert_includes response.body, I18n.t("billing.credits.boleto_clearing_warning")
+    end
+
+    test "show does NOT render Boleto link for non-Boleto pending purchase" do
+      sign_in @manager
+      spaces(:one).credit_purchases.create!(
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :pending,
+        invoice_url:   "https://asaas.com/inv/pix_001"
+      )
+
+      get settings_credits_path
+
+      assert_response :success
+      assert_not_includes response.body, I18n.t("billing.credits.show.view_boleto")
+    end
+
     # ── create — failure paths ────────────────────────────────────────────────
 
     test "POST create with invalid amount redirects with invalid_amount alert" do

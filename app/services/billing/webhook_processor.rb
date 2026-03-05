@@ -227,7 +227,10 @@ module Billing
     def mark_credit_purchase_failed(payment_data)
       credit_purchase = find_credit_purchase(payment_data)
       return unless credit_purchase
-      credit_purchase.update!(status: :failed) unless credit_purchase.completed?
+      return if credit_purchase.completed?
+
+      credit_purchase.update!(status: :failed)
+      Billing::CreditPurchaseFailedNotificationJob.perform_later(credit_purchase.id)
     end
 
     def find_credit_purchase(payment_data)

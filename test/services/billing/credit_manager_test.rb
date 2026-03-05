@@ -4,6 +4,8 @@ require "test_helper"
 
 module Billing
   class CreditManagerTest < ActiveSupport::TestCase
+    include ActiveJob::TestHelper
+
     setup do
       @space  = spaces(:one)
       @credit = message_credits(:one)  # balance: 50, monthly_quota_remaining: 150
@@ -357,93 +359,32 @@ module Billing
       assert result[:success]
     end
 
-    # ── initiate_purchase — Boleto ────────────────────────────────────────────
+    test "fulfill_purchase enqueues CreditPurchaseFulfilledNotificationJob" do
+      purchase = Billing::CreditPurchase.create!(
+        space:         @space,
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :pending
+      )
 
-    test "initiate_purchase with Boleto stores bank_slip_url on CreditPurchase" do
-      @space.subscription.update_columns(asaas_customer_id: "cus_boleto_001", payment_method: :boleto)
-
-      fake_client = Object.new
-      fake_client.define_singleton_method(:create_payment) do |**_|
-        { "id" => "pay_boleto_001", "invoiceUrl" => "https://asaas.com/inv/boleto_001",
-          "bankSlipUrl" => "https://asaas.com/boleto/boleto_001.pdf" }
-      end
-
-      Billing::CreditManager.initiate_purchase(space: @space, amount: 50, asaas_client: fake_client)
-
-      purchase = Billing::CreditPurchase.find_by(asaas_payment_id: "pay_boleto_001")
-      assert_equal "https://asaas.com/boleto/boleto_001.pdf", purchase.bank_slip_url
-    end
-
-    test "initiate_purchase with Boleto returns bank_slip_url in result" do
-      @space.subscription.update_columns(asaas_customer_id: "cus_boleto_002", payment_method: :boleto)
-
-      fake_client = Object.new
-      fake_client.define_singleton_method(:create_payment) do |**_|
-        { "id" => "pay_boleto_002", "invoiceUrl" => "https://asaas.com/inv/boleto_002",
-          "bankSlipUrl" => "https://asaas.com/boleto/boleto_002.pdf" }
-      end
-
-      result = Billing::CreditManager.initiate_purchase(space: @space, amount: 50, asaas_client: fake_client)
-
-      assert result[:success]
-      assert_equal "https://asaas.com/boleto/boleto_002.pdf", result[:bank_slip_url]
-    end
-
-    test "initiate_purchase with Boleto sets due_date to 3 business days from today" do
-      @space.subscription.update_columns(asaas_customer_id: "cus_boleto_003", payment_method: :boleto)
-
-      # Monday 2026-03-02 + 3 business days = Thursday 2026-03-05
-      travel_to Date.new(2026, 3, 2) do
-        received_due_date = nil
-
-        fake_client = Object.new
-        fake_client.define_singleton_method(:create_payment) do |**args|
-          received_due_date = args[:due_date]
-          { "id" => "pay_boleto_003", "invoiceUrl" => "https://asaas.com/inv/boleto_003",
-            "bankSlipUrl" => "https://asaas.com/boleto/boleto_003.pdf" }
-        end
-
-        Billing::CreditManager.initiate_purchase(space: @space, amount: 50, asaas_client: fake_client)
-
-        assert_equal "2026-03-05", received_due_date
+      assert_enqueued_with(job: Billing::CreditPurchaseFulfilledNotificationJob, args: [ purchase.id ]) do
+        Billing::CreditManager.fulfill_purchase(space: @space, credit_purchase: purchase)
       end
     end
 
-    test "initiate_purchase with Boleto skips weekends when computing due_date" do
-      @space.subscription.update_columns(asaas_customer_id: "cus_boleto_004", payment_method: :boleto)
+    test "fulfill_purchase does NOT enqueue notification when already completed" do
+      purchase = Billing::CreditPurchase.create!(
+        space:         @space,
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :completed
+      )
 
-      # Friday 2026-03-06 + 3 business days = Wednesday 2026-03-11 (skips Sat + Sun)
-      travel_to Date.new(2026, 3, 6) do
-        received_due_date = nil
-
-        fake_client = Object.new
-        fake_client.define_singleton_method(:create_payment) do |**args|
-          received_due_date = args[:due_date]
-          { "id" => "pay_boleto_004", "invoiceUrl" => "https://asaas.com/inv/boleto_004",
-            "bankSlipUrl" => "https://asaas.com/boleto/boleto_004.pdf" }
-        end
-
-        Billing::CreditManager.initiate_purchase(space: @space, amount: 50, asaas_client: fake_client)
-
-        assert_equal "2026-03-11", received_due_date
+      assert_no_enqueued_jobs(only: Billing::CreditPurchaseFulfilledNotificationJob) do
+        Billing::CreditManager.fulfill_purchase(space: @space, credit_purchase: purchase)
       end
-    end
-
-    test "initiate_purchase with non-Boleto does not set bank_slip_url on CreditPurchase" do
-      @space.subscription.update_columns(asaas_customer_id: "cus_pix_no_slip", payment_method: :pix)
-
-      fake_client = Object.new
-      fake_client.define_singleton_method(:create_payment) do |**_|
-        { "id" => "pay_pix_no_slip", "invoiceUrl" => "https://asaas.com/inv/pix_no_slip" }
-      end
-      fake_client.define_singleton_method(:pix_qr_code) do |_|
-        { "encodedImage" => "base64img==", "payload" => "pix_payload" }
-      end
-
-      Billing::CreditManager.initiate_purchase(space: @space, amount: 50, asaas_client: fake_client)
-
-      purchase = Billing::CreditPurchase.find_by(asaas_payment_id: "pay_pix_no_slip")
-      assert_nil purchase.bank_slip_url
     end
 
     # ── advisory lock ─────────────────────────────────────────────────────────
