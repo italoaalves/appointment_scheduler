@@ -289,6 +289,40 @@ module Billing
       assert_nothing_raised { Billing::WebhookProcessor.call("not json {{") }
     end
 
+    # ── externalReference prefix guard (C-06) ────────────────────────────────
+
+    test "PAYMENT_CONFIRMED with non-space externalReference does not match a subscription" do
+      payload = {
+        "event" => "PAYMENT_CONFIRMED",
+        "payment" => {
+          "id"                => "pay_guard_001",
+          "value"             => 99.0,
+          "billingType"       => "PIX",
+          "confirmedDate"     => Date.current.to_s,
+          "externalReference" => "workspace_#{@subscription.space_id}"
+        }
+      }.to_json
+
+      assert_nothing_raised { Billing::WebhookProcessor.call(payload) }
+      assert_nil Billing::Payment.find_by(asaas_payment_id: "pay_guard_001")
+    end
+
+    test "PAYMENT_CONFIRMED with credit_purchase externalReference does not match subscription" do
+      payload = {
+        "event" => "PAYMENT_CONFIRMED",
+        "payment" => {
+          "id"                => "pay_guard_002",
+          "value"             => 25.0,
+          "billingType"       => "PIX",
+          "confirmedDate"     => Date.current.to_s,
+          "externalReference" => "credit_purchase_9999"
+        }
+      }.to_json
+
+      assert_nothing_raised { Billing::WebhookProcessor.call(payload) }
+      assert_nil Billing::Payment.find_by(asaas_payment_id: "pay_guard_002")
+    end
+
     # ── Credit purchase webhook handling ─────────────────────────────────────
 
     def credit_purchase_payload(event:, payment_id: "pay_cp_001", purchase_id:)

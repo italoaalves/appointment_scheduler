@@ -15,8 +15,7 @@ module Billing
 
     def verify_webhook_token
       token    = request.headers["asaas-access-token"].presence || params[:accessToken].presence
-      expected = Rails.application.credentials.dig(:asaas, :webhook_token).presence ||
-                 ENV["ASAAS_WEBHOOK_TOKEN"]
+      expected = Rails.application.credentials.dig(:asaas, :webhook_token).presence
 
       return head :unauthorized if token.blank?
       return head :unauthorized if expected.blank?
