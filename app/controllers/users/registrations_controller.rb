@@ -2,8 +2,13 @@
 
 module Users
   class RegistrationsController < Devise::RegistrationsController
+    def build_resource(hash = {})
+      super
+      resource.require_phone_number = true
+    end
+
     def sign_up_params
-      p = params.require(:user).permit(:name, :email, :password)
+      p = params.require(:user).permit(:name, :email, :password, :phone_number)
       p[:password_confirmation] = p[:password]
       p
     end
