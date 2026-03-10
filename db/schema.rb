@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_05_120000) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_10_095333) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -61,6 +61,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_05_120000) do
     t.jsonb "metadata", default: {}, null: false
     t.integer "actor_id"
     t.datetime "created_at", null: false
+    t.index "((metadata ->> 'asaas_payment_id'::text))", name: "idx_billing_events_metadata_asaas_payment_id", where: "((metadata ->> 'asaas_payment_id'::text) IS NOT NULL)"
     t.index ["event_type"], name: "index_billing_events_on_event_type"
     t.index ["space_id", "created_at"], name: "index_billing_events_on_space_id_and_created_at"
     t.index ["space_id"], name: "index_billing_events_on_space_id"
