@@ -5,6 +5,8 @@
     </h2>
 
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
       <% if f.object.respond_to?(:name) %>
         <div class="mb-4">
           <%= f.label :name, t("devise.registrations.name"), class: form_label_classes %>
@@ -15,6 +17,11 @@
       <div class="mb-4">
         <%= f.label :email, t("devise.registrations.email"), class: form_label_classes %>
         <%= f.email_field :email, class: form_input_classes %>
+      </div>
+
+      <div class="mb-4">
+        <%= f.label :phone_number, t("devise.registrations.phone_number"), class: form_label_classes %>
+        <%= f.telephone_field :phone_number, autocomplete: "tel", class: form_input_classes %>
       </div>
 
       <div class="mb-4">

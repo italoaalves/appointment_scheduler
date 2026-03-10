@@ -51,6 +51,7 @@ pt-BR:
       title: "Crie sua conta"
       name: "Nome completo"
       email: "Email"
+      phone_number: "Número de telefone"
       password: "Senha"
       password_confirmation: "Confirme a senha"
       sign_up_button: "Cadastrar"

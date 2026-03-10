@@ -20,6 +20,14 @@ class User < ApplicationRecord
 
   enum :system_role, { super_admin: 0 }, prefix: false
 
+  # Set to true in Users::RegistrationsController to enforce phone presence
+  # on the public sign-up form only (not admin or manager-created users).
+  attr_accessor :require_phone_number
+
+  before_validation :normalize_phone_number
+  validates :phone_number, presence: true, if: :require_phone_number
+  validates :phone_number, uniqueness: { allow_blank: true, message: :cannot_be_verified }
+
   after_save :sync_permissions_from_param
   after_create :ensure_user_preference
   after_commit :create_owner_space, on: :create
@@ -72,6 +80,14 @@ class User < ApplicationRecord
   end
 
   private
+
+  def normalize_phone_number
+    if phone_number.present?
+      self.phone_number = "+#{phone_number.gsub(/\D/, '')}"
+    else
+      self.phone_number = nil
+    end
+  end
 
   def ensure_user_preference
     return if user_preference.present?
