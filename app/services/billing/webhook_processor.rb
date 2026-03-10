@@ -180,8 +180,10 @@ module Billing
       end
 
       external_ref = payment_data["externalReference"].to_s
-      space_id     = external_ref.sub("space_", "").to_i
-      Billing::Subscription.includes(:billing_plan).find_by(space_id: space_id) if space_id.positive?
+      if external_ref.start_with?("space_")
+        space_id = external_ref.delete_prefix("space_").to_i
+        Billing::Subscription.includes(:billing_plan).find_by(space_id: space_id) if space_id.positive?
+      end
     end
 
     def find_or_create_payment(payment_data, subscription)

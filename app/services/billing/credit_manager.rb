@@ -123,6 +123,16 @@ module Billing
       ActiveRecord::Base.transaction do
         purchase(amount: credit_purchase.amount)
         credit_purchase.update!(status: :completed)
+
+        Billing::BillingEvent.create!(
+          space_id:   @space.id,
+          event_type: "credits.fulfilled",
+          metadata:   {
+            credit_purchase_id: credit_purchase.id,
+            asaas_payment_id:   credit_purchase.asaas_payment_id,
+            amount:             credit_purchase.amount
+          }
+        )
       end
 
       Billing::CreditPurchaseFulfilledNotificationJob.perform_later(credit_purchase.id)

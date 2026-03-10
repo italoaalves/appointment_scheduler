@@ -442,6 +442,42 @@ module Billing
       end
     end
 
+    test "fulfill_purchase creates a credits.fulfilled BillingEvent with metadata" do
+      purchase = Billing::CreditPurchase.create!(
+        space:            @space,
+        credit_bundle:    credit_bundles(:fifty),
+        amount:           50,
+        price_cents:      2500,
+        status:           :pending,
+        asaas_payment_id: "pay_fulfill_event_01"
+      )
+
+      assert_difference "Billing::BillingEvent.where(event_type: 'credits.fulfilled').count", 1 do
+        Billing::CreditManager.fulfill_purchase(space: @space, credit_purchase: purchase)
+      end
+
+      event = Billing::BillingEvent.find_by(event_type: "credits.fulfilled")
+      assert_equal @space.id,              event.space_id
+      assert_equal purchase.id,            event.metadata["credit_purchase_id"]
+      assert_equal "pay_fulfill_event_01", event.metadata["asaas_payment_id"]
+      assert_equal 50,                     event.metadata["amount"]
+    end
+
+    test "fulfill_purchase does NOT create credits.fulfilled event when already completed" do
+      purchase = Billing::CreditPurchase.create!(
+        space:            @space,
+        credit_bundle:    credit_bundles(:fifty),
+        amount:           50,
+        price_cents:      2500,
+        status:           :completed,
+        asaas_payment_id: "pay_fulfill_event_02"
+      )
+
+      assert_no_difference "Billing::BillingEvent.where(event_type: 'credits.fulfilled').count" do
+        Billing::CreditManager.fulfill_purchase(space: @space, credit_purchase: purchase)
+      end
+    end
+
     # ── advisory lock ─────────────────────────────────────────────────────────
 
     test "deduct executes advisory lock SQL inside transaction" do
