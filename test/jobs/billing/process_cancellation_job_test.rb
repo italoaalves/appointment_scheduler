@@ -8,13 +8,14 @@ module Billing
     class FakeClient
       attr_reader :cancelled_ids
 
-      def initialize(raise_for: nil)
+      def initialize(raise_for: nil, status_code: 500)
         @cancelled_ids = []
         @raise_for     = raise_for
+        @status_code   = status_code
       end
 
       def cancel_subscription(id)
-        raise Billing::AsaasClient::ApiError.new(500, "fail") if @raise_for == id
+        raise Billing::AsaasClient::ApiError.new(@status_code, "fail") if @raise_for == id
 
         @cancelled_ids << id
       end
@@ -96,24 +97,31 @@ module Billing
 
     # ── Error handling ────────────────────────────────────────────────────────
 
-    test "handles Asaas API error gracefully and continues with remaining subscriptions" do
-      # Second subscription due for cancellation
-      space2 = Space.create!(name: "CancelJob Space2 #{SecureRandom.hex(4)}", timezone: "UTC")
-      Billing::TrialManager.start_trial(space2)
-      sub2 = space2.reload.subscription
-      sub2.update!(
-        status:                :canceled,
-        asaas_subscription_id: "sub_asaas_002",
-        current_period_end:    1.day.ago
-      )
+    test "re-raises non-404 ApiErrors so Solid Queue can retry the job" do
+      client = FakeClient.new(raise_for: "sub_asaas_001", status_code: 500)
 
-      # First call raises; second should still be processed
-      client = FakeClient.new(raise_for: "sub_asaas_001")
+      assert_raises(Billing::AsaasClient::ApiError) do
+        Billing::ProcessCancellationJob.new.perform(client: client)
+      end
+
+      assert @subscription.reload.canceled?, "Subscription should remain canceled pending retry"
+    end
+
+    test "treats Asaas 404 as success and expires the subscription" do
+      # Asaas returns 404 when the subscription was already deleted remotely
+      client = FakeClient.new(raise_for: "sub_asaas_001", status_code: 404)
 
       assert_nothing_raised { Billing::ProcessCancellationJob.new.perform(client: client) }
 
-      assert @subscription.reload.canceled?, "Failed subscription should remain canceled"
-      assert sub2.reload.expired?,           "Successful subscription should be expired"
+      assert @subscription.reload.expired?, "Subscription should expire when Asaas returns 404"
+    end
+
+    test "treats Asaas 404 as success and still logs subscription.expired BillingEvent" do
+      client = FakeClient.new(raise_for: "sub_asaas_001", status_code: 404)
+
+      assert_difference -> { Billing::BillingEvent.where(event_type: "subscription.expired").count } do
+        Billing::ProcessCancellationJob.new.perform(client: client)
+      end
     end
   end
 end

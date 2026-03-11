@@ -3,6 +3,7 @@
 module Billing
   class ProcessCancellationJob < ApplicationJob
     queue_as :default
+    retry_on Billing::AsaasClient::ApiError, wait: :polynomially_longer, attempts: 5
 
     def perform(client: Billing::AsaasClient.new)
       Billing::Subscription
@@ -17,7 +18,11 @@ module Billing
     private
 
     def process(subscription, client)
-      client.cancel_subscription(subscription.asaas_subscription_id)
+      begin
+        client.cancel_subscription(subscription.asaas_subscription_id)
+      rescue Billing::AsaasClient::ApiError => e
+        raise unless e.status_code == 404  # Already deleted on Asaas — safe to proceed
+      end
 
       subscription.update!(status: :expired)
 
@@ -26,10 +31,6 @@ module Billing
         subscription_id: subscription.id,
         event_type:      "subscription.expired",
         metadata:        { reason: "cancellation_period_ended" }
-      )
-    rescue Billing::AsaasClient::ApiError => e
-      Rails.logger.warn(
-        "[ProcessCancellationJob] Asaas DELETE failed subscription_id=#{subscription.id}: #{e.message}"
       )
     end
   end
