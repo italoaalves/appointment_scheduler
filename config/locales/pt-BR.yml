@@ -73,6 +73,7 @@ pt-BR:
           attributes:
             phone_number:
               cannot_be_verified: "não pôde ser verificado. Por favor, verifique e tente novamente."
+              locked_during_trial: "não pode ser alterado durante o período de teste."
     attributes:
       user:
         system_role:
@@ -91,6 +92,7 @@ pt-BR:
       title: "Perfil"
       subtitle: "Atualize seu nome, informações de contato e senha."
       phone_label: "Telefone"
+      phone_locked_during_trial: "O número de telefone não pode ser alterado durante o período de teste."
       password_section: "Alterar senha"
       current_password_label: "Senha atual"
       password_label: "Nova senha"

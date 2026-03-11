@@ -118,9 +118,20 @@ module Billing
     # Errors are intentionally NOT rescued: they propagate to ProcessWebhookJob
     # so Solid Queue can retry automatically.
     def fulfill_purchase(credit_purchase:)
+      # Fast path: avoid the lock entirely when clearly already done.
       return { success: true } if credit_purchase.completed?
 
       ActiveRecord::Base.transaction do
+        lock_key = Zlib.crc32("credit_fulfill:#{@space.id}")
+        ActiveRecord::Base.connection.exec_query(
+          "SELECT pg_advisory_xact_lock($1)", "AdvisoryLock", [ lock_key ]
+        )
+
+        # Re-check after acquiring the lock — another concurrent fulfillment may
+        # have completed the purchase while this thread was waiting.
+        credit_purchase.reload
+        return { success: true } if credit_purchase.completed?
+
         purchase(amount: credit_purchase.amount)
         credit_purchase.update!(status: :completed)
 

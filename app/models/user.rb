@@ -27,6 +27,7 @@ class User < ApplicationRecord
   before_validation :normalize_phone_number
   validates :phone_number, presence: true, if: :require_phone_number
   validates :phone_number, uniqueness: { allow_blank: true, message: :cannot_be_verified }
+  validate :phone_number_locked_during_trial, if: :phone_number_changed?
 
   after_save :sync_permissions_from_param
   after_create :ensure_user_preference
@@ -80,6 +81,14 @@ class User < ApplicationRecord
   end
 
   private
+
+  def phone_number_locked_during_trial
+    return unless persisted?
+    return if super_admin?
+    return unless space&.subscription&.trialing?
+
+    errors.add(:phone_number, :locked_during_trial)
+  end
 
   def normalize_phone_number
     if phone_number.present?

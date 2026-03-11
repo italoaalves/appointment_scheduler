@@ -14,9 +14,15 @@
         <%= form.text_field :name, class: form_input_classes %>
       </div>
 
+      <% phone_locked = !current_user.super_admin? && current_user.space&.subscription&.trialing? %>
       <div>
         <%= form.label :phone_number, t("profiles.edit.phone_label"), class: form_label_classes %>
-        <%= form.telephone_field :phone_number, class: form_input_classes %>
+        <%= form.telephone_field :phone_number,
+              disabled: phone_locked,
+              class: form_input_classes + (phone_locked ? " bg-slate-100 cursor-not-allowed" : "") %>
+        <% if phone_locked %>
+          <p class="mt-1 text-xs text-slate-500"><%= t("profiles.edit.phone_locked_during_trial") %></p>
+        <% end %>
       </div>
 
       <div class="border-t border-slate-200 pt-4">

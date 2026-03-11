@@ -171,6 +171,18 @@ module Billing
       assert payment.confirmed?
     end
 
+    test "PAYMENT_OVERDUE after PAYMENT_CONFIRMED does NOT create a webhook.payment_overdue BillingEvent" do
+      # Regression for R-03: return inside transaction caused implicit COMMIT,
+      # which could leave orphaned Payment or BillingEvent records.
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED", payment_id: "pay_ooo_audit"))
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_OVERDUE",   payment_id: "pay_ooo_audit"))
+
+      overdue_events = Billing::BillingEvent.where(event_type: "webhook.payment_overdue")
+                                            .where("metadata->>'asaas_payment_id' = ?", "pay_ooo_audit")
+      assert_equal 0, overdue_events.count,
+        "No webhook.payment_overdue BillingEvent should be created for an already-confirmed payment"
+    end
+
     test "PAYMENT_DELETED after PAYMENT_CONFIRMED does NOT mark payment as failed" do
       Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED", payment_id: "pay_ooo_03"))
       Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_DELETED",   payment_id: "pay_ooo_03"))
