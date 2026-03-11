@@ -3,6 +3,7 @@
 module Billing
   class ApplyDowngradeJob < ApplicationJob
     queue_as :default
+    retry_on Billing::AsaasClient::ApiError, wait: :polynomially_longer, attempts: 5
 
     def perform(client: Billing::AsaasClient.new)
       Billing::Subscription
@@ -22,10 +23,14 @@ module Billing
       old_plan_slug = subscription.billing_plan.slug
 
       if subscription.asaas_subscription_id.present?
-        client.update_subscription(
-          subscription.asaas_subscription_id,
-          { value: new_plan.price_cents / 100.0 }
-        )
+        begin
+          client.update_subscription(
+            subscription.asaas_subscription_id,
+            { value: new_plan.price_cents / 100.0 }
+          )
+        rescue Billing::AsaasClient::ApiError => e
+          raise unless e.status_code == 404  # Subscription deleted on Asaas — skip remote update
+        end
       end
 
       ActiveRecord::Base.transaction do
@@ -41,10 +46,6 @@ module Billing
           metadata:        { from: old_plan_slug, to: new_plan.slug, applied_by: "downgrade_job" }
         )
       end
-    rescue Billing::AsaasClient::ApiError => e
-      Rails.logger.warn(
-        "[ApplyDowngradeJob] Failed for subscription #{subscription.id}: #{e.message}"
-      )
     end
   end
 end

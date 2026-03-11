@@ -7,13 +7,14 @@ module Billing
     class FakeClient
       attr_reader :update_calls
 
-      def initialize(raise_for: nil)
+      def initialize(raise_for: nil, status_code: 500)
         @update_calls = []
         @raise_for    = raise_for
+        @status_code  = status_code
       end
 
       def update_subscription(id, attrs)
-        raise Billing::AsaasClient::ApiError.new(500, "fail") if @raise_for == id
+        raise Billing::AsaasClient::ApiError.new(@status_code, "fail") if @raise_for == id
 
         @update_calls << { id: id, attrs: attrs }
       end
@@ -118,29 +119,35 @@ module Billing
 
     # ── Error handling ────────────────────────────────────────────────────────
 
-    test "handles Asaas API error gracefully and continues with remaining subscriptions" do
-      space2 = Space.create!(name: "Downgrade Job Space2 #{SecureRandom.hex(4)}", timezone: "UTC")
-      Billing::TrialManager.start_trial(space2)
-      sub2 = space2.reload.subscription
-      sub2.update!(
-        status:                :active,
-        asaas_subscription_id: "sub_asaas_002",
-        billing_plan:          billing_plans(:pro),
-        pending_billing_plan:  billing_plans(:essential),
-        current_period_end:    1.day.ago
-      )
+    test "re-raises non-404 ApiErrors so Solid Queue can retry the job" do
+      client = FakeClient.new(raise_for: "sub_asaas_001", status_code: 500)
 
-      client = FakeClient.new(raise_for: "sub_asaas_001")
+      assert_raises(Billing::AsaasClient::ApiError) do
+        Billing::ApplyDowngradeJob.new.perform(client: client)
+      end
+
+      @subscription.reload
+      assert_equal "pro", @subscription.billing_plan.slug,      "Plan should be unchanged pending retry"
+      assert_not_nil @subscription.pending_billing_plan_id,     "Pending plan should remain set"
+    end
+
+    test "treats Asaas 404 as success and applies the downgrade locally" do
+      # Asaas returns 404 when the subscription was already deleted remotely
+      client = FakeClient.new(raise_for: "sub_asaas_001", status_code: 404)
 
       assert_nothing_raised { Billing::ApplyDowngradeJob.new.perform(client: client) }
 
-      # Failed sub: plan unchanged, pending still set
       @subscription.reload
-      assert_equal "pro", @subscription.billing_plan.slug
-      assert_not_nil @subscription.pending_billing_plan_id
+      assert_equal "essential", @subscription.billing_plan.slug, "Plan should be downgraded locally"
+      assert_nil @subscription.pending_billing_plan_id,          "Pending plan should be cleared"
+    end
 
-      # Successful sub: downgrade applied
-      assert_equal "essential", sub2.reload.billing_plan.slug
+    test "treats Asaas 404 as success and still logs plan.changed BillingEvent" do
+      client = FakeClient.new(raise_for: "sub_asaas_001", status_code: 404)
+
+      assert_difference -> { Billing::BillingEvent.where(event_type: "plan.changed").count } do
+        Billing::ApplyDowngradeJob.new.perform(client: client)
+      end
     end
   end
 end
