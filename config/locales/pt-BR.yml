@@ -838,6 +838,8 @@ pt-BR:
       pix_copied: "Copiado!"
       waiting_payment: "Aguardando confirmação do pagamento..."
       back_to_credits: "Voltar para créditos"
+      purchase_completed: "Créditos adicionados à sua conta!"
+      purchase_failed: "O pagamento não pôde ser processado. Por favor, tente novamente."
       show:
         title: "Créditos WhatsApp"
         subtitle: "Veja seu saldo e compre mais créditos."
@@ -857,6 +859,7 @@ pt-BR:
         pending_purchases: "Compras pendentes"
         pay_now: "Pagar agora"
         view_boleto: "Ver Boleto"
+        view_qr_code: "Ver QR Code"
       boleto_clearing_warning: "Os créditos serão adicionados após a confirmação do pagamento (2-3 dias úteis)."
     checkout:
       submit_loading: "Assinando…"
