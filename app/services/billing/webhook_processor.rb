@@ -108,9 +108,14 @@ module Billing
       subscription = find_subscription_for_payment(payment_data)
       return log_missing_subscription(asaas_payment_id) unless subscription
 
+      payment = nil
       ActiveRecord::Base.transaction do
-        find_or_create_payment(payment_data, subscription)
+        payment = find_or_create_payment(payment_data, subscription)
         log_webhook_event("webhook.payment_created", subscription, asaas_payment_id: asaas_payment_id)
+      end
+
+      if subscription.payment_method_pix? || subscription.payment_method_boleto?
+        Billing::PaymentReminderJob.perform_later(payment.id, reminder_type: "created")
       end
     end
 
@@ -198,6 +203,8 @@ module Billing
         p.amount_cents   = amount_cents.positive? ? amount_cents : 1
         p.payment_method = billing_type
         p.status         = :pending
+        p.due_date       = parse_date(payment_data["dueDate"])&.to_date
+        p.invoice_url    = payment_data["invoiceUrl"]
       end
     end
 

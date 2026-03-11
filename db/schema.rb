@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_10_120000) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_11_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -190,8 +190,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_120000) do
     t.datetime "paid_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.date "due_date"
+    t.string "invoice_url"
     t.index ["asaas_payment_id"], name: "index_payments_on_asaas_payment_id", unique: true
     t.index ["space_id"], name: "index_payments_on_space_id"
+    t.index ["status", "payment_method", "due_date"], name: "index_payments_on_status_method_due_date"
     t.index ["subscription_id", "created_at"], name: "index_payments_on_subscription_id_and_created_at"
     t.index ["subscription_id"], name: "index_payments_on_subscription_id"
   end
