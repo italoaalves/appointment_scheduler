@@ -88,12 +88,13 @@ module Billing
 
       ActiveRecord::Base.transaction do
         payment = find_or_create_payment(payment_data, subscription)
-        return if payment.confirmed? || payment.refunded?
 
-        payment.update!(status: :overdue)
-        subscription.update!(status: :past_due)
+        unless payment.confirmed? || payment.refunded?
+          payment.update!(status: :overdue)
+          subscription.update!(status: :past_due)
 
-        log_webhook_event("webhook.payment_overdue", subscription, asaas_payment_id: asaas_payment_id)
+          log_webhook_event("webhook.payment_overdue", subscription, asaas_payment_id: asaas_payment_id)
+        end
       end
     end
 

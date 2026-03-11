@@ -498,5 +498,61 @@ module Billing
     ensure
       ActiveSupport::Notifications.unsubscribe(subscriber)
     end
+
+    test "fulfill_purchase executes advisory lock SQL inside transaction" do
+      # Regression for R-05: fulfill_purchase must hold an advisory lock to prevent
+      # concurrent webhook deliveries from double-granting credits.
+      purchase = Billing::CreditPurchase.create!(
+        space:         @space,
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :pending
+      )
+
+      sql_log = []
+      subscriber = ActiveSupport::Notifications.subscribe("sql.active_record") do |_, _, _, _, payload|
+        sql_log << payload[:sql]
+      end
+
+      Billing::CreditManager.fulfill_purchase(space: @space, credit_purchase: purchase)
+
+      lock_sql = sql_log.find { |sql| sql.include?("pg_advisory_xact_lock") }
+      assert lock_sql, "Expected pg_advisory_xact_lock to appear in SQL log during fulfill_purchase"
+      assert_match(/pg_advisory_xact_lock\(\$1\)/, lock_sql,
+        "Advisory lock must use a bind parameter ($1), not string interpolation")
+    ensure
+      ActiveSupport::Notifications.unsubscribe(subscriber)
+    end
+
+    test "fulfill_purchase does not grant credits when purchase completed concurrently after lock" do
+      # Simulates the TOCTOU window: outer completed? check sees :pending (stale), but
+      # after acquiring the advisory lock and reloading, the DB row shows :completed
+      # (another thread beat us to it). The inner re-check must catch this.
+      purchase = Billing::CreditPurchase.create!(
+        space:         @space,
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :pending
+      )
+
+      # Load a second Ruby object referencing the same DB row — this is the "stale" handle.
+      stale_purchase = Billing::CreditPurchase.find(purchase.id)
+
+      # Simulate the concurrent fulfillment completing via the original reference.
+      # This updates the DB row and purchase's in-memory state, but stale_purchase
+      # is a separate object whose in-memory status remains :pending.
+      purchase.update!(status: :completed)
+
+      initial_balance = @credit.reload.balance
+
+      # Call with the stale object: outer check (pending) passes, inner reload catches :completed.
+      result = Billing::CreditManager.fulfill_purchase(space: @space, credit_purchase: stale_purchase)
+
+      assert result[:success]
+      assert_equal initial_balance, @credit.reload.balance,
+        "Balance must not increase when purchase was already completed concurrently"
+    end
   end
 end
