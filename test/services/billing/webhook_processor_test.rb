@@ -15,17 +15,18 @@ module Billing
       @subscription.update_columns(asaas_subscription_id: "sub_asaas_test")
     end
 
-    def payment_payload(event:, payment_id: "pay_001", status: "CONFIRMED", billing_type: "PIX", value: 99.0)
+    def payment_payload(event:, payment_id: "pay_001", status: "CONFIRMED", billing_type: "PIX", value: 99.0, due_date: nil)
       {
         "event" => event,
         "payment" => {
-          "id"           => payment_id,
-          "subscription" => @subscription.asaas_subscription_id,
-          "value"        => value,
-          "billingType"  => billing_type,
-          "status"       => status,
-          "confirmedDate" => Date.current.to_s
-        }
+          "id"            => payment_id,
+          "subscription"  => @subscription.asaas_subscription_id,
+          "value"         => value,
+          "billingType"   => billing_type,
+          "status"        => status,
+          "confirmedDate" => Date.current.to_s,
+          "dueDate"       => due_date
+        }.compact
       }.to_json
     end
 
@@ -222,6 +223,45 @@ module Billing
       assert_difference -> { Billing::Payment.count }, 1 do
         Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CREATED", payment_id: "pay_006"))
         Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CREATED", payment_id: "pay_006"))
+      end
+    end
+
+    test "PAYMENT_CREATED stores due_date from webhook payload" do
+      target_date = 5.days.from_now.to_date
+
+      Billing::WebhookProcessor.call(
+        payment_payload(event: "PAYMENT_CREATED", payment_id: "pay_due_001", due_date: target_date.to_s)
+      )
+
+      payment = Billing::Payment.find_by(asaas_payment_id: "pay_due_001")
+      assert_equal target_date, payment.due_date
+    end
+
+    test "PAYMENT_CREATED for PIX subscription enqueues PaymentReminderJob" do
+      @subscription.update_column(:payment_method, Billing::Subscription.payment_methods[:pix])
+
+      assert_enqueued_with(job: Billing::PaymentReminderJob) do
+        Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CREATED", payment_id: "pay_pix_001"))
+      end
+    end
+
+    test "PAYMENT_CREATED for Boleto subscription enqueues PaymentReminderJob" do
+      @subscription.update_column(:payment_method, Billing::Subscription.payment_methods[:boleto])
+
+      assert_enqueued_with(job: Billing::PaymentReminderJob) do
+        Billing::WebhookProcessor.call(
+          payment_payload(event: "PAYMENT_CREATED", payment_id: "pay_bol_001", billing_type: "BOLETO")
+        )
+      end
+    end
+
+    test "PAYMENT_CREATED for credit_card subscription does not enqueue PaymentReminderJob" do
+      @subscription.update_column(:payment_method, Billing::Subscription.payment_methods[:credit_card])
+
+      assert_no_enqueued_jobs(only: Billing::PaymentReminderJob) do
+        Billing::WebhookProcessor.call(
+          payment_payload(event: "PAYMENT_CREATED", payment_id: "pay_cc_001", billing_type: "CREDIT_CARD")
+        )
       end
     end
 
