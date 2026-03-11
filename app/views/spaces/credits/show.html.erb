@@ -39,7 +39,11 @@
               <p class="text-sm font-medium text-slate-900"><%= purchase.amount %> <%= t("billing.credits.show.credits") %></p>
               <p class="text-xs text-slate-400"><%= l(purchase.created_at, format: :long) %></p>
             </div>
-            <% if purchase.bank_slip_url.present? %>
+            <% if purchase.pix_qr_code_base64.present? %>
+              <%= link_to t("billing.credits.show.view_qr_code"),
+                          payment_settings_credits_path(purchase_id: purchase.id),
+                          class: button_classes(:primary) + " text-sm px-3 py-1.5" %>
+            <% elsif purchase.bank_slip_url.present? %>
               <%= link_to t("billing.credits.show.view_boleto"),
                           purchase.bank_slip_url,
                           target: "_blank",

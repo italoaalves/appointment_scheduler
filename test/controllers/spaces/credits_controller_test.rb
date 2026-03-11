@@ -182,6 +182,103 @@ module Spaces
       assert_not_includes response.body, I18n.t("billing.credits.show.view_boleto")
     end
 
+    # ── status ────────────────────────────────────────────────────────────────
+
+    test "GET status returns JSON status for a pending purchase" do
+      sign_in @manager
+
+      purchase = spaces(:one).credit_purchases.create!(
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :pending
+      )
+
+      get status_settings_credits_path, params: { purchase_id: purchase.id }
+
+      assert_response :success
+      assert_equal "application/json", response.content_type.split(";").first
+      assert_equal({ "status" => "pending" }, JSON.parse(response.body))
+    end
+
+    test "GET status returns JSON status for a completed purchase" do
+      sign_in @manager
+
+      purchase = spaces(:one).credit_purchases.create!(
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :completed
+      )
+
+      get status_settings_credits_path, params: { purchase_id: purchase.id }
+
+      assert_response :success
+      assert_equal({ "status" => "completed" }, JSON.parse(response.body))
+    end
+
+    test "GET status is scoped to current tenant" do
+      sign_in @manager
+
+      other_purchase = spaces(:two).credit_purchases.create!(
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :pending
+      )
+
+      get status_settings_credits_path, params: { purchase_id: other_purchase.id }
+
+      assert_response :not_found
+    end
+
+    test "GET status redirects unauthenticated users" do
+      purchase = spaces(:one).credit_purchases.create!(
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :pending
+      )
+
+      get status_settings_credits_path, params: { purchase_id: purchase.id }
+
+      assert_redirected_to new_user_session_path
+    end
+
+    # ── show — PIX QR code link ───────────────────────────────────────────────
+
+    test "show renders View QR Code link for pending PIX purchase with QR code" do
+      sign_in @manager
+      spaces(:one).credit_purchases.create!(
+        credit_bundle:      credit_bundles(:fifty),
+        amount:             50,
+        price_cents:        2500,
+        status:             :pending,
+        pix_qr_code_base64: "base64qr=="
+      )
+
+      get settings_credits_path
+
+      assert_response :success
+      assert_includes response.body, I18n.t("billing.credits.show.view_qr_code")
+    end
+
+    test "show does NOT render View QR Code link for Boleto pending purchase" do
+      sign_in @manager
+      spaces(:one).credit_purchases.create!(
+        credit_bundle: credit_bundles(:fifty),
+        amount:        50,
+        price_cents:   2500,
+        status:        :pending,
+        bank_slip_url: "https://asaas.com/boleto/slip_003.pdf"
+      )
+
+      get settings_credits_path
+
+      assert_response :success
+      assert_not_includes response.body, I18n.t("billing.credits.show.view_qr_code")
+    end
+
     # ── create — failure paths ────────────────────────────────────────────────
 
     test "POST create with invalid amount redirects with invalid_amount alert" do

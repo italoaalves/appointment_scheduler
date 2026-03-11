@@ -7,7 +7,12 @@
 <% content_for(:settings_sidebar) do %>
   <%= render "shared/settings_sidebar" %>
 <% end %>
-<div class="space-y-4">
+<div class="space-y-4"
+     data-controller="purchase-status"
+     data-purchase-status-url-value="<%= status_settings_credits_path(purchase_id: @purchase.id) %>"
+     data-purchase-status-interval-value="5000"
+     data-success-url="<%= settings_credits_path(notice: t("billing.credits.purchase_completed")) %>"
+     data-failure-url="<%= settings_credits_path(alert: t("billing.credits.purchase_failed")) %>">
   <%= render "application/shared/card", padding: "p-6" do %>
     <div class="text-center space-y-4">
       <p class="text-sm font-medium text-slate-700"><%= t("billing.credits.pix_instructions") %></p>
