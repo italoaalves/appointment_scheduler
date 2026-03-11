@@ -62,9 +62,10 @@ module Billing
         end
 
         confirmed_date = parse_date(payment_data["confirmedDate"]) || Time.current
+        due_date       = parse_date(payment_data["dueDate"]) || confirmed_date
         subscription.update!(
-          current_period_start: confirmed_date,
-          current_period_end:   confirmed_date + 30.days
+          current_period_start: due_date,
+          current_period_end:   due_date + 1.month
         )
 
         log_webhook_event("webhook.payment_confirmed", subscription, asaas_payment_id: asaas_payment_id)

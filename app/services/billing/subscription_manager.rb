@@ -61,7 +61,7 @@ module Billing
           asaas_subscription_id: asaas_subscription_id,
           asaas_customer_id:     asaas_customer_id,
           current_period_start:  Time.current,
-          current_period_end:    30.days.from_now,
+          current_period_end:    1.month.from_now,
           trial_ends_at:         nil
         )
         subscription.save!
