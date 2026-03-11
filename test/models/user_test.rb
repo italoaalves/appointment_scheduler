@@ -140,4 +140,47 @@ class UserTest < ActiveSupport::TestCase
     assert @manager.save
     assert_empty @manager.errors[:phone_number]
   end
+
+  # --- Phone lock during trial ---
+
+  test "trialing user cannot change phone number" do
+    # spaces(:one) has a trialing subscription
+    @manager.update_column(:phone_number, "+5511999990010")
+    @manager.reload
+    @manager.phone_number = "+5511999990011"
+
+    assert_not @manager.valid?
+    assert_includes @manager.errors[:phone_number],
+                    I18n.t("activerecord.errors.models.user.attributes.phone_number.locked_during_trial")
+  end
+
+  test "active subscriber can change phone number" do
+    # spaces(:two) has an active subscription
+    manager_two = users(:manager_two)
+    manager_two.update_column(:phone_number, "+5511999990020")
+    manager_two.reload
+    manager_two.phone_number = "+5511999990021"
+
+    assert manager_two.valid?
+    assert_empty manager_two.errors[:phone_number]
+  end
+
+  test "super_admin is exempt from phone lock during trial" do
+    # @admin is a super_admin with no space
+    @admin.update_column(:phone_number, "+5511999990030")
+    @admin.reload
+    @admin.phone_number = "+5511999990031"
+
+    assert @admin.valid?
+    assert_empty @admin.errors[:phone_number]
+  end
+
+  test "phone lock does not fire when phone number is unchanged" do
+    @manager.update_column(:phone_number, "+5511999990040")
+    @manager.reload
+    @manager.name = "Changed Name Only"
+
+    assert @manager.valid?
+    assert_empty @manager.errors[:phone_number]
+  end
 end

@@ -37,10 +37,21 @@ class ProfilesController < ApplicationController
   end
 
   def profile_params
-    params.require(:user).permit(:name, :phone_number)
+    p = params.require(:user).permit(:name, :phone_number)
+    strip_phone_if_trialing(p)
   end
 
   def profile_params_with_password
-    params.require(:user).permit(:name, :phone_number, :current_password, :password, :password_confirmation)
+    p = params.require(:user).permit(:name, :phone_number, :current_password, :password, :password_confirmation)
+    strip_phone_if_trialing(p)
+  end
+
+  # Defense-in-depth: strip phone_number from params when the user is on trial
+  # so even a crafted request cannot bypass the model validation.
+  def strip_phone_if_trialing(permitted)
+    return permitted if current_user.super_admin?
+    return permitted unless current_user.space&.subscription&.trialing?
+
+    permitted.except(:phone_number)
   end
 end
