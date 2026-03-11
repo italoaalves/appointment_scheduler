@@ -77,12 +77,26 @@ module Billing
       end
     end
 
-    test "PAYMENT_CONFIRMED sets current_period_end to 30 days after confirmedDate" do
+    test "PAYMENT_CONFIRMED sets current_period_end to 1 month after the period anchor" do
       freeze_time do
         Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED"))
 
         @subscription.reload
-        assert_equal (Date.current.in_time_zone + 30.days).to_i, @subscription.current_period_end.to_i
+        assert_equal (Date.current.in_time_zone + 1.month).to_i, @subscription.current_period_end.to_i
+      end
+    end
+
+    test "PAYMENT_CONFIRMED prefers dueDate over confirmedDate as period_start" do
+      due_date = 2.days.ago.to_date
+
+      freeze_time do
+        Billing::WebhookProcessor.call(
+          payment_payload(event: "PAYMENT_CONFIRMED", due_date: due_date.to_s)
+        )
+
+        @subscription.reload
+        assert_equal due_date.in_time_zone.to_i, @subscription.current_period_start.to_i
+        assert_equal (due_date.in_time_zone + 1.month).to_i, @subscription.current_period_end.to_i
       end
     end
 

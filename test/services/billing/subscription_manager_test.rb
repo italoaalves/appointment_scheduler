@@ -96,6 +96,21 @@ module Billing
       assert_equal "pro",           @subscription.billing_plan.slug
     end
 
+    test "subscribe sets current_period_end to 1 month from now" do
+      freeze_time do
+        Billing::SubscriptionManager.subscribe(
+          space:             @space,
+          billing_plan_id:   billing_plans(:pro).id,
+          payment_method:    :pix,
+          asaas_customer_id: "cus_001",
+          asaas_client:      fake_client
+        )
+
+        @subscription.reload
+        assert_in_delta 1.month.from_now.to_i, @subscription.current_period_end.to_i, 2
+      end
+    end
+
     test "subscribe logs subscription.activated BillingEvent with plan_slug" do
       assert_difference -> { Billing::BillingEvent.where(event_type: "subscription.activated").count } do
         Billing::SubscriptionManager.subscribe(
