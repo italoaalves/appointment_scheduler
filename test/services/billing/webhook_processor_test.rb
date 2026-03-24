@@ -799,5 +799,23 @@ module Billing
       assert_equal 0, credit&.balance.to_i  # balance not incremented
       assert purchase.reload.pending?        # status unchanged
     end
+
+    # ── Task 77: pending_payment → active on payment confirmation ─────────────
+
+    test "PAYMENT_CONFIRMED transitions pending_payment to active" do
+      @subscription.update_column(:status, Billing::Subscription.statuses[:pending_payment])
+
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED"))
+
+      assert @subscription.reload.active?
+    end
+
+    test "PAYMENT_RECEIVED transitions pending_payment to active" do
+      @subscription.update_column(:status, Billing::Subscription.statuses[:pending_payment])
+
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_RECEIVED"))
+
+      assert @subscription.reload.active?
+    end
   end
 end

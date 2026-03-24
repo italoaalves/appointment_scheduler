@@ -44,7 +44,7 @@ module Billing
         customer_id:        asaas_customer_id,
         billing_type:       payment_method.to_sym,
         value:              plan.price_cents / 100.0,
-        next_due_date:      Date.current.to_s,
+        next_due_date:      next_due_date_for(payment_method),
         description:        plan.name,
         external_reference: "space_#{space.id}"
       )
@@ -52,25 +52,34 @@ module Billing
 
       subscription = nil
 
+      # Credit cards are captured immediately by Asaas → safe to set active.
+      # PIX/Boleto require manual payment → pending_payment until webhook confirms.
+      initial_status = payment_method.to_sym == :credit_card ? :active : :pending_payment
+
       ActiveRecord::Base.transaction do
         subscription = find_or_initialize_subscription(space)
         subscription.assign_attributes(
           billing_plan:          plan,
-          status:                :active,
+          status:                initial_status,
           payment_method:        payment_method,
           asaas_subscription_id: asaas_subscription_id,
           asaas_customer_id:     asaas_customer_id,
-          current_period_start:  Time.current,
-          current_period_end:    1.month.from_now,
+          current_period_start:  initial_status == :active ? Time.current : nil,
+          current_period_end:    initial_status == :active ? 1.month.from_now : nil,
           trial_ends_at:         nil
         )
         subscription.save!
 
+        event_type = initial_status == :active ? "subscription.activated" : "subscription.created"
         Billing::BillingEvent.create!(
           space_id:        space.id,
           subscription_id: subscription.id,
-          event_type:      "subscription.activated",
-          metadata:        { plan_slug: plan.slug, payment_method: payment_method.to_s }
+          event_type:      event_type,
+          metadata:        {
+            plan_slug:        plan.slug,
+            payment_method:   payment_method.to_s,
+            awaiting_payment: initial_status == :pending_payment
+          }
         )
       end
 
@@ -200,6 +209,20 @@ module Billing
     end
 
     private
+
+    def next_due_date_for(payment_method)
+      return Date.current.to_s unless payment_method.to_sym == :boleto
+
+      # Give boleto customers 3 business days to pay before the charge goes overdue.
+      date  = Date.current
+      added = 0
+      loop do
+        date  += 1
+        added += 1 unless date.saturday? || date.sunday?
+        break if added >= 3
+      end
+      date.to_s
+    end
 
     def find_or_initialize_subscription(space)
       Billing::Subscription
