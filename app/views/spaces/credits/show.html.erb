@@ -74,11 +74,9 @@
           <p class="text-2xl font-bold text-slate-900"><%= bundle.amount %></p>
           <p class="text-sm text-slate-500"><%= t("billing.credits.show.credits") %></p>
           <p class="mt-1 text-sm font-medium text-slate-700"><%= number_to_currency(bundle.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %></p>
-          <%= button_to t("billing.credits.show.purchase"),
-                        settings_credits_path,
-                        method: :post,
-                        params: { amount: bundle.amount },
-                        class: "mt-3 w-full #{button_classes(:primary)}" %>
+          <%= link_to t("billing.credits.show.purchase"),
+                      checkout_settings_credits_path(bundle_id: bundle.id),
+                      class: "mt-3 w-full #{button_classes(:primary)}" %>
         </div>
       <% end %>
     </div>

@@ -18,24 +18,25 @@ module Spaces
                              .limit(20)
     end
 
+    def checkout
+      @bundle       = Billing::CreditBundle.available.find(params[:bundle_id])
+      @subscription = current_tenant.subscription
+    end
+
     def create
-      amount = params[:amount].to_i
+      bundle         = Billing::CreditBundle.available.find(params[:bundle_id])
+      payment_method = sanitize_payment_method(params[:payment_method])
 
       result = Billing::CreditManager.initiate_purchase(
-        space:  current_tenant,
-        amount: amount,
-        actor:  current_user
+        space:          current_tenant,
+        bundle:         bundle,
+        payment_method: payment_method,
+        actor:          current_user
       )
 
       if result[:success]
-        purchase = result[:credit_purchase]
-        if purchase.pix_qr_code_base64.present?
-          redirect_to payment_settings_credits_path(purchase_id: purchase.id),
-                      status: :see_other
-        else
-          redirect_to settings_credits_path,
-                      notice: I18n.t("billing.credits.purchase_initiated")
-        end
+        redirect_to payment_settings_credits_path(purchase_id: result[:credit_purchase].id),
+                    status: :see_other
       else
         redirect_to settings_credits_path, alert: result[:error]
       end
@@ -47,6 +48,16 @@ module Spaces
       @pix_payload  = @purchase.pix_payload
       @invoice_url  = @purchase.invoice_url
     end
+
+    private
+
+    def sanitize_payment_method(param)
+      return :pix if param.blank?
+      sym = param.to_sym
+      %i[pix credit_card boleto].include?(sym) ? sym : :pix
+    end
+
+    public
 
     def status
       purchase = current_tenant.credit_purchases.find(params[:purchase_id])

@@ -891,6 +891,16 @@ pt-BR:
         view_boleto: "Ver Boleto"
         view_qr_code: "Ver QR Code"
       boleto_clearing_warning: "Os créditos serão adicionados após a confirmação do pagamento (2-3 dias úteis)."
+      boleto_instructions: "Use o link abaixo para acessar o seu boleto."
+      cc_processing: "O seu cartão de crédito está sendo cobrado. Os créditos aparecerão em breve."
+      checkout:
+        title: "Confirmar Compra"
+        subtitle: "Revise sua compra de créditos antes de confirmar."
+        summary: "Resumo da Compra"
+        payment_method: "Forma de Pagamento"
+        confirm: "Confirmar Compra"
+        processing: "Processando..."
+        back: "Voltar"
     checkout:
       submit_loading: "Assinando…"
       title: "Escolha seu plano"

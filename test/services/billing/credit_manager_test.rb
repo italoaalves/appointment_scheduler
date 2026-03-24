@@ -185,7 +185,8 @@ module Billing
     # ── initiate_purchase ─────────────────────────────────────────────────────
 
     test "initiate_purchase creates a pending CreditPurchase and persists invoice_url on the record" do
-      @space.subscription.update_columns(asaas_customer_id: "cus_test_001", payment_method: :pix)
+      @space.subscription.update_columns(asaas_customer_id: "cus_test_001")
+      bundle = credit_bundles(:fifty)
 
       fake_client = Object.new
       fake_client.define_singleton_method(:create_payment) do |**_|
@@ -196,10 +197,11 @@ module Billing
       end
 
       result = Billing::CreditManager.initiate_purchase(
-        space:        @space,
-        amount:       50,
-        actor:        users(:manager),
-        asaas_client: fake_client
+        space:          @space,
+        bundle:         bundle,
+        payment_method: :pix,
+        actor:          users(:manager),
+        asaas_client:   fake_client
       )
 
       assert result[:success]
@@ -213,7 +215,8 @@ module Billing
     end
 
     test "initiate_purchase does NOT immediately add balance" do
-      @space.subscription.update_columns(asaas_customer_id: "cus_test_002", payment_method: :pix)
+      @space.subscription.update_columns(asaas_customer_id: "cus_test_002")
+      bundle = credit_bundles(:fifty)
 
       fake_client = Object.new
       fake_client.define_singleton_method(:create_payment) do |**_|
@@ -224,32 +227,28 @@ module Billing
       end
 
       assert_no_difference -> { @credit.reload.balance } do
-        Billing::CreditManager.initiate_purchase(space: @space, amount: 50, asaas_client: fake_client)
+        Billing::CreditManager.initiate_purchase(
+          space: @space, bundle: bundle, payment_method: :pix, asaas_client: fake_client
+        )
       end
     end
 
     test "initiate_purchase returns error when subscription has no asaas_customer_id" do
       # subscriptions(:one) has no asaas_customer_id by default
+      bundle = credit_bundles(:fifty)
 
-      result = Billing::CreditManager.initiate_purchase(space: @space, amount: 50)
+      result = Billing::CreditManager.initiate_purchase(
+        space: @space, bundle: bundle, payment_method: :pix
+      )
 
       assert_not result[:success]
       assert_equal I18n.t("billing.credits.no_subscription"), result[:error]
       assert_equal 0, Billing::CreditPurchase.where(space: @space).count
     end
 
-    test "initiate_purchase returns error for invalid amount" do
-      @space.subscription.update_columns(asaas_customer_id: "cus_test_003", payment_method: :pix)
-
-      result = Billing::CreditManager.initiate_purchase(space: @space, amount: 999)
-
-      assert_not result[:success]
-      assert_equal I18n.t("billing.credits.invalid_amount"), result[:error]
-      assert_equal 0, Billing::CreditPurchase.where(space: @space).count
-    end
-
     test "initiate_purchase with PIX persists pix_qr_code_base64 and pix_payload on the record" do
-      @space.subscription.update_columns(asaas_customer_id: "cus_test_pix", payment_method: :pix)
+      @space.subscription.update_columns(asaas_customer_id: "cus_test_pix")
+      bundle = credit_bundles(:fifty)
 
       fake_client = Object.new
       fake_client.define_singleton_method(:create_payment) do |**_|
@@ -260,7 +259,7 @@ module Billing
       end
 
       result = Billing::CreditManager.initiate_purchase(
-        space: @space, amount: 50, asaas_client: fake_client
+        space: @space, bundle: bundle, payment_method: :pix, asaas_client: fake_client
       )
 
       assert result[:success]
@@ -269,8 +268,33 @@ module Billing
       assert_equal "00020101...", purchase.pix_payload
     end
 
-    test "initiate_purchase with credit_card does NOT include pix_qr_code in result" do
-      @space.subscription.update_columns(asaas_customer_id: "cus_test_cc", payment_method: :credit_card)
+    test "initiate_purchase with boleto persists bank_slip_url and does NOT call pix_qr_code" do
+      @space.subscription.update_columns(asaas_customer_id: "cus_test_boleto")
+      bundle = credit_bundles(:fifty)
+
+      pix_called = false
+      fake_client = Object.new
+      fake_client.define_singleton_method(:create_payment) do |**_|
+        { "id" => "pay_boleto_001", "invoiceUrl" => "https://asaas.com/inv/boleto_001",
+          "bankSlipUrl" => "https://asaas.com/boleto/slip_001.pdf" }
+      end
+      fake_client.define_singleton_method(:pix_qr_code) do |_|
+        pix_called = true
+        {}
+      end
+
+      result = Billing::CreditManager.initiate_purchase(
+        space: @space, bundle: bundle, payment_method: :boleto, asaas_client: fake_client
+      )
+
+      assert result[:success]
+      assert_not pix_called, "pix_qr_code should not be called for boleto"
+      assert_equal "https://asaas.com/boleto/slip_001.pdf", result[:credit_purchase].bank_slip_url
+    end
+
+    test "initiate_purchase with credit_card does NOT call pix_qr_code" do
+      @space.subscription.update_columns(asaas_customer_id: "cus_test_cc")
+      bundle = credit_bundles(:fifty)
 
       pix_called = false
       fake_client = Object.new
@@ -283,16 +307,38 @@ module Billing
       end
 
       result = Billing::CreditManager.initiate_purchase(
-        space: @space, amount: 50, asaas_client: fake_client
+        space: @space, bundle: bundle, payment_method: :credit_card, asaas_client: fake_client
       )
 
       assert result[:success]
-      assert_nil result[:pix_qr_code]
       assert_not pix_called, "pix_qr_code should not be called for credit_card payments"
     end
 
+    test "initiate_purchase passes user-chosen payment_method to Asaas, not subscription default" do
+      @space.subscription.update_columns(asaas_customer_id: "cus_test_pm", payment_method: :boleto)
+      bundle = credit_bundles(:fifty)
+
+      received_billing_type = nil
+      fake_client = Object.new
+      fake_client.define_singleton_method(:create_payment) do |**kwargs|
+        received_billing_type = kwargs[:billing_type]
+        { "id" => "pay_pm_001", "invoiceUrl" => "https://asaas.com/inv/pm_001" }
+      end
+      fake_client.define_singleton_method(:pix_qr_code) do |_|
+        { "encodedImage" => "img==", "payload" => "pl" }
+      end
+
+      Billing::CreditManager.initiate_purchase(
+        space: @space, bundle: bundle, payment_method: :pix, asaas_client: fake_client
+      )
+
+      assert_equal :pix, received_billing_type,
+        "Expected :pix (user choice), got #{received_billing_type} (subscription default)"
+    end
+
     test "initiate_purchase marks CreditPurchase as failed when Asaas API errors" do
-      @space.subscription.update_columns(asaas_customer_id: "cus_test_004", payment_method: :pix)
+      @space.subscription.update_columns(asaas_customer_id: "cus_test_004")
+      bundle = credit_bundles(:fifty)
 
       failing_client = Object.new
       failing_client.define_singleton_method(:create_payment) do |**_|
@@ -300,13 +346,14 @@ module Billing
       end
 
       result = Billing::CreditManager.initiate_purchase(
-        space:        @space,
-        amount:       50,
-        asaas_client: failing_client
+        space:          @space,
+        bundle:         bundle,
+        payment_method: :pix,
+        asaas_client:   failing_client
       )
 
       assert_not result[:success]
-      assert_includes result[:error], "Asaas is down"
+      assert_equal I18n.t("billing.generic_error"), result[:error]
 
       purchase = Billing::CreditPurchase.where(space: @space).last
       assert_not_nil purchase
@@ -314,24 +361,26 @@ module Billing
     end
 
     test "initiate_purchase with 3 pending purchases returns too_many_pending error" do
-      @space.subscription.update_columns(asaas_customer_id: "cus_rate_001", payment_method: :pix)
+      @space.subscription.update_columns(asaas_customer_id: "cus_rate_001")
       bundle = credit_bundles(:fifty)
 
-      3.times do |i|
+      3.times do
         Billing::CreditPurchase.create!(
           space: @space, credit_bundle: bundle,
           amount: 50, price_cents: 2500, status: :pending
         )
       end
 
-      result = Billing::CreditManager.initiate_purchase(space: @space, amount: 50)
+      result = Billing::CreditManager.initiate_purchase(
+        space: @space, bundle: bundle, payment_method: :pix
+      )
 
       assert_not result[:success]
       assert_equal I18n.t("billing.credits.too_many_pending"), result[:error]
     end
 
     test "initiate_purchase with 2 pending purchases succeeds" do
-      @space.subscription.update_columns(asaas_customer_id: "cus_rate_002", payment_method: :pix)
+      @space.subscription.update_columns(asaas_customer_id: "cus_rate_002")
       bundle = credit_bundles(:fifty)
 
       2.times do
@@ -345,13 +394,15 @@ module Billing
       fake_client.define_singleton_method(:create_payment) { |**_| { "id" => "pay_rate_01", "invoiceUrl" => "https://asaas.com/inv/rate01" } }
       fake_client.define_singleton_method(:pix_qr_code)   { |_|   { "encodedImage" => "img==", "payload" => "pl" } }
 
-      result = Billing::CreditManager.initiate_purchase(space: @space, amount: 50, asaas_client: fake_client)
+      result = Billing::CreditManager.initiate_purchase(
+        space: @space, bundle: bundle, payment_method: :pix, asaas_client: fake_client
+      )
 
       assert result[:success]
     end
 
     test "completed and failed purchases do not count toward the pending limit" do
-      @space.subscription.update_columns(asaas_customer_id: "cus_rate_003", payment_method: :pix)
+      @space.subscription.update_columns(asaas_customer_id: "cus_rate_003")
       bundle = credit_bundles(:fifty)
 
       Billing::CreditPurchase.create!(space: @space, credit_bundle: bundle, amount: 50, price_cents: 2500, status: :completed)
@@ -362,7 +413,9 @@ module Billing
       fake_client.define_singleton_method(:create_payment) { |**_| { "id" => "pay_rate_02", "invoiceUrl" => "https://asaas.com/inv/rate02" } }
       fake_client.define_singleton_method(:pix_qr_code)   { |_|   { "encodedImage" => "img==", "payload" => "pl" } }
 
-      result = Billing::CreditManager.initiate_purchase(space: @space, amount: 50, asaas_client: fake_client)
+      result = Billing::CreditManager.initiate_purchase(
+        space: @space, bundle: bundle, payment_method: :pix, asaas_client: fake_client
+      )
 
       assert result[:success]
     end
