@@ -15,17 +15,18 @@ module Billing
       @subscription.update_columns(asaas_subscription_id: "sub_asaas_test")
     end
 
-    def payment_payload(event:, payment_id: "pay_001", status: "CONFIRMED", billing_type: "PIX", value: 99.0)
+    def payment_payload(event:, payment_id: "pay_001", status: "CONFIRMED", billing_type: "PIX", value: 99.0, due_date: nil)
       {
         "event" => event,
         "payment" => {
-          "id"           => payment_id,
-          "subscription" => @subscription.asaas_subscription_id,
-          "value"        => value,
-          "billingType"  => billing_type,
-          "status"       => status,
-          "confirmedDate" => Date.current.to_s
-        }
+          "id"            => payment_id,
+          "subscription"  => @subscription.asaas_subscription_id,
+          "value"         => value,
+          "billingType"   => billing_type,
+          "status"        => status,
+          "confirmedDate" => Date.current.to_s,
+          "dueDate"       => due_date
+        }.compact
       }.to_json
     end
 
@@ -275,6 +276,45 @@ module Billing
       end
     end
 
+    test "PAYMENT_CREATED stores due_date from webhook payload" do
+      target_date = 5.days.from_now.to_date
+
+      Billing::WebhookProcessor.call(
+        payment_payload(event: "PAYMENT_CREATED", payment_id: "pay_due_001", due_date: target_date.to_s)
+      )
+
+      payment = Billing::Payment.find_by(asaas_payment_id: "pay_due_001")
+      assert_equal target_date, payment.due_date
+    end
+
+    test "PAYMENT_CREATED for PIX subscription enqueues PaymentReminderJob" do
+      @subscription.update_column(:payment_method, Billing::Subscription.payment_methods[:pix])
+
+      assert_enqueued_with(job: Billing::PaymentReminderJob) do
+        Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CREATED", payment_id: "pay_pix_001"))
+      end
+    end
+
+    test "PAYMENT_CREATED for Boleto subscription enqueues PaymentReminderJob" do
+      @subscription.update_column(:payment_method, Billing::Subscription.payment_methods[:boleto])
+
+      assert_enqueued_with(job: Billing::PaymentReminderJob) do
+        Billing::WebhookProcessor.call(
+          payment_payload(event: "PAYMENT_CREATED", payment_id: "pay_bol_001", billing_type: "BOLETO")
+        )
+      end
+    end
+
+    test "PAYMENT_CREATED for credit_card subscription does not enqueue PaymentReminderJob" do
+      @subscription.update_column(:payment_method, Billing::Subscription.payment_methods[:credit_card])
+
+      assert_no_enqueued_jobs(only: Billing::PaymentReminderJob) do
+        Billing::WebhookProcessor.call(
+          payment_payload(event: "PAYMENT_CREATED", payment_id: "pay_cc_001", billing_type: "CREDIT_CARD")
+        )
+      end
+    end
+
     # ── SUBSCRIPTION_DELETED ──────────────────────────────────────────────────
 
     def subscription_deleted_payload(asaas_subscription_id: "sub_asaas_test")
@@ -328,6 +368,71 @@ module Billing
     test "SUBSCRIPTION_DELETED for unknown asaas_subscription_id logs warning and returns gracefully" do
       assert_nothing_raised do
         Billing::WebhookProcessor.call(subscription_deleted_payload(asaas_subscription_id: "sub_unknown"))
+      end
+    end
+
+    # ── PAYMENT_REPROVED_BY_RISK_ANALYSIS / PAYMENT_CREDIT_CARD_CAPTURE_REFUSED / PAYMENT_BANK_SLIP_CANCELLED ──
+
+    test "PAYMENT_REPROVED_BY_RISK_ANALYSIS marks pending payment as failed" do
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CREATED", payment_id: "pay_risk_001"))
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_REPROVED_BY_RISK_ANALYSIS", payment_id: "pay_risk_001"))
+
+      payment = Billing::Payment.find_by(asaas_payment_id: "pay_risk_001")
+      assert payment.failed?
+    end
+
+    test "PAYMENT_CREDIT_CARD_CAPTURE_REFUSED marks pending payment as failed" do
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CREATED", payment_id: "pay_cc_001"))
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CREDIT_CARD_CAPTURE_REFUSED", payment_id: "pay_cc_001"))
+
+      payment = Billing::Payment.find_by(asaas_payment_id: "pay_cc_001")
+      assert payment.failed?
+    end
+
+    test "PAYMENT_BANK_SLIP_CANCELLED marks pending payment as failed" do
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CREATED", payment_id: "pay_boleto_001"))
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_BANK_SLIP_CANCELLED", payment_id: "pay_boleto_001"))
+
+      payment = Billing::Payment.find_by(asaas_payment_id: "pay_boleto_001")
+      assert payment.failed?
+    end
+
+    # ── SUBSCRIPTION_INACTIVATED ──────────────────────────────────────────────
+
+    def subscription_inactivated_payload(asaas_subscription_id: "sub_asaas_test")
+      { "event" => "SUBSCRIPTION_INACTIVATED", "subscription" => { "id" => asaas_subscription_id } }.to_json
+    end
+
+    test "SUBSCRIPTION_INACTIVATED logs a BillingEvent" do
+      assert_difference -> { Billing::BillingEvent.where(event_type: "webhook.subscription_inactivated").count } do
+        Billing::WebhookProcessor.call(subscription_inactivated_payload)
+      end
+
+      event = Billing::BillingEvent.find_by(event_type: "webhook.subscription_inactivated")
+      assert_equal "sub_asaas_test", event.metadata["asaas_subscription_id"]
+    end
+
+    test "SUBSCRIPTION_INACTIVATED does NOT change subscription status" do
+      original_status = @subscription.status
+
+      Billing::WebhookProcessor.call(subscription_inactivated_payload)
+
+      assert_equal original_status, @subscription.reload.status
+    end
+
+    test "SUBSCRIPTION_INACTIVATED is idempotent — duplicate webhook creates only one BillingEvent" do
+      Billing::WebhookProcessor.call(subscription_inactivated_payload)
+      Billing::WebhookProcessor.call(subscription_inactivated_payload)
+
+      count = Billing::BillingEvent.where(event_type: "webhook.subscription_inactivated")
+                                   .where("metadata->>'asaas_subscription_id' = ?", "sub_asaas_test")
+                                   .count
+      assert_equal 1, count
+    end
+
+    test "SUBSCRIPTION_INACTIVATED for unknown subscription logs warning and returns gracefully" do
+      assert_nothing_raised do
+        Billing::WebhookProcessor.call(subscription_inactivated_payload(asaas_subscription_id: "sub_unknown_inactivated"))
       end
     end
 

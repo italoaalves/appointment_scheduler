@@ -41,6 +41,10 @@ default: &default
     class: Billing::ApplyDowngradeJob
     queue: default
     schedule: at 5am every day
+  billing_payment_due_reminders:
+    class: Billing::PaymentDueReminderJob
+    queue: default
+    schedule: at 8am every day
 
 development:
   <<: *default

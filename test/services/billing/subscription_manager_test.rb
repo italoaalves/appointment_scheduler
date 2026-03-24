@@ -107,7 +107,7 @@ module Billing
         )
 
         @subscription.reload
-        assert_equal 1.month.from_now.to_i, @subscription.current_period_end.to_i
+        assert_in_delta 1.month.from_now.to_i, @subscription.current_period_end.to_i, 2
       end
     end
 

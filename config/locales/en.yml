@@ -72,6 +72,18 @@ en:
       plan_change_payment:
         title: "Payment required for plan upgrade"
         body: "You've upgraded to %{plan_name}. Please complete your %{payment_method} payment to keep your subscription active."
+      payment_reminder_created:
+        title: "Payment required"
+        body: "A %{payment_method} charge of %{amount} has been generated, due on %{due_date}. Please pay to keep your subscription active."
+      payment_reminder_approaching:
+        title: "Payment due in 3 days"
+        body: "Your %{payment_method} payment of %{amount} is due on %{due_date}. Please pay before the deadline."
+      payment_reminder_due_today:
+        title: "Payment due today"
+        body: "Your %{payment_method} payment of %{amount} is due today. Pay now to avoid interruption."
+      payment_reminder_overdue:
+        title: "Payment overdue"
+        body: "Your %{payment_method} payment of %{amount} was due on %{due_date}. Please pay immediately."
       dropdown:
         title: "Notifications"
         mark_all_read: "Mark all as read"
@@ -830,6 +842,23 @@ en:
       failed:
         subject: "Your WhatsApp credit purchase could not be processed"
         body: "Your purchase of %{amount} WhatsApp credits could not be processed. Please visit your credits page to try again."
+    payment_mailer:
+      reminder:
+        greeting: "Hello,"
+        pay_now: "Pay now"
+        subjects:
+          created: "Payment required: %{amount} due %{due_date}"
+          approaching: "Reminder: Your %{amount} payment is due in 3 days"
+          due_today: "Your %{amount} payment is due today — please pay to keep your subscription active"
+          overdue: "Overdue payment: %{amount} — please pay to restore access"
+        body_created_pix: "A new PIX charge of %{amount} has been generated for your subscription, due on %{due_date}. Please complete the payment to keep your subscription active."
+        body_created_boleto: "A new boleto of %{amount} has been generated for your subscription, due on %{due_date}. Please pay the boleto to keep your subscription active."
+        body_approaching_pix: "Your PIX payment of %{amount} is due in 3 days (%{due_date}). Please complete the payment to avoid service interruption."
+        body_approaching_boleto: "Your boleto of %{amount} is due in 3 days (%{due_date}). Please pay the boleto to avoid service interruption."
+        body_due_today_pix: "Your PIX payment of %{amount} is due today. Please complete the payment now to keep your subscription active."
+        body_due_today_boleto: "Your boleto of %{amount} is due today. Please pay the boleto now to keep your subscription active."
+        body_overdue_pix: "Your PIX payment of %{amount} was due on %{due_date} and is now overdue. Please pay immediately to restore full access."
+        body_overdue_boleto: "Your boleto of %{amount} was due on %{due_date} and is now overdue. Please pay immediately to restore full access."
     plan_changed: "Your plan has been upgraded."
     downgrade_scheduled: "Your plan will change at the end of your current billing period."
     canceled: "Your subscription has been canceled. Access continues until the end of your billing period."
@@ -934,6 +963,8 @@ en:
       pix_copied: "Copied!"
       waiting_payment: "Waiting for payment confirmation..."
       back_to_credits: "Back to credits"
+      purchase_completed: "Credits added to your account!"
+      purchase_failed: "Payment could not be processed. Please try again."
       show:
         title: "WhatsApp Credits"
         subtitle: "View your credit balance and purchase more."
@@ -953,6 +984,7 @@ en:
         pending_purchases: "Pending purchases"
         pay_now: "Pay now"
         view_boleto: "View Boleto"
+        view_qr_code: "View QR Code"
       boleto_clearing_warning: "Credits will be added after payment confirmation (2-3 business days)."
     limits:
       team_members_exceeded: "Your plan's team member limit has been reached. Upgrade to add more."

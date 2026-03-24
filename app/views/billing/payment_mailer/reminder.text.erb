@@ -1,0 +1,11 @@
+<%= t("billing.payment_mailer.reminder.greeting", space_name: @space.name) %>
+
+<%= t("billing.payment_mailer.reminder.body_#{@reminder_type}_#{@payment_method}",
+      amount:   number_to_currency(@amount, unit: "R$", separator: ",", delimiter: "."),
+      due_date: @due_date&.strftime("%d/%m/%Y") || "-") %>
+
+<% if @invoice_url.present? %>
+<%= t("billing.payment_mailer.reminder.pay_now") %>: <%= @invoice_url %>
+<% end %>
+
+<%= t("layout.app_name") %>

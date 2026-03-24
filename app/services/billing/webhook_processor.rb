@@ -27,9 +27,13 @@ module Billing
       when "PAYMENT_CONFIRMED", "PAYMENT_RECEIVED" then handle_payment_confirmed
       when "PAYMENT_OVERDUE"                        then handle_payment_overdue
       when "PAYMENT_CREATED"                        then handle_payment_created
-      when "PAYMENT_DELETED"                        then handle_payment_deleted
+      when "PAYMENT_DELETED",
+           "PAYMENT_REPROVED_BY_RISK_ANALYSIS",
+           "PAYMENT_CREDIT_CARD_CAPTURE_REFUSED",
+           "PAYMENT_BANK_SLIP_CANCELLED"            then handle_payment_deleted
       when "PAYMENT_REFUNDED"                       then handle_payment_refunded
       when "SUBSCRIPTION_DELETED"                   then handle_subscription_deleted
+      when "SUBSCRIPTION_INACTIVATED"               then handle_subscription_inactivated
       else log_unknown_event(event_name)
       end
       # Errors are intentionally NOT rescued here.
@@ -61,12 +65,11 @@ module Billing
           subscription.update!(status: :active)
         end
 
-        period_start = parse_date(payment_data["dueDate"]) ||
-                       parse_date(payment_data["confirmedDate"]) ||
-                       Time.current
+        confirmed_date = parse_date(payment_data["confirmedDate"]) || Time.current
+        due_date       = parse_date(payment_data["dueDate"]) || confirmed_date
         subscription.update!(
-          current_period_start: period_start,
-          current_period_end:   period_start + 1.month
+          current_period_start: due_date,
+          current_period_end:   due_date + 1.month
         )
 
         log_webhook_event("webhook.payment_confirmed", subscription, asaas_payment_id: asaas_payment_id)
@@ -110,9 +113,14 @@ module Billing
       subscription = find_subscription_for_payment(payment_data)
       return log_missing_subscription(asaas_payment_id) unless subscription
 
+      payment = nil
       ActiveRecord::Base.transaction do
-        find_or_create_payment(payment_data, subscription)
+        payment = find_or_create_payment(payment_data, subscription)
         log_webhook_event("webhook.payment_created", subscription, asaas_payment_id: asaas_payment_id)
+      end
+
+      if subscription.payment_method_pix? || subscription.payment_method_boleto?
+        Billing::PaymentReminderJob.perform_later(payment.id, reminder_type: "created")
       end
     end
 
@@ -172,6 +180,33 @@ module Billing
       end
     end
 
+    def handle_subscription_inactivated
+      subscription_data     = @payload["subscription"] || {}
+      asaas_subscription_id = subscription_data["id"]
+      return log_missing("asaas_subscription_id", "SUBSCRIPTION_INACTIVATED") if asaas_subscription_id.blank?
+
+      return if already_processed?("webhook.subscription_inactivated", asaas_subscription_id,
+                                   key: "asaas_subscription_id")
+
+      subscription = Billing::Subscription.includes(:billing_plan)
+                                         .find_by(asaas_subscription_id: asaas_subscription_id)
+      return log_missing_subscription(asaas_subscription_id) unless subscription
+
+      ActiveRecord::Base.transaction do
+        Billing::BillingEvent.create!(
+          space_id:        subscription.space_id,
+          subscription_id: subscription.id,
+          event_type:      "webhook.subscription_inactivated",
+          metadata:        { asaas_subscription_id: asaas_subscription_id }
+        )
+      end
+
+      Rails.logger.warn(
+        "[Billing::WebhookProcessor] Subscription #{asaas_subscription_id} " \
+        "inactivated by Asaas for space #{subscription.space_id}"
+      )
+    end
+
     # ── Lookup helpers ────────────────────────────────────────────────────────
 
     def find_subscription_for_payment(payment_data)
@@ -200,6 +235,8 @@ module Billing
         p.amount_cents   = amount_cents.positive? ? amount_cents : 1
         p.payment_method = billing_type
         p.status         = :pending
+        p.due_date       = parse_date(payment_data["dueDate"])&.to_date
+        p.invoice_url    = payment_data["invoiceUrl"]
       end
     end
 

@@ -43,6 +43,18 @@ pt-BR:
       plan_change_payment:
         title: "Pagamento necessário para upgrade de plano"
         body: "Você fez upgrade para o %{plan_name}. Conclua o pagamento via %{payment_method} para manter sua assinatura ativa."
+      payment_reminder_created:
+        title: "Pagamento gerado"
+        body: "Uma cobrança de %{amount} via %{payment_method} foi gerada, com vencimento em %{due_date}. Pague para manter sua assinatura ativa."
+      payment_reminder_approaching:
+        title: "Pagamento vence em 3 dias"
+        body: "Seu pagamento de %{amount} via %{payment_method} vence em %{due_date}. Pague antes do prazo."
+      payment_reminder_due_today:
+        title: "Pagamento vence hoje"
+        body: "Seu pagamento de %{amount} via %{payment_method} vence hoje. Pague agora para evitar interrupção."
+      payment_reminder_overdue:
+        title: "Pagamento em atraso"
+        body: "Seu pagamento de %{amount} via %{payment_method} venceu em %{due_date}. Pague imediatamente."
       dropdown:
         title: "Notificações"
         mark_all_read: "Marcar tudo como lido"
@@ -801,6 +813,23 @@ pt-BR:
       failed:
         subject: "Sua compra de créditos WhatsApp não pôde ser processada"
         body: "Sua compra de %{amount} créditos WhatsApp não pôde ser processada. Acesse a página de créditos para tentar novamente."
+    payment_mailer:
+      reminder:
+        greeting: "Olá,"
+        pay_now: "Pagar agora"
+        subjects:
+          created: "Pagamento gerado: %{amount} com vencimento em %{due_date}"
+          approaching: "Lembrete: Seu pagamento de %{amount} vence em 3 dias"
+          due_today: "Seu pagamento de %{amount} vence hoje — pague para manter o acesso"
+          overdue: "Pagamento em atraso: %{amount} — pague imediatamente"
+        body_created_pix: "Uma cobrança PIX de %{amount} foi gerada para sua assinatura, com vencimento em %{due_date}. Conclua o pagamento para manter sua assinatura ativa."
+        body_created_boleto: "Um boleto de %{amount} foi gerado para sua assinatura, com vencimento em %{due_date}. Pague o boleto para manter sua assinatura ativa."
+        body_approaching_pix: "Seu pagamento PIX de %{amount} vence em 3 dias (%{due_date}). Pague antes do prazo para evitar interrupção do serviço."
+        body_approaching_boleto: "Seu boleto de %{amount} vence em 3 dias (%{due_date}). Pague o boleto antes do prazo para evitar interrupção."
+        body_due_today_pix: "Seu pagamento PIX de %{amount} vence hoje. Conclua o pagamento agora para manter sua assinatura ativa."
+        body_due_today_boleto: "Seu boleto de %{amount} vence hoje. Pague o boleto agora para manter sua assinatura ativa."
+        body_overdue_pix: "Seu pagamento PIX de %{amount} venceu em %{due_date} e está em atraso. Pague imediatamente para restaurar o acesso completo."
+        body_overdue_boleto: "Seu boleto de %{amount} venceu em %{due_date} e está em atraso. Pague imediatamente para restaurar o acesso completo."
     plan_changed: "Seu plano foi atualizado com sucesso."
     downgrade_scheduled: "Seu plano será alterado ao final do período de cobrança atual."
     canceled: "Sua assinatura foi cancelada. O acesso continua até o fim do período de cobrança."
@@ -838,6 +867,8 @@ pt-BR:
       pix_copied: "Copiado!"
       waiting_payment: "Aguardando confirmação do pagamento..."
       back_to_credits: "Voltar para créditos"
+      purchase_completed: "Créditos adicionados à sua conta!"
+      purchase_failed: "O pagamento não pôde ser processado. Por favor, tente novamente."
       show:
         title: "Créditos WhatsApp"
         subtitle: "Veja seu saldo e compre mais créditos."
@@ -857,6 +888,7 @@ pt-BR:
         pending_purchases: "Compras pendentes"
         pay_now: "Pagar agora"
         view_boleto: "Ver Boleto"
+        view_qr_code: "Ver QR Code"
       boleto_clearing_warning: "Os créditos serão adicionados após a confirmação do pagamento (2-3 dias úteis)."
     checkout:
       submit_loading: "Assinando…"

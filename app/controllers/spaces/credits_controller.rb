@@ -47,5 +47,10 @@ module Spaces
       @pix_payload  = @purchase.pix_payload
       @invoice_url  = @purchase.invoice_url
     end
+
+    def status
+      purchase = current_tenant.credit_purchases.find(params[:purchase_id])
+      render json: { status: purchase.status }
+    end
   end
 end

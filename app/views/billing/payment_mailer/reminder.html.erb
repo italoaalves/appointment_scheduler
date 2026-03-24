@@ -1,0 +1,15 @@
+<p><%= t("billing.payment_mailer.reminder.greeting", space_name: @space.name) %></p>
+
+<p><%= t("billing.payment_mailer.reminder.body_#{@reminder_type}_#{@payment_method}",
+         amount:   number_to_currency(@amount, unit: "R$", separator: ",", delimiter: "."),
+         due_date: @due_date&.strftime("%d/%m/%Y") || "-") %></p>
+
+<% if @invoice_url.present? %>
+  <p>
+    <a href="<%= @invoice_url %>"><%= t("billing.payment_mailer.reminder.pay_now") %></a>
+  </p>
+<% end %>
+
+<p style="margin-top: 1.5em; font-size: 12px; color: #666;">
+  <%= t("layout.app_name") %>
+</p>
