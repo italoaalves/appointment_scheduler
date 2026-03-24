@@ -76,7 +76,8 @@ module Billing
 
       { success: true, subscription: subscription }
     rescue Billing::AsaasClient::ApiError => e
-      { success: false, error: e.message }
+      Rails.logger.error("[Billing::SubscriptionManager] Asaas API error during subscribe: #{e.message}")
+      { success: false, error: I18n.t("billing.generic_error") }
     end
 
     def upgrade(subscription:, new_billing_plan_id:, payment_method: nil)
@@ -112,7 +113,8 @@ module Billing
 
       { success: true }
     rescue Billing::AsaasClient::ApiError => e
-      { success: false, error: e.message }
+      Rails.logger.error("[Billing::SubscriptionManager] Asaas API error during upgrade: #{e.message}")
+      { success: false, error: I18n.t("billing.generic_error") }
     end
 
     def downgrade(subscription:, new_billing_plan_id:)
@@ -135,7 +137,8 @@ module Billing
 
       { success: true }
     rescue Billing::AsaasClient::ApiError => e
-      { success: false, error: e.message }
+      Rails.logger.error("[Billing::SubscriptionManager] Asaas API error during downgrade: #{e.message}")
+      { success: false, error: I18n.t("billing.generic_error") }
     end
 
     def cancel(subscription:)
@@ -166,7 +169,8 @@ module Billing
 
       { success: true }
     rescue Billing::AsaasClient::ApiError => e
-      { success: false, error: e.message }
+      Rails.logger.error("[Billing::SubscriptionManager] Asaas API error during cancel: #{e.message}")
+      { success: false, error: I18n.t("billing.generic_error") }
     end
 
     def reactivate(subscription:)
