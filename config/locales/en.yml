@@ -987,6 +987,16 @@ en:
         view_boleto: "View Boleto"
         view_qr_code: "View QR Code"
       boleto_clearing_warning: "Credits will be added after payment confirmation (2-3 business days)."
+      boleto_instructions: "Use the link below to access your boleto."
+      cc_processing: "Your credit card is being charged. Credits will appear shortly."
+      checkout:
+        title: "Confirm Purchase"
+        subtitle: "Review your credit purchase before confirming."
+        summary: "Purchase Summary"
+        payment_method: "Payment Method"
+        confirm: "Confirm Purchase"
+        processing: "Processing..."
+        back: "Back"
     limits:
       team_members_exceeded: "Your plan's team member limit has been reached. Upgrade to add more."
       customers_exceeded: "Your plan's customer limit has been reached. Upgrade to add more."

@@ -23,46 +23,97 @@ module Spaces
       assert_redirected_to new_user_session_path
     end
 
-    # ── create — success path ─────────────────────────────────────────────────
+    # ── checkout ──────────────────────────────────────────────────────────────
 
-    test "POST create with valid amount initiates purchase and redirects with notice" do
+    test "GET checkout renders page with bundle summary and payment method selector" do
       sign_in @manager
-      spaces(:one).subscription.update_columns(asaas_customer_id: "cus_ctrl_001")
 
-      fake_result = {
-        success:      true,
-        credit_purchase: Billing::CreditPurchase.new,
-        invoice_url: "https://asaas.com/inv/pay_ctrl_001"
-      }
+      get checkout_settings_credits_path, params: { bundle_id: credit_bundles(:fifty).id }
 
-      Billing::CreditManager.stub(:initiate_purchase, fake_result) do
-        post settings_credits_path, params: { amount: 50 }
-      end
-
-      assert_redirected_to settings_credits_path
-      assert_equal I18n.t("billing.credits.purchase_initiated"), flash[:notice]
+      assert_response :success
+      assert_includes response.body, I18n.t("billing.credits.checkout.title")
+      assert_includes response.body, I18n.t("billing.credits.checkout.confirm")
     end
 
-    test "POST create for PIX redirects to the payment page" do
+    test "GET checkout returns 404 for unknown bundle_id" do
       sign_in @manager
-      spaces(:one).subscription.update_columns(asaas_customer_id: "cus_ctrl_pix")
+
+      get checkout_settings_credits_path, params: { bundle_id: 0 }
+
+      assert_response :not_found
+    end
+
+    test "GET checkout redirects unauthenticated users" do
+      get checkout_settings_credits_path, params: { bundle_id: credit_bundles(:fifty).id }
+
+      assert_redirected_to new_user_session_path
+    end
+
+    # ── create — success path ─────────────────────────────────────────────────
+
+    test "POST create with bundle_id and pix redirects to payment page" do
+      sign_in @manager
 
       purchase = spaces(:one).credit_purchases.create!(
-        credit_bundle:      credit_bundles(:fifty),
-        amount:             50,
-        price_cents:        2500,
-        status:             :pending,
-        pix_qr_code_base64: "base64qr==",
-        pix_payload:        "00020101..."
+        credit_bundle: credit_bundles(:fifty),
+        amount: 50, price_cents: 2500, status: :pending,
+        pix_qr_code_base64: "base64qr==", pix_payload: "00020101..."
       )
 
-      fake_result = { success: true, credit_purchase: purchase }
-
-      Billing::CreditManager.stub(:initiate_purchase, fake_result) do
-        post settings_credits_path, params: { amount: 50 }
+      Billing::CreditManager.stub(:initiate_purchase, { success: true, credit_purchase: purchase }) do
+        post settings_credits_path, params: { bundle_id: credit_bundles(:fifty).id, payment_method: "pix" }
       end
 
       assert_redirected_to payment_settings_credits_path(purchase_id: purchase.id)
+    end
+
+    test "POST create with boleto redirects to payment page" do
+      sign_in @manager
+
+      purchase = spaces(:one).credit_purchases.create!(
+        credit_bundle: credit_bundles(:fifty),
+        amount: 50, price_cents: 2500, status: :pending,
+        bank_slip_url: "https://asaas.com/boleto/slip.pdf"
+      )
+
+      Billing::CreditManager.stub(:initiate_purchase, { success: true, credit_purchase: purchase }) do
+        post settings_credits_path, params: { bundle_id: credit_bundles(:fifty).id, payment_method: "boleto" }
+      end
+
+      assert_redirected_to payment_settings_credits_path(purchase_id: purchase.id)
+    end
+
+    test "POST create with credit_card redirects to payment page" do
+      sign_in @manager
+
+      purchase = spaces(:one).credit_purchases.create!(
+        credit_bundle: credit_bundles(:fifty),
+        amount: 50, price_cents: 2500, status: :pending
+      )
+
+      Billing::CreditManager.stub(:initiate_purchase, { success: true, credit_purchase: purchase }) do
+        post settings_credits_path, params: { bundle_id: credit_bundles(:fifty).id, payment_method: "credit_card" }
+      end
+
+      assert_redirected_to payment_settings_credits_path(purchase_id: purchase.id)
+    end
+
+    test "POST create with invalid payment_method defaults to pix" do
+      sign_in @manager
+
+      received_payment_method = nil
+      stub_result = { success: true, credit_purchase: spaces(:one).credit_purchases.create!(
+        credit_bundle: credit_bundles(:fifty), amount: 50, price_cents: 2500, status: :pending
+      ) }
+
+      Billing::CreditManager.stub(:initiate_purchase, ->(space:, bundle:, payment_method:, actor:) {
+        received_payment_method = payment_method
+        stub_result
+      }) do
+        post settings_credits_path, params: { bundle_id: credit_bundles(:fifty).id, payment_method: "invalid" }
+      end
+
+      assert_equal :pix, received_payment_method
     end
 
     # ── payment ───────────────────────────────────────────────────────────────
@@ -120,14 +171,13 @@ module Spaces
       credit          = message_credits(:one)
       initial_balance = credit.balance
 
-      fake_result = {
-        success:         true,
-        credit_purchase: Billing::CreditPurchase.new,
-        invoice_url:     "https://asaas.com/inv/pay_ctrl_002"
-      }
+      purchase    = spaces(:one).credit_purchases.create!(
+        credit_bundle: credit_bundles(:fifty), amount: 50, price_cents: 2500, status: :pending
+      )
+      fake_result = { success: true, credit_purchase: purchase }
 
       Billing::CreditManager.stub(:initiate_purchase, fake_result) do
-        post settings_credits_path, params: { amount: 50 }
+        post settings_credits_path, params: { bundle_id: credit_bundles(:fifty).id, payment_method: "pix" }
       end
 
       assert_equal initial_balance, credit.reload.balance
@@ -281,45 +331,25 @@ module Spaces
 
     # ── create — failure paths ────────────────────────────────────────────────
 
-    test "POST create with invalid amount redirects with invalid_amount alert" do
+    test "POST create with invalid bundle_id returns 404" do
       sign_in @manager
 
-      fake_result = { success: false, error: I18n.t("billing.credits.invalid_amount") }
+      post settings_credits_path, params: { bundle_id: 0, payment_method: "pix" }
 
-      Billing::CreditManager.stub(:initiate_purchase, fake_result) do
-        post settings_credits_path, params: { amount: 75 }
-      end
-
-      assert_redirected_to settings_credits_path
-      assert_equal I18n.t("billing.credits.invalid_amount"), flash[:alert]
+      assert_response :not_found
     end
 
-    test "POST create without asaas_customer_id redirects with no_subscription alert" do
+    test "POST create when manager returns error redirects to credits with alert" do
       sign_in @manager
-      # subscriptions(:one) has no asaas_customer_id by default
 
       fake_result = { success: false, error: I18n.t("billing.credits.no_subscription") }
 
       Billing::CreditManager.stub(:initiate_purchase, fake_result) do
-        post settings_credits_path, params: { amount: 50 }
+        post settings_credits_path, params: { bundle_id: credit_bundles(:fifty).id, payment_method: "pix" }
       end
 
       assert_redirected_to settings_credits_path
       assert_equal I18n.t("billing.credits.no_subscription"), flash[:alert]
-    end
-
-    test "POST create with Asaas error redirects with error message" do
-      sign_in @manager
-      spaces(:one).subscription.update_columns(asaas_customer_id: "cus_ctrl_003")
-
-      fake_result = { success: false, error: "Asaas API unavailable" }
-
-      Billing::CreditManager.stub(:initiate_purchase, fake_result) do
-        post settings_credits_path, params: { amount: 50 }
-      end
-
-      assert_redirected_to settings_credits_path
-      assert_equal "Asaas API unavailable", flash[:alert]
     end
   end
 end

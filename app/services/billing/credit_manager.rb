@@ -12,8 +12,9 @@ module Billing
 
     # Creates an Asaas charge and a pending CreditPurchase. Credits are NOT
     # granted here; they are granted when the webhook confirms payment.
-    def self.initiate_purchase(space:, amount:, actor: nil, asaas_client: Billing::AsaasClient.new)
-      new(space).initiate_purchase(amount: amount, actor: actor, asaas_client: asaas_client)
+    def self.initiate_purchase(space:, bundle:, payment_method:, actor: nil, asaas_client: Billing::AsaasClient.new)
+      new(space).initiate_purchase(bundle: bundle, payment_method: payment_method,
+                                   actor: actor, asaas_client: asaas_client)
     end
 
     # Grants credits after Asaas confirms the payment for a CreditPurchase.
@@ -61,8 +62,7 @@ module Billing
 
     # Creates a pending Asaas charge and a CreditPurchase record.
     # Credits are NOT granted — the webhook calls fulfill_purchase after payment.
-    def initiate_purchase(amount:, actor: nil, asaas_client: Billing::AsaasClient.new)
-      bundle       = Billing::CreditBundle.available.find_by!(amount: amount)
+    def initiate_purchase(bundle:, payment_method:, actor: nil, asaas_client: Billing::AsaasClient.new)
       subscription = @space.subscription
 
       if Billing::CreditPurchase.where(space: @space, status: :pending).count >= 3
@@ -76,7 +76,7 @@ module Billing
       credit_purchase = Billing::CreditPurchase.create!(
         space:         @space,
         credit_bundle: bundle,
-        amount:        amount,
+        amount:        bundle.amount,
         price_cents:   bundle.price_cents,
         actor_id:      actor&.id,
         status:        :pending
@@ -84,16 +84,15 @@ module Billing
 
       result = asaas_client.create_payment(
         customer_id:        subscription.asaas_customer_id,
-        billing_type:       subscription.payment_method.to_sym,
+        billing_type:       payment_method,
         value:              bundle.price_cents / 100.0,
-        due_date:           boleto_due_date_for(subscription),
-        description:        "#{amount} WhatsApp credits",
+        due_date:           boleto_due_date_for_method(payment_method),
+        description:        "#{bundle.amount} WhatsApp credits",
         external_reference: "credit_purchase_#{credit_purchase.id}"
       )
 
-      bank_slip_url = result["bankSlipUrl"] if subscription.payment_method_boleto?
-
-      pix_data = asaas_client.pix_qr_code(result["id"]) if subscription.payment_method_pix?
+      bank_slip_url = result["bankSlipUrl"] if payment_method == :boleto
+      pix_data      = asaas_client.pix_qr_code(result["id"]) if payment_method == :pix
 
       credit_purchase.update!(
         asaas_payment_id:   result["id"],
@@ -103,16 +102,11 @@ module Billing
         pix_payload:        pix_data&.dig("payload")
       )
 
-      {
-        success:         true,
-        credit_purchase: credit_purchase
-      }
+      { success: true, credit_purchase: credit_purchase }
     rescue Billing::AsaasClient::ApiError => e
       credit_purchase&.update_column(:status, :failed)
       Rails.logger.error("[Billing::CreditManager] Asaas API error during initiate_purchase: #{e.message}")
       { success: false, error: I18n.t("billing.generic_error") }
-    rescue ActiveRecord::RecordNotFound
-      { success: false, error: I18n.t("billing.credits.invalid_amount") }
     end
 
     # Grants credits after payment is confirmed. Idempotent — safe to call twice.
@@ -195,8 +189,8 @@ module Billing
       end
     end
 
-    def boleto_due_date_for(subscription)
-      return Date.current.to_s unless subscription.payment_method_boleto?
+    def boleto_due_date_for_method(payment_method)
+      return Date.current.to_s unless payment_method == :boleto
 
       date = Date.current
       added = 0

@@ -73,8 +73,9 @@ Rails.application.routes.draw do
       end
     end
     resource :credits, only: [ :show, :create ], controller: "credits" do
-      get :payment, on: :collection
-      get :status,  on: :collection
+      get :checkout, on: :collection
+      get :payment,  on: :collection
+      get :status,   on: :collection
     end
   end
 
