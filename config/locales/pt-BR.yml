@@ -968,6 +968,13 @@ pt-BR:
       payment_method_notice: "Sua assinatura utiliza %{method}. Ao alterar o plano, uma nova cobrança será gerada e você precisará pagá-la manualmente."
       change_payment_method: "Método de pagamento para esta alteração"
       back: "Voltar para cobrança"
+      confirm_change: "Confirmar Mudança de Plano"
+      current_plan_label: "Atual"
+      new_plan_label: "Novo"
+      upgrade_notice: "Este é um upgrade. Você será cobrado pela diferença de preço imediatamente."
+      downgrade_notice: "Este é um downgrade. A mudança entra em vigor ao final do seu período de cobrança:"
+      manual_payment_warning: "Seu método de pagamento requer ação manual. Após confirmar, você receberá as instruções de pagamento por e-mail."
+      confirm_button: "Confirmar Mudança"
     limits:
       team_members_exceeded: "O limite de membros do seu plano foi atingido. Faça upgrade para adicionar mais."
       customers_exceeded: "O limite de clientes do seu plano foi atingido. Faça upgrade para adicionar mais."

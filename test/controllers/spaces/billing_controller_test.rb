@@ -172,13 +172,14 @@ module Spaces
       assert subscriptions(:two).reload.payment_method_pix?
     end
 
-    test "GET edit renders payment method radio buttons" do
+    test "GET edit renders payment method selector" do
       sign_in @manager2
 
       get edit_settings_billing_path
 
       assert_response :success
-      assert_select "input[type=radio][name='payment_method']"
+      assert_select "input[type=radio][name='pm_display']"
+      assert_select "input[type=hidden][name='payment_method']"
     end
 
     # ── cancel ────────────────────────────────────────────────────────────────
