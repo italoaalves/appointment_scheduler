@@ -27,9 +27,13 @@ module Billing
       when "PAYMENT_CONFIRMED", "PAYMENT_RECEIVED" then handle_payment_confirmed
       when "PAYMENT_OVERDUE"                        then handle_payment_overdue
       when "PAYMENT_CREATED"                        then handle_payment_created
-      when "PAYMENT_DELETED"                        then handle_payment_deleted
+      when "PAYMENT_DELETED",
+           "PAYMENT_REPROVED_BY_RISK_ANALYSIS",
+           "PAYMENT_CREDIT_CARD_CAPTURE_REFUSED",
+           "PAYMENT_BANK_SLIP_CANCELLED"            then handle_payment_deleted
       when "PAYMENT_REFUNDED"                       then handle_payment_refunded
       when "SUBSCRIPTION_DELETED"                   then handle_subscription_deleted
+      when "SUBSCRIPTION_INACTIVATED"               then handle_subscription_inactivated
       else log_unknown_event(event_name)
       end
       # Errors are intentionally NOT rescued here.
@@ -168,6 +172,33 @@ module Billing
         log_webhook_event("webhook.subscription_deleted", subscription,
                           asaas_subscription_id: asaas_subscription_id)
       end
+    end
+
+    def handle_subscription_inactivated
+      subscription_data     = @payload["subscription"] || {}
+      asaas_subscription_id = subscription_data["id"]
+      return log_missing("asaas_subscription_id", "SUBSCRIPTION_INACTIVATED") if asaas_subscription_id.blank?
+
+      return if already_processed?("webhook.subscription_inactivated", asaas_subscription_id,
+                                   key: "asaas_subscription_id")
+
+      subscription = Billing::Subscription.includes(:billing_plan)
+                                         .find_by(asaas_subscription_id: asaas_subscription_id)
+      return log_missing_subscription(asaas_subscription_id) unless subscription
+
+      ActiveRecord::Base.transaction do
+        Billing::BillingEvent.create!(
+          space_id:        subscription.space_id,
+          subscription_id: subscription.id,
+          event_type:      "webhook.subscription_inactivated",
+          metadata:        { asaas_subscription_id: asaas_subscription_id }
+        )
+      end
+
+      Rails.logger.warn(
+        "[Billing::WebhookProcessor] Subscription #{asaas_subscription_id} " \
+        "inactivated by Asaas for space #{subscription.space_id}"
+      )
     end
 
     # ── Lookup helpers ────────────────────────────────────────────────────────
