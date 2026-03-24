@@ -24,7 +24,8 @@ module Billing
       return log_unknown_event(event_name) if event_name.blank?
 
       case event_name
-      when "PAYMENT_CONFIRMED", "PAYMENT_RECEIVED" then handle_payment_confirmed
+      when "PAYMENT_CONFIRMED" then handle_payment_success("CONFIRMED")
+      when "PAYMENT_RECEIVED"  then handle_payment_success("RECEIVED")
       when "PAYMENT_OVERDUE"                        then handle_payment_overdue
       when "PAYMENT_CREATED"                        then handle_payment_created
       when "PAYMENT_DELETED",
@@ -44,22 +45,27 @@ module Billing
 
     # ── Handlers ──────────────────────────────────────────────────────────────
 
-    def handle_payment_confirmed
+    def handle_payment_success(asaas_status)
       payment_data     = @payload["payment"] || {}
       asaas_payment_id = payment_data["id"]
-      return log_missing("asaas_payment_id", "PAYMENT_CONFIRMED") if asaas_payment_id.blank?
+      event_key        = "webhook.payment_#{asaas_status.downcase}"
+      return log_missing("asaas_payment_id", event_key) if asaas_payment_id.blank?
 
       # Credit purchases are fulfilled via their own path, not the subscription payment path.
       return fulfill_credit_purchase(payment_data) if credit_purchase_payment?(payment_data)
 
-      return if already_processed?("webhook.payment_confirmed", asaas_payment_id)
+      return if already_processed?(event_key, asaas_payment_id)
 
       subscription = find_subscription_for_payment(payment_data)
       return log_missing_subscription(asaas_payment_id) unless subscription
 
       ActiveRecord::Base.transaction do
         payment = find_or_create_payment(payment_data, subscription)
-        payment.update!(status: :confirmed, paid_at: parse_date(payment_data["confirmedDate"]) || Time.current)
+        payment.update!(
+          status:       :confirmed,
+          asaas_status: asaas_status,
+          paid_at:      parse_date(payment_data["confirmedDate"]) || Time.current
+        )
 
         if subscription.trialing? || subscription.past_due?
           subscription.update!(status: :active)
@@ -72,7 +78,9 @@ module Billing
           current_period_end:   due_date + 1.month
         )
 
-        log_webhook_event("webhook.payment_confirmed", subscription, asaas_payment_id: asaas_payment_id)
+        log_webhook_event(event_key, subscription,
+                          asaas_payment_id: asaas_payment_id,
+                          asaas_status:     asaas_status)
       end
     end
 

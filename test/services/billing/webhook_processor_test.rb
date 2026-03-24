@@ -68,6 +68,68 @@ module Billing
       assert_equal @subscription.plan.slug, event.metadata["plan_slug"]
     end
 
+    test "PAYMENT_CONFIRMED stores asaas_status CONFIRMED on the payment record" do
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED"))
+
+      payment = Billing::Payment.find_by(asaas_payment_id: "pay_001")
+      assert_equal "CONFIRMED", payment.asaas_status
+    end
+
+    test "PAYMENT_RECEIVED stores asaas_status RECEIVED on the payment record" do
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_RECEIVED", payment_id: "pay_recv_001"))
+
+      payment = Billing::Payment.find_by(asaas_payment_id: "pay_recv_001")
+      assert_not_nil payment
+      assert payment.confirmed?
+      assert_equal "RECEIVED", payment.asaas_status
+    end
+
+    test "PAYMENT_RECEIVED activates trialing subscription" do
+      assert @subscription.trialing?
+
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_RECEIVED", payment_id: "pay_recv_002"))
+
+      assert @subscription.reload.active?
+    end
+
+    test "PAYMENT_RECEIVED activates past_due subscription" do
+      @subscription.update_column(:status, Billing::Subscription.statuses[:past_due])
+
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_RECEIVED", payment_id: "pay_recv_003"))
+
+      assert @subscription.reload.active?
+    end
+
+    test "PAYMENT_RECEIVED logs webhook.payment_received BillingEvent" do
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_RECEIVED", payment_id: "pay_recv_004"))
+
+      event = Billing::BillingEvent.find_by(event_type: "webhook.payment_received")
+      assert_not_nil event
+      assert_equal "pay_recv_004", event.metadata["asaas_payment_id"]
+    end
+
+    test "PAYMENT_CONFIRMED and PAYMENT_RECEIVED for the same payment are both processed" do
+      # CONFIRMED first (intermediate), then RECEIVED (terminal) — both should create events
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED", payment_id: "pay_both_001"))
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_RECEIVED",  payment_id: "pay_both_001"))
+
+      assert Billing::BillingEvent.where(event_type: "webhook.payment_confirmed")
+                                  .where("metadata->>'asaas_payment_id' = ?", "pay_both_001").exists?
+      assert Billing::BillingEvent.where(event_type: "webhook.payment_received")
+                                  .where("metadata->>'asaas_payment_id' = ?", "pay_both_001").exists?
+
+      payment = Billing::Payment.find_by(asaas_payment_id: "pay_both_001")
+      assert_equal "RECEIVED", payment.asaas_status
+    end
+
+    test "duplicate PAYMENT_RECEIVED is idempotent" do
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_RECEIVED", payment_id: "pay_idem_001"))
+      Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_RECEIVED", payment_id: "pay_idem_001"))
+
+      assert_equal 1, Billing::BillingEvent.where(event_type: "webhook.payment_received")
+                                            .where("metadata->>'asaas_payment_id' = ?", "pay_idem_001").count
+    end
+
     test "PAYMENT_CONFIRMED sets period_start to dueDate and period_end to dueDate + 1 month" do
       due_date = Date.new(2026, 3, 1)
       payload  = {
