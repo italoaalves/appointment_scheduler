@@ -67,22 +67,72 @@ module Billing
       assert_equal @subscription.plan.slug, event.metadata["plan_slug"]
     end
 
-    test "PAYMENT_CONFIRMED updates current_period_start to confirmedDate" do
-      freeze_time do
-        Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED"))
+    test "PAYMENT_CONFIRMED sets period_start to dueDate and period_end to dueDate + 1 month" do
+      due_date = Date.new(2026, 3, 1)
+      payload  = {
+        "event"   => "PAYMENT_CONFIRMED",
+        "payment" => {
+          "id"            => "pay_period_001",
+          "subscription"  => @subscription.asaas_subscription_id,
+          "value"         => 99.0,
+          "billingType"   => "PIX",
+          "status"        => "CONFIRMED",
+          "dueDate"       => due_date.to_s,
+          "confirmedDate" => Date.new(2026, 3, 5).to_s
+        }
+      }.to_json
 
-        @subscription.reload
-        assert_equal Date.current.in_time_zone.to_i, @subscription.current_period_start.to_i
-      end
+      Billing::WebhookProcessor.call(payload)
+
+      @subscription.reload
+      assert_equal due_date.in_time_zone.to_i, @subscription.current_period_start.to_i
+      assert_equal (due_date.in_time_zone + 1.month).to_i, @subscription.current_period_end.to_i
     end
 
-    test "PAYMENT_CONFIRMED sets current_period_end to 30 days after confirmedDate" do
-      freeze_time do
-        Billing::WebhookProcessor.call(payment_payload(event: "PAYMENT_CONFIRMED"))
+    test "PAYMENT_CONFIRMED late payment uses dueDate for period_start, not confirmedDate" do
+      # Due Mar 1, confirmed Mar 5 — period should be Mar 1 → Apr 1, not Mar 5 → Apr 5
+      due_date       = Date.new(2026, 3, 1)
+      confirmed_date = Date.new(2026, 3, 5)
+      payload = {
+        "event"   => "PAYMENT_CONFIRMED",
+        "payment" => {
+          "id"            => "pay_late_001",
+          "subscription"  => @subscription.asaas_subscription_id,
+          "value"         => 99.0,
+          "billingType"   => "PIX",
+          "status"        => "CONFIRMED",
+          "dueDate"       => due_date.to_s,
+          "confirmedDate" => confirmed_date.to_s
+        }
+      }.to_json
 
-        @subscription.reload
-        assert_equal (Date.current.in_time_zone + 30.days).to_i, @subscription.current_period_end.to_i
-      end
+      Billing::WebhookProcessor.call(payload)
+
+      @subscription.reload
+      assert_equal due_date.in_time_zone.to_i, @subscription.current_period_start.to_i
+      assert_equal (due_date.in_time_zone + 1.month).to_i, @subscription.current_period_end.to_i
+    end
+
+    test "PAYMENT_CONFIRMED falls back to confirmedDate when dueDate is absent" do
+      confirmed_date = Date.new(2026, 3, 5)
+      payload = {
+        "event"   => "PAYMENT_CONFIRMED",
+        "payment" => {
+          "id"            => "pay_noduedate_001",
+          "subscription"  => @subscription.asaas_subscription_id,
+          "value"         => 99.0,
+          "billingType"   => "PIX",
+          "status"        => "CONFIRMED",
+          "confirmedDate" => confirmed_date.to_s
+          # no dueDate key
+        }
+      }.to_json
+
+      Billing::WebhookProcessor.call(payload)
+
+      @subscription.reload
+      assert_equal confirmed_date.in_time_zone.to_i, @subscription.current_period_start.to_i
+      assert_equal (confirmed_date.in_time_zone + 1.month).to_i, @subscription.current_period_end.to_i
     end
 
     test "PAYMENT_CONFIRMED for credit purchase does NOT update billing period" do
