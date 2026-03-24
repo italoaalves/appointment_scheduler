@@ -825,6 +825,7 @@ en:
         notice: "Policies updated."
 
   billing:
+    generic_error: "Something went wrong processing your request. Please try again or contact support."
     payment_methods:
       pix: "PIX"
       boleto: "Boleto"

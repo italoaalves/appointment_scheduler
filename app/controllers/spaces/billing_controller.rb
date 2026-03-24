@@ -98,7 +98,8 @@ module Spaces
         redirect_to checkout_settings_billing_path, alert: result[:error]
       end
     rescue Billing::AsaasClient::ApiError => e
-      redirect_to checkout_settings_billing_path, alert: e.message
+      Rails.logger.error("[Billing::BillingController] Asaas API error during subscribe: #{e.message}")
+      redirect_to checkout_settings_billing_path, alert: I18n.t("billing.generic_error")
     end
 
     def cancel

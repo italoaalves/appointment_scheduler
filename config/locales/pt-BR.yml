@@ -796,6 +796,7 @@ pt-BR:
         notice: "Políticas atualizadas."
 
   billing:
+    generic_error: "Ocorreu um erro ao processar sua solicitação. Tente novamente ou entre em contato com o suporte."
     payment_methods:
       pix: "PIX"
       boleto: "Boleto"

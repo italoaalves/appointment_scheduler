@@ -109,7 +109,8 @@ module Billing
       }
     rescue Billing::AsaasClient::ApiError => e
       credit_purchase&.update_column(:status, :failed)
-      { success: false, error: e.message }
+      Rails.logger.error("[Billing::CreditManager] Asaas API error during initiate_purchase: #{e.message}")
+      { success: false, error: I18n.t("billing.generic_error") }
     rescue ActiveRecord::RecordNotFound
       { success: false, error: I18n.t("billing.credits.invalid_amount") }
     end
