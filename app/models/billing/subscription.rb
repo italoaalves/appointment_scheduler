@@ -12,7 +12,7 @@ module Billing
     has_many :payments,       class_name: "Billing::Payment",      dependent: :destroy
     has_many :billing_events, class_name: "Billing::BillingEvent", dependent: :destroy
 
-    enum :status, { trialing: 0, active: 1, past_due: 2, canceled: 3, expired: 4 }
+    enum :status, { trialing: 0, active: 1, past_due: 2, canceled: 3, expired: 4, pending_payment: 5 }
     enum :payment_method, { pix: 0, credit_card: 1, boleto: 2 }, prefix: true
 
     validates :space_id, presence: true

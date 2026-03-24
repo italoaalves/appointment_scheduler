@@ -60,13 +60,13 @@ module Billing
 
     # ── subscribe ─────────────────────────────────────────────────────────────
 
-    test "subscribe sets status to active and clears trial_ends_at" do
+    test "subscribe sets status to active and clears trial_ends_at (credit card)" do
       @subscription.update_column(:trial_ends_at, 14.days.from_now)
 
       Billing::SubscriptionManager.subscribe(
         space:             @space,
         billing_plan_id:   billing_plans(:pro).id,
-        payment_method:    :pix,
+        payment_method:    :credit_card,
         asaas_customer_id: "cus_001",
         asaas_client:      fake_client
       )
@@ -96,12 +96,12 @@ module Billing
       assert_equal "pro",           @subscription.billing_plan.slug
     end
 
-    test "subscribe sets current_period_end to 1 month from now" do
+    test "subscribe sets current_period_end to 1 month from now (credit card)" do
       freeze_time do
         Billing::SubscriptionManager.subscribe(
           space:             @space,
           billing_plan_id:   billing_plans(:pro).id,
-          payment_method:    :pix,
+          payment_method:    :credit_card,
           asaas_customer_id: "cus_001",
           asaas_client:      fake_client
         )
@@ -111,12 +111,12 @@ module Billing
       end
     end
 
-    test "subscribe logs subscription.activated BillingEvent with plan_slug" do
+    test "subscribe logs subscription.activated BillingEvent with plan_slug (credit card)" do
       assert_difference -> { Billing::BillingEvent.where(event_type: "subscription.activated").count } do
         Billing::SubscriptionManager.subscribe(
           space:             @space,
           billing_plan_id:   billing_plans(:pro).id,
-          payment_method:    :pix,
+          payment_method:    :credit_card,
           asaas_customer_id: "cus_001",
           asaas_client:      fake_client
         )
@@ -171,6 +171,153 @@ module Billing
 
       assert_equal false, result[:success]
       assert result[:error].present?
+    end
+
+    # ── N-11: PIX/Boleto should not be immediately active ─────────────────────
+
+    test "subscribe with credit_card sets status to active immediately" do
+      Billing::SubscriptionManager.subscribe(
+        space:             @space,
+        billing_plan_id:   billing_plans(:pro).id,
+        payment_method:    :credit_card,
+        asaas_customer_id: "cus_001",
+        asaas_client:      fake_client
+      )
+
+      assert @subscription.reload.active?
+    end
+
+    test "subscribe with pix sets status to pending_payment" do
+      Billing::SubscriptionManager.subscribe(
+        space:             @space,
+        billing_plan_id:   billing_plans(:pro).id,
+        payment_method:    :pix,
+        asaas_customer_id: "cus_001",
+        asaas_client:      fake_client
+      )
+
+      assert @subscription.reload.pending_payment?
+    end
+
+    test "subscribe with boleto sets status to pending_payment" do
+      Billing::SubscriptionManager.subscribe(
+        space:             @space,
+        billing_plan_id:   billing_plans(:pro).id,
+        payment_method:    :boleto,
+        asaas_customer_id: "cus_001",
+        asaas_client:      fake_client
+      )
+
+      assert @subscription.reload.pending_payment?
+    end
+
+    test "subscribe with credit_card sets current_period_start and current_period_end" do
+      freeze_time do
+        Billing::SubscriptionManager.subscribe(
+          space:             @space,
+          billing_plan_id:   billing_plans(:pro).id,
+          payment_method:    :credit_card,
+          asaas_customer_id: "cus_001",
+          asaas_client:      fake_client
+        )
+
+        @subscription.reload
+        assert_not_nil @subscription.current_period_start
+        assert_in_delta 1.month.from_now.to_i, @subscription.current_period_end.to_i, 2
+      end
+    end
+
+    test "subscribe with pix does not set current_period_start or current_period_end" do
+      Billing::SubscriptionManager.subscribe(
+        space:             @space,
+        billing_plan_id:   billing_plans(:pro).id,
+        payment_method:    :pix,
+        asaas_customer_id: "cus_001",
+        asaas_client:      fake_client
+      )
+
+      @subscription.reload
+      assert_nil @subscription.current_period_start
+      assert_nil @subscription.current_period_end
+    end
+
+    test "subscribe with credit_card logs subscription.activated BillingEvent" do
+      assert_difference -> { Billing::BillingEvent.where(event_type: "subscription.activated").count } do
+        Billing::SubscriptionManager.subscribe(
+          space:             @space,
+          billing_plan_id:   billing_plans(:pro).id,
+          payment_method:    :credit_card,
+          asaas_customer_id: "cus_001",
+          asaas_client:      fake_client
+        )
+      end
+    end
+
+    test "subscribe with pix logs subscription.created BillingEvent" do
+      assert_difference -> { Billing::BillingEvent.where(event_type: "subscription.created").count } do
+        Billing::SubscriptionManager.subscribe(
+          space:             @space,
+          billing_plan_id:   billing_plans(:pro).id,
+          payment_method:    :pix,
+          asaas_customer_id: "cus_001",
+          asaas_client:      fake_client
+        )
+      end
+    end
+
+    # ── N-17: Boleto grace period ─────────────────────────────────────────────
+
+    test "subscribe with boleto sends next_due_date 3 business days from now" do
+      client = fake_client
+
+      travel_to Date.new(2026, 3, 23) do  # Monday
+        Billing::SubscriptionManager.subscribe(
+          space:             @space,
+          billing_plan_id:   billing_plans(:pro).id,
+          payment_method:    :boleto,
+          asaas_customer_id: "cus_001",
+          asaas_client:      client
+        )
+      end
+
+      due_date = client.call_args[:create_subscription][:next_due_date]
+      # Monday + 3 business days = Thursday 2026-03-26
+      assert_equal "2026-03-26", due_date
+    end
+
+    test "subscribe with boleto skips weekends when computing due date" do
+      client = fake_client
+
+      travel_to Date.new(2026, 3, 25) do  # Wednesday
+        Billing::SubscriptionManager.subscribe(
+          space:             @space,
+          billing_plan_id:   billing_plans(:pro).id,
+          payment_method:    :boleto,
+          asaas_customer_id: "cus_001",
+          asaas_client:      client
+        )
+      end
+
+      due_date = client.call_args[:create_subscription][:next_due_date]
+      # Wednesday + 3 business days (Thu, Fri, Mon) = Monday 2026-03-30
+      assert_equal "2026-03-30", due_date
+    end
+
+    test "subscribe with pix sends next_due_date as today" do
+      client = fake_client
+
+      travel_to Date.new(2026, 3, 23) do
+        Billing::SubscriptionManager.subscribe(
+          space:             @space,
+          billing_plan_id:   billing_plans(:pro).id,
+          payment_method:    :pix,
+          asaas_customer_id: "cus_001",
+          asaas_client:      client
+        )
+      end
+
+      due_date = client.call_args[:create_subscription][:next_due_date]
+      assert_equal "2026-03-23", due_date
     end
 
     test "subscribe succeeds for enterprise with credit_card payment method" do
