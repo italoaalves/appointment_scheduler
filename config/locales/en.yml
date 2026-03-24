@@ -937,6 +937,13 @@ en:
       back: "Back to billing"
       payment_method_notice: "Your subscription currently uses %{method}. After changing plans, a new charge will be generated that you'll need to pay manually."
       change_payment_method: "Payment method for this change"
+      confirm_change: "Confirm Plan Change"
+      current_plan_label: "Current"
+      new_plan_label: "New"
+      upgrade_notice: "This is an upgrade. You will be charged the price difference immediately."
+      downgrade_notice: "This is a downgrade. The change takes effect at the end of your billing period:"
+      manual_payment_warning: "Your payment method requires manual action. After confirming, you'll receive payment instructions via email."
+      confirm_button: "Confirm Change"
     features:
       personalized_booking_page: "Personalized booking page"
       whatsapp_included_quota: "WhatsApp messages included"
