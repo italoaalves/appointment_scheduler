@@ -50,6 +50,9 @@ env:
     # Use appointment_scheduler-db for a db accessory server on same machine via local kamal docker network.
     # DB_HOST: 192.168.0.2
 
+    # OpenTelemetry: set to the OTel Collector endpoint in production
+    # OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+
     # Log everything from Rails
     # RAILS_LOG_LEVEL: debug
 

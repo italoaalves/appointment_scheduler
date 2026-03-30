@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  get "up" => "rails/health#show", as: :rails_health_check
+  # Health checks — liveness (lightweight) and readiness (deep dependency check)
+  get "up" => "health#show", as: :rails_health_check
+  get "up/ready" => "health#ready", as: :health_ready
 
   devise_for :users, controllers: { registrations: "users/registrations" }
   root "dashboard#index"

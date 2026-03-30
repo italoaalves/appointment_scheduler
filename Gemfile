@@ -75,3 +75,14 @@ gem "devise-i18n", "~> 1.16"
 gem "twilio-ruby", "~> 6.0"
 
 gem "rack-attack", "~> 6.8"
+
+# Observability
+gem "lograge", "~> 0.14"
+gem "opentelemetry-sdk", "~> 1.6"
+gem "opentelemetry-exporter-otlp", "~> 0.29"
+gem "opentelemetry-instrumentation-rails", "~> 0.36"
+gem "opentelemetry-instrumentation-pg", "~> 0.30"
+gem "opentelemetry-instrumentation-net_http", "~> 0.22"
+gem "opentelemetry-instrumentation-active_job", "~> 0.8"
+gem "opentelemetry-instrumentation-action_pack", "~> 0.12"
+gem "opentelemetry-instrumentation-active_record", "~> 0.9"
