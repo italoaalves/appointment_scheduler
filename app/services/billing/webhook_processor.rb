@@ -35,6 +35,9 @@ module Billing
       when "PAYMENT_REFUNDED"                       then handle_payment_refunded
       when "SUBSCRIPTION_DELETED"                   then handle_subscription_deleted
       when "SUBSCRIPTION_INACTIVATED"               then handle_subscription_inactivated
+      when "PAYMENT_CHARGEBACK_REQUESTED",
+           "PAYMENT_CHARGEBACK_DISPUTE",
+           "PAYMENT_AWAITING_CHARGEBACK_REVERSAL"   then handle_chargeback
       else log_unknown_event(event_name)
       end
       # Errors are intentionally NOT rescued here.
@@ -186,6 +189,45 @@ module Billing
         log_webhook_event("webhook.subscription_deleted", subscription,
                           asaas_subscription_id: asaas_subscription_id)
       end
+    end
+
+    def handle_chargeback
+      payment_data     = @payload["payment"] || {}
+      asaas_payment_id = payment_data["id"]
+      event_name       = @payload["event"]
+      return log_missing("asaas_payment_id", event_name) if asaas_payment_id.blank?
+
+      event_type = "webhook.#{event_name.downcase}"
+      return if already_processed?(event_type, asaas_payment_id)
+
+      payment = Billing::Payment.find_by(asaas_payment_id: asaas_payment_id)
+      unless payment
+        Rails.logger.warn("[Billing::WebhookProcessor] Chargeback for unknown payment #{asaas_payment_id}")
+        return
+      end
+
+      chargeback_data = payment_data["chargeback"] || {}
+
+      ActiveRecord::Base.transaction do
+        Billing::BillingEvent.create!(
+          space_id:        payment.space_id,
+          subscription_id: payment.subscription_id,
+          event_type:      event_type,
+          metadata:        {
+            asaas_payment_id:  asaas_payment_id,
+            chargeback_status: chargeback_data["status"],
+            chargeback_reason: chargeback_data["reason"],
+            payment_amount:    payment_data["value"],
+            payment_method:    payment_data["billingType"]
+          }
+        )
+      end
+
+      Billing::ChargebackNotificationJob.perform_later(
+        payment.id,
+        event_name,
+        chargeback_data["reason"]
+      )
     end
 
     def handle_subscription_inactivated

@@ -1066,6 +1066,11 @@ pt-BR:
         no_subscriptions: "Nenhuma assinatura ainda."
         recent_events: "Eventos recentes de cobrança"
         trial_ends: "Teste termina"
+        payment_method: "Método"
+        recent_payments: "Pagamentos Recentes"
+        payment_amount: "Valor"
+        asaas_status: "Status Asaas"
+        payment_date: "Data"
     plans:
       create:
         notice: "Plano criado."

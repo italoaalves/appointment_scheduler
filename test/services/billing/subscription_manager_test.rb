@@ -33,6 +33,11 @@ module Billing
         response_for(:cancel_subscription) || { "deleted" => true }
       end
 
+      def find_subscription(id)
+        record_call(:find_subscription, { id: id })
+        response_for(:find_subscription) || { "id" => id, "status" => "ACTIVE" }
+      end
+
       private
 
       def record_call(method, args = {})
@@ -701,7 +706,10 @@ module Billing
                              asaas_subscription_id: "sub_reactivate_001")
 
       freeze_time do
-        result = Billing::SubscriptionManager.reactivate(subscription: @subscription)
+        result = Billing::SubscriptionManager.reactivate(
+          subscription: @subscription,
+          asaas_client: fake_client(find_subscription: { "id" => "sub_reactivate_001", "status" => "ACTIVE" })
+        )
 
         assert result[:success]
         @subscription.reload
@@ -716,7 +724,58 @@ module Billing
                              asaas_subscription_id: "sub_reactivate_002")
 
       assert_difference -> { Billing::BillingEvent.where(event_type: "subscription.reactivated").count } do
-        Billing::SubscriptionManager.reactivate(subscription: @subscription)
+        Billing::SubscriptionManager.reactivate(
+          subscription: @subscription,
+          asaas_client: fake_client(find_subscription: { "id" => "sub_reactivate_002", "status" => "ACTIVE" })
+        )
+      end
+    end
+
+    test "reactivate fails when Asaas subscription is inactive" do
+      @subscription.update!(status: :canceled, canceled_at: 1.day.ago,
+                             current_period_end: 10.days.from_now,
+                             asaas_subscription_id: "sub_reactivate_inactive")
+
+      result = Billing::SubscriptionManager.reactivate(
+        subscription: @subscription,
+        asaas_client: fake_client(find_subscription: { "id" => "sub_reactivate_inactive", "status" => "INACTIVE" })
+      )
+
+      assert_equal false, result[:success]
+      assert result[:error].present?
+      assert @subscription.reload.canceled?
+    end
+
+    test "reactivate fails when Asaas subscription is 404 and clears stale ID" do
+      @subscription.update!(status: :canceled, canceled_at: 1.day.ago,
+                             current_period_end: 10.days.from_now,
+                             asaas_subscription_id: "sub_reactivate_gone")
+
+      result = Billing::SubscriptionManager.reactivate(
+        subscription: @subscription,
+        asaas_client: fake_client(
+          find_subscription: Billing::AsaasClient::ApiError.new(404, "Not Found")
+        )
+      )
+
+      assert_equal false, result[:success]
+      assert result[:error].present?
+      assert @subscription.reload.canceled?
+      assert_nil @subscription.asaas_subscription_id
+    end
+
+    test "reactivate re-raises non-404 Asaas API errors" do
+      @subscription.update!(status: :canceled, canceled_at: 1.day.ago,
+                             current_period_end: 10.days.from_now,
+                             asaas_subscription_id: "sub_reactivate_err")
+
+      assert_raises(Billing::AsaasClient::ApiError) do
+        Billing::SubscriptionManager.reactivate(
+          subscription: @subscription,
+          asaas_client: fake_client(
+            find_subscription: Billing::AsaasClient::ApiError.new(500, "Server Error")
+          )
+        )
       end
     end
 

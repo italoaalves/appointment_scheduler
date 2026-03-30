@@ -800,6 +800,106 @@ module Billing
       assert purchase.reload.pending?        # status unchanged
     end
 
+    # ── Task 71: Chargeback webhooks ──────────────────────────────────────────
+
+    def chargeback_payload(event:, payment_id: "pay_cb_001", chargeback_status: "REQUESTED", chargeback_reason: "Fraud")
+      {
+        "event" => event,
+        "payment" => {
+          "id"          => payment_id,
+          "subscription" => @subscription.asaas_subscription_id,
+          "value"       => 99.0,
+          "billingType" => "CREDIT_CARD",
+          "chargeback"  => {
+            "status" => chargeback_status,
+            "reason" => chargeback_reason
+          }
+        }
+      }.to_json
+    end
+
+    def create_payment_for_chargeback(payment_id: "pay_cb_001")
+      Billing::Payment.create!(
+        asaas_payment_id: payment_id,
+        subscription:     @subscription,
+        space_id:         @subscription.space_id,
+        amount_cents:     9900,
+        payment_method:   :credit_card,
+        status:           :confirmed
+      )
+    end
+
+    test "PAYMENT_CHARGEBACK_REQUESTED logs BillingEvent with chargeback metadata" do
+      create_payment_for_chargeback
+
+      assert_difference "Billing::BillingEvent.count", 1 do
+        Billing::WebhookProcessor.call(chargeback_payload(event: "PAYMENT_CHARGEBACK_REQUESTED"))
+      end
+
+      event = Billing::BillingEvent.find_by(event_type: "webhook.payment_chargeback_requested")
+      assert_not_nil event
+      assert_equal "pay_cb_001", event.metadata["asaas_payment_id"]
+      assert_equal "REQUESTED",  event.metadata["chargeback_status"]
+      assert_equal "Fraud",      event.metadata["chargeback_reason"]
+    end
+
+    test "PAYMENT_CHARGEBACK_REQUESTED enqueues ChargebackNotificationJob" do
+      create_payment_for_chargeback
+
+      assert_enqueued_with(job: Billing::ChargebackNotificationJob) do
+        Billing::WebhookProcessor.call(chargeback_payload(event: "PAYMENT_CHARGEBACK_REQUESTED"))
+      end
+    end
+
+    test "PAYMENT_CHARGEBACK_DISPUTE logs BillingEvent" do
+      create_payment_for_chargeback(payment_id: "pay_cb_002")
+
+      Billing::WebhookProcessor.call(chargeback_payload(event: "PAYMENT_CHARGEBACK_DISPUTE", payment_id: "pay_cb_002"))
+
+      assert Billing::BillingEvent.exists?(event_type: "webhook.payment_chargeback_dispute")
+    end
+
+    test "PAYMENT_AWAITING_CHARGEBACK_REVERSAL logs BillingEvent" do
+      create_payment_for_chargeback(payment_id: "pay_cb_003")
+
+      Billing::WebhookProcessor.call(chargeback_payload(event: "PAYMENT_AWAITING_CHARGEBACK_REVERSAL", payment_id: "pay_cb_003"))
+
+      assert Billing::BillingEvent.exists?(event_type: "webhook.payment_awaiting_chargeback_reversal")
+    end
+
+    test "chargeback does NOT change subscription status" do
+      create_payment_for_chargeback
+
+      original_status = @subscription.status
+      Billing::WebhookProcessor.call(chargeback_payload(event: "PAYMENT_CHARGEBACK_REQUESTED"))
+
+      assert_equal original_status, @subscription.reload.status
+    end
+
+    test "chargeback with unknown payment ID logs warning and skips" do
+      assert_no_difference "Billing::BillingEvent.count" do
+        Billing::WebhookProcessor.call(chargeback_payload(event: "PAYMENT_CHARGEBACK_REQUESTED", payment_id: "pay_unknown_cb"))
+      end
+    end
+
+    test "duplicate chargeback webhook is idempotent" do
+      create_payment_for_chargeback
+
+      Billing::WebhookProcessor.call(chargeback_payload(event: "PAYMENT_CHARGEBACK_REQUESTED"))
+
+      assert_no_difference "Billing::BillingEvent.count" do
+        Billing::WebhookProcessor.call(chargeback_payload(event: "PAYMENT_CHARGEBACK_REQUESTED"))
+      end
+    end
+
+    test "chargeback missing payment ID skips without error" do
+      payload = { "event" => "PAYMENT_CHARGEBACK_REQUESTED", "payment" => { "chargeback" => {} } }.to_json
+
+      assert_no_difference "Billing::BillingEvent.count" do
+        Billing::WebhookProcessor.call(payload)
+      end
+    end
+
     # ── Task 77: pending_payment → active on payment confirmation ─────────────
 
     test "PAYMENT_CONFIRMED transitions pending_payment to active" do

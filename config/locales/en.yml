@@ -1095,6 +1095,11 @@ en:
         no_subscriptions: "No subscriptions yet."
         recent_events: "Recent Billing Events"
         trial_ends: "Trial ends"
+        payment_method: "Method"
+        recent_payments: "Recent Payments"
+        payment_amount: "Amount"
+        asaas_status: "Asaas Status"
+        payment_date: "Date"
     plans:
       create:
         notice: "Plan created."
