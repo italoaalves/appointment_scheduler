@@ -1,0 +1,8 @@
+one:
+  space: one
+  wa_id: "5511999990001"
+  customer_phone: "+5511999990001"
+  customer_name: "João Silva"
+  last_message_at: <%= 1.hour.ago %>
+  session_expires_at: <%= 23.hours.from_now %>
+  unread: false
