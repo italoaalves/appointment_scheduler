@@ -67,7 +67,7 @@ module Billing
           paid_at:      parse_date(payment_data["confirmedDate"]) || Time.current
         )
 
-        if subscription.trialing? || subscription.past_due?
+        if subscription.trialing? || subscription.past_due? || subscription.pending_payment?
           subscription.update!(status: :active)
         end
 

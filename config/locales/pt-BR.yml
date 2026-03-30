@@ -939,6 +939,7 @@ pt-BR:
       cancel_confirm_trial: "Seu período de avaliação será encerrado imediatamente e seu espaço será desativado. Tem certeza?"
       resubscribe: "Reativar Assinatura"
       reactivate: "Reativar"
+      awaiting_first_payment: "Aguardando confirmação do primeiro pagamento. Seu plano será ativado após a confirmação."
       cancel_pending: "Cancelada. Acesso disponível até %{date}."
       plan_limits: "Uso do plano"
       team_members: "Membros"

@@ -908,6 +908,7 @@ en:
       cancel_confirm_trial: "Your trial will end immediately and your workspace will be deactivated. Are you sure?"
       resubscribe: "Resubscribe"
       reactivate: "Reactivate"
+      awaiting_first_payment: "Awaiting first payment confirmation. Your plan will activate once payment is received."
       cancel_pending: "Canceled. Access continues until %{date}."
       plan_limits: "Plan usage"
       team_members: "Team members"

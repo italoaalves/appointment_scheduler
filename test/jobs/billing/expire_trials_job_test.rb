@@ -47,5 +47,41 @@ module Billing
       assert sub.reload.active?,
              "Active subscription should not be expired by job"
     end
+
+    # ── Task 77: stale pending_payment expiry ─────────────────────────────────
+
+    test "expires pending_payment subscription older than 7 days" do
+      sub = subscriptions(:one)
+      sub.update_columns(status: Billing::Subscription.statuses[:pending_payment],
+                         created_at: 8.days.ago)
+
+      Billing::ExpireTrialsJob.new.perform
+
+      assert sub.reload.expired?
+    end
+
+    test "logs subscription.expired BillingEvent when pending_payment subscription expires" do
+      sub = subscriptions(:one)
+      sub.update_columns(status: Billing::Subscription.statuses[:pending_payment],
+                         created_at: 8.days.ago)
+
+      assert_difference "Billing::BillingEvent.count", 1 do
+        Billing::ExpireTrialsJob.new.perform
+      end
+
+      event = Billing::BillingEvent.order(:created_at).last
+      assert_equal "subscription.expired", event.event_type
+      assert_equal "pending_payment_timeout", event.metadata["reason"]
+    end
+
+    test "does not expire pending_payment subscription younger than 7 days" do
+      sub = subscriptions(:one)
+      sub.update_columns(status: Billing::Subscription.statuses[:pending_payment],
+                         created_at: 3.days.ago)
+
+      Billing::ExpireTrialsJob.new.perform
+
+      assert sub.reload.pending_payment?
+    end
   end
 end
