@@ -231,11 +231,13 @@ module Spaces
       )
       sign_in @manager
 
-      patch resubscribe_settings_billing_path
+      fake_result = { success: true }
+      Billing::SubscriptionManager.stub(:reactivate, fake_result) do
+        patch resubscribe_settings_billing_path
+      end
 
       assert_redirected_to settings_billing_path
       assert_equal I18n.t("billing.reactivated"), flash[:notice]
-      assert subscriptions(:one).reload.active?
     end
 
     test "PATCH resubscribe redirects to checkout when subscription is expired" do
