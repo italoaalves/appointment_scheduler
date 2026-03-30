@@ -166,8 +166,8 @@ GEM
     jbuilder (2.14.1)
       actionview (>= 7.0.0)
       activesupport (>= 7.0.0)
-    json (2.18.1)
-    jwt (2.10.2)
+    json (2.19.3)
+    jwt (3.1.2)
       base64
     kamal (2.10.1)
       activesupport (>= 7.0)
@@ -237,19 +237,19 @@ GEM
       net-protocol
     net-ssh (7.3.0)
     nio4r (2.7.5)
-    nokogiri (1.19.1-aarch64-linux-gnu)
+    nokogiri (1.19.2-aarch64-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.19.1-aarch64-linux-musl)
+    nokogiri (1.19.2-aarch64-linux-musl)
       racc (~> 1.4)
-    nokogiri (1.19.1-arm-linux-gnu)
+    nokogiri (1.19.2-arm-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.19.1-arm-linux-musl)
+    nokogiri (1.19.2-arm-linux-musl)
       racc (~> 1.4)
-    nokogiri (1.19.1-arm64-darwin)
+    nokogiri (1.19.2-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.19.1-x86_64-linux-gnu)
+    nokogiri (1.19.2-x86_64-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.19.1-x86_64-linux-musl)
+    nokogiri (1.19.2-x86_64-linux-musl)
       racc (~> 1.4)
     opentelemetry-api (1.8.0)
       logger
@@ -481,9 +481,9 @@ GEM
     turbo-rails (2.0.23)
       actionpack (>= 7.1.0)
       railties (>= 7.1.0)
-    twilio-ruby (6.12.1)
+    twilio-ruby (7.10.4)
       faraday (>= 0.9, < 3.0)
-      jwt (>= 1.5, < 3.0)
+      jwt (>= 1.5, < 4.0)
       nokogiri (>= 1.6, < 2.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -555,7 +555,7 @@ DEPENDENCIES
   tailwindcss-rails (~> 4.4)
   thruster
   turbo-rails
-  twilio-ruby (~> 6.0)
+  twilio-ruby (~> 7.10)
   tzinfo-data
   web-console
 
