@@ -26,6 +26,33 @@ module Platform
       assert_response :success
     end
 
+    test "index loads recent payments" do
+      space = spaces(:one)
+      subscription = space.subscription
+      Billing::Payment.create!(
+        asaas_payment_id: "pay_admin_test_001",
+        subscription:     subscription,
+        space_id:         space.id,
+        amount_cents:     9900,
+        payment_method:   :credit_card,
+        status:           :confirmed
+      )
+
+      sign_in @admin
+      get platform_billing_index_path
+
+      assert_response :success
+      assert_select "table", minimum: 2
+    end
+
+    test "index shows payment method column in subscriptions table" do
+      sign_in @admin
+      get platform_billing_index_path
+
+      assert_response :success
+      assert_select "th", text: I18n.t("platform.billing.index.payment_method")
+    end
+
     test "index exposes MRR and subscription stats to the view" do
       sign_in @admin
 

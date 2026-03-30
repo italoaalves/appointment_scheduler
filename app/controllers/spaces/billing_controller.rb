@@ -124,6 +124,9 @@ module Spaces
       else
         redirect_to checkout_settings_billing_path
       end
+    rescue Billing::AsaasClient::ApiError => e
+      Rails.logger.error("[Billing::BillingController] Asaas API error during reactivation: #{e.message}")
+      redirect_to settings_billing_path, alert: I18n.t("billing.generic_error")
     end
 
     private

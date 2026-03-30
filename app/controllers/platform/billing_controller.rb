@@ -21,6 +21,11 @@ module Platform
                           .order(created_at: :desc)
                           .page(params[:page])
                           .per(20)
+
+      @recent_payments = Billing::Payment
+                           .includes(:subscription, :space)
+                           .order(created_at: :desc)
+                           .limit(50)
     end
   end
 end

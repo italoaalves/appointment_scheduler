@@ -1,0 +1,13 @@
+<h2>Chargeback Alert</h2>
+
+<p>A chargeback event was received for <strong><%= @space.name %></strong>.</p>
+
+<table>
+  <tr><td>Event</td><td><%= @event_name %></td></tr>
+  <tr><td>Reason</td><td><%= @reason %></td></tr>
+  <tr><td>Payment ID</td><td><%= @payment.asaas_payment_id %></td></tr>
+  <tr><td>Amount</td><td>R$ <%= "%.2f" % (@payment.amount_cents / 100.0) %></td></tr>
+  <tr><td>Space</td><td><%= @space.name %> (ID: <%= @space.id %>)</td></tr>
+</table>
+
+<p>Review in the platform admin dashboard and take appropriate action.</p>

@@ -23,8 +23,8 @@ module Billing
       new(asaas_client).cancel(subscription: subscription)
     end
 
-    def self.reactivate(subscription:)
-      new(nil).reactivate(subscription: subscription)
+    def self.reactivate(subscription:, asaas_client: Billing::AsaasClient.new)
+      new(asaas_client).reactivate(subscription: subscription)
     end
 
     # ── Instance ─────────────────────────────────────────────────────────────
@@ -187,11 +187,33 @@ module Billing
         return { success: false, error: I18n.t("billing.resubscribe_unavailable") }
       end
 
-      # Safety: if the Asaas subscription was already deleted (e.g., SUBSCRIPTION_DELETED
-      # webhook received before the customer reactivated), reactivation is impossible —
-      # there is no active Asaas subscription to generate future charges.
       if subscription.asaas_subscription_id.blank?
         return { success: false, error: I18n.t("billing.resubscribe_unavailable") }
+      end
+
+      # Verify the Asaas subscription still exists and is active.
+      # The local asaas_subscription_id can be stale if a SUBSCRIPTION_DELETED webhook
+      # was missed, or if Asaas admin deleted the record. Without this check, reactivation
+      # sets status = active locally but Asaas won't generate future charges — silent free access.
+      begin
+        remote = @client.find_subscription(subscription.asaas_subscription_id)
+        unless remote["status"] == "ACTIVE"
+          Rails.logger.warn(
+            "[Billing::SubscriptionManager] Cannot reactivate — Asaas subscription " \
+            "#{subscription.asaas_subscription_id} status is #{remote['status']}"
+          )
+          return { success: false, error: I18n.t("billing.resubscribe_unavailable") }
+        end
+      rescue Billing::AsaasClient::ApiError => e
+        if e.status_code == 404
+          Rails.logger.warn(
+            "[Billing::SubscriptionManager] Cannot reactivate — Asaas subscription " \
+            "#{subscription.asaas_subscription_id} not found (404)"
+          )
+          subscription.update_column(:asaas_subscription_id, nil)
+          return { success: false, error: I18n.t("billing.resubscribe_unavailable") }
+        end
+        raise
       end
 
       ActiveRecord::Base.transaction do

@@ -29,6 +29,7 @@
           <tr>
             <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.billing.index.space") %></th>
             <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.billing.index.plan") %></th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.billing.index.payment_method") %></th>
             <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.billing.index.status") %></th>
             <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.billing.index.period") %></th>
             <th scope="col" class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.billing.index.override") %></th>
@@ -41,6 +42,7 @@
                 <%= link_to sub.space&.name, platform_space_path(sub.space), class: "hover:underline" %>
               </td>
               <td class="px-4 py-2 text-slate-700"><%= sub.billing_plan.name %></td>
+              <td class="px-4 py-2 text-slate-700"><%= sub.payment_method&.humanize || "—" %></td>
               <td class="px-4 py-2">
                 <%= render "application/shared/status_badge",
                            status: sub.status,
@@ -70,6 +72,47 @@
       <p class="px-5 py-4 text-sm text-slate-500"><%= t("platform.billing.index.no_subscriptions") %></p>
     <% end %>
   </div>
+
+  <%# Recent payments %>
+  <% if @recent_payments.any? %>
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div class="border-b border-slate-200 px-5 py-3">
+        <h2 class="text-sm font-semibold text-slate-800"><%= t("platform.billing.index.recent_payments") %></h2>
+      </div>
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead class="bg-slate-50">
+          <tr>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.billing.index.space") %></th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.billing.index.payment_amount") %></th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.billing.index.payment_method") %></th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.billing.index.status") %></th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.billing.index.asaas_status") %></th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.billing.index.payment_date") %></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200 bg-white">
+          <% @recent_payments.each do |payment| %>
+            <tr class="hover:bg-slate-50">
+              <td class="px-4 py-2 font-medium text-slate-900"><%= payment.space&.name %></td>
+              <td class="px-4 py-2 text-slate-700">
+                <%= number_to_currency(payment.amount_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %>
+              </td>
+              <td class="px-4 py-2 text-slate-700"><%= payment.payment_method&.humanize || "—" %></td>
+              <td class="px-4 py-2">
+                <%= render "application/shared/status_badge",
+                           status: payment.status,
+                           label:  payment.status.humanize %>
+              </td>
+              <td class="px-4 py-2 text-xs text-slate-400"><%= payment.asaas_status || "—" %></td>
+              <td class="px-4 py-2 text-xs text-slate-500">
+                <%= l(payment.paid_at || payment.created_at, format: :long) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
 
   <%# Recent events %>
   <% if @recent_events.any? %>
