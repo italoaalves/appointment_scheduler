@@ -25,6 +25,22 @@ ENV RAILS_ENV="production" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development"
 
+# Development stage — all gems, build tools, source mounted via compose
+FROM base AS dev
+
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+ENV RAILS_ENV="development" \
+    BUNDLE_PATH="/usr/local/bundle" \
+    BUNDLE_WITHOUT=""
+
+COPY Gemfile Gemfile.lock ./
+RUN bundle install && \
+    gem install foreman
+
+
 # Throw-away build stage to reduce size of final image
 FROM base AS build
 
