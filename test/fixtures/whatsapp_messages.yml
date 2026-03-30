@@ -1,0 +1,16 @@
+outbound_template:
+  whatsapp_conversation: one
+  wamid: "wamid.HBgNNTUxMTk5OTk5MDAwMQ=="
+  direction: 1
+  message_type: "template"
+  status: 2
+  metadata: {}
+
+inbound_reply:
+  whatsapp_conversation: one
+  wamid: "wamid.HBgNNTUxMTk5OTk5MDAwMg=="
+  direction: 0
+  body: "Ok, obrigado!"
+  message_type: "text"
+  status: 2
+  metadata: {}
