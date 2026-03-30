@@ -85,6 +85,9 @@ Rails.application.routes.draw do
     resources :webhooks, only: [ :create ]
   end
 
+  get  "whatsapp/webhooks", to: "whatsapp/webhooks#verify"
+  post "whatsapp/webhooks", to: "whatsapp/webhooks#receive"
+
   namespace :platform do
     root to: "dashboard#index", as: :root
 
