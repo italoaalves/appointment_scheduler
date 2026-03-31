@@ -84,6 +84,9 @@ en:
       payment_reminder_overdue:
         title: "Payment overdue"
         body: "Your %{payment_method} payment of %{amount} was due on %{due_date}. Please pay immediately."
+      whatsapp_message:
+        title: "New WhatsApp message"
+        body: "New message from %{name}"
       dropdown:
         title: "Notifications"
         mark_all_read: "Mark all as read"

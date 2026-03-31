@@ -55,6 +55,9 @@ pt-BR:
       payment_reminder_overdue:
         title: "Pagamento em atraso"
         body: "Seu pagamento de %{amount} via %{payment_method} venceu em %{due_date}. Pague imediatamente."
+      whatsapp_message:
+        title: "Nova mensagem WhatsApp"
+        body: "Nova mensagem de %{name}"
       dropdown:
         title: "Notificações"
         mark_all_read: "Marcar tudo como lido"
