@@ -139,5 +139,49 @@ module Spaces
       assert_redirected_to spaces_inbox_path(@conversation)
       assert_not_nil flash[:alert]
     end
+
+    # ── session UI states ──────────────────────────────────────────────────────
+
+    test "show displays active session indicator when session is open" do
+      @conversation.update!(space: spaces(:two), session_expires_at: 23.hours.from_now)
+      sign_in @manager2
+
+      get spaces_inbox_path(@conversation)
+
+      assert_response :ok
+      assert_select "[data-session-timer-target='indicator']"
+      assert_select "[data-session-timer-expires-at-value]"
+    end
+
+    test "show renders reply form enabled when session is active" do
+      @conversation.update!(space: spaces(:two), session_expires_at: 23.hours.from_now)
+      sign_in @manager2
+
+      get spaces_inbox_path(@conversation)
+
+      assert_select "textarea[data-session-timer-target='textarea']:not([disabled])"
+      assert_select "input[data-session-timer-target='submit']:not([disabled])"
+    end
+
+    test "show renders reply form disabled when session is expired" do
+      @conversation.update!(space: spaces(:two), session_expires_at: 1.hour.ago)
+      sign_in @manager2
+
+      get spaces_inbox_path(@conversation)
+
+      assert_response :ok
+      assert_select "textarea[data-session-timer-target='textarea'][disabled]"
+      assert_select "input[data-session-timer-target='submit'][disabled]"
+    end
+
+    test "show includes session_timer controller with expires_at value" do
+      @conversation.update!(space: spaces(:two), session_expires_at: 23.hours.from_now)
+      sign_in @manager2
+
+      get spaces_inbox_path(@conversation)
+
+      assert_select "[data-controller='session-timer']"
+      assert_select "[data-session-timer-expires-at-value='#{@conversation.session_expires_at.iso8601}']"
+    end
   end
 end
