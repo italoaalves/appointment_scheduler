@@ -32,9 +32,10 @@ class TurboStreamHelperTest < ActionView::TestCase
     assert_includes result, "bg-red-50"
   end
 
-  test "turbo_stream_flash includes auto-dismiss x-init" do
+  test "turbo_stream_flash includes auto-dismiss stimulus controller" do
     result = turbo_stream_flash(type: :notice, message: "Msg")
 
-    assert_includes result, "setTimeout"
+    assert_includes result, 'data-controller="dismissible"'
+    assert_includes result, 'data-dismissible-auto-close-value="5000"'
   end
 end
