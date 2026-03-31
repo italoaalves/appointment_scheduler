@@ -98,6 +98,8 @@ module UiHelper
       controller_path == "spaces/billing"
     when :credits
       controller_path == "spaces/credits"
+    when :inbox
+      controller_path == "spaces/inbox"
     else
       false
     end

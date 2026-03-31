@@ -221,6 +221,7 @@ pt-BR:
     finish: "Finalizar"
     customers: "Clientes"
     team: "Equipe"
+    inbox: "Caixa de entrada"
     booking_links: "Links de Agendamento"
     personalized_link: "Link Personalizado"
     settings: "Configurações"
@@ -231,6 +232,7 @@ pt-BR:
     change_plan: "Trocar Plano"
     checkout: "Checkout"
     credits: "Créditos"
+    inbox: "Caixa de entrada"
     profile: "Perfil"
     preferences: "Preferências"
     invite: "Convidar"
@@ -614,6 +616,30 @@ pt-BR:
         back_to_space: "Voltar para configurações do espaço"
       update:
         notice: "Disponibilidade atualizada."
+
+    inbox:
+      index:
+        title: "Caixa de entrada"
+        unread: "Não lida"
+        empty: "Nenhuma conversa de WhatsApp ainda."
+      show:
+        session_open: "Janela de resposta aberta por %{time}"
+        session_expired: "Sessão expirada — respostas não estão disponíveis."
+        no_messages: "Nenhuma mensagem nesta conversa."
+        template_message: "(mensagem de template)"
+        reply_placeholder: "Digite uma mensagem…"
+        session_expired_placeholder: "Sessão expirada — não é possível responder"
+        send: "Enviar"
+        status:
+          pending: "·"
+          sent: "✓"
+          delivered: "✓✓"
+          read: "✓✓"
+          failed: "!"
+      reply:
+        body_required: "A mensagem não pode estar em branco."
+        session_expired: "Não é possível responder — a janela de 24h expirou."
+        delivery_failed: "Não foi possível entregar a mensagem. Tente novamente."
 
     scheduling_links:
       create:

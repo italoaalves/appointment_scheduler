@@ -61,6 +61,12 @@ Rails.application.routes.draw do
     end
   end
 
+  scope module: "spaces", as: "spaces" do
+    resources :inbox, only: [ :index, :show ], controller: "inbox" do
+      post :reply, on: :member
+    end
+  end
+
   scope path: "settings", module: "spaces", as: "settings" do
     resource :space, only: [ :edit, :update ], controller: "space" do
       resource :availability, only: [ :edit, :update ], controller: "space/availabilities"

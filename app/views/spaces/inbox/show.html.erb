@@ -1,0 +1,65 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("space.inbox.index.title"), path: spaces_inbox_index_path },
+  { label: @conversation.customer_name.presence || @conversation.customer_phone }
+] } %>
+
+<div class="space-y-4 max-w-2xl mx-auto">
+  <%= render "application/shared/page_header",
+      title: @conversation.customer_name.presence || @conversation.customer_phone,
+      subtitle: @conversation.customer_phone %>
+
+  <%# Session window indicator %>
+  <% if @conversation.session_active? %>
+    <div class="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-2 text-sm text-emerald-800">
+      <%= t("space.inbox.show.session_open",
+            time: distance_of_time_in_words(Time.current, @conversation.session_expires_at)) %>
+    </div>
+  <% else %>
+    <div class="rounded-lg bg-amber-50 border border-amber-200 px-4 py-2 text-sm text-amber-800">
+      <%= t("space.inbox.show.session_expired") %>
+    </div>
+  <% end %>
+
+  <%# Message thread %>
+  <div class="rounded-xl border border-slate-200 bg-slate-50 shadow-sm overflow-hidden">
+    <div class="flex flex-col gap-3 px-4 py-4 min-h-48 max-h-[60vh] overflow-y-auto">
+      <% if @messages.any? %>
+        <% @messages.each do |message| %>
+          <div class="flex <%= message.outbound? ? "justify-end" : "justify-start" %>">
+            <div class="max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm
+                        <%= message.outbound? ? "bg-indigo-600 text-white rounded-br-sm" : "bg-white text-slate-900 rounded-bl-sm border border-slate-200" %>">
+              <p class="whitespace-pre-wrap break-words"><%= message.body.presence || t("space.inbox.show.template_message") %></p>
+              <div class="mt-1 flex items-center gap-1 <%= message.outbound? ? "justify-end text-indigo-200" : "justify-start text-slate-400" %> text-[11px]">
+                <span><%= message.created_at.strftime("%H:%M") %></span>
+                <% if message.outbound? %>
+                  <%= t("space.inbox.show.status.#{message.status}") %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="text-center text-slate-400 text-sm py-8"><%= t("space.inbox.show.no_messages") %></p>
+      <% end %>
+    </div>
+
+    <%# Reply form %>
+    <div class="border-t border-slate-200 bg-white px-4 py-3">
+      <%= turbo_frame_tag "reply_form" do %>
+        <%= form_with url: reply_spaces_inbox_path(@conversation), method: :post do |f| %>
+          <div class="flex gap-2 items-end">
+            <%= f.text_area :body,
+                rows: 2,
+                placeholder: @conversation.session_active? ? t("space.inbox.show.reply_placeholder") : t("space.inbox.show.session_expired_placeholder"),
+                disabled: !@conversation.session_active?,
+                class: "flex-1 resize-none rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-100 disabled:text-slate-400" %>
+            <%= f.submit t("space.inbox.show.send"),
+                disabled: !@conversation.session_active?,
+                class: "shrink-0 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed" %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
