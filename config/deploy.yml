@@ -18,7 +18,6 @@ registry:
 env:
   secret:
     - RAILS_MASTER_KEY
-    - RAILS_STAGING_MASTER_KEY
   clear:
     SOLID_QUEUE_IN_PUMA: true
     RAILS_ENV: staging

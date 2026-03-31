@@ -113,8 +113,7 @@
 - Successful form submissions (POST/PATCH/DELETE) must **redirect** (303), never `render` a 200 — Turbo expects the PRG pattern.
 - Use Turbo Frames to scope partial page updates (e.g., settings content area, modals).
 - Use Stimulus controllers for JS behavior tied to DOM elements.
-- **Alpine.js** is allowed only for lightweight, self-contained UI affordances (toggles, dropdowns, simple conditional visibility) where there is no Rails-native way to handle the state. Never use Alpine for page navigation, form submission flows, or stateful workflows that span requests.
-- When in doubt, prefer Turbo/Stimulus over Alpine.
+- **Alpine.js is not used.** All client-side behavior is handled via Stimulus controllers. Do not introduce Alpine.js — it requires `unsafe-eval` in CSP, which is a security concern.
 
 ## Code Style
 

@@ -34,7 +34,7 @@
                         class: "inline-flex rounded-md bg-amber-600 px-2 py-1 text-xs font-semibold text-amber-900 hover:bg-amber-700" %>
         </div>
       <% end %>
-      <nav x-data="{ open: false }" class="bg-slate-900 border-b border-slate-800">
+      <nav data-controller="dropdown" data-action="click@window->dropdown#close" class="bg-slate-900 border-b border-slate-800">
         <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div class="flex h-14 items-center justify-between">
             <div class="flex items-center gap-4">
@@ -78,25 +78,16 @@
               <% if tenant_staff? %>
                 <%= render "shared/notification_dropdown" %>
               <% end %>
-              <div class="relative" x-data="{ profileOpen: false }">
+              <div class="relative" data-controller="dropdown" data-action="click@window->dropdown#close">
                 <button type="button"
                         class="inline-flex items-center justify-center rounded-full bg-slate-800 p-2 text-slate-200 hover:bg-slate-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-900"
-                        @click="profileOpen = !profileOpen"
+                        data-action="dropdown#toggle"
                         aria-haspopup="true"
-                        x-bind:aria-expanded="profileOpen"
                         aria-label="<%= t('layout.nav.profile') %>">
                   <%= render "shared/icons/user" %>
                 </button>
-                <div x-show="profileOpen"
-                     @click.outside="profileOpen = false"
-                     x-transition:enter="transition ease-out duration-100"
-                     x-transition:enter-start="opacity-0 scale-95"
-                     x-transition:enter-end="opacity-100 scale-100"
-                     x-transition:leave="transition ease-in duration-75"
-                     x-transition:leave-start="opacity-100 scale-100"
-                     x-transition:leave-end="opacity-0 scale-95"
-                     x-cloak
-                     class="absolute right-0 top-full z-50 mt-2 min-w-[200px] rounded-md bg-slate-800 py-1 shadow-lg ring-1 ring-slate-700">
+                <div data-dropdown-target="menu"
+                     class="hidden absolute right-0 top-full z-50 mt-2 min-w-[200px] rounded-md bg-slate-800 py-1 shadow-lg ring-1 ring-slate-700">
                   <div class="border-b border-slate-700 px-3 py-2">
                     <p class="text-xs font-medium text-white truncate"><%= current_user.name.presence || current_user.email %></p>
                     <p class="text-xs text-slate-400 truncate"><%= current_user.email %></p>
@@ -120,16 +111,15 @@
             <div class="flex items-center md:hidden">
               <button type="button"
                       class="inline-flex items-center justify-center rounded-md p-1.5 text-slate-200 hover:bg-slate-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                      @click="open = !open"
+                      data-action="dropdown#toggle"
                       aria-label="Toggle navigation"
-                      aria-haspopup="true"
-                      :aria-expanded="open">
-                <span x-show="!open"><%= render "shared/icons/menu" %></span>
-                <span x-show="open" x-cloak><%= render "shared/icons/close" %></span>
+                      aria-haspopup="true">
+                <span data-dropdown-target="openIcon"><%= render "shared/icons/menu" %></span>
+                <span data-dropdown-target="closeIcon" class="hidden"><%= render "shared/icons/close" %></span>
               </button>
             </div>
           </div>
-          <div class="md:hidden" x-show="open" x-transition @click.outside="open = false" x-cloak>
+          <div class="md:hidden hidden" data-dropdown-target="menu">
             <div class="space-y-1 pb-3 pt-2">
               <% if current_user.super_admin? %>
                 <%= link_to t("layout.nav.tenants"), platform_spaces_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
