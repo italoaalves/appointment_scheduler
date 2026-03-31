@@ -4,19 +4,24 @@
   { label: @conversation.customer_name.presence || @conversation.customer_phone }
 ] } %>
 
-<div class="space-y-4 max-w-2xl mx-auto">
+<div class="space-y-4 max-w-2xl mx-auto"
+     data-controller="session-timer"
+     data-session-timer-expires-at-value="<%= @conversation.session_expires_at&.iso8601 %>">
+
   <%= render "application/shared/page_header",
       title: @conversation.customer_name.presence || @conversation.customer_phone,
       subtitle: @conversation.customer_phone %>
 
   <%# Session window indicator %>
   <% if @conversation.session_active? %>
-    <div class="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-2 text-sm text-emerald-800">
+    <div data-session-timer-target="indicator"
+         class="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-2 text-sm text-emerald-800">
       <%= t("space.inbox.show.session_open",
             time: distance_of_time_in_words(Time.current, @conversation.session_expires_at)) %>
     </div>
   <% else %>
-    <div class="rounded-lg bg-amber-50 border border-amber-200 px-4 py-2 text-sm text-amber-800">
+    <div data-session-timer-target="indicator"
+         class="rounded-lg bg-amber-50 border border-amber-200 px-4 py-2 text-sm text-amber-800">
       <%= t("space.inbox.show.session_expired") %>
     </div>
   <% end %>
@@ -53,9 +58,11 @@
                 rows: 2,
                 placeholder: @conversation.session_active? ? t("space.inbox.show.reply_placeholder") : t("space.inbox.show.session_expired_placeholder"),
                 disabled: !@conversation.session_active?,
+                data: { session_timer_target: "textarea" },
                 class: "flex-1 resize-none rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-100 disabled:text-slate-400" %>
             <%= f.submit t("space.inbox.show.send"),
                 disabled: !@conversation.session_active?,
+                data: { session_timer_target: "submit" },
                 class: "shrink-0 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed" %>
           </div>
         <% end %>
