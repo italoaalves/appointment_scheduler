@@ -21,7 +21,7 @@
 - **Provider:** Asaas (BRL only, monthly billing).
 - **Plans:** Two self-serve flat-rate plans (Starter, Pro). Enterprise is marketing-only — no engineering.
 - **Gating:** Primary = team members (`SpaceMembership` count). Secondary = feature access (e.g., personalized booking page is Pro-only) and customer cap (Starter: 100).
-- **Add-on:** WhatsApp message credits (metered, real per-message cost via Twilio).
+- **Add-on:** WhatsApp message credits (metered, real per-message cost via WhatsApp Cloud API).
 
 ### Plan Definition
 - Plans are Ruby frozen constants in `Billing::Plan`, NOT a database table.
@@ -51,6 +51,14 @@
 - Must be resilient to out-of-order events.
 - Webhook handlers do NOT set `Current.space` — they look up Space from the Asaas subscription/customer ID.
 
+### WhatsApp
+- Messages sent via **WhatsApp Cloud API** (Meta) — no Twilio dependency.
+- `Whatsapp::Client` is a lightweight HTTP wrapper (no SDK). Credentials in `Rails.application.credentials.whatsapp`.
+- Webhook signature validation via `X-Hub-Signature-256` + App Secret. Verify token for endpoint registration.
+- Inbound messages and delivery status updates processed async via `Whatsapp::ProcessWebhookJob`.
+- Space owners and members see incoming messages in the inbox (`spaces/inbox`).
+- Two message types: **template** (proactive, costs a credit) and **session** (free reply within 24h window).
+
 ### WhatsApp Credits
 - Credits tied to a Space, not a User. One `MessageCredit` row per Space.
 - Deducted at send time, refunded on delivery failure.
@@ -66,11 +74,18 @@
 - Asaas API keys stored in `Rails.application.credentials.asaas`. Never in ENV, never in code.
 - Sandbox URL for dev/test, production URL for prod — environment-driven via credentials.
 - No raw card data touches our servers (tokenization via Asaas).
+- WhatsApp credentials stored in `Rails.application.credentials.whatsapp` (`app_secret`, `access_token`, `verify_token`, `phone_number_id`). Never in ENV, never in code.
 
 ### Billing Code Location
 - Services: `app/services/billing/`
 - Jobs: `app/jobs/billing/`
 - Background jobs load Space explicitly and do NOT set `Current.space`.
+
+### WhatsApp Code Location
+- Services: `app/services/whatsapp/` — `Whatsapp::Client` (HTTP wrapper)
+- Jobs: `app/jobs/whatsapp/` — `Whatsapp::ProcessWebhookJob`
+- Controllers: `app/controllers/whatsapp/` — `Whatsapp::WebhooksController`
+- Inbox: `app/controllers/spaces/inbox_controller.rb`
 
 ## Platform vs Tenant Boundary
 
