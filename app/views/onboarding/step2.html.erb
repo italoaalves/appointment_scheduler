@@ -40,27 +40,29 @@
             <% opens_val = window&.opens_at&.strftime("%H:%M") || "09:00" %>
             <% closes_val = window&.closes_at&.strftime("%H:%M") || "17:00" %>
             <div class="flex flex-wrap items-center gap-2 gap-y-3 rounded-md border border-slate-200 bg-slate-50 p-3"
-                 x-data="{ enabled: <%= day_enabled %> }">
+                 data-controller="toggle-inputs">
               <input type="hidden" name="days[<%= wday %>][enabled]" value="0">
               <label class="flex w-24 shrink-0 items-center gap-2 text-sm font-medium text-slate-700">
                 <input type="checkbox"
                        name="days[<%= wday %>][enabled]"
                        value="1"
                        <%= "checked" if day_enabled %>
-                       x-model="enabled"
+                       data-action="toggle-inputs#toggle"
                        class="rounded border-slate-300">
                 <%= label %>
               </label>
               <input type="time"
                      name="days[<%= wday %>][opens_at]"
                      value="<%= opens_val %>"
-                     :disabled="!enabled"
+                     <%= "disabled" unless day_enabled %>
+                     data-toggle-inputs-target="input"
                      class="rounded-md border border-slate-300 px-2 py-1.5 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
                      aria-label="<%= t("onboarding.step2.opens_at") %>">
               <input type="time"
                      name="days[<%= wday %>][closes_at]"
                      value="<%= closes_val %>"
-                     :disabled="!enabled"
+                     <%= "disabled" unless day_enabled %>
+                     data-toggle-inputs-target="input"
                      class="rounded-md border border-slate-300 px-2 py-1.5 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
                      aria-label="<%= t("onboarding.step2.closes_at") %>">
             </div>

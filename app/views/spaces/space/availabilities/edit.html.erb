@@ -42,28 +42,30 @@
         <% show_other = @space.timezone.present? && !ApplicationHelper::COMMON_TIMEZONES.include?(@space.timezone) %>
         <% tz_select_initial = show_other ? ApplicationHelper::OTHER_TIMEZONE_VALUE : (@space.timezone.presence || "") %>
         <% tz_other_initial = show_other ? @space.timezone : "" %>
-        <div x-data="{ tzSelect: <%= tz_select_initial.to_json %>, tzOther: <%= tz_other_initial.to_json %> }">
+        <div data-controller="conditional-field" data-conditional-field-show-when-value="<%= ApplicationHelper::OTHER_TIMEZONE_VALUE %>">
           <label for="space_timezone"
                  class="block text-sm font-medium text-slate-700"><%= t("space.settings.edit.timezone_label") %></label>
           <input type="hidden"
                  name="space[timezone]"
-                 :value="tzSelect === '<%= ApplicationHelper::OTHER_TIMEZONE_VALUE %>' ? tzOther : tzSelect">
+                 id="space_timezone_hidden"
+                 value="<%= @space.timezone %>"
+                 data-conditional-field-target="hiddenField">
           <div class="mt-1 max-w-sm space-y-2">
             <select id="space_timezone"
-                    x-model="tzSelect"
+                    data-conditional-field-target="source"
+                    data-action="conditional-field#toggle"
                     class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500">
               <% options = common_timezone_options_for_select(@space.timezone) %>
               <% options.each do |label, value| %>
-                <option value="<%= value %>"><%= label %></option>
+                <option value="<%= value %>" <%= "selected" if value == tz_select_initial %>><%= label %></option>
               <% end %>
             </select>
             <input type="text"
-                   x-show="tzSelect === '<%= ApplicationHelper::OTHER_TIMEZONE_VALUE %>'"
-                   x-transition
-                   x-cloak
-                   x-model="tzOther"
-                   placeholder="<%= t('space.settings.edit.timezone_other_placeholder') %>"
-                   class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" />
+                   data-conditional-field-target="target"
+                   data-action="input->conditional-field#syncFromTarget"
+                   class="<%= 'hidden' unless show_other %> block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                   value="<%= tz_other_initial %>"
+                   placeholder="<%= t('space.settings.edit.timezone_other_placeholder') %>" />
           </div>
         </div>
       </div>

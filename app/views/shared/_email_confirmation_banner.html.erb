@@ -1,6 +1,4 @@
-<div x-data="{ show: true }"
-     x-show="show"
-     x-transition
+<div data-controller="dismissible"
      class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 bg-amber-100 px-4 py-2 text-sm text-amber-900">
   <span><%= t("shared.email_confirmation_banner.message") %></span>
   <%= link_to t("shared.email_confirmation_banner.resend_link"),
@@ -9,7 +7,7 @@
   <button type="button"
           class="ml-auto shrink-0 p-1 text-amber-700 hover:text-amber-950"
           aria-label="Dismiss"
-          @click="show = false">
+          data-action="dismissible#dismiss">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
