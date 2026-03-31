@@ -26,6 +26,8 @@ class Notification < ApplicationRecord
       { controller: "spaces/billing", action: "show" }
     when "Billing::MessageCredit", "Billing::CreditPurchase"
       { controller: "spaces/credits", action: "show" }
+    when "WhatsappConversation"
+      { controller: "spaces/inbox", action: "show", id: notifiable_id }
     end
   end
 end
