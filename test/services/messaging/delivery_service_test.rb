@@ -59,15 +59,22 @@ module Messaging
       assert result[:success]
     end
 
-    test "returns error hash for whatsapp when not configured" do
-      # Uses a real customer (has space + credits); Twilio isn't configured in test env
-      # so delivery fails, credits are deducted then refunded atomically.
+    test "passes template keyword through to channel deliver" do
       customer = customers(:one)
+      template = { name: "appointment_booked_v1", language: "pt_BR", components: [] }
+      received_template = nil
 
-      result = DeliveryService.call(channel: :whatsapp, to: customer, body: "Hi")
+      fake_channel = Object.new
+      fake_channel.define_singleton_method(:deliver) do |**kwargs|
+        received_template = kwargs[:template]
+        { success: true }
+      end
 
-      assert_not result[:success]
-      assert_includes result[:error], "not configured"
+      Messaging::Channels::Whatsapp.stub(:new, fake_channel) do
+        DeliveryService.call(channel: :whatsapp, to: customer, body: "Hi", template: template)
+      end
+
+      assert_equal template, received_template
     end
 
     # ── Credit integration ────────────────────────────────────────────────────
