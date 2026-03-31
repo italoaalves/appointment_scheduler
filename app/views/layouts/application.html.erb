@@ -161,6 +161,14 @@
                   <%= link_to t("layout.nav.settings_policies"), edit_settings_space_policies_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{settings_section_active?(:policies) ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (settings_section_active?(:policies) ? "page" : nil) } %>
                   <%= link_to t("layout.nav.billing"), settings_billing_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{settings_section_active?(:billing) ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (settings_section_active?(:billing) ? "page" : nil) } %>
                   <%= link_to t("layout.nav.credits"), settings_credits_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{settings_section_active?(:credits) ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (settings_section_active?(:credits) ? "page" : nil) } %>
+                  <% if Billing::PlanEnforcer.can?(current_tenant, :send_whatsapp) %>
+                    <%= link_to spaces_inbox_index_path, class: "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium pl-6 #{settings_section_active?(:inbox) ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (settings_section_active?(:inbox) ? "page" : nil) } do %>
+                      <%= t("layout.nav.inbox") %>
+                      <% if (unread_count = current_tenant.whatsapp_conversations.unread.count) > 0 %>
+                        <span class="inline-flex items-center rounded-full bg-indigo-500 px-1.5 py-0.5 text-[10px] font-bold text-white"><%= unread_count %></span>
+                      <% end %>
+                    <% end %>
+                  <% end %>
                 <% end %>
               <% else %>
                 <%# Customers: profile/logout only; book via scheduling links %>

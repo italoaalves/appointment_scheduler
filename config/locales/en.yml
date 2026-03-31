@@ -250,6 +250,7 @@ en:
     finish: "Finish"
     customers: "Customers"
     team: "Team"
+    inbox: "Inbox"
     booking_links: "Booking Links"
     personalized_link: "Personalized Link"
     settings: "Settings"
@@ -260,6 +261,7 @@ en:
     change_plan: "Change Plan"
     checkout: "Checkout"
     credits: "Credits"
+    inbox: "Inbox"
     profile: "Profile"
     preferences: "Preferences"
     invite: "Invite"
@@ -1356,6 +1358,30 @@ en:
         appointments_title: "Appointments"
         no_appointments: "No appointments for this customer yet."
         status_prefix: "Status:"
+
+    inbox:
+      index:
+        title: "Inbox"
+        unread: "Unread"
+        empty: "No WhatsApp conversations yet."
+      show:
+        session_open: "Reply window open for %{time}"
+        session_expired: "Session expired — replies are not available."
+        no_messages: "No messages in this conversation."
+        template_message: "(template message)"
+        reply_placeholder: "Type a message…"
+        session_expired_placeholder: "Session expired — cannot reply"
+        send: "Send"
+        status:
+          pending: "·"
+          sent: "✓"
+          delivered: "✓✓"
+          read: "✓✓"
+          failed: "!"
+      reply:
+        body_required: "Message cannot be blank."
+        session_expired: "Cannot reply — the 24h session window has expired."
+        delivery_failed: "Message could not be delivered. Please try again."
 
     scheduling_links:
       index:

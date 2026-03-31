@@ -1,0 +1,44 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("space.inbox.index.title") }
+] } %>
+
+<div class="space-y-4">
+  <%= render "application/shared/page_header", title: t("space.inbox.index.title") %>
+
+  <% if @conversations.any? %>
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm divide-y divide-slate-200">
+      <% @conversations.each do |conversation| %>
+        <%= link_to spaces_inbox_path(conversation), class: "flex items-center gap-4 px-4 py-3 hover:bg-slate-50 transition" do %>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="font-medium text-slate-900 truncate">
+                <%= conversation.customer_name.presence || conversation.customer_phone %>
+              </span>
+              <% if conversation.unread? %>
+                <span class="inline-block h-2 w-2 rounded-full bg-indigo-500 shrink-0" aria-label="<%= t("space.inbox.index.unread") %>"></span>
+              <% end %>
+            </div>
+            <% last_message = conversation.whatsapp_messages.last %>
+            <p class="text-sm text-slate-500 truncate mt-0.5">
+              <%= last_message&.body&.truncate(80) || "—" %>
+            </p>
+          </div>
+          <div class="text-xs text-slate-400 shrink-0">
+            <%= time_ago_in_words(conversation.last_message_at) %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <% if @conversations.respond_to?(:total_pages) && @conversations.total_pages > 1 %>
+      <div class="flex justify-center">
+        <%= paginate @conversations %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center text-slate-500 shadow-sm">
+      <%= t("space.inbox.index.empty") %>
+    </div>
+  <% end %>
+</div>
