@@ -152,6 +152,56 @@ module Spaces
       assert_equal "appointment_rescheduled", Notification.last.event_type
     end
 
+    # -------------------------------------------------------------------------
+    # WhatsApp template building
+    # -------------------------------------------------------------------------
+
+    test "whatsapp dispatch uses correct template name per event" do
+      @customer.update!(phone: "+5511999990099")
+
+      [ :appointment_confirmed, :appointment_cancelled, :appointment_rescheduled ].each do |event|
+        received_template = nil
+        fake_channel = Object.new
+        fake_channel.define_singleton_method(:deliver) do |**kwargs|
+          received_template = kwargs[:template]
+          { success: true }
+        end
+
+        Billing::PlanEnforcer.stub(:can?, true) do
+          Messaging::Channels::Whatsapp.stub(:new, fake_channel) do
+            NotificationDispatcher.call(event: event, appointment: @appointment)
+          end
+        end
+
+        assert_not_nil received_template, "Expected template for #{event}"
+        assert_equal "appointment_#{event}_v1", received_template[:name]
+        assert_equal "pt_BR", received_template[:language]
+      end
+    end
+
+    test "whatsapp template components include customer name, date, and time" do
+      @customer.update!(phone: "+5511999990099", name: "Maria Silva")
+      @appointment.update!(scheduled_at: Time.zone.parse("2026-06-15 14:30:00"))
+
+      received_template = nil
+      fake_channel = Object.new
+      fake_channel.define_singleton_method(:deliver) do |**kwargs|
+        received_template = kwargs[:template]
+        { success: true }
+      end
+
+      Billing::PlanEnforcer.stub(:can?, true) do
+        Messaging::Channels::Whatsapp.stub(:new, fake_channel) do
+          NotificationDispatcher.call(event: :appointment_confirmed, appointment: @appointment)
+        end
+      end
+
+      assert_not_nil received_template
+      params = received_template[:components].first[:parameters]
+      texts  = params.map { |p| p[:text] }
+      assert_includes texts, "Maria Silva"
+    end
+
     test "in-app failure does not block email delivery" do
       # Force Notification.create! to raise
       Notification.stub(:create!, ->(*) { raise ActiveRecord::RecordInvalid }) do

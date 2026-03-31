@@ -119,7 +119,8 @@ module Spaces
         channel:  channel,
         to:       recipient,
         body:     body,
-        subject:  channel == :email ? subject : nil
+        subject:  channel == :email ? subject : nil,
+        template: channel == :whatsapp ? build_whatsapp_template : nil
       )
 
       return if result[:success]
@@ -128,6 +129,27 @@ module Spaces
         "[Notifications] delivery_failed event=#{@event} channel=#{channel} " \
         "recipient=#{recipient.inspect} error=#{result[:error]}"
       )
+    end
+
+    def build_whatsapp_template
+      {
+        name:       "appointment_#{@event}_v1",
+        language:   "pt_BR",
+        components: [ {
+          type:       "body",
+          parameters: whatsapp_template_params.map { |v| { type: "text", text: v.to_s } }
+        } ]
+      }
+    end
+
+    def whatsapp_template_params
+      tz   = TimezoneResolver.zone(@space)
+      dt   = @appointment.scheduled_at&.in_time_zone(tz)
+      [
+        @appointment.customer&.name.presence || "A customer",
+        dt ? I18n.l(dt.to_date, format: :short) : "—",
+        dt ? dt.strftime("%H:%M") : "—"
+      ]
     end
 
     def build_subject(_channel)

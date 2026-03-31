@@ -7,16 +7,17 @@ module Messaging
       whatsapp: Channels::Whatsapp
     }.freeze
 
-    def self.call(channel:, to:, body:, subject: nil, **opts)
-      new(channel: channel, to: to, body: body, subject: subject, **opts).call
+    def self.call(channel:, to:, body:, subject: nil, template: nil, **opts)
+      new(channel: channel, to: to, body: body, subject: subject, template: template, **opts).call
     end
 
-    def initialize(channel:, to:, body:, subject: nil, **opts)
-      @channel = channel.to_sym
-      @to = to
-      @body = body
-      @subject = subject
-      @opts = opts
+    def initialize(channel:, to:, body:, subject: nil, template: nil, **opts)
+      @channel  = channel.to_sym
+      @to       = to
+      @body     = body
+      @subject  = subject
+      @template = template
+      @opts     = opts
       @credit_deduction = nil
     end
 
@@ -37,27 +38,16 @@ module Messaging
       end
 
       strategy_class.new.deliver(
-        to: @to,
-        body: @body,
-        subject: @subject,
+        to:       @to,
+        body:     @body,
+        subject:  @subject,
+        template: @template,
         **@opts
       )
     rescue Messaging::DeliveryError => e
       refund_credit_if_needed
       Rails.logger.error(
         "[Messaging] delivery_failed" \
-        " channel=#{@channel}" \
-        " to=#{@to.inspect}" \
-        " error_class=#{e.class}" \
-        " error=#{e.message}"
-      )
-      { success: false, error: e.message }
-    rescue => e
-      raise unless defined?(Twilio::REST::TwilioError) && e.is_a?(Twilio::REST::TwilioError)
-
-      refund_credit_if_needed
-      Rails.logger.error(
-        "[Messaging] twilio_transport_error" \
         " channel=#{@channel}" \
         " to=#{@to.inspect}" \
         " error_class=#{e.class}" \
