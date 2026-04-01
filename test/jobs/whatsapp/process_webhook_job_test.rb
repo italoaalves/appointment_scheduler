@@ -3,7 +3,7 @@
 require "test_helper"
 
 class Whatsapp::ProcessWebhookJobTest < ActiveJob::TestCase
-  def inbound_payload(wamid: "wamid.NEW001", wa_id: "5511999990001", body: "Hello!", name: "João Silva")
+  def inbound_payload(wamid: "wamid.NEW001", wa_id: "5511999990001", body: "Hello!", name: "João Silva", phone_number_id: "system_bot_phone_id")
     {
       "entry" => [
         {
@@ -11,7 +11,7 @@ class Whatsapp::ProcessWebhookJobTest < ActiveJob::TestCase
             {
               "field" => "messages",
               "value" => {
-                "metadata"  => { "phone_number_id" => "123456789" },
+                "metadata"  => { "phone_number_id" => phone_number_id },
                 "contacts"  => [ { "wa_id" => wa_id, "profile" => { "name" => name } } ],
                 "messages"  => [
                   {
@@ -29,7 +29,7 @@ class Whatsapp::ProcessWebhookJobTest < ActiveJob::TestCase
     }.to_json
   end
 
-  def status_payload(wamid:, status:, errors: nil)
+  def status_payload(wamid:, status:, errors: nil, phone_number_id: "system_bot_phone_id")
     event = { "id" => wamid, "status" => status }
     event["errors"] = errors if errors
     {
@@ -39,7 +39,7 @@ class Whatsapp::ProcessWebhookJobTest < ActiveJob::TestCase
             {
               "field" => "messages",
               "value" => {
-                "metadata" => { "phone_number_id" => "123456789" },
+                "metadata" => { "phone_number_id" => phone_number_id },
                 "statuses" => [ event ]
               }
             }
@@ -174,10 +174,55 @@ class Whatsapp::ProcessWebhookJobTest < ActiveJob::TestCase
     end
   end
 
-  test "inbound message from unknown wa_id is logged and skipped" do
+  test "inbound message from unknown wa_id on system bot is logged and skipped" do
     assert_no_difference "WhatsappMessage.count" do
       Whatsapp::ProcessWebhookJob.perform_now(
         payload: inbound_payload(wamid: "wamid.NEWMSG4", wa_id: "5511000000000")
+      )
+    end
+  end
+
+  test "inbound message to tenant-owned number creates conversation" do
+    phone_number = whatsapp_phone_numbers(:space_number)
+    new_wa_id = "5521888880001"
+
+    assert_difference "WhatsappConversation.count", 1 do
+      Whatsapp::ProcessWebhookJob.perform_now(
+        payload: inbound_payload(
+          wamid: "wamid.TENANT1",
+          wa_id: new_wa_id,
+          name: "Tenant Contact",
+          phone_number_id: phone_number.phone_number_id
+        )
+      )
+    end
+
+    conv = WhatsappConversation.find_by(wa_id: new_wa_id)
+    assert_equal phone_number.space, conv.space
+    assert_equal "+#{new_wa_id}", conv.customer_phone
+  end
+
+  test "inbound message to tenant-owned number finds existing conversation" do
+    phone_number = whatsapp_phone_numbers(:space_number)
+    conversation = whatsapp_conversations(:one)
+
+    assert_no_difference "WhatsappConversation.count" do
+      assert_difference "WhatsappMessage.count", 1 do
+        Whatsapp::ProcessWebhookJob.perform_now(
+          payload: inbound_payload(
+            wamid: "wamid.TENANT2",
+            wa_id: conversation.wa_id,
+            phone_number_id: phone_number.phone_number_id
+          )
+        )
+      end
+    end
+  end
+
+  test "inbound message to unknown phone_number_id is skipped" do
+    assert_no_difference "WhatsappMessage.count" do
+      Whatsapp::ProcessWebhookJob.perform_now(
+        payload: inbound_payload(wamid: "wamid.UNK1", phone_number_id: "unknown_id")
       )
     end
   end

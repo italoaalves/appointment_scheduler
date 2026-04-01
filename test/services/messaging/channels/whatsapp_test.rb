@@ -167,6 +167,24 @@ module Messaging
         assert msg.pending?
       end
 
+      test "uses Client.for_space when space option provided" do
+        space    = spaces(:one)
+        customer = customers(:one)
+        customer.update!(phone: "+5511999990099")
+
+        client_called = false
+        fake_for_space = ->(_space) {
+          client_called = true
+          @fake_client
+        }
+
+        ::Whatsapp::Client.stub(:for_space, fake_for_space) do
+          @channel.deliver(to: customer, body: "Hi", space: space)
+        end
+
+        assert client_called
+      end
+
       test "recording failure does not raise — delivery still succeeds" do
         # No space set, so recording is skipped silently (space is nil)
         recipient = OpenStruct.new(phone: "+5511999999999")

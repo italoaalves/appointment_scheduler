@@ -7,7 +7,11 @@ module Messaging
         phone = resolve_phone(to)
         raise Messaging::DeliveryError, "WhatsApp requires recipient phone" if phone.blank?
 
-        client = ::Whatsapp::Client.new(phone_number_id: opts[:phone_number_id])
+        client = if opts[:space]
+          ::Whatsapp::Client.for_space(opts[:space])
+        else
+          ::Whatsapp::Client.new(phone_number_id: opts[:phone_number_id])
+        end
 
         result = if template
           client.send_template(
