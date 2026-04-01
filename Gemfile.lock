@@ -212,7 +212,9 @@ GEM
     marcel (1.1.0)
     matrix (0.4.3)
     mini_mime (1.1.5)
-    minitest (5.27.0)
+    minitest (6.0.3)
+      drb (~> 2.0)
+      prism (~> 1.5)
     msgpack (1.8.0)
     net-imap (0.6.3)
       date
@@ -520,7 +522,7 @@ DEPENDENCIES
   kaminari (~> 1.2)
   letter_opener
   lograge (~> 0.14)
-  minitest (~> 5.27)
+  minitest (~> 6.0)
   opentelemetry-exporter-otlp (~> 0.29)
   opentelemetry-instrumentation-action_pack (~> 0.12)
   opentelemetry-instrumentation-active_job (~> 0.8)
