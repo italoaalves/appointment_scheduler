@@ -58,6 +58,10 @@ pt-BR:
       whatsapp_message:
         title: "Nova mensagem WhatsApp"
         body: "Nova mensagem de %{name}"
+      whatsapp_quality:
+        title: "Alerta de Qualidade WhatsApp"
+        body_flagged: "Seu número WhatsApp %{number} foi sinalizado por problemas de qualidade. Revise suas práticas de mensagens para evitar restrições."
+        body_restricted: "Seu número WhatsApp %{number} foi restringido por problemas de qualidade. O envio de mensagens pode ser limitado."
       dropdown:
         title: "Notificações"
         mark_all_read: "Marcar tudo como lido"

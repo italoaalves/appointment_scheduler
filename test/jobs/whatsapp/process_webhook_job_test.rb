@@ -29,6 +29,25 @@ class Whatsapp::ProcessWebhookJobTest < ActiveJob::TestCase
     }.to_json
   end
 
+  def quality_payload(phone_number: "+55 21 88888-0000", event: "FLAGGED", current_limit: "TIER_1K")
+    {
+      "entry" => [
+        {
+          "changes" => [
+            {
+              "field" => "phone_number_quality_update",
+              "value" => {
+                "display_phone_number" => phone_number,
+                "event" => event,
+                "current_limit" => current_limit
+              }
+            }
+          ]
+        }
+      ]
+    }.to_json
+  end
+
   def status_payload(wamid:, status:, errors: nil, phone_number_id: "system_bot_phone_id")
     event = { "id" => wamid, "status" => status }
     event["errors"] = errors if errors
@@ -290,6 +309,81 @@ class Whatsapp::ProcessWebhookJobTest < ActiveJob::TestCase
         Whatsapp::ProcessWebhookJob.perform_now(payload: status_payload(wamid: msg.wamid, status: "failed"))
       end
     end
+  end
+
+  # ── Quality updates ──────────────────────────────────────────────────────────
+
+  test "FLAGGED event updates quality_rating to YELLOW and creates notification" do
+    phone_number = whatsapp_phone_numbers(:space_number)
+
+    assert_difference "Notification.count", 1 do
+      Whatsapp::ProcessWebhookJob.perform_now(payload: quality_payload(event: "FLAGGED"))
+    end
+
+    phone_number.reload
+    assert_equal "YELLOW", phone_number.quality_rating
+
+    notif = Notification.find_by(event_type: "whatsapp_quality_flagged")
+    assert_not_nil notif
+    assert_equal phone_number.space.owner, notif.user
+    assert_equal phone_number, notif.notifiable
+  end
+
+  test "RESTRICTED event updates quality_rating to RED and creates notification" do
+    phone_number = whatsapp_phone_numbers(:space_number)
+
+    assert_difference "Notification.count", 1 do
+      Whatsapp::ProcessWebhookJob.perform_now(payload: quality_payload(event: "RESTRICTED"))
+    end
+
+    phone_number.reload
+    assert_equal "RED", phone_number.quality_rating
+
+    notif = Notification.find_by(event_type: "whatsapp_quality_restricted")
+    assert_not_nil notif
+  end
+
+  test "UNFLAGGED event updates quality_rating to GREEN and creates no notification" do
+    phone_number = whatsapp_phone_numbers(:space_number)
+
+    assert_no_difference "Notification.count" do
+      Whatsapp::ProcessWebhookJob.perform_now(payload: quality_payload(event: "UNFLAGGED"))
+    end
+
+    assert_equal "GREEN", phone_number.reload.quality_rating
+  end
+
+  test "quality update for unknown phone number is silently ignored" do
+    assert_nothing_raised do
+      Whatsapp::ProcessWebhookJob.perform_now(
+        payload: quality_payload(phone_number: "+99 00 00000-0000", event: "FLAGGED")
+      )
+    end
+  end
+
+  test "quality update stores metadata with messaging_limit and last event info" do
+    phone_number = whatsapp_phone_numbers(:space_number)
+
+    Whatsapp::ProcessWebhookJob.perform_now(
+      payload: quality_payload(event: "FLAGGED", current_limit: "TIER_1K")
+    )
+
+    phone_number.reload
+    assert_equal "TIER_1K", phone_number.metadata["messaging_limit"]
+    assert_equal "FLAGGED", phone_number.metadata["last_quality_event"]
+    assert_not_nil phone_number.metadata["last_quality_update_at"]
+  end
+
+  # ── Notification target_path for WhatsappPhoneNumber ────────────────────────
+
+  test "notification target_path routes to whatsapp_settings show for WhatsappPhoneNumber" do
+    phone_number = whatsapp_phone_numbers(:space_number)
+    notif = Notification.new(notifiable: phone_number, notifiable_type: "WhatsappPhoneNumber",
+                             notifiable_id: phone_number.id)
+
+    path = notif.target_path
+    assert_equal "spaces/whatsapp_settings", path[:controller]
+    assert_equal "show", path[:action]
   end
 
   # ── Malformed payload ────────────────────────────────────────────────────────
