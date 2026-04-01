@@ -170,15 +170,16 @@ module Spaces
 
     # ── disconnect ───────────────────────────────────────────────────────────
 
-    test "disconnect sets phone number status to disconnected" do
+    test "disconnect destroys the phone number record" do
       sign_in @manager
-      # spaces(:one) has whatsapp_phone_numbers(:space_number) — active
 
-      delete disconnect_settings_whatsapp_path
+      assert_difference "WhatsappPhoneNumber.count", -1 do
+        delete disconnect_settings_whatsapp_path
+      end
 
       assert_redirected_to settings_whatsapp_path
       assert_equal I18n.t("spaces.whatsapp_settings.disconnected"), flash[:notice]
-      assert whatsapp_phone_numbers(:space_number).reload.disconnected?
+      assert_nil spaces(:one).reload.whatsapp_phone_number
     end
 
     test "disconnect alerts when no number exists" do
@@ -189,6 +190,54 @@ module Spaces
 
       assert_redirected_to settings_whatsapp_path
       assert_equal I18n.t("spaces.whatsapp_settings.disconnect_failed"), flash[:alert]
+    end
+
+    test "connect replaces existing number without creating orphan" do
+      sign_in @manager
+      old_id = whatsapp_phone_numbers(:space_number).id
+
+      with_successful_verification do
+        assert_no_difference "WhatsappPhoneNumber.count" do
+          post connect_settings_whatsapp_path, params: {
+            whatsapp_phone_number: {
+              phone_number_id: "replacement_phone_id",
+              display_number: "+55 31 77777-0000",
+              waba_id: "waba_new",
+              verified_name: "New Clinic"
+            }
+          }
+        end
+      end
+
+      assert_redirected_to settings_whatsapp_path
+      assert_nil WhatsappPhoneNumber.find_by(id: old_id)
+
+      new_number = spaces(:one).reload.whatsapp_phone_number
+      assert_equal "replacement_phone_id", new_number.phone_number_id
+      assert new_number.active?
+    end
+
+    test "connect after disconnect creates new number without orphans" do
+      sign_in @manager
+
+      # Disconnect first
+      delete disconnect_settings_whatsapp_path
+
+      # Then connect
+      with_successful_verification do
+        post connect_settings_whatsapp_path, params: {
+          whatsapp_phone_number: {
+            phone_number_id: "reconnect_phone_id",
+            display_number: "+55 41 66666-0000",
+            waba_id: "waba_reconnect",
+            verified_name: "Reconnected Clinic"
+          }
+        }
+      end
+
+      # No orphaned system-bot-looking records
+      assert_equal 1, WhatsappPhoneNumber.system_bot.count, "Should only have the original system bot"
+      assert_equal "reconnect_phone_id", spaces(:one).reload.whatsapp_phone_number.phone_number_id
     end
 
     test "disconnect redirects unauthenticated users" do
