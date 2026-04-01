@@ -73,6 +73,23 @@ class WhatsappPhoneNumberTest < ActiveSupport::TestCase
     assert_not whatsapp_phone_numbers(:space_number).system_bot?
   end
 
+  # ── normalized_phone callback ─────────────────────────────────────────────────
+
+  test "sets normalized_phone from display_number on save" do
+    pn = WhatsappPhoneNumber.create!(
+      phone_number_id: "callback_test_id",
+      display_number: "+55 21 98765-4321",
+      waba_id: "waba_test"
+    )
+    assert_equal "5521987654321", pn.normalized_phone
+  end
+
+  test "updates normalized_phone when display_number changes" do
+    pn = whatsapp_phone_numbers(:system_bot)
+    pn.update!(display_number: "+55 31 11111-2222")
+    assert_equal "5531111112222", pn.normalized_phone
+  end
+
   # ── system_bot scope ──────────────────────────────────────────────────────────
 
   test "system_bot scope returns only records with nil space_id" do

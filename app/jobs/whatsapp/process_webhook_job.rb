@@ -118,11 +118,10 @@ module Whatsapp
 
     def process_quality_update(value)
       display = value["display_phone_number"]
-      phone_number_id = display&.gsub(/\D/, "")
+      digits = display&.gsub(/\D/, "")
       event = value["event"]
 
-      whatsapp_number = WhatsappPhoneNumber.find_by(phone_number_id: phone_number_id)
-      whatsapp_number ||= WhatsappPhoneNumber.find_by(display_number: display) if display
+      whatsapp_number = WhatsappPhoneNumber.find_by(normalized_phone: digits)
       return unless whatsapp_number
 
       new_rating = map_quality_rating(event)

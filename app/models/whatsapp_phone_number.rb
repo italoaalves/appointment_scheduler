@@ -12,7 +12,15 @@ class WhatsappPhoneNumber < ApplicationRecord
 
   scope :system_bot, -> { where(space_id: nil) }
 
+  before_save :set_normalized_phone
+
   def system_bot?
     space_id.nil?
+  end
+
+  private
+
+  def set_normalized_phone
+    self.normalized_phone = display_number&.gsub(/\D/, "")
   end
 end
