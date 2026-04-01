@@ -1,6 +1,7 @@
 system_bot:
   phone_number_id: "system_bot_phone_id"
   display_number: "+55 11 99999-0000"
+  normalized_phone: "5511999990000"
   waba_id: "waba_system"
   verified_name: "Platform Bot"
   status: 1
@@ -10,6 +11,7 @@ system_bot:
 space_number:
   phone_number_id: "space_phone_id"
   display_number: "+55 21 88888-0000"
+  normalized_phone: "5521888880000"
   waba_id: "waba_space"
   verified_name: "Dr. Owner Clinic"
   status: 1

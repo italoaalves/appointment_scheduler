@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_01_020000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_01_190956) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -359,6 +359,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_01_020000) do
     t.datetime "created_at", null: false
     t.string "display_number", null: false
     t.jsonb "metadata", default: {}, null: false
+    t.string "normalized_phone"
     t.string "phone_number_id", null: false
     t.string "quality_rating"
     t.bigint "space_id"
@@ -366,6 +367,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_01_020000) do
     t.datetime "updated_at", null: false
     t.string "verified_name"
     t.string "waba_id", null: false
+    t.index ["normalized_phone"], name: "index_whatsapp_phone_numbers_on_normalized_phone"
     t.index ["phone_number_id"], name: "index_whatsapp_phone_numbers_on_phone_number_id", unique: true
     t.index ["space_id"], name: "index_whatsapp_phone_numbers_on_space_id", unique: true, where: "(space_id IS NOT NULL)"
   end
