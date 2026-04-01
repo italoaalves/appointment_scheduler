@@ -44,8 +44,12 @@ module Messaging
         wamid = result.dig("messages", 0, "id")
         return unless wamid
 
-        space = Current.space || (recipient.respond_to?(:space) ? recipient.space : nil)
-        return unless space
+        space = opts[:space] || (recipient.respond_to?(:space) ? recipient.space : nil)
+
+        unless space
+          Rails.logger.warn("[Messaging::Channels::Whatsapp] No space context — skipping message recording")
+          return
+        end
 
         phone = resolve_phone(recipient)
         conversation = space.whatsapp_conversations.find_or_create_by!(
