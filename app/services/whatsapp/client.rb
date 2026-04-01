@@ -18,6 +18,11 @@ module Whatsapp
       end
     end
 
+    def self.for_space(space)
+      phone_number = space.whatsapp_phone_number || WhatsappPhoneNumber.system_bot.first!
+      new(phone_number_id: phone_number.phone_number_id)
+    end
+
     def initialize(phone_number_id: nil, access_token: nil, http_adapter: nil)
       @phone_number_id = phone_number_id || default_phone_number_id
       @access_token    = access_token    || default_access_token

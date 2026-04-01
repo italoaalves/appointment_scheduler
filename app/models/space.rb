@@ -27,6 +27,7 @@ class Space < ApplicationRecord
   has_many :billing_events,    class_name: "Billing::BillingEvent",     dependent: :destroy
   has_many :credit_purchases,  class_name: "Billing::CreditPurchase",   dependent: :destroy
   has_many :whatsapp_conversations, dependent: :destroy
+  has_one :whatsapp_phone_number, dependent: :nullify
 
   # business_hours: cached display string; updated by AvailabilitySchedule callback. Read-only.
 

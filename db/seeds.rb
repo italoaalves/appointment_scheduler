@@ -12,6 +12,7 @@ Billing::Subscription.destroy_all
 Billing::MessageCredit.destroy_all
 Billing::Plan.destroy_all
 Billing::CreditBundle.destroy_all
+WhatsappPhoneNumber.destroy_all
 Appointment.destroy_all
 Customer.destroy_all
 UserPreference.destroy_all
@@ -51,6 +52,14 @@ Billing::Plan.create!(
   allowed_payment_methods: %w[credit_card],
   position: 3, public: true, highlighted: false, trial_default: false, active: true
 )
+
+# ---- WHATSAPP PHONE NUMBER (system bot) ----
+WhatsappPhoneNumber.find_or_create_by!(phone_number_id: "SEED_PHONE_NUMBER_ID") do |pn|
+  pn.display_number = "+55 11 99999-0000"
+  pn.waba_id = "SEED_WABA_ID"
+  pn.verified_name = "Platform Bot"
+  pn.status = :active
+end
 
 # ---- SAAS ADMIN (no space) ----
 admin = User.create!(

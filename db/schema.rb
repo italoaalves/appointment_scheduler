@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_30_133509) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_01_011054) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -355,6 +355,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_133509) do
     t.index ["whatsapp_conversation_id"], name: "index_whatsapp_messages_on_whatsapp_conversation_id"
   end
 
+  create_table "whatsapp_phone_numbers", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "display_number", null: false
+    t.string "phone_number_id", null: false
+    t.string "quality_rating"
+    t.bigint "space_id"
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.string "verified_name"
+    t.string "waba_id", null: false
+    t.index ["phone_number_id"], name: "index_whatsapp_phone_numbers_on_phone_number_id", unique: true
+    t.index ["space_id"], name: "index_whatsapp_phone_numbers_on_space_id", unique: true, where: "(space_id IS NOT NULL)"
+  end
+
   add_foreign_key "appointments", "customers"
   add_foreign_key "appointments", "spaces"
   add_foreign_key "availability_windows", "availability_schedules"
@@ -384,4 +398,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_133509) do
   add_foreign_key "whatsapp_conversations", "spaces"
   add_foreign_key "whatsapp_messages", "users", column: "sent_by_id"
   add_foreign_key "whatsapp_messages", "whatsapp_conversations"
+  add_foreign_key "whatsapp_phone_numbers", "spaces"
 end
