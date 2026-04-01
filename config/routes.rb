@@ -85,6 +85,10 @@ Rails.application.routes.draw do
       get :payment,  on: :collection
       get :status,   on: :collection
     end
+    resource :whatsapp, only: [ :show ], controller: "whatsapp_settings" do
+      post :connect, on: :member
+      delete :disconnect, on: :member
+    end
   end
 
   namespace :billing do
