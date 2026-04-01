@@ -11,6 +11,15 @@ module Spaces
     end
 
     def connect
+      verification = Whatsapp::VerifyOwnership.new.call(
+        phone_number_id: connect_params[:phone_number_id],
+        waba_id: connect_params[:waba_id]
+      )
+
+      unless verification.success?
+        return redirect_to settings_whatsapp_path, alert: t("spaces.whatsapp_settings.verification_failed")
+      end
+
       phone_number = current_tenant.build_whatsapp_phone_number(connect_params)
       phone_number.status = :active
 
@@ -19,6 +28,8 @@ module Spaces
       else
         redirect_to settings_whatsapp_path, alert: phone_number.errors.full_messages.to_sentence
       end
+    rescue ActiveRecord::RecordNotUnique
+      redirect_to settings_whatsapp_path, alert: t("spaces.whatsapp_settings.already_connected")
     end
 
     def disconnect
