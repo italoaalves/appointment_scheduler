@@ -1494,6 +1494,8 @@ en:
       connect_button: "Connect WhatsApp Number"
       warning: "Once your number is registered on the WhatsApp Business API, you will no longer be able to use it in the WhatsApp app or WhatsApp Business app. All messages will be managed through this platform's inbox."
       connected: "WhatsApp number connected successfully."
+      verification_failed: "Could not verify ownership of this WhatsApp number. Please try again."
+      already_connected: "This WhatsApp number is already connected to another space."
       disconnected: "WhatsApp number disconnected."
       disconnect_failed: "Failed to disconnect WhatsApp number."
       disconnect_button: "Disconnect"
