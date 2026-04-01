@@ -28,6 +28,8 @@ class Notification < ApplicationRecord
       { controller: "spaces/credits", action: "show" }
     when "WhatsappConversation"
       { controller: "spaces/inbox", action: "show", id: notifiable_id }
+    when "WhatsappPhoneNumber"
+      { controller: "spaces/whatsapp_settings", action: "show" }
     end
   end
 end

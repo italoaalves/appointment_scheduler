@@ -10,6 +10,11 @@ module Whatsapp
 
       data.dig("entry")&.each do |entry|
         entry.dig("changes")&.each do |change|
+          if change["field"] == "phone_number_quality_update"
+            process_quality_update(change["value"])
+            next
+          end
+
           next unless change["field"] == "messages"
 
           value = change["value"]
@@ -109,6 +114,50 @@ module Whatsapp
       Billing::CreditManager.new(space).refund(source: :delivery_failure)
     rescue => e
       Rails.logger.error("[Whatsapp::ProcessWebhookJob] Credit refund failed for message #{message.id}: #{e.message}")
+    end
+
+    def process_quality_update(value)
+      display = value["display_phone_number"]
+      phone_number_id = display&.gsub(/\D/, "")
+      event = value["event"]
+
+      whatsapp_number = WhatsappPhoneNumber.find_by(phone_number_id: phone_number_id)
+      whatsapp_number ||= WhatsappPhoneNumber.find_by(display_number: display) if display
+      return unless whatsapp_number
+
+      new_rating = map_quality_rating(event)
+      whatsapp_number.update!(
+        quality_rating: new_rating,
+        metadata: whatsapp_number.metadata.merge(
+          "messaging_limit" => value["current_limit"],
+          "last_quality_event" => event,
+          "last_quality_update_at" => Time.current.iso8601
+        )
+      )
+
+      notify_quality_degradation(whatsapp_number, event) if event.in?(%w[FLAGGED RESTRICTED])
+    end
+
+    def map_quality_rating(event)
+      case event
+      when "FLAGGED"    then "YELLOW"
+      when "RESTRICTED" then "RED"
+      when "UNFLAGGED"  then "GREEN"
+      else event
+      end
+    end
+
+    def notify_quality_degradation(whatsapp_number, event)
+      return unless whatsapp_number.space&.owner
+
+      Notification.create!(
+        user: whatsapp_number.space.owner,
+        title: I18n.t("notifications.in_app.whatsapp_quality.title"),
+        body: I18n.t("notifications.in_app.whatsapp_quality.body_#{event.downcase}",
+                     number: whatsapp_number.display_number),
+        notifiable: whatsapp_number,
+        event_type: "whatsapp_quality_#{event.downcase}"
+      )
     end
 
     def notify_space_members(conversation)

@@ -5,6 +5,7 @@ system_bot:
   verified_name: "Platform Bot"
   status: 1
   space: null
+  metadata: {}
 
 space_number:
   phone_number_id: "space_phone_id"
@@ -13,3 +14,4 @@ space_number:
   verified_name: "Dr. Owner Clinic"
   status: 1
   space: one
+  metadata: {}

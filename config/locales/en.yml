@@ -87,6 +87,10 @@ en:
       whatsapp_message:
         title: "New WhatsApp message"
         body: "New message from %{name}"
+      whatsapp_quality:
+        title: "WhatsApp Quality Alert"
+        body_flagged: "Your WhatsApp number %{number} has been flagged for quality issues. Review your messaging practices to avoid restrictions."
+        body_restricted: "Your WhatsApp number %{number} has been restricted due to quality issues. Message sending may be limited."
       dropdown:
         title: "Notifications"
         mark_all_read: "Mark all as read"
