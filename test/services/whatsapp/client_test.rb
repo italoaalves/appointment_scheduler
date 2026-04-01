@@ -243,6 +243,27 @@ module Whatsapp
       assert_equal "application/json", captured[:request]["Content-Type"]
     end
 
+    # ── for_space ─────────────────────────────────────────────────────────────
+
+    test "for_space returns client with space's phone number when space has one" do
+      space = spaces(:one)
+      # space_number fixture is associated with spaces(:one)
+      pn = whatsapp_phone_numbers(:space_number)
+
+      client = Whatsapp::Client.for_space(space)
+
+      assert_equal pn.phone_number_id, client.instance_variable_get(:@phone_number_id)
+    end
+
+    test "for_space falls back to system bot when space has no phone number" do
+      space = spaces(:two)  # no whatsapp_phone_number associated
+      system_pn = whatsapp_phone_numbers(:system_bot)
+
+      client = Whatsapp::Client.for_space(space)
+
+      assert_equal system_pn.phone_number_id, client.instance_variable_get(:@phone_number_id)
+    end
+
     # ── URL construction ──────────────────────────────────────────────────────
 
     test "posts to correct messages URL including phone_number_id" do
