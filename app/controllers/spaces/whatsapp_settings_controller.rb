@@ -20,10 +20,11 @@ module Spaces
         return redirect_to settings_whatsapp_path, alert: t("spaces.whatsapp_settings.verification_failed")
       end
 
-      phone_number = current_tenant.build_whatsapp_phone_number(connect_params)
-      phone_number.status = :active
+      current_tenant.whatsapp_phone_number&.destroy
 
-      if phone_number.save
+      phone_number = current_tenant.create_whatsapp_phone_number(connect_params.merge(status: :active))
+
+      if phone_number.persisted?
         redirect_to settings_whatsapp_path, notice: t("spaces.whatsapp_settings.connected")
       else
         redirect_to settings_whatsapp_path, alert: phone_number.errors.full_messages.to_sentence
@@ -35,7 +36,7 @@ module Spaces
     def disconnect
       phone_number = current_tenant.whatsapp_phone_number
 
-      if phone_number&.update(status: :disconnected)
+      if phone_number&.destroy
         redirect_to settings_whatsapp_path, notice: t("spaces.whatsapp_settings.disconnected")
       else
         redirect_to settings_whatsapp_path, alert: t("spaces.whatsapp_settings.disconnect_failed")
