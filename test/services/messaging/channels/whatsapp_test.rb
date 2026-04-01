@@ -186,7 +186,7 @@ module Messaging
       end
 
       test "recording failure does not raise — delivery still succeeds" do
-        # No space set, so recording is skipped silently (space is nil)
+        # No space: opt and recipient has no .space — warning is logged, delivery still succeeds
         recipient = OpenStruct.new(phone: "+5511999999999")
 
         result = nil
@@ -197,6 +197,42 @@ module Messaging
         end
 
         assert result[:success]
+      end
+
+      test "logs warning when no space context available for recording" do
+        recipient = OpenStruct.new(phone: "+5511999999999")
+        warned    = false
+
+        Rails.logger.stub(:warn, ->(msg) { warned = true if msg.include?("No space context") }) do
+          ::Whatsapp::Client.stub(:new, @fake_client) do
+            @channel.deliver(to: recipient, body: "Hi")
+          end
+        end
+
+        assert warned, "Expected a warning log when no space context is available"
+      end
+
+      test "records outbound message when space: opt is passed explicitly" do
+        space    = spaces(:one)
+        customer = customers(:one)
+        customer.update!(phone: "+5511999990098")
+
+        fake_for_space = ->(_space) { @fake_client }
+
+        ::Whatsapp::Client.stub(:for_space, fake_for_space) do
+          assert_difference "WhatsappMessage.count", 1 do
+            @channel.deliver(
+              to:       customer,
+              body:     "Hi",
+              template: { name: "appointment_booked_v1" },
+              space:    space
+            )
+          end
+        end
+
+        msg = WhatsappMessage.last
+        assert_equal "wamid.test123", msg.wamid
+        assert msg.outbound?
       end
     end
   end
