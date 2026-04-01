@@ -75,14 +75,23 @@ module Whatsapp
     end
 
     def find_or_create_conversation(wa_id, customer_name, phone_number_id)
-      conversation = WhatsappConversation.find_by(wa_id: wa_id)
+      whatsapp_number = WhatsappPhoneNumber.active.find_by(phone_number_id: phone_number_id)
 
-      if conversation.nil?
-        Rails.logger.warn("[Whatsapp::ProcessWebhookJob] Unknown wa_id: #{wa_id}, no existing conversation")
+      unless whatsapp_number
+        Rails.logger.warn("[Whatsapp::ProcessWebhookJob] Unknown phone_number_id: #{phone_number_id}")
         return nil
       end
 
-      conversation
+      if whatsapp_number.space
+        # Tenant-owned number — route to that space, create conversation if new
+        whatsapp_number.space.whatsapp_conversations.find_or_create_by!(wa_id: wa_id) do |conv|
+          conv.customer_phone = "+#{wa_id}"
+          conv.customer_name = customer_name
+        end
+      else
+        # System bot — match by wa_id across all spaces (existing behavior)
+        WhatsappConversation.find_by(wa_id: wa_id)
+      end
     end
 
     def extract_body(msg)
