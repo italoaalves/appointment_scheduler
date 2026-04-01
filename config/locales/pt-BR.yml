@@ -1455,3 +1455,19 @@ pt-BR:
         back: "Voltar para usuário"
         all_users: "Todos os usuários"
 
+  spaces:
+    whatsapp_settings:
+      title: "Configurações do WhatsApp"
+      no_number: "Nenhum número do WhatsApp conectado"
+      connect_button: "Conectar Número do WhatsApp"
+      warning: "Uma vez que seu número for registrado na API do WhatsApp Business, você não poderá mais usá-lo no aplicativo WhatsApp ou WhatsApp Business. Todas as mensagens serão gerenciadas pela caixa de entrada desta plataforma."
+      connected: "Número do WhatsApp conectado com sucesso."
+      disconnected: "Número do WhatsApp desconectado."
+      disconnect_failed: "Falha ao desconectar o número do WhatsApp."
+      disconnect_button: "Desconectar"
+      disconnect_confirm: "Tem certeza? Seu espaço voltará a usar o número compartilhado da plataforma."
+      status: "Status"
+      quality_rating: "Classificação de Qualidade"
+      verified_name: "Nome da Empresa"
+      display_number: "Número de Telefone"
+

@@ -1482,4 +1482,20 @@ en:
         submit: "Update user"
         back: "Back to user"
         all_users: "All users"
-        
+
+  spaces:
+    whatsapp_settings:
+      title: "WhatsApp Settings"
+      no_number: "No WhatsApp number connected"
+      connect_button: "Connect WhatsApp Number"
+      warning: "Once your number is registered on the WhatsApp Business API, you will no longer be able to use it in the WhatsApp app or WhatsApp Business app. All messages will be managed through this platform's inbox."
+      connected: "WhatsApp number connected successfully."
+      disconnected: "WhatsApp number disconnected."
+      disconnect_failed: "Failed to disconnect WhatsApp number."
+      disconnect_button: "Disconnect"
+      disconnect_confirm: "Are you sure? Your space will fall back to the platform's shared number."
+      status: "Status"
+      quality_rating: "Quality Rating"
+      verified_name: "Business Name"
+      display_number: "Phone Number"
+
