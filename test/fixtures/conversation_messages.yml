@@ -1,0 +1,27 @@
+inbound_question:
+  conversation: needs_reply_one
+  direction: 0
+  body: "What time is my appointment?"
+  message_type: text
+  status: 3
+  external_message_id: "wamid_inbound_001"
+  credit_cost: 0
+
+outbound_reply:
+  conversation: open_with_messages
+  direction: 1
+  body: "Your appointment is at 10am tomorrow."
+  message_type: text
+  status: 2
+  external_message_id: "wamid_outbound_001"
+  sent_by: manager
+  credit_cost: 1
+
+inbound_thanks:
+  conversation: open_with_messages
+  direction: 0
+  body: "Thank you!"
+  message_type: text
+  status: 3
+  external_message_id: "wamid_inbound_002"
+  credit_cost: 0
