@@ -1,0 +1,39 @@
+automated_one:
+  space: one
+  channel: 0
+  status: 0
+  priority: 1
+  external_id: "wa_auto_001"
+  contact_identifier: "+5511999990001"
+  contact_name: "Bot Trigger"
+  last_message_body: "Your appointment is confirmed."
+  credit_cost_total: 1
+  unread: false
+
+needs_reply_one:
+  space: one
+  customer: one
+  channel: 0
+  status: 1
+  priority: 1
+  external_id: "wa_conv_001"
+  contact_identifier: "+5511999990002"
+  contact_name: "João Silva"
+  last_message_body: "What time is my appointment?"
+  last_message_at: <%= 30.minutes.ago %>
+  session_expires_at: <%= 23.hours.from_now %>
+  unread: true
+
+open_with_messages:
+  space: one
+  customer: two
+  channel: 0
+  status: 2
+  priority: 2
+  external_id: "wa_conv_002"
+  contact_identifier: "+5511999990003"
+  contact_name: "Maria Souza"
+  last_message_body: "Thank you!"
+  last_message_at: <%= 1.hour.ago %>
+  session_expires_at: <%= 22.hours.from_now %>
+  unread: false

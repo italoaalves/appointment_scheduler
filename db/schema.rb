@@ -91,6 +91,58 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_01_190956) do
     t.index ["trial_default"], name: "index_billing_plans_on_trial_default", unique: true, where: "(trial_default = true)"
   end
 
+  create_table "conversation_messages", force: :cascade do |t|
+    t.text "body"
+    t.bigint "conversation_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "credit_cost", default: 0, null: false
+    t.integer "direction", null: false
+    t.string "external_message_id"
+    t.string "message_type", default: "text"
+    t.jsonb "metadata", default: {}
+    t.bigint "sent_by_id"
+    t.integer "status", default: 0
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id", "created_at"], name: "index_conversation_messages_on_conversation_id_and_created_at"
+    t.index ["conversation_id"], name: "index_conversation_messages_on_conversation_id"
+    t.index ["external_message_id"], name: "index_conversation_messages_on_external_message_id", unique: true, where: "(external_message_id IS NOT NULL)"
+    t.index ["sent_by_id"], name: "index_conversation_messages_on_sent_by_id"
+  end
+
+  create_table "conversations", force: :cascade do |t|
+    t.bigint "assigned_to_id"
+    t.integer "channel", null: false
+    t.string "contact_identifier", null: false
+    t.string "contact_name"
+    t.datetime "created_at", null: false
+    t.integer "credit_cost_total", default: 0, null: false
+    t.bigint "customer_id"
+    t.string "external_id", null: false
+    t.datetime "first_response_at"
+    t.datetime "last_message_at"
+    t.string "last_message_body"
+    t.jsonb "metadata", default: {}
+    t.integer "priority", default: 1, null: false
+    t.datetime "session_expires_at"
+    t.boolean "sla_breached", default: false, null: false
+    t.datetime "sla_deadline_at"
+    t.bigint "space_id", null: false
+    t.integer "status", default: 0, null: false
+    t.string "subject"
+    t.boolean "unread", default: false, null: false
+    t.datetime "updated_at", null: false
+    t.index ["assigned_to_id"], name: "index_conversations_on_assigned_to_id"
+    t.index ["customer_id"], name: "index_conversations_on_customer_id"
+    t.index ["space_id", "assigned_to_id"], name: "index_conversations_on_space_id_and_assigned_to_id", where: "(assigned_to_id IS NOT NULL)"
+    t.index ["space_id", "channel", "external_id"], name: "index_conversations_on_space_id_and_channel_and_external_id", unique: true
+    t.index ["space_id", "channel"], name: "index_conversations_on_space_id_and_channel"
+    t.index ["space_id", "customer_id"], name: "index_conversations_on_space_id_and_customer_id"
+    t.index ["space_id", "sla_breached"], name: "index_conversations_on_space_id_and_sla_breached", where: "(sla_breached = true)"
+    t.index ["space_id", "status", "last_message_at"], name: "index_conversations_on_space_id_and_status_and_last_message_at"
+    t.index ["space_id", "unread"], name: "index_conversations_on_space_id_and_unread", where: "((unread = true) AND (status = ANY (ARRAY[1, 2, 3])))"
+    t.index ["space_id"], name: "index_conversations_on_space_id"
+  end
+
   create_table "credit_bundles", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.integer "amount", null: false
@@ -377,6 +429,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_01_190956) do
   add_foreign_key "availability_windows", "availability_schedules"
   add_foreign_key "billing_events", "spaces"
   add_foreign_key "billing_events", "subscriptions"
+  add_foreign_key "conversation_messages", "conversations"
+  add_foreign_key "conversation_messages", "users", column: "sent_by_id"
+  add_foreign_key "conversations", "customers"
+  add_foreign_key "conversations", "spaces"
+  add_foreign_key "conversations", "users", column: "assigned_to_id"
   add_foreign_key "credit_purchases", "credit_bundles"
   add_foreign_key "credit_purchases", "spaces"
   add_foreign_key "customers", "spaces"
