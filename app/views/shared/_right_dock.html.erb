@@ -1,6 +1,6 @@
 <%# Desktop right dock — hidden on mobile %>
 <div id="right-dock"
-     class="hidden lg:flex fixed right-4 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-1 py-3 px-2"
+     class="hidden lg:flex fixed right-4 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-1.5 py-4 px-3"
      style="background: rgba(255,255,255,0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.3); border-radius: 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.08);"
      data-controller="nav"
      data-turbo-permanent>
@@ -9,39 +9,39 @@
   <% if defined?(unread_notifications_count) && unread_notifications_count > 0 %>
     <div class="relative" data-controller="dropdown" data-action="click@window->dropdown#close">
       <button type="button"
-              class="relative flex items-center justify-center w-12 h-12 rounded-2xl text-slate-400 hover:text-deep hover:bg-slate-100/60 transition-colors cursor-pointer"
+              class="relative flex items-center justify-center w-14 h-14 rounded-2xl text-slate-400 hover:text-deep hover:bg-slate-100/60 transition-colors cursor-pointer"
               data-action="dropdown#toggle"
               aria-label="<%= t('notifications.in_app.dropdown.title') %>">
-        <%= render "shared/icons/bell", class: "h-5 w-5" %>
-        <span class="absolute top-2 right-2 flex h-2 w-2">
+        <%= render "shared/icons/bell", class: "h-[30px] w-[30px]" %>
+        <span class="absolute top-2.5 right-2.5 flex h-2.5 w-2.5">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
         </span>
       </button>
       <div data-dropdown-target="menu" class="hidden absolute right-full mr-3 top-0 z-50 min-w-[280px]">
         <%= render "shared/notification_dropdown" %>
       </div>
     </div>
-    <div class="w-8 h-px my-0.5" style="background: rgba(0,0,0,0.08);"></div>
+    <div class="w-12 h-px my-0.5" style="background: rgba(0,0,0,0.08);"></div>
   <% end %>
 
   <%# Logo / Home %>
   <%= link_to root_path,
-              class: "flex items-center justify-center w-12 h-12 rounded-2xl hover:bg-slate-100/60 transition-colors",
+              class: "flex items-center justify-center w-14 h-14 rounded-2xl hover:bg-slate-100/60 transition-colors",
               aria: { label: "Home" } do %>
-    <%= image_tag "anella-logo.png", class: "w-7 h-7 rounded-lg object-contain", alt: "Anella" %>
+    <%= image_tag "anella-logo.png", class: "w-10 h-10 rounded-xl object-contain", alt: "Anella" %>
   <% end %>
 
-  <div class="w-8 h-px my-0.5" style="background: rgba(0,0,0,0.08);"></div>
+  <div class="w-12 h-px my-0.5" style="background: rgba(0,0,0,0.08);"></div>
 
   <%# Appointments group %>
   <div class="relative">
     <button type="button"
-            class="flex items-center justify-center w-12 h-12 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:appointments) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60' %>"
+            class="flex items-center justify-center w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:appointments) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60' %>"
             data-action="click->nav#toggle"
             data-nav-group-param="appointments"
             aria-label="Appointments">
-      <%= render "shared/icons/calendar_days", class: "h-5 w-5" %>
+      <%= render "shared/icons/calendar_days", class: "h-[30px] w-[30px]" %>
     </button>
     <%# Flyout %>
     <div class="hidden opacity-0 translate-x-2 absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 w-52 transition-all duration-150"
@@ -70,9 +70,9 @@
   <%# Communication — only when entitled %>
   <% if defined?(current_tenant) && Billing::PlanEnforcer.can?(current_tenant, :send_whatsapp) %>
     <%= link_to spaces_inbox_index_path,
-                class: "flex items-center justify-center w-12 h-12 rounded-2xl transition-colors #{nav_group_active?(:communication) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60'}",
+                class: "flex items-center justify-center w-14 h-14 rounded-2xl transition-colors #{nav_group_active?(:communication) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60'}",
                 aria: { label: "Inbox" } do %>
-      <%= render "shared/icons/chat_bubble", class: "h-5 w-5" %>
+      <%= render "shared/icons/chat_bubble", class: "h-[30px] w-[30px]" %>
     <% end %>
   <% end %>
 
@@ -80,11 +80,11 @@
   <% if current_user.can?(:manage_space) %>
     <div class="relative">
       <button type="button"
-              class="flex items-center justify-center w-12 h-12 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:space) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60' %>"
+              class="flex items-center justify-center w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:space) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60' %>"
               data-action="click->nav#toggle"
               data-nav-group-param="space"
               aria-label="Workspace">
-        <%= render "shared/icons/building_office", class: "h-5 w-5" %>
+        <%= render "shared/icons/building_office", class: "h-[30px] w-[30px]" %>
       </button>
       <%# Flyout %>
       <div class="hidden opacity-0 translate-x-2 absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 w-52 transition-all duration-150"
@@ -120,16 +120,16 @@
     </div>
   <% end %>
 
-  <div class="w-8 h-px my-0.5" style="background: rgba(0,0,0,0.08);"></div>
+  <div class="w-12 h-px my-0.5" style="background: rgba(0,0,0,0.08);"></div>
 
   <%# Profile %>
   <div class="relative">
     <button type="button"
-            class="flex items-center justify-center w-12 h-12 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:profile) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60' %>"
+            class="flex items-center justify-center w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:profile) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60' %>"
             data-action="click->nav#toggle"
             data-nav-group-param="profile"
             aria-label="Profile">
-      <%= render "shared/icons/user_circle", class: "h-5 w-5" %>
+      <%= render "shared/icons/user_circle", class: "h-[30px] w-[30px]" %>
     </button>
     <%# Flyout %>
     <div class="hidden opacity-0 translate-x-2 absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 w-52 transition-all duration-150"

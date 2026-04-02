@@ -47,15 +47,34 @@ export default class extends Controller {
 
   toggleSheet(event) {
     event.stopPropagation()
+
     const group = event.params.group
     const sheet = this.sheetTargets.find(el => el.dataset.navGroup === group)
     if (!sheet) return
 
     const isOpen = !sheet.classList.contains("hidden")
-    this.closeAllSheets()
-    if (!isOpen) {
-      this._sheetOpenedAt = Date.now()
-      this.sheetOverlayTarget.classList.remove("hidden")
+
+    // Close any OTHER open sheets (skip already-hidden ones)
+    this.sheetTargets.forEach(el => {
+      if (el === sheet || el.classList.contains("hidden")) return
+      el.classList.add("translate-y-full")
+      el.classList.remove("translate-y-0")
+      setTimeout(() => el.classList.add("hidden"), 200)
+    })
+
+    if (isOpen) {
+      // Close this sheet
+      sheet.classList.add("translate-y-full")
+      sheet.classList.remove("translate-y-0")
+      setTimeout(() => sheet.classList.add("hidden"), 200)
+      if (this.hasSheetOverlayTarget) {
+        this.sheetOverlayTarget.classList.add("hidden")
+      }
+    } else {
+      // Open this sheet
+      if (this.hasSheetOverlayTarget) {
+        this.sheetOverlayTarget.classList.remove("hidden")
+      }
       sheet.classList.remove("hidden")
       requestAnimationFrame(() => {
         sheet.classList.remove("translate-y-full")
@@ -64,15 +83,14 @@ export default class extends Controller {
     }
   }
 
-  closeAll(event) {
-    // Ignore ghost clicks fired within 150ms of opening (mobile touch)
-    if (this._sheetOpenedAt && Date.now() - this._sheetOpenedAt < 150) return
+  closeAll() {
     this._closeFlyouts()
     this.closeAllSheets()
   }
 
   closeAllSheets() {
     this.sheetTargets.forEach(el => {
+      if (el.classList.contains("hidden")) return
       el.classList.add("translate-y-full")
       el.classList.remove("translate-y-0")
       setTimeout(() => el.classList.add("hidden"), 200)
