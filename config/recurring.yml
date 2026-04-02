@@ -45,6 +45,10 @@ default: &default
     class: Billing::PaymentDueReminderJob
     queue: default
     schedule: at 8am every day
+  inbox_check_sla_breaches:
+    class: Inbox::CheckSlaBreachesJob
+    queue: default
+    schedule: every 5 minutes
 
 development:
   <<: *default

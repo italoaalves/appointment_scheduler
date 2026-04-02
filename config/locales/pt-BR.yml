@@ -58,6 +58,9 @@ pt-BR:
       whatsapp_message:
         title: "Nova mensagem WhatsApp"
         body: "Nova mensagem de %{name}"
+      sla_breach:
+        title: "SLA violado"
+        body: "O prazo de resposta para a conversa com %{name} foi ultrapassado."
       whatsapp_quality:
         title: "Alerta de Qualidade WhatsApp"
         body_flagged: "Seu número WhatsApp %{number} foi sinalizado por problemas de qualidade. Revise suas práticas de mensagens para evitar restrições."

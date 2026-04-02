@@ -17,7 +17,35 @@ class Conversation < ApplicationRecord
   scope :needing_attention, -> { where(status: [ :needs_reply, :open, :pending ]) }
   scope :for_default_inbox, -> { needing_attention }
 
+  after_save :set_sla_deadline, if: :needs_sla_deadline?
+  after_save :recompute_sla_deadline, if: :needs_sla_recompute?
+
   def session_active?
     session_expires_at.present? && session_expires_at > Time.current
+  end
+
+  private
+
+  # Set deadline when transitioning into needs_reply for the first time.
+  def needs_sla_deadline?
+    saved_change_to_status? &&
+      needs_reply? &&
+      sla_deadline_at.nil?
+  end
+
+  # Recompute deadline when priority changes on an unresponded needs_reply conversation.
+  def needs_sla_recompute?
+    saved_change_to_priority? &&
+      needs_reply? &&
+      first_response_at.nil? &&
+      sla_deadline_at.present?
+  end
+
+  def set_sla_deadline
+    update_column(:sla_deadline_at, Inbox::SlaPolicy.deadline_for(priority))
+  end
+
+  def recompute_sla_deadline
+    update_column(:sla_deadline_at, Inbox::SlaPolicy.deadline_for(priority))
   end
 end
