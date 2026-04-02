@@ -121,7 +121,7 @@
       <%# Appointments %>
       <button type="button"
               class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:appointments) ? 'text-electric' : 'text-slate-400' %>"
-              data-action="click->nav#toggleSheet"
+              data-action="touchstart->nav#toggleSheet click->nav#toggleSheet"
               data-nav-group-param="appointments"
               aria-label="Appointments">
         <%= render "shared/icons/calendar_days", class: "h-5 w-5" %>
@@ -142,7 +142,7 @@
       <% if current_user.can?(:manage_space) %>
         <button type="button"
                 class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:space) ? 'text-electric' : 'text-slate-400' %>"
-                data-action="click->nav#toggleSheet"
+                data-action="touchstart->nav#toggleSheet click->nav#toggleSheet"
                 data-nav-group-param="space"
                 aria-label="Workspace">
           <%= render "shared/icons/building_office", class: "h-5 w-5" %>
@@ -153,7 +153,7 @@
       <%# Profile %>
       <button type="button"
               class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:profile) ? 'text-electric' : 'text-slate-400' %>"
-              data-action="click->nav#toggleSheet"
+              data-action="touchstart->nav#toggleSheet click->nav#toggleSheet"
               data-nav-group-param="profile"
               aria-label="Profile">
         <%= render "shared/icons/user_circle", class: "h-5 w-5" %>

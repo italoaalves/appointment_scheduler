@@ -45,8 +45,15 @@ export default class extends Controller {
     this._closeFlyouts()
   }
 
+  // Handles both touchstart (mobile) and click (desktop).
+  // On touchstart, preventDefault() suppresses the subsequent synthetic click
+  // so the sheet is only toggled once per tap.
   toggleSheet(event) {
+    if (event.type === "touchstart") {
+      event.preventDefault()
+    }
     event.stopPropagation()
+
     const group = event.params.group
     const sheet = this.sheetTargets.find(el => el.dataset.navGroup === group)
     if (!sheet) return
@@ -54,7 +61,6 @@ export default class extends Controller {
     const isOpen = !sheet.classList.contains("hidden")
     this.closeAllSheets()
     if (!isOpen) {
-      this._sheetOpenedAt = Date.now()
       this.sheetOverlayTarget.classList.remove("hidden")
       sheet.classList.remove("hidden")
       requestAnimationFrame(() => {
@@ -65,8 +71,9 @@ export default class extends Controller {
   }
 
   closeAll(event) {
-    // Ignore ghost clicks fired within 150ms of opening (mobile touch)
-    if (this._sheetOpenedAt && Date.now() - this._sheetOpenedAt < 150) return
+    if (event?.type === "touchstart") {
+      event.preventDefault()
+    }
     this._closeFlyouts()
     this.closeAllSheets()
   }
