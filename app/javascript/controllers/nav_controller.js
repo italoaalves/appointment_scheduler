@@ -46,11 +46,15 @@ export default class extends Controller {
   }
 
   // Handles both touchstart (mobile) and click (desktop).
-  // On touchstart, preventDefault() suppresses the subsequent synthetic click
-  // so the sheet is only toggled once per tap.
+  // Sets _touchHandled on touchstart so the subsequent synthetic click is ignored,
+  // preventing the double-fire that would open then immediately close the sheet.
   toggleSheet(event) {
     if (event.type === "touchstart") {
       event.preventDefault()
+      this._touchHandled = true
+    } else if (event.type === "click" && this._touchHandled) {
+      this._touchHandled = false
+      return
     }
     event.stopPropagation()
 
@@ -73,6 +77,10 @@ export default class extends Controller {
   closeAll(event) {
     if (event?.type === "touchstart") {
       event.preventDefault()
+      this._touchHandled = true
+    } else if (event?.type === "click" && this._touchHandled) {
+      this._touchHandled = false
+      return
     }
     this._closeFlyouts()
     this.closeAllSheets()
