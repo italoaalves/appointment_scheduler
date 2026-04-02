@@ -1,5 +1,155 @@
 @import "tailwindcss";
 
+@theme {
+  /* === Colors: Fresh Water & Deep Current === */
+  --color-cerulean: #00D2FF;
+  --color-electric: #007AFF;
+  --color-deep: #0F172A;
+  --color-mist: #F8FAFC;
+  --color-hydro-glass: rgba(255, 255, 255, 0.4);
+  --color-hydro-border: rgba(255, 255, 255, 0.2);
+
+  /* === Typography === */
+  --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* === Radius === */
+  --radius-card: 1.5rem;
+
+  /* === Shadows / Glows === */
+  --shadow-glow: 0 0 100px rgba(0, 210, 255, 0.15);
+}
+
+@layer base {
+  body {
+    font-family: var(--font-body);
+    color: var(--color-deep);
+    background-color: var(--color-mist);
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+  }
+}
+
+@layer components {
+  /* === Buttons === */
+
+  /* Primary CTA — Electric Cyan, used sparingly */
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3
+           bg-electric text-white font-display font-bold
+           rounded-card
+           transition-all duration-200
+           hover:brightness-110 hover:shadow-lg
+           focus:outline-none focus:ring-2 focus:ring-electric/50 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Secondary — outlined, for less prominent actions */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3
+           bg-white text-deep font-medium
+           border border-slate-300 rounded-card
+           transition-all duration-200
+           hover:border-slate-400 hover:shadow-sm
+           focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Danger — destructive actions */
+  .btn-danger {
+    @apply inline-flex items-center justify-center px-6 py-3
+           bg-red-600 text-white font-medium
+           rounded-card
+           transition-all duration-200
+           hover:bg-red-700
+           focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Small variant modifier — combine with btn-* */
+  .btn-sm {
+    @apply px-4 py-2 text-sm;
+  }
+
+  /* === Cards === */
+
+  /* Standard card */
+  .card {
+    @apply bg-white rounded-card p-6
+           border border-slate-200
+           shadow-sm;
+  }
+
+  /* Glassmorphism card — for landing page and premium surfaces */
+  .card-glass {
+    @apply rounded-card p-6
+           border border-hydro-border
+           shadow-sm;
+    background: var(--color-hydro-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  /* === Form Fields === */
+
+  .form-input {
+    @apply w-full px-4 py-3
+           bg-white text-deep
+           border border-slate-300 rounded-card
+           transition-colors duration-200
+           placeholder:text-slate-400
+           focus:outline-none focus:border-electric focus:ring-2 focus:ring-electric/20;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-deep mb-1.5;
+  }
+
+  .form-hint {
+    @apply text-sm text-slate-500 mt-1;
+  }
+
+  .form-error {
+    @apply text-sm text-red-600 mt-1;
+  }
+
+  /* === Badges === */
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5
+           text-xs font-medium rounded-full;
+  }
+
+  .badge-cerulean {
+    @apply bg-cerulean/10 text-cerulean;
+  }
+
+  .badge-green {
+    @apply bg-green-100 text-green-700;
+  }
+
+  .badge-red {
+    @apply bg-red-100 text-red-700;
+  }
+
+  .badge-slate {
+    @apply bg-slate-100 text-slate-600;
+  }
+
+  /* === Section Headings === */
+
+  .section-heading {
+    @apply font-display text-3xl font-extrabold text-deep tracking-tight;
+  }
+
+  .section-subheading {
+    @apply text-lg text-slate-600 mt-2 max-w-2xl;
+  }
+}
+
 /* Booking slot buttons */
 .slot-btn {
   @apply rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:border-slate-400;
