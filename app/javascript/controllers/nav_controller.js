@@ -45,17 +45,7 @@ export default class extends Controller {
     this._closeFlyouts()
   }
 
-  // Handles both touchstart (mobile) and click (desktop).
-  // Sets _touchHandled on touchstart so the subsequent synthetic click is ignored,
-  // preventing the double-fire that would open then immediately close the sheet.
   toggleSheet(event) {
-    if (event.type === "touchstart") {
-      event.preventDefault()
-      this._touchHandled = true
-    } else if (event.type === "click" && this._touchHandled) {
-      this._touchHandled = false
-      return
-    }
     event.stopPropagation()
 
     const group = event.params.group
@@ -63,9 +53,28 @@ export default class extends Controller {
     if (!sheet) return
 
     const isOpen = !sheet.classList.contains("hidden")
-    this.closeAllSheets()
-    if (!isOpen) {
-      this.sheetOverlayTarget.classList.remove("hidden")
+
+    // Close any OTHER open sheets (skip already-hidden ones)
+    this.sheetTargets.forEach(el => {
+      if (el === sheet || el.classList.contains("hidden")) return
+      el.classList.add("translate-y-full")
+      el.classList.remove("translate-y-0")
+      setTimeout(() => el.classList.add("hidden"), 200)
+    })
+
+    if (isOpen) {
+      // Close this sheet
+      sheet.classList.add("translate-y-full")
+      sheet.classList.remove("translate-y-0")
+      setTimeout(() => sheet.classList.add("hidden"), 200)
+      if (this.hasSheetOverlayTarget) {
+        this.sheetOverlayTarget.classList.add("hidden")
+      }
+    } else {
+      // Open this sheet
+      if (this.hasSheetOverlayTarget) {
+        this.sheetOverlayTarget.classList.remove("hidden")
+      }
       sheet.classList.remove("hidden")
       requestAnimationFrame(() => {
         sheet.classList.remove("translate-y-full")
@@ -74,20 +83,14 @@ export default class extends Controller {
     }
   }
 
-  closeAll(event) {
-    if (event?.type === "touchstart") {
-      event.preventDefault()
-      this._touchHandled = true
-    } else if (event?.type === "click" && this._touchHandled) {
-      this._touchHandled = false
-      return
-    }
+  closeAll() {
     this._closeFlyouts()
     this.closeAllSheets()
   }
 
   closeAllSheets() {
     this.sheetTargets.forEach(el => {
+      if (el.classList.contains("hidden")) return
       el.classList.add("translate-y-full")
       el.classList.remove("translate-y-0")
       setTimeout(() => el.classList.add("hidden"), 200)
