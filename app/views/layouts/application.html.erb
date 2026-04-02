@@ -26,7 +26,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen bg-slate-50 text-slate-900">
+  <body class="min-h-screen bg-mist text-deep">
     <%= render "shared/email_confirmation_banner" if user_signed_in? && !current_user.confirmed? %>
     <% if user_signed_in? %>
       <% if impersonating? %>
@@ -38,160 +38,107 @@
                         class: "inline-flex rounded-md bg-amber-600 px-2 py-1 text-xs font-semibold text-amber-900 hover:bg-amber-700" %>
         </div>
       <% end %>
-      <nav data-controller="dropdown" data-action="click@window->dropdown#close" class="bg-deep border-b border-slate-800">
-        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div class="flex h-14 items-center justify-between">
-            <div class="flex items-center gap-4">
-              <%= link_to t("layout.app_name"), current_user.super_admin? ? platform_root_path : root_path, class: "font-display font-bold text-sm text-white tracking-tight" %>
-              <div class="hidden md:flex items-center gap-3 text-sm">
-                <% if current_user.super_admin? %>
+      <% if current_user.super_admin? %>
+        <nav data-controller="dropdown" data-action="click@window->dropdown#close" class="bg-deep border-b border-slate-800">
+          <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-14 items-center justify-between">
+              <div class="flex items-center gap-4">
+                <%= link_to t("layout.app_name"), platform_root_path, class: "font-display font-bold text-sm text-white tracking-tight" %>
+                <div class="hidden md:flex items-center gap-3 text-sm">
                   <%= link_to t("layout.nav.tenants"), platform_spaces_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
                   <%= link_to t("layout.nav.platform_users"), platform_users_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
                   <%= link_to t("layout.nav.platform_billing"), platform_billing_index_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
                   <%= link_to t("layout.nav.platform_plans"), platform_plans_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
                   <%= link_to t("layout.nav.platform_credit_bundles"), platform_credit_bundles_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
-                <% elsif tenant_staff? %>
-                  <%= link_to root_path, class: nav_active_classes(:dashboard), aria: { current: (nav_active?(:dashboard) ? "page" : nil) } do %>
-                    <%= t("layout.nav.dashboard") %>
-                  <% end %>
-                  <%= link_to appointments_path, class: nav_active_classes(:appointments), aria: { current: (nav_active?(:appointments) ? "page" : nil) } do %>
-                    <%= t("layout.nav.all_appointments") %>
-                    <%= render "shared/pending_badge", count: pending_appointments_count %>
-                  <% end %>
-                  <%= link_to scheduling_links_path, class: nav_active_classes(:booking_links), aria: { current: (nav_active?(:booking_links) ? "page" : nil) } do %>
-                    <%= t("layout.nav.booking_links") %>
-                  <% end %>
-                  <%= link_to customers_path, class: nav_active_classes(:customers), aria: { current: (nav_active?(:customers) ? "page" : nil) } do %>
-                    <%= t("layout.nav.customers") %>
-                  <% end %>
-                  <%= link_to users_path, class: nav_active_classes(:team), aria: { current: (nav_active?(:team) ? "page" : nil) } do %>
-                    <%= t("layout.nav.team") %>
-                  <% end %>
-                  <% if current_user.can?(:manage_space) %>
-                    <%= link_to edit_settings_space_path, class: "#{nav_active_classes(:settings)} gap-1", aria: { current: (nav_active?(:settings) ? "page" : nil) } do %>
-                      <%= render "shared/icons/gear", class: "h-4 w-4 shrink-0" %>
-                      <%= t("layout.nav.settings") %>
-                    <% end %>
-                  <% end %>
-                <% else %>
-                  <%# Customers: profile/logout only; book via scheduling links %>
-                <% end %>
+                </div>
               </div>
-            </div>
-            <div class="hidden md:flex items-center gap-2">
-              <% if tenant_staff? %>
-                <%= render "shared/notification_dropdown" %>
-              <% end %>
-              <div class="relative" data-controller="dropdown" data-action="click@window->dropdown#close">
-                <button type="button"
-                        class="inline-flex items-center justify-center rounded-full bg-slate-800 p-2 text-slate-200 hover:bg-slate-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-900"
-                        data-action="dropdown#toggle"
-                        aria-haspopup="true"
-                        aria-label="<%= t('layout.nav.profile') %>">
-                  <%= render "shared/icons/user" %>
-                </button>
-                <div data-dropdown-target="menu"
-                     class="hidden absolute right-0 top-full z-50 mt-2 min-w-[200px] rounded-md bg-slate-800 py-1 shadow-lg ring-1 ring-slate-700">
-                  <div class="border-b border-slate-700 px-3 py-2">
-                    <p class="text-xs font-medium text-white truncate"><%= current_user.name.presence || current_user.email %></p>
-                    <p class="text-xs text-slate-400 truncate"><%= current_user.email %></p>
-                  </div>
-                  <%= link_to edit_profile_path, class: "block px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 hover:text-white" do %>
-                    <%= t("layout.nav.profile") %>
-                  <% end %>
-                  <%= link_to edit_preferences_path, class: "block px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 hover:text-white" do %>
-                    <%= t("layout.nav.preferences") %>
-                  <% end %>
-                  <div class="border-t border-slate-700">
-                    <%= button_to t("layout.nav.logout"),
-                                  destroy_user_session_path,
-                                  method: :delete,
-                                  data: { turbo: false },
-                                  class: "block w-full px-3 py-2 text-left text-sm text-slate-200 hover:bg-slate-700 hover:text-white" %>
+              <div class="hidden md:flex items-center gap-2">
+                <div class="relative" data-controller="dropdown" data-action="click@window->dropdown#close">
+                  <button type="button"
+                          class="inline-flex items-center justify-center rounded-full bg-slate-800 p-2 text-slate-200 hover:bg-slate-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-900"
+                          data-action="dropdown#toggle"
+                          aria-haspopup="true"
+                          aria-label="<%= t('layout.nav.profile') %>">
+                    <%= render "shared/icons/user" %>
+                  </button>
+                  <div data-dropdown-target="menu"
+                       class="hidden absolute right-0 top-full z-50 mt-2 min-w-[200px] rounded-md bg-slate-800 py-1 shadow-lg ring-1 ring-slate-700">
+                    <div class="border-b border-slate-700 px-3 py-2">
+                      <p class="text-xs font-medium text-white truncate"><%= current_user.name.presence || current_user.email %></p>
+                      <p class="text-xs text-slate-400 truncate"><%= current_user.email %></p>
+                    </div>
+                    <%= link_to edit_profile_path, class: "block px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 hover:text-white" do %>
+                      <%= t("layout.nav.profile") %>
+                    <% end %>
+                    <%= link_to edit_preferences_path, class: "block px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 hover:text-white" do %>
+                      <%= t("layout.nav.preferences") %>
+                    <% end %>
+                    <div class="border-t border-slate-700">
+                      <%= button_to t("layout.nav.logout"),
+                                    destroy_user_session_path,
+                                    method: :delete,
+                                    data: { turbo: false },
+                                    class: "block w-full px-3 py-2 text-left text-sm text-slate-200 hover:bg-slate-700 hover:text-white" %>
+                    </div>
                   </div>
                 </div>
               </div>
+              <div class="flex items-center md:hidden">
+                <button type="button"
+                        class="inline-flex items-center justify-center rounded-md p-1.5 text-slate-200 hover:bg-slate-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                        data-action="dropdown#toggle"
+                        aria-label="Toggle navigation"
+                        aria-haspopup="true">
+                  <span data-dropdown-target="openIcon"><%= render "shared/icons/menu" %></span>
+                  <span data-dropdown-target="closeIcon" class="hidden"><%= render "shared/icons/close" %></span>
+                </button>
+              </div>
             </div>
-            <div class="flex items-center md:hidden">
-              <button type="button"
-                      class="inline-flex items-center justify-center rounded-md p-1.5 text-slate-200 hover:bg-slate-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                      data-action="dropdown#toggle"
-                      aria-label="Toggle navigation"
-                      aria-haspopup="true">
-                <span data-dropdown-target="openIcon"><%= render "shared/icons/menu" %></span>
-                <span data-dropdown-target="closeIcon" class="hidden"><%= render "shared/icons/close" %></span>
-              </button>
-            </div>
-          </div>
-          <div class="md:hidden hidden" data-dropdown-target="menu">
-            <div class="space-y-1 pb-3 pt-2">
-              <% if current_user.super_admin? %>
+            <div class="md:hidden hidden" data-dropdown-target="menu">
+              <div class="space-y-1 pb-3 pt-2">
                 <%= link_to t("layout.nav.tenants"), platform_spaces_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
                 <%= link_to t("layout.nav.platform_users"), platform_users_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
                 <%= link_to t("layout.nav.platform_billing"), platform_billing_index_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
                 <%= link_to t("layout.nav.platform_plans"), platform_plans_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
                 <%= link_to t("layout.nav.platform_credit_bundles"), platform_credit_bundles_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
-              <% elsif tenant_staff? %>
-                <%= link_to root_path, class: nav_active_classes(:dashboard, variant: :mobile), aria: { current: (nav_active?(:dashboard) ? "page" : nil) } do %>
-                  <%= t("layout.nav.dashboard") %>
-                <% end %>
-                <%= link_to appointments_path, class: nav_active_classes(:appointments, variant: :mobile), aria: { current: (nav_active?(:appointments) ? "page" : nil) } do %>
-                  <%= t("layout.nav.all_appointments") %>
-                  <%= render "shared/pending_badge_mobile", count: pending_appointments_count %>
-                <% end %>
-                <%= link_to scheduling_links_path, class: nav_active_classes(:booking_links, variant: :mobile), aria: { current: (nav_active?(:booking_links) ? "page" : nil) } do %>
-                  <%= t("layout.nav.booking_links") %>
-                <% end %>
-                <%= link_to customers_path, class: nav_active_classes(:customers, variant: :mobile), aria: { current: (nav_active?(:customers) ? "page" : nil) } do %>
-                  <%= t("layout.nav.customers") %>
-                <% end %>
-                <%= link_to users_path, class: nav_active_classes(:team, variant: :mobile), aria: { current: (nav_active?(:team) ? "page" : nil) } do %>
-                  <%= t("layout.nav.team") %>
-                <% end %>
-                <% if current_user.can?(:manage_space) %>
-                  <p class="px-3 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-slate-400"><%= t("layout.nav.settings") %></p>
-                  <%= link_to t("layout.nav.settings_space"), edit_settings_space_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{settings_section_active?(:space) ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (settings_section_active?(:space) ? "page" : nil) } %>
-                  <%= link_to t("layout.nav.settings_availability"), edit_settings_space_availability_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{settings_section_active?(:availability) ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (settings_section_active?(:availability) ? "page" : nil) } %>
-                  <%= link_to t("layout.nav.settings_policies"), edit_settings_space_policies_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{settings_section_active?(:policies) ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (settings_section_active?(:policies) ? "page" : nil) } %>
-                  <%= link_to t("layout.nav.billing"), settings_billing_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{settings_section_active?(:billing) ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (settings_section_active?(:billing) ? "page" : nil) } %>
-                  <%= link_to t("layout.nav.credits"), settings_credits_path, class: "block rounded-md px-3 py-2 text-sm font-medium pl-6 #{settings_section_active?(:credits) ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (settings_section_active?(:credits) ? "page" : nil) } %>
-                  <% if Billing::PlanEnforcer.can?(current_tenant, :send_whatsapp) %>
-                    <%= link_to spaces_inbox_index_path, class: "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium pl-6 #{settings_section_active?(:inbox) ? 'bg-indigo-900/40 text-white' : 'text-slate-100 hover:bg-slate-800'}", aria: { current: (settings_section_active?(:inbox) ? "page" : nil) } do %>
-                      <%= t("layout.nav.inbox") %>
-                      <% if (unread_count = current_tenant.whatsapp_conversations.unread.count) > 0 %>
-                        <span class="inline-flex items-center rounded-full bg-indigo-500 px-1.5 py-0.5 text-[10px] font-bold text-white"><%= unread_count %></span>
-                      <% end %>
-                    <% end %>
+                <div class="border-t border-slate-800 mt-2 pt-2 space-y-1 px-3 pb-2">
+                  <%= link_to edit_profile_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" do %>
+                    <%= t("layout.nav.profile") %>
                   <% end %>
-                <% end %>
-              <% else %>
-                <%# Customers: profile/logout only; book via scheduling links %>
-              <% end %>
-              <% if tenant_staff? && unread_notifications_count > 0 %>
-                <%= link_to notifications_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" do %>
-                  <%= t("notifications.in_app.dropdown.title") %>
-                  <span class="ml-1.5 inline-flex items-center rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
-                    <%= unread_notifications_count %>
-                  </span>
-                <% end %>
-              <% end %>
-              <div class="border-t border-slate-800 mt-2 pt-2 space-y-1 px-3 pb-2">
-                <%= link_to edit_profile_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" do %>
-                  <%= t("layout.nav.profile") %>
-                <% end %>
-                <%= link_to edit_preferences_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" do %>
-                  <%= t("layout.nav.preferences") %>
-                <% end %>
-                <%= button_to t("layout.nav.logout"),
-                              destroy_user_session_path,
-                              method: :delete,
-                              data: { turbo: false },
-                              class: "block w-full text-left rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+                  <%= link_to edit_preferences_path, class: "block rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" do %>
+                    <%= t("layout.nav.preferences") %>
+                  <% end %>
+                  <%= button_to t("layout.nav.logout"),
+                                destroy_user_session_path,
+                                method: :delete,
+                                data: { turbo: false },
+                                class: "block w-full text-left rounded-md px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+      <% elsif tenant_staff? %>
+        <% if unread_notifications_count > 0 %>
+          <div class="lg:hidden fixed top-4 right-4 z-50" data-controller="dropdown" data-action="click@window->dropdown#close">
+            <button type="button"
+                    class="relative flex items-center justify-center w-10 h-10 rounded-full bg-white/80 backdrop-blur shadow-sm border border-slate-200/60 text-slate-500 cursor-pointer"
+                    data-action="dropdown#toggle"
+                    aria-label="<%= t('notifications.in_app.dropdown.title') %>">
+              <%= render "shared/icons/bell", class: "h-5 w-5" %>
+              <span class="absolute top-1 right-1 flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+              </span>
+            </button>
+            <div data-dropdown-target="menu" class="hidden absolute right-0 top-full mt-2 z-50 min-w-[280px]">
+              <%= render "shared/notification_dropdown" %>
+            </div>
+          </div>
+        <% end %>
+        <%= render "shared/right_dock" %>
+        <%= render "shared/bottom_nav" %>
+      <% end %>
     <% end %>
 
     <%= render "shared/billing_banner" %>
@@ -200,7 +147,7 @@
       <%= render "shared/flash_messages" %>
     </div>
 
-    <main class="mx-auto px-4 py-8 <%= content_for?(:settings_sidebar) ? 'max-w-5xl' : 'max-w-4xl' %>">
+    <main class="mx-auto px-4 py-8 pb-24 lg:pb-8 lg:pr-24 <%= content_for?(:settings_sidebar) ? 'max-w-5xl' : 'max-w-4xl' %>">
       <%= yield(:breadcrumbs) if content_for?(:breadcrumbs) %>
       <% if content_for?(:settings_sidebar) %>
         <div class="flex flex-col md:flex-row gap-6 md:gap-8">

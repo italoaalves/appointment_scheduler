@@ -1,0 +1,159 @@
+<%# Desktop right dock — hidden on mobile %>
+<div class="hidden lg:flex fixed right-4 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-1 py-3 px-2"
+     style="background: rgba(255,255,255,0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.3); border-radius: 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.08);"
+     data-controller="nav"
+     data-action="click@window->nav#closeAll">
+
+  <%# Notification bell — only when there are unread %>
+  <% if defined?(unread_notifications_count) && unread_notifications_count > 0 %>
+    <div class="relative" data-controller="dropdown" data-action="click@window->dropdown#close">
+      <button type="button"
+              class="relative flex items-center justify-center w-12 h-12 rounded-2xl text-slate-400 hover:text-deep hover:bg-slate-100/60 transition-colors cursor-pointer"
+              data-action="dropdown#toggle"
+              aria-label="<%= t('notifications.in_app.dropdown.title') %>">
+        <%= render "shared/icons/bell", class: "h-5 w-5" %>
+        <span class="absolute top-2 right-2 flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+        </span>
+      </button>
+      <div data-dropdown-target="menu" class="hidden absolute right-full mr-3 top-0 z-50 min-w-[280px]">
+        <%= render "shared/notification_dropdown" %>
+      </div>
+    </div>
+    <div class="w-8 h-px my-0.5" style="background: rgba(0,0,0,0.08);"></div>
+  <% end %>
+
+  <%# Logo / Home %>
+  <%= link_to root_path,
+              class: "flex items-center justify-center w-12 h-12 rounded-2xl hover:bg-slate-100/60 transition-colors",
+              aria: { label: "Home" } do %>
+    <%= image_tag "anella-logo.png", class: "w-7 h-7 rounded-lg object-contain", alt: "Anella" %>
+  <% end %>
+
+  <div class="w-8 h-px my-0.5" style="background: rgba(0,0,0,0.08);"></div>
+
+  <%# Appointments group %>
+  <div class="relative">
+    <button type="button"
+            class="flex items-center justify-center w-12 h-12 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:appointments) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60' %>"
+            data-action="click->nav#toggle"
+            data-nav-group-param="appointments"
+            aria-label="Appointments">
+      <%= render "shared/icons/calendar_days", class: "h-5 w-5" %>
+    </button>
+    <%# Flyout %>
+    <div class="hidden opacity-0 translate-x-2 absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 w-52 transition-all duration-150"
+         style="background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.3); border-radius: 1.25rem; box-shadow: 0 8px 32px rgba(0,0,0,0.12);"
+         data-nav-target="flyout"
+         data-nav-group="appointments">
+      <div class="p-2">
+        <p class="px-3 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Appointments</p>
+        <%= link_to root_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{nav_active?(:dashboard) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+          <%= t("layout.nav.dashboard") %>
+        <% end %>
+        <%= link_to appointments_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{nav_active?(:appointments) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+          <%= t("layout.nav.all_appointments") %>
+        <% end %>
+        <%= link_to scheduling_links_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{nav_active?(:booking_links) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+          <%= t("layout.nav.booking_links") %>
+        <% end %>
+        <%= link_to customers_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{nav_active?(:customers) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+          <%= t("layout.nav.customers") %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <%# Communication — only when entitled %>
+  <% if defined?(current_tenant) && Billing::PlanEnforcer.can?(current_tenant, :send_whatsapp) %>
+    <%= link_to spaces_inbox_index_path,
+                class: "flex items-center justify-center w-12 h-12 rounded-2xl transition-colors #{nav_group_active?(:communication) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60'}",
+                aria: { label: "Inbox" } do %>
+      <%= render "shared/icons/chat_bubble", class: "h-5 w-5" %>
+    <% end %>
+  <% end %>
+
+  <%# Space — managers only %>
+  <% if current_user.can?(:manage_space) %>
+    <div class="relative">
+      <button type="button"
+              class="flex items-center justify-center w-12 h-12 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:space) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60' %>"
+              data-action="click->nav#toggle"
+              data-nav-group-param="space"
+              aria-label="Workspace">
+        <%= render "shared/icons/building_office", class: "h-5 w-5" %>
+      </button>
+      <%# Flyout %>
+      <div class="hidden opacity-0 translate-x-2 absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 w-52 transition-all duration-150"
+           style="background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.3); border-radius: 1.25rem; box-shadow: 0 8px 32px rgba(0,0,0,0.12);"
+           data-nav-target="flyout"
+           data-nav-group="space">
+        <div class="p-2">
+          <p class="px-3 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Workspace</p>
+          <%= link_to users_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{nav_active?(:team) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+            <%= t("layout.nav.team") %>
+          <% end %>
+          <div class="h-px mx-3 my-1" style="background: rgba(0,0,0,0.06);"></div>
+          <p class="px-3 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Settings</p>
+          <%= link_to edit_settings_space_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{settings_section_active?(:space) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+            <%= t("layout.nav.settings_space") %>
+          <% end %>
+          <%= link_to edit_settings_space_availability_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{settings_section_active?(:availability) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+            <%= t("layout.nav.settings_availability") %>
+          <% end %>
+          <%= link_to edit_settings_space_policies_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{settings_section_active?(:policies) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+            <%= t("layout.nav.settings_policies") %>
+          <% end %>
+          <div class="h-px mx-3 my-1" style="background: rgba(0,0,0,0.06);"></div>
+          <%= link_to settings_billing_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{settings_section_active?(:billing) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+            <%= t("layout.nav.billing") %>
+          <% end %>
+          <%= link_to settings_credits_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{settings_section_active?(:credits) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+            <%= t("layout.nav.credits") %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="w-8 h-px my-0.5" style="background: rgba(0,0,0,0.08);"></div>
+
+  <%# Profile %>
+  <div class="relative">
+    <button type="button"
+            class="flex items-center justify-center w-12 h-12 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:profile) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60' %>"
+            data-action="click->nav#toggle"
+            data-nav-group-param="profile"
+            aria-label="Profile">
+      <%= render "shared/icons/user_circle", class: "h-5 w-5" %>
+    </button>
+    <%# Flyout %>
+    <div class="hidden opacity-0 translate-x-2 absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 w-52 transition-all duration-150"
+         style="background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.3); border-radius: 1.25rem; box-shadow: 0 8px 32px rgba(0,0,0,0.12);"
+         data-nav-target="flyout"
+         data-nav-group="profile">
+      <div class="p-2">
+        <div class="px-3 py-2 border-b" style="border-color: rgba(0,0,0,0.06);">
+          <p class="text-xs font-medium text-deep truncate"><%= current_user.name.presence || current_user.email %></p>
+          <p class="text-xs text-slate-400 truncate"><%= current_user.email %></p>
+        </div>
+        <div class="pt-1">
+          <%= link_to edit_profile_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:bg-slate-100/80 hover:text-deep transition-colors" do %>
+            <%= t("layout.nav.profile") %>
+          <% end %>
+          <%= link_to edit_preferences_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:bg-slate-100/80 hover:text-deep transition-colors" do %>
+            <%= t("layout.nav.preferences") %>
+          <% end %>
+          <div class="h-px mx-1 my-1" style="background: rgba(0,0,0,0.06);"></div>
+          <%= button_to t("layout.nav.logout"),
+                        destroy_user_session_path,
+                        method: :delete,
+                        data: { turbo: false },
+                        form_class: "w-full",
+                        class: "flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

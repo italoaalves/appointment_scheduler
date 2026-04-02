@@ -66,6 +66,26 @@ module UiHelper
     end
   end
 
+  def nav_group_active?(group)
+    case group.to_sym
+    when :dashboard
+      controller_path == "dashboard" && action_name == "index"
+    when :appointments
+      nav_active?(:dashboard) || nav_active?(:appointments) || nav_active?(:booking_links) || nav_active?(:customers)
+    when :communication
+      controller_path.start_with?("spaces/inbox")
+    when :space
+      nav_active?(:team) || nav_active?(:settings) ||
+        controller_path.start_with?("spaces/space") ||
+        controller_path.start_with?("spaces/billing") ||
+        controller_path.start_with?("spaces/credits")
+    when :profile
+      controller_path.include?("profile") || controller_path.include?("preference")
+    else
+      false
+    end
+  end
+
   def nav_active_classes(section, variant: :desktop)
     active = nav_active?(section)
     case variant.to_sym
