@@ -1,162 +1,166 @@
-<%# Mobile bottom nav — hidden on desktop %>
-<%# Sheet overlay %>
-<div class="lg:hidden fixed inset-0 z-30 bg-black/40 hidden"
-     data-nav-target="sheetOverlay"
-     data-action="click->nav#closeAllSheets"></div>
+<%# Mobile bottom nav — hidden on desktop.
+    All elements live inside a single data-controller="nav" wrapper so
+    sheet targets are in scope when toggleSheet/closeAllSheets are called. %>
+<div class="lg:hidden"
+     data-controller="nav">
 
-<%# Bottom sheets for multi-item groups %>
+  <%# Sheet overlay %>
+  <div class="fixed inset-0 z-30 bg-black/40 hidden"
+       data-nav-target="sheetOverlay"
+       data-action="touchstart->nav#closeAll click->nav#closeAll"></div>
 
-<%# Appointments sheet %>
-<div class="fixed bottom-16 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
-     style="padding-bottom: env(safe-area-inset-bottom);"
-     data-nav-target="sheet"
-     data-nav-group="appointments">
-  <div class="mx-4 mb-2 rounded-3xl overflow-hidden"
-       style="background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 -8px 32px rgba(0,0,0,0.12);">
-    <div class="flex justify-center pt-3 pb-1">
-      <div class="w-10 h-1 rounded-full bg-slate-200"></div>
-    </div>
-    <div class="p-3">
-      <p class="px-3 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Appointments</p>
-      <%= link_to root_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{nav_active?(:dashboard) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
-        <%= t("layout.nav.dashboard") %>
-      <% end %>
-      <%= link_to appointments_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{nav_active?(:appointments) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
-        <%= t("layout.nav.all_appointments") %>
-      <% end %>
-      <%= link_to scheduling_links_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{nav_active?(:booking_links) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
-        <%= t("layout.nav.booking_links") %>
-      <% end %>
-      <%= link_to customers_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{nav_active?(:customers) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
-        <%= t("layout.nav.customers") %>
-      <% end %>
-    </div>
-  </div>
-</div>
-
-<%# Space sheet — managers only %>
-<% if current_user.can?(:manage_space) %>
+  <%# Appointments sheet %>
   <div class="fixed bottom-16 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
        style="padding-bottom: env(safe-area-inset-bottom);"
        data-nav-target="sheet"
-       data-nav-group="space">
+       data-nav-group="appointments">
     <div class="mx-4 mb-2 rounded-3xl overflow-hidden"
          style="background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 -8px 32px rgba(0,0,0,0.12);">
       <div class="flex justify-center pt-3 pb-1">
         <div class="w-10 h-1 rounded-full bg-slate-200"></div>
       </div>
       <div class="p-3">
-        <p class="px-3 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Workspace</p>
-        <%= link_to users_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{nav_active?(:team) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
-          <%= t("layout.nav.team") %>
+        <p class="px-3 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Appointments</p>
+        <%= link_to root_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{nav_active?(:dashboard) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
+          <%= t("layout.nav.dashboard") %>
         <% end %>
-        <%= link_to edit_settings_space_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{settings_section_active?(:space) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
-          <%= t("layout.nav.settings_space") %>
+        <%= link_to appointments_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{nav_active?(:appointments) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
+          <%= t("layout.nav.all_appointments") %>
         <% end %>
-        <%= link_to edit_settings_space_availability_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{settings_section_active?(:availability) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
-          <%= t("layout.nav.settings_availability") %>
+        <%= link_to scheduling_links_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{nav_active?(:booking_links) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
+          <%= t("layout.nav.booking_links") %>
         <% end %>
-        <%= link_to edit_settings_space_policies_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{settings_section_active?(:policies) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
-          <%= t("layout.nav.settings_policies") %>
-        <% end %>
-        <%= link_to settings_billing_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{settings_section_active?(:billing) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
-          <%= t("layout.nav.billing") %>
-        <% end %>
-        <%= link_to settings_credits_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{settings_section_active?(:credits) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
-          <%= t("layout.nav.credits") %>
+        <%= link_to customers_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{nav_active?(:customers) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
+          <%= t("layout.nav.customers") %>
         <% end %>
       </div>
     </div>
   </div>
-<% end %>
 
-<%# Profile sheet %>
-<div class="fixed bottom-16 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
-     style="padding-bottom: env(safe-area-inset-bottom);"
-     data-nav-target="sheet"
-     data-nav-group="profile">
-  <div class="mx-4 mb-2 rounded-3xl overflow-hidden"
-       style="background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 -8px 32px rgba(0,0,0,0.12);">
-    <div class="flex justify-center pt-3 pb-1">
-      <div class="w-10 h-1 rounded-full bg-slate-200"></div>
-    </div>
-    <div class="p-3">
-      <div class="px-3 py-2 mb-1 rounded-2xl bg-slate-50">
-        <p class="text-xs font-medium text-deep truncate"><%= current_user.name.presence || current_user.email %></p>
-        <p class="text-xs text-slate-400 truncate"><%= current_user.email %></p>
+  <%# Space sheet — managers only %>
+  <% if current_user.can?(:manage_space) %>
+    <div class="fixed bottom-16 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
+         style="padding-bottom: env(safe-area-inset-bottom);"
+         data-nav-target="sheet"
+         data-nav-group="space">
+      <div class="mx-4 mb-2 rounded-3xl overflow-hidden"
+           style="background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 -8px 32px rgba(0,0,0,0.12);">
+        <div class="flex justify-center pt-3 pb-1">
+          <div class="w-10 h-1 rounded-full bg-slate-200"></div>
+        </div>
+        <div class="p-3">
+          <p class="px-3 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Workspace</p>
+          <%= link_to users_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{nav_active?(:team) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
+            <%= t("layout.nav.team") %>
+          <% end %>
+          <%= link_to edit_settings_space_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{settings_section_active?(:space) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
+            <%= t("layout.nav.settings_space") %>
+          <% end %>
+          <%= link_to edit_settings_space_availability_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{settings_section_active?(:availability) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
+            <%= t("layout.nav.settings_availability") %>
+          <% end %>
+          <%= link_to edit_settings_space_policies_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{settings_section_active?(:policies) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
+            <%= t("layout.nav.settings_policies") %>
+          <% end %>
+          <%= link_to settings_billing_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{settings_section_active?(:billing) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
+            <%= t("layout.nav.billing") %>
+          <% end %>
+          <%= link_to settings_credits_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-colors #{settings_section_active?(:credits) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-700 hover:bg-slate-100'}" do %>
+            <%= t("layout.nav.credits") %>
+          <% end %>
+        </div>
       </div>
-      <%= link_to edit_profile_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm text-slate-700 hover:bg-slate-100 transition-colors" do %>
-        <%= t("layout.nav.profile") %>
-      <% end %>
-      <%= link_to edit_preferences_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm text-slate-700 hover:bg-slate-100 transition-colors" do %>
-        <%= t("layout.nav.preferences") %>
-      <% end %>
-      <div class="h-px mx-1 my-1 bg-slate-100"></div>
-      <%= button_to t("layout.nav.logout"),
-                    destroy_user_session_path,
-                    method: :delete,
-                    data: { turbo: false },
-                    form_class: "w-full",
-                    class: "flex items-center gap-3 w-full px-3 py-3 rounded-2xl text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer" %>
+    </div>
+  <% end %>
+
+  <%# Profile sheet %>
+  <div class="fixed bottom-16 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
+       style="padding-bottom: env(safe-area-inset-bottom);"
+       data-nav-target="sheet"
+       data-nav-group="profile">
+    <div class="mx-4 mb-2 rounded-3xl overflow-hidden"
+         style="background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 -8px 32px rgba(0,0,0,0.12);">
+      <div class="flex justify-center pt-3 pb-1">
+        <div class="w-10 h-1 rounded-full bg-slate-200"></div>
+      </div>
+      <div class="p-3">
+        <div class="px-3 py-2 mb-1 rounded-2xl bg-slate-50">
+          <p class="text-xs font-medium text-deep truncate"><%= current_user.name.presence || current_user.email %></p>
+          <p class="text-xs text-slate-400 truncate"><%= current_user.email %></p>
+        </div>
+        <%= link_to edit_profile_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm text-slate-700 hover:bg-slate-100 transition-colors" do %>
+          <%= t("layout.nav.profile") %>
+        <% end %>
+        <%= link_to edit_preferences_path, class: "flex items-center gap-3 px-3 py-3 rounded-2xl text-sm text-slate-700 hover:bg-slate-100 transition-colors" do %>
+          <%= t("layout.nav.preferences") %>
+        <% end %>
+        <div class="h-px mx-1 my-1 bg-slate-100"></div>
+        <%= button_to t("layout.nav.logout"),
+                      destroy_user_session_path,
+                      method: :delete,
+                      data: { turbo: false },
+                      form_class: "w-full",
+                      class: "flex items-center gap-3 w-full px-3 py-3 rounded-2xl text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer" %>
+      </div>
     </div>
   </div>
-</div>
 
-<%# Bottom nav bar %>
-<nav class="lg:hidden fixed bottom-0 inset-x-0 z-40"
-     style="background: rgba(255,255,255,0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(0,0,0,0.08); padding-bottom: env(safe-area-inset-bottom);"
-     data-controller="nav"
-     data-action="click@window->nav#closeAll">
-  <div class="flex justify-around items-center h-16">
+  <%# Bottom nav bar %>
+  <nav class="fixed bottom-0 inset-x-0 z-40"
+       style="background: rgba(255,255,255,0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(0,0,0,0.08); padding-bottom: env(safe-area-inset-bottom);">
+    <div class="flex justify-around items-center h-16">
 
-    <%# Home %>
-    <%= link_to root_path,
-                class: "flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors #{nav_group_active?(:dashboard) ? 'text-electric' : 'text-slate-400'}",
-                aria: { label: "Home" } do %>
-      <%= image_tag "anella-logo.png", class: "w-6 h-6 rounded-md object-contain", alt: "" %>
-      <span class="text-[10px] font-medium">Home</span>
-    <% end %>
-
-    <%# Appointments %>
-    <button type="button"
-            class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:appointments) ? 'text-electric' : 'text-slate-400' %>"
-            data-action="click->nav#toggleSheet"
-            data-nav-group-param="appointments"
-            aria-label="Appointments">
-      <%= render "shared/icons/calendar_days", class: "h-5 w-5" %>
-      <span class="text-[10px] font-medium">Schedule</span>
-    </button>
-
-    <%# Communication %>
-    <% if defined?(current_tenant) && Billing::PlanEnforcer.can?(current_tenant, :send_whatsapp) %>
-      <%= link_to spaces_inbox_index_path,
-                  class: "flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors #{nav_group_active?(:communication) ? 'text-electric' : 'text-slate-400'}",
-                  aria: { label: "Inbox" } do %>
-        <%= render "shared/icons/chat_bubble", class: "h-5 w-5" %>
-        <span class="text-[10px] font-medium">Inbox</span>
+      <%# Home %>
+      <%= link_to root_path,
+                  class: "flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors #{nav_group_active?(:dashboard) ? 'text-electric' : 'text-slate-400'}",
+                  aria: { label: "Home" } do %>
+        <%= image_tag "anella-logo.png", class: "w-6 h-6 rounded-md object-contain", alt: "" %>
+        <span class="text-[10px] font-medium">Home</span>
       <% end %>
-    <% end %>
 
-    <%# Space %>
-    <% if current_user.can?(:manage_space) %>
+      <%# Appointments %>
       <button type="button"
-              class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:space) ? 'text-electric' : 'text-slate-400' %>"
+              class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:appointments) ? 'text-electric' : 'text-slate-400' %>"
               data-action="click->nav#toggleSheet"
-              data-nav-group-param="space"
-              aria-label="Workspace">
-        <%= render "shared/icons/building_office", class: "h-5 w-5" %>
-        <span class="text-[10px] font-medium">Workspace</span>
+              data-nav-group-param="appointments"
+              aria-label="Appointments">
+        <%= render "shared/icons/calendar_days", class: "h-5 w-5" %>
+        <span class="text-[10px] font-medium">Schedule</span>
       </button>
-    <% end %>
 
-    <%# Profile %>
-    <button type="button"
-            class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:profile) ? 'text-electric' : 'text-slate-400' %>"
-            data-action="click->nav#toggleSheet"
-            data-nav-group-param="profile"
-            aria-label="Profile">
-      <%= render "shared/icons/user_circle", class: "h-5 w-5" %>
-      <span class="text-[10px] font-medium">Profile</span>
-    </button>
-  </div>
-</nav>
+      <%# Communication %>
+      <% if defined?(current_tenant) && Billing::PlanEnforcer.can?(current_tenant, :send_whatsapp) %>
+        <%= link_to spaces_inbox_index_path,
+                    class: "flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors #{nav_group_active?(:communication) ? 'text-electric' : 'text-slate-400'}",
+                    aria: { label: "Inbox" } do %>
+          <%= render "shared/icons/chat_bubble", class: "h-5 w-5" %>
+          <span class="text-[10px] font-medium">Inbox</span>
+        <% end %>
+      <% end %>
+
+      <%# Space %>
+      <% if current_user.can?(:manage_space) %>
+        <button type="button"
+                class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:space) ? 'text-electric' : 'text-slate-400' %>"
+                data-action="click->nav#toggleSheet"
+                data-nav-group-param="space"
+                aria-label="Workspace">
+          <%= render "shared/icons/building_office", class: "h-5 w-5" %>
+          <span class="text-[10px] font-medium">Workspace</span>
+        </button>
+      <% end %>
+
+      <%# Profile %>
+      <button type="button"
+              class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:profile) ? 'text-electric' : 'text-slate-400' %>"
+              data-action="click->nav#toggleSheet"
+              data-nav-group-param="profile"
+              aria-label="Profile">
+        <%= render "shared/icons/user_circle", class: "h-5 w-5" %>
+        <span class="text-[10px] font-medium">Profile</span>
+      </button>
+
+    </div>
+  </nav>
+
+</div>

@@ -131,6 +131,13 @@ module UiHelper
     end
   end
 
+  # Renders the Hydro-Glass floating breadcrumb pill.
+  # path_array: [[label, path], [label, path], [label]] — last item is current (no path).
+  def render_zen_breadcrumbs(path_array)
+    crumbs = path_array.map { |pair| { label: pair[0], path: pair[1] } }
+    render "shared/breadcrumbs", crumbs: crumbs
+  end
+
   def pending_appointments_count
     @pending_appointments_count || 0
   end

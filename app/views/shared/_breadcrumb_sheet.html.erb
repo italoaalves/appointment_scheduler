@@ -1,0 +1,47 @@
+<%# Mobile bottom sheet — full breadcrumb hierarchy.
+    Locals: crumbs — array of hashes: { label: "...", path: "..." }
+    Rendered only when there are ancestors (depth > 2). %>
+
+<%# Backdrop overlay %>
+<div class="lg:hidden fixed inset-0 z-40 bg-black/30 hidden"
+     data-ui--breadcrumb-target="overlay"
+     data-action="click->ui--breadcrumb#closeSheet"></div>
+
+<%# Sheet panel %>
+<div class="lg:hidden fixed inset-x-0 bottom-0 z-50 translate-y-full transition-transform duration-200 ease-out hidden"
+     data-ui--breadcrumb-target="sheet"
+     role="dialog"
+     aria-modal="true"
+     aria-label="<%= t('breadcrumbs.full_path') %>">
+  <div style="background: rgba(255,255,255,0.15); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.20); padding-bottom: env(safe-area-inset-bottom);"
+       class="rounded-t-3xl">
+
+    <%# Drag handle %>
+    <div class="flex justify-center pt-3 pb-1">
+      <div class="w-10 h-1 rounded-full bg-white/30"></div>
+    </div>
+
+    <%# Full path list %>
+    <nav class="px-4 pb-6 pt-2">
+      <ol class="space-y-1 font-mono text-xs">
+        <% crumbs.each_with_index do |crumb, i| %>
+          <% is_current = (i == crumbs.length - 1) %>
+          <li>
+            <% if is_current %>
+              <span class="text-cerulean font-medium" aria-current="page">
+                <%= crumb[:label] %>
+              </span>
+            <% elsif crumb[:path].present? %>
+              <%= link_to crumb[:label], crumb[:path],
+                  class: "text-slate-400 hover:text-slate-200 transition-colors",
+                  data: { action: "click->ui--breadcrumb#closeSheet" } %>
+            <% else %>
+              <span class="text-slate-400"><%= crumb[:label] %></span>
+            <% end %>
+          </li>
+        <% end %>
+      </ol>
+    </nav>
+
+  </div>
+</div>

@@ -243,6 +243,8 @@ pt-BR:
     profile: "Perfil"
     preferences: "Preferências"
     invite: "Convidar"
+    show_full_path: "Mostrar caminho completo"
+    full_path: "Caminho completo"
 
   settings:
     sidebar:
