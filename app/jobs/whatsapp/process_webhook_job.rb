@@ -75,7 +75,7 @@ module Whatsapp
           customer_name: customer_name.presence || conversation.customer_name
         )
 
-        notify_space_members(conversation)
+        Whatsapp::NotifySpaceMembersJob.perform_later(conversation_id: conversation.id)
       end
     end
 
@@ -157,25 +157,6 @@ module Whatsapp
         notifiable: whatsapp_number,
         event_type: "whatsapp_quality_#{event.downcase}"
       )
-    end
-
-    def notify_space_members(conversation)
-      space        = conversation.space
-      member_ids   = space.space_memberships.pluck(:user_id)
-      recipient_ids = (member_ids + [ space.owner_id ]).compact.uniq
-      recipients   = User.where(id: recipient_ids)
-
-      display_name = conversation.customer_name.presence || conversation.customer_phone
-
-      recipients.find_each do |user|
-        Notification.create!(
-          user: user,
-          title: I18n.t("notifications.in_app.whatsapp_message.title"),
-          body: I18n.t("notifications.in_app.whatsapp_message.body", name: display_name),
-          notifiable: conversation,
-          event_type: "whatsapp_message_received"
-        )
-      end
     end
   end
 end

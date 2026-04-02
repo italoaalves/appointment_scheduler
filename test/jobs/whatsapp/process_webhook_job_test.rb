@@ -248,38 +248,12 @@ class Whatsapp::ProcessWebhookJobTest < ActiveJob::TestCase
 
   # ── Notifications ───────────────────────────────────────────────────────────
 
-  test "creates notification for space owner on inbound message" do
-    space = spaces(:one)
-    owner = space.owner
-
-    Whatsapp::ProcessWebhookJob.perform_now(payload: inbound_payload(wamid: "wamid.NOTIF1"))
-
-    owner_notif = Notification.where(event_type: "whatsapp_message_received")
-                               .find_by(user: owner)
-    assert_not_nil owner_notif
-    assert_equal whatsapp_conversations(:one), owner_notif.notifiable
-  end
-
-  test "creates notification for each space member on inbound message" do
-    space      = spaces(:one)
-    member_ids = space.space_memberships.pluck(:user_id)
-    all_ids    = (member_ids + [ space.owner_id ]).compact.uniq
-
-    assert_difference "Notification.count", all_ids.size do
-      Whatsapp::ProcessWebhookJob.perform_now(payload: inbound_payload(wamid: "wamid.NOTIF2"))
-    end
-  end
-
-  test "notification body uses customer phone when name is absent" do
+  test "enqueues NotifySpaceMembersJob on inbound message" do
     conversation = whatsapp_conversations(:one)
-    conversation.update!(customer_name: nil)
 
-    Whatsapp::ProcessWebhookJob.perform_now(
-      payload: inbound_payload(wamid: "wamid.NOTIF3", name: nil)
-    )
-
-    notif = Notification.where(event_type: "whatsapp_message_received").last
-    assert_includes notif.body, conversation.customer_phone
+    assert_enqueued_with(job: Whatsapp::NotifySpaceMembersJob, args: [ { conversation_id: conversation.id } ]) do
+      Whatsapp::ProcessWebhookJob.perform_now(payload: inbound_payload(wamid: "wamid.NOTIF1"))
+    end
   end
 
   # ── Notification target_path ─────────────────────────────────────────────
