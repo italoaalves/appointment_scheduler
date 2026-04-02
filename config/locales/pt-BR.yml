@@ -1477,3 +1477,15 @@ pt-BR:
       verified_name: "Nome da Empresa"
       display_number: "Número de Telefone"
 
+  inbox:
+    channels:
+      whatsapp:
+        session_expired: "Sessão WhatsApp expirada — use uma mensagem de template para reengajar."
+      instagram:
+        session_expired: "Sessão Instagram expirada — aguarde o cliente enviar uma mensagem."
+      messenger:
+        session_expired: "Sessão Messenger expirada — aguarde o cliente enviar uma mensagem."
+    errors:
+      insufficient_credits: "Créditos insuficientes para enviar esta mensagem."
+      send_failed: "Falha ao enviar a mensagem. Tente novamente."
+
