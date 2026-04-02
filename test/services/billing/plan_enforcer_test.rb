@@ -275,6 +275,32 @@ module Billing
       assert_nil Billing::PlanEnforcer.limit_for(space, :max_team_members)
     end
 
+    # ── :access_inbox ─────────────────────────────────────────────────────────
+
+    test "access_inbox returns true for Essential plan (trialing)" do
+      space = make_space(plan_id: "essential")
+
+      assert Billing::PlanEnforcer.can?(space, :access_inbox)
+    end
+
+    test "access_inbox returns true for Pro plan (active)" do
+      space = make_space(plan_id: "pro", status: :active)
+
+      assert Billing::PlanEnforcer.can?(space, :access_inbox)
+    end
+
+    test "access_inbox returns true for trialing space" do
+      space = make_space(plan_id: "pro", status: :trialing)
+
+      assert Billing::PlanEnforcer.can?(space, :access_inbox)
+    end
+
+    test "access_inbox returns false for expired subscription" do
+      space = make_space(plan_id: "pro", status: :expired)
+
+      assert_not Billing::PlanEnforcer.can?(space, :access_inbox)
+    end
+
     # ── Unknown action ────────────────────────────────────────────────────────
 
     test "unknown action returns false" do

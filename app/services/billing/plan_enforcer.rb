@@ -31,6 +31,8 @@ module Billing
         plan.feature?(:personalized_booking_page)
       when :access_custom_policies
         plan.feature?(:custom_appointment_policies)
+      when :access_inbox
+        true
       when :send_whatsapp
         return true if plan.whatsapp_unlimited?
         return false unless plan.feature?(:whatsapp_included_quota) || plan.whatsapp_monthly_quota.to_i.positive?
