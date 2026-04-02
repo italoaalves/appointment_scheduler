@@ -168,6 +168,11 @@
   .section-subheading {
     @apply text-lg text-slate-600 mt-2 max-w-2xl;
   }
+
+  /* Unloaded card state — preserves scroll height, hides content */
+  .appointment-card.is-unloaded > * {
+    visibility: hidden;
+  }
 }
 
 /* Booking slot buttons */

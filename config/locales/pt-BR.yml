@@ -451,7 +451,14 @@ pt-BR:
         finish: "Finalizada"
         delete: "Excluir"
         delete_confirm: "Excluir esta consulta permanentemente?"
+        in_progress: "Em andamento"
+        duration_minutes: "%{count} min"
+        swipe_hint: "Deslize ←"
       cancelled_locked: "Consultas canceladas não podem ser alteradas. Você só pode excluí-las."
+      feed:
+        today: "Hoje"
+        tomorrow: "Amanhã"
+        yesterday: "Ontem"
       pending:
         title: "Consultas pendentes"
         subtitle: "%{count} consulta(s) aguardando confirmação."

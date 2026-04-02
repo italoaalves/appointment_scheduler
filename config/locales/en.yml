@@ -480,7 +480,14 @@ en:
         finish: "Finished"
         delete: "Delete"
         delete_confirm: "Permanently delete this appointment?"
+        in_progress: "In progress"
+        duration_minutes: "%{count} min"
+        swipe_hint: "Swipe ←"
       cancelled_locked: "Cancelled appointments cannot be modified. You can only delete them."
+      feed:
+        today: "Today"
+        tomorrow: "Tomorrow"
+        yesterday: "Yesterday"
       pending:
         title: "Pending requests"
         subtitle: "%{count} appointment(s) waiting for confirmation."
