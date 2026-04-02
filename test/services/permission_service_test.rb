@@ -58,4 +58,16 @@ class PermissionServiceTest < ActiveSupport::TestCase
     space_two = spaces(:two)
     assert_not PermissionService.can?(user: @manager, permission: :manage_space, space: space_two)
   end
+
+  test "read_inbox is a recognized permission" do
+    assert PermissionService::ALLOWED_PERMISSIONS.include?("read_inbox")
+  end
+
+  test "write_inbox is a recognized permission" do
+    assert PermissionService::ALLOWED_PERMISSIONS.include?("write_inbox")
+  end
+
+  test "read_inbox is not rejected as unknown permission" do
+    assert_not PermissionService.can?(user: @secretary, permission: :read_inbox, space: @space)
+  end
 end
