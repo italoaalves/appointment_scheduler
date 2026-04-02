@@ -1,7 +1,20 @@
 import { Controller } from "@hotwired/stimulus"
 
+const STORAGE_KEY = "nav_open_group"
+
 export default class extends Controller {
   static targets = ["flyout", "sheet", "sheetOverlay"]
+
+  connect() {
+    const openGroup = sessionStorage.getItem(STORAGE_KEY)
+    if (!openGroup) return
+
+    const panel = this.flyoutTargets.find(el => el.dataset.navGroup === openGroup)
+    if (panel) {
+      panel.classList.remove("hidden", "opacity-0", "translate-x-2")
+      panel.classList.add("opacity-100", "translate-x-0")
+    }
+  }
 
   toggle(event) {
     event.stopPropagation()
@@ -10,14 +23,27 @@ export default class extends Controller {
     if (!panel) return
 
     const isOpen = !panel.classList.contains("hidden")
-    this.closeAll()
+    this._closeFlyouts()
     if (!isOpen) {
+      sessionStorage.setItem(STORAGE_KEY, group)
       panel.classList.remove("hidden")
       requestAnimationFrame(() => {
         panel.classList.remove("opacity-0", "translate-x-2")
         panel.classList.add("opacity-100", "translate-x-0")
       })
     }
+  }
+
+  closeFlyout() {
+    sessionStorage.removeItem(STORAGE_KEY)
+    this._closeFlyouts()
+  }
+
+  closeAll(event) {
+    if (event && this.element.contains(event.target)) return
+    sessionStorage.removeItem(STORAGE_KEY)
+    this._closeFlyouts()
+    this.closeAllSheets()
   }
 
   toggleSheet(event) {
@@ -38,15 +64,6 @@ export default class extends Controller {
     }
   }
 
-  closeAll(event) {
-    if (event && this.element.contains(event.target)) return
-    this.flyoutTargets.forEach(el => {
-      el.classList.add("hidden", "opacity-0", "translate-x-2")
-      el.classList.remove("opacity-100", "translate-x-0")
-    })
-    this.closeAllSheets()
-  }
-
   closeAllSheets() {
     this.sheetTargets.forEach(el => {
       el.classList.add("translate-y-full")
@@ -56,5 +73,12 @@ export default class extends Controller {
     if (this.hasSheetOverlayTarget) {
       this.sheetOverlayTarget.classList.add("hidden")
     }
+  }
+
+  _closeFlyouts() {
+    this.flyoutTargets.forEach(el => {
+      el.classList.add("hidden", "opacity-0", "translate-x-2")
+      el.classList.remove("opacity-100", "translate-x-0")
+    })
   }
 }
