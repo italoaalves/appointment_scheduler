@@ -1,6 +1,6 @@
 <% booking_url = current_tenant.personalized_scheduling_link ? book_by_slug_url(slug: current_tenant.personalized_scheduling_link.slug) : nil %>
 <% if booking_url.present? %>
-  <div class="relative rounded-xl border border-emerald-200 bg-emerald-50 p-6 shadow-sm"
+  <div class="relative rounded-card border border-emerald-200 bg-emerald-50 p-6 md:p-8 shadow-sm shadow-slate-200/50"
        id="dashboard_welcome_card">
     <%= button_to dismiss_dashboard_welcome_path,
           method: :patch,
