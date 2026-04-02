@@ -272,6 +272,8 @@ en:
     profile: "Profile"
     preferences: "Preferences"
     invite: "Invite"
+    show_full_path: "Show full path"
+    full_path: "Full path"
 
   settings:
     sidebar:

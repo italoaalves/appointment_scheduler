@@ -1,7 +1,28 @@
 import { Controller } from "@hotwired/stimulus"
 
+// Group → path prefix mapping (mirrors nav_group_active? in UiHelper)
+const GROUP_PATTERNS = {
+  appointments: [/^\/$/, /^\/appointments/, /^\/scheduling_links/, /^\/personalized_scheduling_links/, /^\/customers/],
+  communication: [/^\/inbox/],
+  space:         [/^\/users/, /^\/settings/],
+  profile:       [/^\/profile/, /^\/preferences/],
+}
+
+const ACTIVE_CLASSES   = ["bg-electric/15", "text-electric"]
+const INACTIVE_CLASSES = ["text-slate-400", "hover:text-deep", "hover:bg-slate-100/60"]
+
 export default class extends Controller {
   static targets = ["flyout", "sheet", "sheetOverlay"]
+
+  connect() {
+    this._updateActiveStates()
+    this._handleTurboLoad = () => this._updateActiveStates()
+    document.addEventListener("turbo:load", this._handleTurboLoad)
+  }
+
+  disconnect() {
+    document.removeEventListener("turbo:load", this._handleTurboLoad)
+  }
 
   toggle(event) {
     event.stopPropagation()
@@ -33,6 +54,7 @@ export default class extends Controller {
     const isOpen = !sheet.classList.contains("hidden")
     this.closeAllSheets()
     if (!isOpen) {
+      this._sheetOpenedAt = Date.now()
       this.sheetOverlayTarget.classList.remove("hidden")
       sheet.classList.remove("hidden")
       requestAnimationFrame(() => {
@@ -40,6 +62,13 @@ export default class extends Controller {
         sheet.classList.add("translate-y-0")
       })
     }
+  }
+
+  closeAll(event) {
+    // Ignore ghost clicks fired within 150ms of opening (mobile touch)
+    if (this._sheetOpenedAt && Date.now() - this._sheetOpenedAt < 150) return
+    this._closeFlyouts()
+    this.closeAllSheets()
   }
 
   closeAllSheets() {
@@ -57,6 +86,25 @@ export default class extends Controller {
     this.flyoutTargets.forEach(el => {
       el.classList.add("hidden", "opacity-0", "translate-x-2")
       el.classList.remove("opacity-100", "translate-x-0")
+    })
+  }
+
+  _updateActiveStates() {
+    const path = window.location.pathname
+    const buttons = this.element.querySelectorAll("[data-nav-group-param]")
+
+    buttons.forEach(btn => {
+      const group = btn.dataset.navGroupParam
+      const patterns = GROUP_PATTERNS[group] || []
+      const active = patterns.some(re => re.test(path))
+
+      if (active) {
+        btn.classList.add(...ACTIVE_CLASSES)
+        btn.classList.remove(...INACTIVE_CLASSES)
+      } else {
+        btn.classList.remove(...ACTIVE_CLASSES)
+        btn.classList.add(...INACTIVE_CLASSES)
+      }
     })
   }
 }

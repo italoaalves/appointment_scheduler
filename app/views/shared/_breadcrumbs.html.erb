@@ -1,23 +1,97 @@
-<%# Renders breadcrumb trail.
+<%# Renders a floating Hydro-Glass breadcrumb pill.
     Locals: crumbs — array of hashes: { label: "...", path: "..." }
-    Last crumb has no path (current page). %>
-<% return if local_assigns[:crumbs].blank? %>
+    Last crumb has no path (current page).
+    Desktop: parent + current visible; hover expands full path to the left.
+    Mobile: parent + current visible; "..." button opens a Hydro-Glass bottom sheet. %>
+<% return if local_assigns[:crumbs].blank? || crumbs.empty? %>
 
-<nav aria-label="<%= t("breadcrumbs.label") %>" class="mb-4">
-  <ol class="flex flex-wrap items-center gap-1 text-sm text-slate-500">
-    <% crumbs.each_with_index do |crumb, i| %>
-      <li class="flex items-center gap-1">
-        <% if i > 0 %>
-          <span aria-hidden="true" class="text-slate-300">›</span>
-        <% end %>
-        <% if crumb[:path].present? %>
-          <%= link_to crumb[:label], crumb[:path],
-              class: "text-slate-600 hover:text-slate-800 hover:underline" %>
+<%
+  all_crumbs = Array(crumbs)
+  current   = all_crumbs.last
+  parent    = all_crumbs.length >= 2 ? all_crumbs[-2] : nil
+  ancestors = all_crumbs.length > 2  ? all_crumbs[0..-3] : []
+%>
+
+<div data-controller="ui--breadcrumb">
+
+  <%# ── Desktop floating pill ──────────────────────────────────── %>
+  <div class="hidden lg:block fixed bottom-8 right-28 z-30">
+    <nav aria-label="<%= t('breadcrumbs.label') %>"
+         class="flex items-center px-3 py-1.5 rounded-full font-mono text-xs"
+         style="background: rgba(255,255,255,0.10); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.20);"
+         data-action="mouseenter->ui--breadcrumb#expand mouseleave->ui--breadcrumb#collapse">
+
+      <%# Ancestors — hidden by default, slide in on hover %>
+      <% if ancestors.any? %>
+        <span class="flex items-center overflow-hidden max-w-0 opacity-0 transition-all duration-200 ease-out"
+              data-ui--breadcrumb-target="ancestors">
+          <% ancestors.each do |crumb| %>
+            <% if crumb[:path].present? %>
+              <%= link_to crumb[:label], crumb[:path],
+                  class: "text-slate-400 hover:text-slate-200 whitespace-nowrap transition-colors" %>
+            <% else %>
+              <span class="text-slate-400 whitespace-nowrap"><%= crumb[:label] %></span>
+            <% end %>
+            <span class="mx-2 text-slate-500">/</span>
+          <% end %>
+        </span>
+      <% end %>
+
+      <%# Parent %>
+      <% if parent %>
+        <% if parent[:path].present? %>
+          <%= link_to parent[:label], parent[:path],
+              class: "text-slate-400 hover:text-slate-200 whitespace-nowrap transition-colors" %>
         <% else %>
-          <span class="text-slate-800 font-medium truncate max-w-[200px]"
-                aria-current="page"><%= crumb[:label] %></span>
+          <span class="text-slate-400 whitespace-nowrap"><%= parent[:label] %></span>
         <% end %>
-      </li>
-    <% end %>
-  </ol>
-</nav>
+        <span class="mx-2 text-slate-500">/</span>
+      <% end %>
+
+      <%# Current page %>
+      <span class="text-cerulean font-medium whitespace-nowrap" aria-current="page">
+        <%= current[:label] %>
+      </span>
+    </nav>
+  </div>
+
+  <%# ── Mobile floating pill ───────────────────────────────────── %>
+  <div class="lg:hidden fixed z-30"
+       style="bottom: calc(env(safe-area-inset-bottom) + 80px); right: 1.5rem;">
+    <nav aria-label="<%= t('breadcrumbs.label') %>"
+         class="flex items-center px-3 py-1.5 rounded-full font-mono text-xs"
+         style="background: rgba(255,255,255,0.10); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.20);">
+
+      <%# Collapsed ancestors — shown as "···" button %>
+      <% if ancestors.any? %>
+        <button type="button"
+                class="text-slate-400 hover:text-slate-200 transition-colors leading-none mr-1"
+                data-action="click->ui--breadcrumb#openSheet"
+                aria-label="<%= t('breadcrumbs.show_full_path') %>">···</button>
+        <span class="mx-2 text-slate-500">/</span>
+      <% end %>
+
+      <%# Parent %>
+      <% if parent %>
+        <% if parent[:path].present? %>
+          <%= link_to parent[:label], parent[:path],
+              class: "text-slate-400 hover:text-slate-200 whitespace-nowrap transition-colors" %>
+        <% else %>
+          <span class="text-slate-400 whitespace-nowrap"><%= parent[:label] %></span>
+        <% end %>
+        <span class="mx-2 text-slate-500">/</span>
+      <% end %>
+
+      <%# Current page %>
+      <span class="text-cerulean font-medium whitespace-nowrap" aria-current="page">
+        <%= current[:label] %>
+      </span>
+    </nav>
+  </div>
+
+  <%# ── Mobile bottom sheet (full path) ───────────────────────── %>
+  <% if ancestors.any? %>
+    <%= render "shared/breadcrumb_sheet", crumbs: all_crumbs %>
+  <% end %>
+
+</div>
