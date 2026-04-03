@@ -26,10 +26,10 @@ class ApplicationController < ActionController::Base
     if resource.can?(:access_space_dashboard)
       space = resource.space
       return onboarding_wizard_path if space.present? && !space.onboarding_complete? && resource.space_owner?
-      return root_path
+      return dashboard_path
     end
 
-    stored_location_for(resource) || root_path
+    stored_location_for(resource) || dashboard_path
   end
 
   private
