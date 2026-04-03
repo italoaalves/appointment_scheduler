@@ -7,7 +7,7 @@
   <%= render "application/shared/page_header", title: t("space.inbox.index.title") %>
 
   <% if @conversations.any? %>
-    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm divide-y divide-slate-200">
+    <div class="card-glass overflow-hidden p-0 divide-y divide-slate-200">
       <% @conversations.each do |conversation| %>
         <%= link_to spaces_inbox_path(conversation), class: "flex items-center gap-4 px-4 py-3 hover:bg-slate-50 transition" do %>
           <div class="flex-1 min-w-0">
@@ -37,7 +37,7 @@
       </div>
     <% end %>
   <% else %>
-    <div class="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center text-slate-500 shadow-sm">
+    <div class="card-glass px-6 py-12 text-center text-slate-500">
       <%= t("space.inbox.index.empty") %>
     </div>
   <% end %>

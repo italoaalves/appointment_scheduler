@@ -1,13 +1,16 @@
 @import "tailwindcss";
 
+/* Targets devices with a real pointer (mouse/trackpad) — not screen-width based */
+@custom-variant can-hover (@media (hover: hover) and (pointer: fine));
+
 @theme {
   /* === Colors: Fresh Water & Deep Current === */
   --color-cerulean: #00D2FF;
   --color-electric: #007AFF;
   --color-deep: #0F172A;
   --color-mist: #F8FAFC;
-  --color-hydro-glass: rgba(255, 255, 255, 0.4);
-  --color-hydro-border: rgba(255, 255, 255, 0.2);
+  --color-hydro-glass: rgba(255, 255, 255, 0.88);
+  --color-hydro-border: rgba(15, 23, 42, 0.08);
 
   /* === Typography === */
   --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
@@ -79,21 +82,28 @@
 
   /* === Cards === */
 
-  /* Standard card — "Flat Earth" style (primary content, grounded) */
+  /* Standard card — now uses the same glass treatment */
   .card {
-    @apply bg-mist rounded-card p-6 md:p-8
-           border border-slate-200/60
-           shadow-sm shadow-slate-200/50;
+    @apply rounded-card p-6 md:p-8;
+    background: var(--color-hydro-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow:
+      0 1px 3px rgba(15, 23, 42, 0.08),
+      0 6px 24px rgba(15, 23, 42, 0.10),
+      0 0 0 1px rgba(15, 23, 42, 0.08);
   }
 
   /* Glassmorphism card — "Water Glass" style (navigational, overlays) */
   .card-glass {
-    @apply rounded-card p-6 md:p-8
-           border border-hydro-border
-           shadow-sm;
+    @apply rounded-card p-6 md:p-8;
     background: var(--color-hydro-glass);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
+    box-shadow:
+      0 1px 3px rgba(15, 23, 42, 0.08),
+      0 6px 24px rgba(15, 23, 42, 0.10),
+      0 0 0 1px rgba(15, 23, 42, 0.08);
   }
 
   /* Card state: Active appointment — slow-breathing cerulean glow */

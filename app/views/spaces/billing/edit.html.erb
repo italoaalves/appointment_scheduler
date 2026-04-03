@@ -36,7 +36,7 @@
     <div class="grid gap-4 sm:grid-cols-3">
       <% @plans.each do |plan| %>
         <% is_current = @subscription&.billing_plan_id == plan.id %>
-        <div class="relative flex flex-col rounded-xl border-2 bg-white p-5 shadow-sm
+        <div class="card-glass relative flex flex-col rounded-card border-2 p-5
                     <%= is_current ? 'border-slate-400 ring-2 ring-slate-100' :
                         plan.highlighted? ? 'border-slate-700' : 'border-slate-200' %>">
           <%# Badges %>
