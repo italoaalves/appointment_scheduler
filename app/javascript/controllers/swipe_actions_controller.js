@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 const CLOSE_EVENT = "swipe-actions:close-others"
+const HOVER_MEDIA = "(hover: hover) and (pointer: fine)"
 
 export default class extends Controller {
   static targets = ["content", "actions"]
@@ -9,9 +10,8 @@ export default class extends Controller {
     this.startX = 0
     this.baseOffset = 0
     this.swiped = false
-    this.REVEAL_WIDTH = 128
-    this.THRESHOLD = 60
-    this.MD_BREAKPOINT = 768
+    this.REVEAL_WIDTH = (this.hasActionsTarget && this.actionsTarget.offsetWidth) || 80
+    this.THRESHOLD = this.REVEAL_WIDTH * 0.5
 
     this.onTouchStart = this.#touchStart.bind(this)
     this.onTouchMove = this.#touchMove.bind(this)
@@ -19,10 +19,14 @@ export default class extends Controller {
     this.onCloseOthers = (e) => { if (e.detail !== this) this.#reset() }
     this.onDocTap = this.#handleDocTap.bind(this)
     this.onResize = this.#handleResize.bind(this)
+    this.onMouseEnter = this.#handleMouseEnter.bind(this)
+    this.onMouseLeave = this.#handleMouseLeave.bind(this)
 
     this.element.addEventListener("touchstart", this.onTouchStart, { passive: true })
     this.element.addEventListener("touchmove", this.onTouchMove, { passive: true })
     this.element.addEventListener("touchend", this.onTouchEnd)
+    this.element.addEventListener("mouseenter", this.onMouseEnter)
+    this.element.addEventListener("mouseleave", this.onMouseLeave)
     document.addEventListener(CLOSE_EVENT, this.onCloseOthers)
     document.addEventListener("touchstart", this.onDocTap, { passive: true })
     window.addEventListener("resize", this.onResize)
@@ -32,6 +36,8 @@ export default class extends Controller {
     this.element.removeEventListener("touchstart", this.onTouchStart)
     this.element.removeEventListener("touchmove", this.onTouchMove)
     this.element.removeEventListener("touchend", this.onTouchEnd)
+    this.element.removeEventListener("mouseenter", this.onMouseEnter)
+    this.element.removeEventListener("mouseleave", this.onMouseLeave)
     document.removeEventListener(CLOSE_EVENT, this.onCloseOthers)
     document.removeEventListener("touchstart", this.onDocTap)
     window.removeEventListener("resize", this.onResize)
@@ -65,6 +71,28 @@ export default class extends Controller {
     }
   }
 
+  #handleMouseEnter() {
+    if (!window.matchMedia(HOVER_MEDIA).matches) return
+    if (this.hasContentTarget) {
+      this.contentTarget.style.transform = `translateX(-${this.REVEAL_WIDTH}px)`
+    }
+    if (this.hasActionsTarget) {
+      this.actionsTarget.style.opacity = "1"
+    }
+  }
+
+  #handleMouseLeave() {
+    if (!window.matchMedia(HOVER_MEDIA).matches) return
+    if (!this.swiped) {
+      if (this.hasContentTarget) {
+        this.contentTarget.style.transform = "translateX(0)"
+      }
+      if (this.hasActionsTarget) {
+        this.actionsTarget.style.opacity = "0"
+      }
+    }
+  }
+
   #handleDocTap(e) {
     if (this.swiped && !this.element.contains(e.target)) {
       this.#reset()
@@ -72,9 +100,9 @@ export default class extends Controller {
   }
 
   #handleResize() {
-    if (this.swiped && window.innerWidth >= this.MD_BREAKPOINT) {
-      this.#reset()
-    }
+    this.REVEAL_WIDTH = (this.hasActionsTarget && this.actionsTarget.offsetWidth) || 80
+    this.THRESHOLD = this.REVEAL_WIDTH * 0.5
+    if (this.swiped) this.#reset()
   }
 
   #reveal() {
@@ -84,8 +112,7 @@ export default class extends Controller {
       this.contentTarget.style.transform = `translateX(-${this.REVEAL_WIDTH}px)`
     }
     if (this.hasActionsTarget) {
-      this.actionsTarget.classList.remove("opacity-0")
-      this.actionsTarget.classList.add("opacity-100")
+      this.actionsTarget.style.opacity = "1"
     }
   }
 
@@ -95,8 +122,7 @@ export default class extends Controller {
       this.contentTarget.style.transform = "translateX(0)"
     }
     if (this.hasActionsTarget) {
-      this.actionsTarget.classList.add("opacity-0")
-      this.actionsTarget.classList.remove("opacity-100")
+      this.actionsTarget.style.opacity = "0"
     }
   }
 }
