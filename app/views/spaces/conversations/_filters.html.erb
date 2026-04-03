@@ -1,0 +1,63 @@
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  <%# Channel filter %>
+  <div>
+    <%= f.label :channel, t("spaces.conversations.index.filters.channel"), class: "block text-sm font-medium text-slate-700 mb-1" %>
+    <%= f.select :channel, options_for_select([
+      [t("spaces.conversations.index.filters.all_channels"), ""],
+      [t("spaces.conversations.index.filters.channel_whatsapp"), "whatsapp"],
+      [t("spaces.conversations.index.filters.channel_email"), "email"],
+      [t("spaces.conversations.index.filters.channel_sms"), "sms"],
+      [t("spaces.conversations.index.filters.channel_instagram"), "instagram"],
+      [t("spaces.conversations.index.filters.channel_messenger"), "messenger"]
+    ], params[:channel]), {}, { class: "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" } %>
+  </div>
+
+  <%# Status filter %>
+  <div>
+    <%= f.label :status, t("spaces.conversations.index.filters.status"), class: "block text-sm font-medium text-slate-700 mb-1" %>
+    <%= f.select :status, options_for_select([
+      [t("spaces.conversations.index.filters.all_statuses"), ""],
+      [t("spaces.conversations.index.filters.status_automated"), "automated"],
+      [t("spaces.conversations.index.filters.status_needs_reply"), "needs_reply"],
+      [t("spaces.conversations.index.filters.status_open"), "open"],
+      [t("spaces.conversations.index.filters.status_pending"), "pending"],
+      [t("spaces.conversations.index.filters.status_resolved"), "resolved"],
+      [t("spaces.conversations.index.filters.status_closed"), "closed"]
+    ], params[:status]), {}, { class: "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500", style: params[:all].present? ? "" : "display: none" } %>
+  </div>
+
+  <%# Priority filter %>
+  <div>
+    <%= f.label :priority, t("spaces.conversations.index.filters.priority"), class: "block text-sm font-medium text-slate-700 mb-1" %>
+    <%= f.select :priority, options_for_select([
+      [t("spaces.conversations.index.filters.all_priorities"), ""],
+      [t("spaces.conversations.index.priority.low"), "low"],
+      [t("spaces.conversations.index.priority.normal"), "normal"],
+      [t("spaces.conversations.index.priority.high"), "high"],
+      [t("spaces.conversations.index.priority.urgent"), "urgent"]
+    ], params[:priority]), {}, { class: "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" } %>
+  </div>
+
+  <%# Customer search %>
+  <div>
+    <%= f.label :customer, t("spaces.conversations.index.filters.customer"), class: "block text-sm font-medium text-slate-700 mb-1" %>
+    <%= f.text_field :customer, value: params[:customer], placeholder: t("spaces.conversations.index.filters.customer_placeholder"), class: "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+  </div>
+
+  <%# Date range %>
+  <div>
+    <%= f.label :since, t("spaces.conversations.index.filters.since"), class: "block text-sm font-medium text-slate-700 mb-1" %>
+    <%= f.date_field :since, value: params[:since], class: "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+  </div>
+
+  <div>
+    <%= f.label :until, t("spaces.conversations.index.filters.until"), class: "block text-sm font-medium text-slate-700 mb-1" %>
+    <%= f.date_field :until, value: params[:until], class: "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+  </div>
+
+  <%# All conversations toggle %>
+  <div class="flex items-end">
+    <%= f.check_box :all, { checked: params[:all].present? }, "1", "0" %>
+    <%= f.label :all, t("spaces.conversations.index.all_toggle"), class: "ml-2 text-sm text-slate-700" %>
+  </div>
+</div>

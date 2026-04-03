@@ -1,0 +1,52 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("spaces.conversations.index.title") }
+] } %>
+
+<div class="flex flex-col h-[calc(100vh-100px)]" data-controller="inbox-filter">
+  <%# Filter bar %>
+  <%= form_with url: spaces_conversations_path, method: :get, data: { turbo_frame: "conversation_list", inbox_filter_target: "form" }, class: "p-4 border-b border-slate-200" do |f| %>
+    <%= render "spaces/conversations/filters", f: f %>
+  <% end %>
+
+  <div class="flex flex-1 overflow-hidden">
+    <%# Conversation list panel %>
+    <div class="w-1/2 overflow-y-auto border-r border-slate-200">
+      <%= turbo_frame_tag "conversation_list" do %>
+        <% if @conversations.any? %>
+          <div class="divide-y divide-slate-200">
+            <% @conversations.each do |conversation| %>
+              <%= render "spaces/conversations/conversation", conversation: conversation %>
+            <% end %>
+          </div>
+
+          <% if @conversations.respond_to?(:total_pages) && @conversations.total_pages > 1 %>
+            <div class="p-4 flex justify-center">
+              <%= paginate @conversations %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="p-8 text-center text-slate-500">
+            <%= t("spaces.conversations.index.empty") %>
+            <% if params[:all].present? %>
+              <%= link_to t("spaces.conversations.index.empty_all_clear"), spaces_conversations_path, class: "text-indigo-600 hover:underline ml-1" %>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <%# Detail panel %>
+    <div class="w-1/2 overflow-y-auto">
+      <%= turbo_frame_tag "conversation_detail" do %>
+        <% if @conversation %>
+          <%= render "spaces/conversations/detail", conversation: @conversation %>
+        <% else %>
+          <div class="p-8 text-center text-slate-500">
+            <%= t("spaces.conversations.index.detail_placeholder") %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
