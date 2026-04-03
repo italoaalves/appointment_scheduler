@@ -123,6 +123,23 @@
     animation: flow-gradient 8s ease infinite;
   }
 
+  /* Card state: Active appointment — slow-breathing cerulean glow */
+  .card-active {
+    animation: pulse-glow 2.5s ease-in-out infinite;
+  }
+
+  /* Card state: Alert / canceled / past-due — border flashes red */
+  .card-alert {
+    animation: border-pop 1s ease-in-out infinite;
+  }
+
+  /* Card state: Featured (next upcoming) — slow gradient flow */
+  .card-featured {
+    background-image: linear-gradient(-45deg, #fff, #E0F7FA, #fff, #E0F7FA);
+    background-size: 400%;
+    animation: flow-gradient 8s ease infinite;
+  }
+
   /* === Form Fields === */
 
   .form-input {
