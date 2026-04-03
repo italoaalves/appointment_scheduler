@@ -26,7 +26,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen bg-mist text-deep">
+  <body class="min-h-screen text-deep" style="background: linear-gradient(160deg, #ffffff 0%, #f0f9ff 50%, #e0f2fe 100%); background-attachment: fixed;">
     <%= render "shared/email_confirmation_banner" if user_signed_in? && !current_user.confirmed? %>
     <% if user_signed_in? %>
       <% if impersonating? %>
@@ -147,7 +147,7 @@
       <%= render "shared/flash_messages" %>
     </div>
 
-    <main class="mx-auto px-4 py-8 pb-24 lg:pb-8 lg:pr-28 <%= content_for?(:settings_sidebar) ? 'max-w-5xl' : 'max-w-4xl' %>">
+    <main class="mx-auto px-4 py-8 pb-28 sm:pb-8 sm:pr-28 <%= content_for?(:settings_sidebar) ? 'max-w-5xl' : 'max-w-4xl' %>">
       <%= yield(:breadcrumbs) if content_for?(:breadcrumbs) %>
       <% if content_for?(:settings_sidebar) %>
         <div class="flex flex-col md:flex-row gap-6 md:gap-8">

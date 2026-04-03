@@ -1,14 +1,17 @@
 <% tz = TimezoneResolver.zone(current_tenant) %>
 <% today = Time.current.in_time_zone(tz).to_date %>
+<% day_names   = t("date.day_names") %>
+<% month_names = t("date.month_names") %>
+<% abbr_months = t("date.abbr_month_names") %>
 
 <% if grouped_appointments.any? %>
   <div class="space-y-8">
     <% grouped_appointments.each do |date, appts| %>
       <div>
-        <div class="sticky top-0 z-10 -mx-1 px-1 py-2 mb-3 bg-mist/80 backdrop-blur-sm">
+        <div class="sticky top-0 z-10 -mx-1 px-1 py-2 mb-3">
           <h2 class="font-display font-bold text-deep text-lg">
             <% if date.nil? %>
-              —
+              <%= t("space.appointments.feed.unscheduled") %>
             <% elsif date == today %>
               <%= t("space.appointments.feed.today") %>
             <% elsif date == today + 1 %>
@@ -16,13 +19,15 @@
             <% elsif date == today - 1 %>
               <%= t("space.appointments.feed.yesterday") %>
             <% elsif (date - today).abs < 7 %>
-              <%= date.strftime("%A") %>
+              <%= day_names[date.wday] %>
             <% else %>
-              <%= date.strftime("%B %-d") %>
+              <%= "#{month_names[date.month]} #{date.day}" %>
             <% end %>
-            <span class="ml-2 text-sm font-normal text-slate-400">
-              <%= date&.strftime("%b %-d, %Y") %>
-            </span>
+            <% if date %>
+              <span class="ml-2 text-sm font-normal text-slate-400">
+                <%= "#{date.day} #{abbr_months[date.month]} #{date.year}" %>
+              </span>
+            <% end %>
           </h2>
         </div>
 

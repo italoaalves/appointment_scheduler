@@ -1,5 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
+const CLOSE_EVENT = "swipe-actions:close-others"
+
 export default class extends Controller {
   static targets = ["content", "actions"]
 
@@ -7,22 +9,32 @@ export default class extends Controller {
     this.startX = 0
     this.baseOffset = 0
     this.swiped = false
-    this.REVEAL_WIDTH = 128 // matches w-32 (8rem = 128px)
+    this.REVEAL_WIDTH = 128
     this.THRESHOLD = 60
+    this.MD_BREAKPOINT = 768
 
     this.onTouchStart = this.#touchStart.bind(this)
     this.onTouchMove = this.#touchMove.bind(this)
     this.onTouchEnd = this.#touchEnd.bind(this)
+    this.onCloseOthers = (e) => { if (e.detail !== this) this.#reset() }
+    this.onDocTap = this.#handleDocTap.bind(this)
+    this.onResize = this.#handleResize.bind(this)
 
     this.element.addEventListener("touchstart", this.onTouchStart, { passive: true })
     this.element.addEventListener("touchmove", this.onTouchMove, { passive: true })
     this.element.addEventListener("touchend", this.onTouchEnd)
+    document.addEventListener(CLOSE_EVENT, this.onCloseOthers)
+    document.addEventListener("touchstart", this.onDocTap, { passive: true })
+    window.addEventListener("resize", this.onResize)
   }
 
   disconnect() {
     this.element.removeEventListener("touchstart", this.onTouchStart)
     this.element.removeEventListener("touchmove", this.onTouchMove)
     this.element.removeEventListener("touchend", this.onTouchEnd)
+    document.removeEventListener(CLOSE_EVENT, this.onCloseOthers)
+    document.removeEventListener("touchstart", this.onDocTap)
+    window.removeEventListener("resize", this.onResize)
   }
 
   #touchStart(e) {
@@ -53,7 +65,20 @@ export default class extends Controller {
     }
   }
 
+  #handleDocTap(e) {
+    if (this.swiped && !this.element.contains(e.target)) {
+      this.#reset()
+    }
+  }
+
+  #handleResize() {
+    if (this.swiped && window.innerWidth >= this.MD_BREAKPOINT) {
+      this.#reset()
+    }
+  }
+
   #reveal() {
+    document.dispatchEvent(new CustomEvent(CLOSE_EVENT, { detail: this }))
     this.swiped = true
     if (this.hasContentTarget) {
       this.contentTarget.style.transform = `translateX(-${this.REVEAL_WIDTH}px)`

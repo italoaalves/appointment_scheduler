@@ -1,7 +1,7 @@
 <%# Mobile bottom nav — hidden on desktop.
     All elements live inside a single data-controller="nav" wrapper so
     sheet targets are in scope when toggleSheet/closeAllSheets are called. %>
-<div class="lg:hidden"
+<div class="sm:hidden"
      data-controller="nav">
 
   <%# Sheet overlay %>
@@ -10,7 +10,7 @@
        data-action="click->nav#closeAll"></div>
 
   <%# Appointments sheet %>
-  <div class="fixed bottom-16 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
+  <div class="fixed bottom-24 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
        style="padding-bottom: env(safe-area-inset-bottom);"
        data-nav-target="sheet"
        data-nav-group="appointments">
@@ -39,7 +39,7 @@
 
   <%# Space sheet — managers only %>
   <% if current_user.can?(:manage_space) %>
-    <div class="fixed bottom-16 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
+    <div class="fixed bottom-24 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
          style="padding-bottom: env(safe-area-inset-bottom);"
          data-nav-target="sheet"
          data-nav-group="space">
@@ -74,7 +74,7 @@
   <% end %>
 
   <%# Profile sheet %>
-  <div class="fixed bottom-16 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
+  <div class="fixed bottom-24 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
        style="padding-bottom: env(safe-area-inset-bottom);"
        data-nav-target="sheet"
        data-nav-group="profile">
@@ -105,10 +105,10 @@
     </div>
   </div>
 
-  <%# Bottom nav bar %>
-  <nav class="fixed bottom-0 inset-x-0 z-40"
-       style="background: rgba(255,255,255,0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(0,0,0,0.08); padding-bottom: env(safe-area-inset-bottom);">
-    <div class="flex justify-around items-center h-16">
+  <%# Bottom nav bar — floating pill %>
+  <nav class="fixed bottom-4 inset-x-3 z-40 flex items-center gap-1 py-2 px-2"
+       style="background: rgba(255,255,255,0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.3); border-radius: 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));">
+    <div class="flex items-center justify-around w-full">
 
       <%# Home %>
       <%= link_to root_path,

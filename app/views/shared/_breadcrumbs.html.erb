@@ -15,7 +15,7 @@
 <div data-controller="ui--breadcrumb">
 
   <%# ── Desktop floating pill ──────────────────────────────────── %>
-  <div class="hidden lg:block fixed bottom-8 right-32 z-30">
+  <div class="hidden sm:block fixed bottom-8 right-32 z-30">
     <nav aria-label="<%= t('breadcrumbs.label') %>"
          class="flex items-center px-3 py-1.5 rounded-full font-mono text-xs"
          style="background: rgba(255,255,255,0.10); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.20);"
@@ -56,8 +56,8 @@
   </div>
 
   <%# ── Mobile floating pill ───────────────────────────────────── %>
-  <div class="lg:hidden fixed z-30"
-       style="bottom: calc(env(safe-area-inset-bottom) + 80px); right: 1.5rem;">
+  <div class="sm:hidden fixed z-30"
+       style="bottom: calc(env(safe-area-inset-bottom) + 6.5rem); right: 1rem;">
     <nav aria-label="<%= t('breadcrumbs.label') %>"
          class="flex items-center px-3 py-1.5 rounded-full font-mono text-xs"
          style="background: rgba(255,255,255,0.10); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.20);">
