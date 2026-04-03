@@ -15,7 +15,7 @@
     </div>
   </header>
 
-  <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+  <div class="card-glass p-4">
     <dl class="space-y-3 text-sm">
       <div class="flex justify-between gap-4">
         <dt class="font-medium text-slate-700"><%= t("platform.customers.show.name") %></dt>
@@ -50,7 +50,7 @@
     <% if @appointments.any? %>
       <ul class="space-y-2">
         <% @appointments.each do |appointment| %>
-          <li class="rounded-lg border border-slate-200 bg-white p-3 text-sm shadow-sm">
+          <li class="card-glass p-3 text-sm">
             <div class="flex items-start justify-between gap-3">
               <div>
                 <p class="text-slate-900">

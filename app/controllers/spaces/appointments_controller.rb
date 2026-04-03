@@ -14,7 +14,9 @@ module Spaces
       base = current_tenant.appointments.includes(:customer, :space)
       base = apply_status_filter(base)
       base = apply_date_range_filter(base, timezone: current_tenant)
-      @appointments = base.order(scheduled_at: :desc, created_at: :desc).page(params[:page]).per(20)
+      @appointments = base.order(scheduled_at: :asc, created_at: :asc).page(params[:page]).per(20)
+      tz = TimezoneResolver.zone(current_tenant)
+      @grouped_appointments = @appointments.group_by { |a| a.scheduled_at&.in_time_zone(tz)&.to_date }
     end
 
     def show
@@ -182,7 +184,7 @@ module Spaces
       elsif source == "index"
         streams << turbo_stream.replace(
           dom_id(@appointment),
-          partial: "spaces/appointments/appointment_row",
+          partial: "spaces/appointments/appointment",
           locals: { appointment: @appointment }
         )
       elsif source == "calendar"

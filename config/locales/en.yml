@@ -28,6 +28,11 @@
 #       enabled: "ON"
 
 en:
+  date:
+    day_names: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    month_names: [~, "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    abbr_month_names: [~, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
   notifications:
     appointment_booked:
       subject: "New appointment request from %{customer_name}"
@@ -480,7 +485,15 @@ en:
         finish: "Finished"
         delete: "Delete"
         delete_confirm: "Permanently delete this appointment?"
+        in_progress: "In progress"
+        duration_minutes: "%{count} min"
+        swipe_hint: "Swipe ←"
       cancelled_locked: "Cancelled appointments cannot be modified. You can only delete them."
+      feed:
+        today: "Today"
+        tomorrow: "Tomorrow"
+        yesterday: "Yesterday"
+        unscheduled: "Unscheduled"
       pending:
         title: "Pending requests"
         subtitle: "%{count} appointment(s) waiting for confirmation."

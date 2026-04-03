@@ -13,7 +13,7 @@
   <%= render "application/shared/page_header", title: t("space.customers.index.title"), actions: page_actions %>
 
   <% if @customers.any? %>
-    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div class="card-glass overflow-hidden p-0">
       <table class="min-w-full divide-y divide-slate-200 text-sm">
         <thead class="bg-slate-50">
           <tr>

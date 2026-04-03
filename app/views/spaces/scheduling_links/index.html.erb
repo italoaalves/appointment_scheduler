@@ -13,7 +13,7 @@
   <%= render "application/shared/page_header", title: t("space.scheduling_links.index.title"), actions: page_actions %>
 
   <% if current_user.can?(:manage_personalized_links) %>
-    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div class="card-glass p-4">
       <h2 class="text-sm font-semibold text-slate-800"><%= t("space.personalized_scheduling_links.index.title") %></h2>
       <% if @personalized_link.present? %>
         <p class="mt-1 text-xs text-slate-600"><%= t("space.personalized_scheduling_links.index.has_link_hint") %></p>
@@ -42,7 +42,7 @@
   <% end %>
 
   <% if @scheduling_links.any? %>
-    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div class="card-glass overflow-hidden p-0">
       <table class="min-w-full divide-y divide-slate-200 text-sm">
         <thead class="bg-slate-50">
           <tr>

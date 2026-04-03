@@ -11,7 +11,7 @@
       [t("platform.billing.index.trialing"), @total_trialing, "text-blue-700"],
       [t("platform.billing.index.expired_canceled"), "#{@total_expired} / #{@total_canceled}", "text-red-700"]
     ].each do |label, value, cls| %>
-      <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div class="card-glass p-4">
         <p class="text-xs font-medium text-slate-500"><%= label %></p>
         <p class="mt-1 text-2xl font-bold <%= cls %>"><%= value %></p>
       </div>
@@ -19,7 +19,7 @@
   </div>
 
   <%# Subscription list %>
-  <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+  <div class="card-glass overflow-hidden p-0">
     <div class="border-b border-slate-200 px-5 py-3">
       <h2 class="text-sm font-semibold text-slate-800"><%= t("platform.billing.index.all_subscriptions") %></h2>
     </div>
@@ -75,7 +75,7 @@
 
   <%# Recent payments %>
   <% if @recent_payments.any? %>
-    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div class="card-glass overflow-hidden p-0">
       <div class="border-b border-slate-200 px-5 py-3">
         <h2 class="text-sm font-semibold text-slate-800"><%= t("platform.billing.index.recent_payments") %></h2>
       </div>
@@ -116,7 +116,7 @@
 
   <%# Recent events %>
   <% if @recent_events.any? %>
-    <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div class="card-glass p-0">
       <div class="border-b border-slate-200 px-5 py-3">
         <h2 class="text-sm font-semibold text-slate-800"><%= t("platform.billing.index.recent_events") %></h2>
       </div>
