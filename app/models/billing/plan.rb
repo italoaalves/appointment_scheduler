@@ -18,8 +18,9 @@ module Billing
                             numericality: { greater_than_or_equal_to: 0 }
     validates :position,    presence: true
 
-    scope :active,  -> { where(active: true) }
-    scope :visible, -> { active.where(public: true).order(:position) }
+    scope :active,   -> { where(active: true) }
+    scope :visible,  -> { active.where(public: true).order(:position) }
+    scope :ordered,  -> { order(:position) }
 
     def free?
       price_cents.zero?

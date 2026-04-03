@@ -4,7 +4,8 @@ Rails.application.routes.draw do
   get "up/ready" => "health#ready", as: :health_ready
 
   devise_for :users, controllers: { registrations: "users/registrations" }
-  root "dashboard#index"
+  root "landing#index"
+  get "dashboard", to: "dashboard#index", as: :dashboard
 
   patch "dashboard/dismiss_welcome", to: "dashboard#dismiss_welcome", as: :dismiss_dashboard_welcome
 
