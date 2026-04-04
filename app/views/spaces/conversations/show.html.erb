@@ -1,0 +1,11 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("spaces.conversations.index.title"), path: spaces_inbox_index_path },
+  { label: @conversation.contact_name || @conversation.contact_identifier }
+] } %>
+
+<div class="flex flex-col h-[calc(100vh-100px)]">
+  <%= turbo_frame_tag "conversation_detail" do %>
+    <%= render "spaces/conversations/detail", conversation: @conversation %>
+  <% end %>
+</div>

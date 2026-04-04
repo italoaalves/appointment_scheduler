@@ -87,3 +87,7 @@ secretary_appointments:
 secretary_scheduling_links:
   user: secretary
   permission: manage_scheduling_links
+
+secretary_read_inbox:
+  user: secretary
+  permission: read_inbox

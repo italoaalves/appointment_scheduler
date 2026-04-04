@@ -7,6 +7,7 @@ automated_one:
   contact_identifier: "+5511999990001"
   contact_name: "Bot Trigger"
   last_message_body: "Your appointment is confirmed."
+  last_message_at: <%= 2.hours.ago %>
   credit_cost_total: 1
   unread: false
 

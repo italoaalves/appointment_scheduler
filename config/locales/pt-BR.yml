@@ -1475,35 +1475,8 @@ pt-BR:
         all_users: "Todos os usuários"
 
   spaces:
-    whatsapp_settings:
-      title: "Configurações do WhatsApp"
-      no_number: "Nenhum número do WhatsApp conectado"
-      connect_button: "Conectar Número do WhatsApp"
-      warning: "Uma vez que seu número for registrado na API do WhatsApp Business, você não poderá mais usá-lo no aplicativo WhatsApp ou WhatsApp Business. Todas as mensagens serão gerenciadas pela caixa de entrada desta plataforma."
-      connected: "Número do WhatsApp conectado com sucesso."
-      verification_failed: "Não foi possível verificar a propriedade deste número do WhatsApp. Por favor, tente novamente."
-      already_connected: "Este número do WhatsApp já está conectado a outro espaço."
-      disconnected: "Número do WhatsApp desconectado."
-      disconnect_failed: "Falha ao desconectar o número do WhatsApp."
-      disconnect_button: "Desconectar"
-      disconnect_confirm: "Tem certeza? Seu espaço voltará a usar o número compartilhado da plataforma."
-      status: "Status"
-      quality_rating: "Classificação de Qualidade"
-      verified_name: "Nome da Empresa"
-      display_number: "Número de Telefone"
-
-  inbox:
-    channels:
-      whatsapp:
-        session_expired: "Sessão WhatsApp expirada — use uma mensagem de template para reengajar."
-      instagram:
-        session_expired: "Sessão Instagram expirada — aguarde o cliente enviar uma mensagem."
-      messenger:
-        session_expired: "Sessão Messenger expirada — aguarde o cliente enviar uma mensagem."
-    errors:
-      insufficient_credits: "Créditos insuficientes para enviar esta mensagem."
-      send_failed: "Falha ao enviar a mensagem. Tente novamente."
     conversations:
+      update_failed: "Não foi possível atualizar a conversa. Tente novamente."
       index:
         title: "Conversas"
         all_toggle: "Todas as conversas"
@@ -1562,6 +1535,7 @@ pt-BR:
         title: "Detalhes da conversa"
         subtitle: "Veja o histórico de mensagens e informações da conversa."
         no_messages: "Nenhuma mensagem ainda."
+        body_required: "A mensagem não pode estar em branco."
         assign_to: "Atribuir para"
         assign_to_me: "Atribuir para mim"
         assign_to_none: "Remover atribuição"
@@ -1598,4 +1572,34 @@ pt-BR:
         status_resolved: "Resolvida"
         status_closed: "Fechada"
         unassigned: "Não atribuída"
+    whatsapp_settings:
+      title: "Configurações do WhatsApp"
+      no_number: "Nenhum número do WhatsApp conectado"
+      connect_button: "Conectar Número do WhatsApp"
+      warning: "Uma vez que seu número for registrado na API do WhatsApp Business, você não poderá mais usá-lo no aplicativo WhatsApp ou WhatsApp Business. Todas as mensagens serão gerenciadas pela caixa de entrada desta plataforma."
+      connected: "Número do WhatsApp conectado com sucesso."
+      verification_failed: "Não foi possível verificar a propriedade deste número do WhatsApp. Por favor, tente novamente."
+      already_connected: "Este número do WhatsApp já está conectado a outro espaço."
+      disconnected: "Número do WhatsApp desconectado."
+      disconnect_failed: "Falha ao desconectar o número do WhatsApp."
+      disconnect_button: "Desconectar"
+      disconnect_confirm: "Tem certeza? Seu espaço voltará a usar o número compartilhado da plataforma."
+      status: "Status"
+      quality_rating: "Classificação de Qualidade"
+      verified_name: "Nome da Empresa"
+      display_number: "Número de Telefone"
+
+  inbox:
+    access_denied: "Acesso à caixa de entrada bloqueado. Faça upgrade do seu plano."
+    write_denied: "Permissão insuficiente para responder. Entre em contato com o administrador."
+    channels:
+      whatsapp:
+        session_expired: "Sessão WhatsApp expirada — use uma mensagem de template para reengajar."
+      instagram:
+        session_expired: "Sessão Instagram expirada — aguarde o cliente enviar uma mensagem."
+      messenger:
+        session_expired: "Sessão Messenger expirada — aguarde o cliente enviar uma mensagem."
+    errors:
+      insufficient_credits: "Créditos insuficientes para enviar esta mensagem."
+      send_failed: "Falha ao enviar a mensagem. Tente novamente."
 

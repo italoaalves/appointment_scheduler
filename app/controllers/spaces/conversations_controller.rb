@@ -24,43 +24,54 @@ module Spaces
     end
 
     def reply
+      body = reply_params[:body]&.strip
+
+      if body.blank?
+        redirect_to spaces_inbox_path(@conversation),
+                    alert: t("spaces.conversations.detail.body_required"), status: :see_other
+        return
+      end
+
       result = Inbox::SendReply.new(
         conversation: @conversation,
-        body: reply_params[:body],
+        body: body,
         sent_by: current_user,
         space: current_tenant
       ).call
 
       if result.success?
-        redirect_to spaces_conversation_path(@conversation), status: :see_other
+        redirect_to spaces_inbox_path(@conversation), status: :see_other
       else
-        redirect_to spaces_conversation_path(@conversation),
+        redirect_to spaces_inbox_path(@conversation),
                     alert: result.error, status: :see_other
       end
     end
 
     def update
       if @conversation.update(update_params)
-        redirect_to spaces_conversation_path(@conversation), status: :see_other
+        redirect_to spaces_inbox_path(@conversation), status: :see_other
       else
-        redirect_to spaces_conversation_path(@conversation),
+        redirect_to spaces_inbox_path(@conversation),
                     alert: t("spaces.conversations.update_failed"), status: :see_other
       end
+    rescue ArgumentError
+      redirect_to spaces_inbox_path(@conversation),
+                  alert: t("spaces.conversations.update_failed"), status: :see_other
     end
 
     def assign
       @conversation.update!(assigned_to_id: assign_params[:assigned_to_id])
-      redirect_to spaces_conversation_path(@conversation), status: :see_other
+      redirect_to spaces_inbox_path(@conversation), status: :see_other
     end
 
     def resolve
       @conversation.update!(status: :resolved)
-      redirect_to spaces_conversations_path, status: :see_other
+      redirect_to spaces_inbox_index_path, status: :see_other
     end
 
     def reopen
       @conversation.update!(status: :needs_reply)
-      redirect_to spaces_conversation_path(@conversation), status: :see_other
+      redirect_to spaces_inbox_path(@conversation), status: :see_other
     end
 
     private
@@ -76,8 +87,8 @@ module Spaces
     end
 
     def require_write_inbox
-      unless PermissionService.can?(current_user, current_tenant, "write_inbox")
-        redirect_to spaces_conversations_path, alert: t("inbox.write_denied")
+      unless PermissionService.can?(user: current_user, permission: "write_inbox", space: current_tenant)
+        redirect_to spaces_inbox_index_path, alert: t("inbox.write_denied")
       end
     end
 

@@ -1,0 +1,5 @@
+<% colors = { "whatsapp" => "emerald", "email" => "blue", "sms" => "violet", "instagram" => "pink", "messenger" => "sky" } %>
+<% color = colors[channel.to_s] || "gray" %>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase bg-<%= color %>-100 text-<%= color %>-700">
+  <%= t("spaces.conversations.index.channel_#{channel}") %>
+</span>

@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+# Decrypt a credential path from staging.yml.enc without booting Rails.
+# Usage: .kamal/decrypt kamal deploy token
+
+require "yaml"
+require "active_support/encrypted_configuration"
+
+creds = ActiveSupport::EncryptedConfiguration.new(
+  config_path: "config/credentials/staging.yml.enc",
+  key_path: "config/credentials/staging.key",
+  env_key: "RAILS_MASTER_KEY",
+  raise_if_missing_key: true
+)
+
+value = creds.dig(*ARGV.map(&:to_sym))
+abort "ERROR: credential #{ARGV.join('.')} is missing" if value.nil? || value.empty?
+print value
