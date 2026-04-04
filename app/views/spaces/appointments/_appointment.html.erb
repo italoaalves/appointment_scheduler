@@ -104,8 +104,8 @@
       </p>
     <% end %>
 
-    <%# Touch: swipe hint (hidden on pointer devices) %>
-    <% if appointment.pending? || appointment.confirmed? %>
+    <%# Touch: swipe hint (hidden on pointer devices) — shown whenever the drawer has at least one action %>
+    <% if appointment.pending? || appointment.confirmed? || current_user.can?(:destroy_appointments) %>
       <div class="can-hover:hidden px-4 pb-3 flex justify-end">
         <span class="text-xs text-slate-400"><%= t("space.appointments.index.swipe_hint") %></span>
       </div>
