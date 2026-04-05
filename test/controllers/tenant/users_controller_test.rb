@@ -37,7 +37,7 @@ module Tenant
       sign_in @manager
       get users_url
       assert_response :success
-      assert_select "table tbody tr", count: 2
+      assert_select ".user-card", count: 2
     end
 
     test "manager can create secretary" do
