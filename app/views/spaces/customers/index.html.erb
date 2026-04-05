@@ -1,51 +1,49 @@
+<% content_for(:wide_layout) { "" } %>
 <% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
   { label: t("breadcrumbs.dashboard"), path: root_path },
   { label: t("breadcrumbs.customers") }
 ] } %>
-<div class="space-y-4">
-  <% page_actions = capture do %>
-    <% if Billing::PlanEnforcer.can?(current_tenant, :create_customer) %>
-      <%= link_to t("space.customers.index.new_button"), new_customer_path, class: button_classes(:primary) %>
-    <% else %>
-      <span class="text-sm text-slate-500"><%= t("billing.limits.customers_exceeded") %></span>
-    <% end %>
-  <% end %>
-  <%= render "application/shared/page_header", title: t("space.customers.index.title"), actions: page_actions %>
 
-  <% if @customers.any? %>
-    <div class="card-glass overflow-hidden p-0">
-      <table class="min-w-full divide-y divide-slate-200 text-sm">
-        <thead class="bg-slate-50">
-          <tr>
-            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("space.customers.index.table.name") %>
-            </th>
-            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("space.customers.index.table.phone") %>
-            </th>
-            <th scope="col" class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("space.customers.index.table.actions") %>
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-200">
-          <% @customers.each do |customer| %>
-            <tr class="hover:bg-slate-50">
-              <td class="px-4 py-2 align-top text-slate-900"><%= customer.name %></td>
-              <td class="px-4 py-2 align-top text-slate-700"><%= customer.phone.presence || "—" %></td>
-              <td class="px-4 py-2 align-top">
-                <div class="flex flex-wrap justify-end gap-1">
-                  <%= link_to t("space.customers.index.view"), customer_path(customer), class: button_classes(:table_link) %>
-                  <%= link_to t("space.customers.index.edit"), edit_customer_path(customer), class: button_classes(:table_link) %>
-                  <%= button_to t("space.customers.index.delete"), customer_path(customer), method: :delete, data: { turbo_confirm: t("space.customers.index.delete_confirm"), turbo_submits_with: t("shared.deleting") }, class: button_classes(:danger) %>
-                </div>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  <% else %>
-    <%= render "application/shared/empty_state", content: t("space.customers.index.empty") %>
-  <% end %>
-</div>
+<% if turbo_frame_request? %>
+  <turbo-frame id="<%= request.headers["Turbo-Frame"] %>">
+    <%= render "feed_page", grouped_customers: @grouped_customers, customers: @customers %>
+  </turbo-frame>
+<% else %>
+  <div class="space-y-6">
+    <% page_actions = capture do %>
+      <% if Billing::PlanEnforcer.can?(current_tenant, :create_customer) %>
+        <%= link_to t("space.customers.index.new_button"), new_customer_path, class: button_classes(:primary) %>
+      <% else %>
+        <span class="text-sm text-slate-500"><%= t("billing.limits.customers_exceeded") %></span>
+      <% end %>
+    <% end %>
+    <%= render "application/shared/page_header", title: t("space.customers.index.title"), actions: page_actions %>
+
+    <%= form_with url: customers_path,
+                  method: :get,
+                  local: true,
+                  data: { controller: "auto-submit", turbo_frame: "customers-feed" },
+                  class: "card-glass flex items-center gap-2 p-3" do %>
+      <div class="flex-1">
+        <%= text_field_tag :query, params[:query],
+                           placeholder: t("space.customers.index.filters.search_placeholder"),
+                           class: "w-full rounded-md border-slate-300 text-base focus:border-slate-500 focus:ring-slate-500 py-2.5",
+                           data: { auto_submit_target: "input", action: "input->auto-submit#search" } %>
+      </div>
+      <%= link_to customers_path,
+            class: "flex-shrink-0 p-2 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors",
+            aria: { label: t("space.customers.index.filters.clear") },
+            data: { turbo_frame: "customers-feed" } do %>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      <% end %>
+    <% end %>
+
+    <turbo-frame id="customers-feed"
+                 data-controller="infinite-scroll"
+                 data-infinite-scroll-card-selector-value=".customer-card">
+      <%= render "feed_page", grouped_customers: @grouped_customers, customers: @customers %>
+    </turbo-frame>
+  </div>
+<% end %>

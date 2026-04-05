@@ -67,7 +67,7 @@ class PermissionServiceTest < ActiveSupport::TestCase
     assert PermissionService::ALLOWED_PERMISSIONS.include?("write_inbox")
   end
 
-  test "read_inbox is not rejected as unknown permission" do
-    assert_not PermissionService.can?(user: @secretary, permission: :read_inbox, space: @space)
+  test "secretary with read_inbox permission can read inbox" do
+    assert PermissionService.can?(user: @secretary, permission: :read_inbox, space: @space)
   end
 end

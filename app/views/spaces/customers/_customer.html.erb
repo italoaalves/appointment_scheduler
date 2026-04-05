@@ -1,0 +1,73 @@
+<% initials = customer.name.split.first(2).map { |w| w[0]&.upcase }.join %>
+<% avatar_colors = [
+  "bg-cerulean/15 text-cerulean",
+  "bg-emerald-500/15 text-emerald-700",
+  "bg-amber-500/15 text-amber-700",
+  "bg-rose-500/15 text-rose-700",
+  "bg-purple-500/15 text-purple-700",
+  "bg-blue-500/15 text-blue-700"
+] %>
+<% avatar_color = avatar_colors[customer.name[0]&.ord.to_i % avatar_colors.length] %>
+
+<div id="<%= dom_id(customer) %>"
+     class="customer-card group relative overflow-hidden rounded-card"
+     data-controller="swipe-actions">
+
+  <%# Action panel — pinned to trailing edge, revealed by hover (desktop) or swipe (touch) %>
+  <div data-swipe-actions-target="actions"
+       class="absolute right-0 top-0 h-full w-15 flex flex-col items-center justify-center gap-2 px-2
+              bg-gradient-to-l from-deep/10 to-transparent z-[1] opacity-0 transition-opacity duration-[250ms]"
+       role="group"
+       aria-label="<%= t("space.customers.index.table.actions") %>">
+    <% if current_user.can?(:manage_customers) %>
+      <%= link_to edit_customer_path(customer),
+            class: "flex flex-col items-center gap-0.5 p-2 rounded-lg bg-slate-100 text-slate-600 shadow-sm hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400",
+            data: { turbo_frame: "_top" },
+            aria: { label: t("space.customers.index.edit") } do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+        </svg>
+      <% end %>
+      <%= button_to customer_path(customer),
+            method: :delete,
+            data: { turbo_confirm: t("space.customers.index.delete_confirm"), turbo_submits_with: t("shared.deleting") },
+            class: "flex flex-col items-center gap-0.5 p-2 rounded-lg bg-red-100 text-red-700 shadow-sm hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-400 cursor-pointer",
+            aria: { label: t("space.customers.index.delete") } do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# Card content — slides left on hover (desktop) or swipe (touch) to reveal action panel %>
+  <div data-swipe-actions-target="content"
+       class="card-glass relative z-[2] h-full transition-transform duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)]">
+
+    <%# Tappable info area — navigates to customer detail %>
+    <%= link_to customer_path(customer),
+          class: "block p-4 cursor-pointer",
+          data: { turbo_frame: "_top" } do %>
+      <div class="flex items-center gap-3">
+        <div class="flex-shrink-0 w-10 h-10 rounded-full <%= avatar_color %> flex items-center justify-center font-display font-bold text-sm select-none">
+          <%= initials.presence || "?" %>
+        </div>
+        <div class="min-w-0 flex-1">
+          <p class="font-display font-bold text-deep text-base leading-snug truncate"><%= customer.name %></p>
+          <% if customer.phone.present? %>
+            <p class="font-body text-sm text-slate-500 mt-0.5"><%= customer.phone %></p>
+          <% elsif customer.email.present? %>
+            <p class="font-body text-sm text-slate-500 mt-0.5 truncate"><%= customer.email %></p>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# Touch: swipe hint (hidden on pointer devices) %>
+    <% if current_user.can?(:manage_customers) %>
+      <div class="can-hover:hidden px-4 pb-3 flex justify-end">
+        <span class="text-xs text-slate-400"><%= t("space.customers.index.swipe_hint") %></span>
+      </div>
+    <% end %>
+  </div>
+</div>

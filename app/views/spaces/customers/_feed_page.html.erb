@@ -1,0 +1,27 @@
+<% if grouped_customers.any? %>
+  <div class="space-y-8">
+    <% grouped_customers.each do |letter, group| %>
+      <div>
+        <div class="sticky top-0 z-10 -mx-1 px-1 py-2 mb-3">
+          <h2 class="font-display font-bold text-deep text-lg"><%= letter %></h2>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <% group.each do |customer| %>
+            <%= render "customer", customer: customer %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if customers.next_page %>
+      <turbo-frame id="customers-page-<%= customers.next_page %>"
+                   src="<%= customers_path(page: customers.next_page, query: params[:query]) %>"
+                   loading="lazy">
+        <%= render "skeleton_loaders" %>
+      </turbo-frame>
+    <% end %>
+  </div>
+<% else %>
+  <%= render "application/shared/empty_state", content: t("space.customers.index.empty") %>
+<% end %>
