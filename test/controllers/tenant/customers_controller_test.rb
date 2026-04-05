@@ -38,7 +38,7 @@ module Tenant
       sign_in @manager
       get customers_url
       assert_response :success
-      assert_select "table tbody tr", count: 2
+      assert_select ".customer-card", count: 2
     end
 
     test "manager can create customer" do
