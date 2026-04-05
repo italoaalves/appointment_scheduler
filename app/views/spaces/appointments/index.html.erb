@@ -5,8 +5,21 @@
 ] } %>
 
 <% if turbo_frame_request? %>
-  <turbo-frame id="<%= request.headers["Turbo-Frame"] %>">
-    <%= render "feed_page", grouped_appointments: @grouped_appointments, appointments: @appointments %>
+  <% frame_id = request.headers["Turbo-Frame"] %>
+  <turbo-frame id="<%= frame_id %>">
+    <% if frame_id == "appointments-feed" %>
+      <%# Filter refresh — rebuild past loader + feed list inside the frame %>
+      <%= render "past_loader",
+            before_date: params[:date_from].presence || Date.current.iso8601,
+            page: 1,
+            status: params[:status] %>
+      <div id="appointments-feed-list" class="space-y-8" style="overflow-anchor: auto;">
+        <%= render "feed_page", grouped_appointments: @grouped_appointments, appointments: @appointments %>
+      </div>
+    <% else %>
+      <%# Lazy pagination (appointments-page-N) — raw feed page inside its own frame %>
+      <%= render "feed_page", grouped_appointments: @grouped_appointments, appointments: @appointments %>
+    <% end %>
   </turbo-frame>
 <% else %>
   <div class="space-y-6">
@@ -19,7 +32,7 @@
                   method: :get,
                   local: true,
                   data: { turbo_frame: "appointments-feed" },
-                  class: "card-glass flex flex-wrap items-end gap-3 p-4" do %>
+                  class: "card-glass sticky top-4 z-20 flex flex-wrap items-end gap-3 p-4" do %>
       <div class="flex flex-col gap-1">
         <label for="status" class="<%= form_label_classes_sm %>"><%= t("space.appointments.filters.status") %></label>
         <%= select_tag :status,
@@ -51,8 +64,16 @@
       </div>
     <% end %>
 
-    <turbo-frame id="appointments-feed" data-controller="infinite-scroll">
-      <%= render "feed_page", grouped_appointments: @grouped_appointments, appointments: @appointments %>
+    <turbo-frame id="appointments-feed"
+                 data-controller="infinite-scroll past-loader"
+                 data-past-loader-url-value="<%= appointments_path %>">
+      <%= render "past_loader",
+            before_date: params[:date_from].presence || Date.current.iso8601,
+            page: 1,
+            status: params[:status] %>
+      <div id="appointments-feed-list" class="space-y-8" style="overflow-anchor: auto;">
+        <%= render "feed_page", grouped_appointments: @grouped_appointments, appointments: @appointments %>
+      </div>
     </turbo-frame>
   </div>
 <% end %>

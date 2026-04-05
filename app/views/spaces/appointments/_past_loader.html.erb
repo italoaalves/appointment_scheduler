@@ -1,0 +1,13 @@
+<div id="past-loader-trigger" class="flex justify-center py-3">
+  <button type="button"
+          class="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
+          data-action="past-loader#load"
+          data-past-loader-before-date-param="<%= before_date %>"
+          data-past-loader-page-param="<%= page || 1 %>"
+          data-past-loader-status-param="<%= status.to_s %>">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11l7-7 7 7M5 19l7-7 7 7"/>
+    </svg>
+    <%= t("space.appointments.feed.load_previous") %>
+  </button>
+</div>

@@ -4,8 +4,9 @@
      appointment.scheduled_at <= Time.current &&
      Time.current <= appointment.scheduled_at + appointment.effective_duration_minutes.minutes %>
 
+<% is_past = !in_progress && appointment.scheduled_at.present? && appointment.scheduled_at < Time.current %>
 <div id="<%= dom_id(appointment) %>"
-     class="appointment-card group relative overflow-hidden rounded-card <%= in_progress ? 'card-active' : '' %>"
+     class="appointment-card group relative overflow-hidden rounded-card <%= in_progress ? 'card-active' : '' %> <%= 'is-past' if is_past %>"
      data-controller="swipe-actions">
 
   <%# Action drawer — right edge on touch (swipe), bottom edge on hover devices %>

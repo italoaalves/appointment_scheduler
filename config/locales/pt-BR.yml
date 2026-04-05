@@ -465,6 +465,7 @@ pt-BR:
         tomorrow: "Amanhã"
         yesterday: "Ontem"
         unscheduled: "Sem data"
+        load_previous: "Ver anteriores"
       pending:
         title: "Consultas pendentes"
         subtitle: "%{count} consulta(s) aguardando confirmação."

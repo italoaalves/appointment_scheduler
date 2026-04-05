@@ -494,6 +494,7 @@ en:
         tomorrow: "Tomorrow"
         yesterday: "Yesterday"
         unscheduled: "Unscheduled"
+        load_previous: "Show previous"
       pending:
         title: "Pending requests"
         subtitle: "%{count} appointment(s) waiting for confirmation."
