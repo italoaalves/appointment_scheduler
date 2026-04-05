@@ -13,6 +13,10 @@ module Spaces
     def index
       base = current_tenant.appointments.includes(:customer, :space)
       base = apply_status_filter(base)
+
+      return load_past_feed(base) if params[:before_date].present?
+
+      params[:date_from] = Date.current.iso8601 if params[:date_from].blank?
       base = apply_date_range_filter(base, timezone: current_tenant)
       @appointments = base.order(scheduled_at: :asc, created_at: :asc).page(params[:page]).per(20)
       tz = TimezoneResolver.zone(current_tenant)
@@ -209,6 +213,57 @@ module Spaces
 
       streams << turbo_stream.prepend("flash_messages", partial: "shared/flash_stream", locals: { type: :notice, message: notice })
       streams
+    end
+
+    def load_past_feed(base)
+      before_date = parse_date_param(params[:before_date])
+      return head(:bad_request) unless before_date
+
+      tz = TimezoneResolver.zone(current_tenant)
+      cutoff = tz.local(before_date.year, before_date.month, before_date.day, 0, 0, 0)
+
+      @appointments = base
+        .where(scheduled_at: ...cutoff)
+        .order(scheduled_at: :desc, created_at: :desc)
+        .page(params[:page])
+        .per(20)
+
+      records = @appointments.to_a
+      sorted_asc = records.sort_by { |a| [ a.scheduled_at || Time.at(0), a.created_at ] }
+      @grouped_appointments = sorted_asc.group_by { |a| a.scheduled_at&.in_time_zone(tz)&.to_date }
+
+      respond_to do |format|
+        format.turbo_stream do
+          streams = [
+            turbo_stream.prepend(
+              "appointments-feed-list",
+              partial: "spaces/appointments/past_feed_page",
+              locals: { grouped_appointments: @grouped_appointments, tz: tz }
+            )
+          ]
+
+          if @appointments.next_page
+            streams << turbo_stream.replace(
+              "past-loader-trigger",
+              partial: "spaces/appointments/past_loader",
+              locals: { before_date: before_date, page: @appointments.next_page, status: params[:status] }
+            )
+          else
+            streams << turbo_stream.remove("past-loader-trigger")
+          end
+
+          render turbo_stream: streams
+        end
+        format.html { redirect_to appointments_path }
+      end
+    end
+
+    def parse_date_param(str)
+      return nil if str.blank?
+
+      Date.parse(str.to_s)
+    rescue ArgumentError
+      nil
     end
 
     def resolve_error_message(result, cannot_before_key, policy_blocked_key, cancelled_locked_key)

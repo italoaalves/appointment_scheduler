@@ -200,6 +200,11 @@
   .appointment-card.is-unloaded > * {
     visibility: hidden;
   }
+
+  /* Past appointment card — subtle mute to distinguish history from upcoming */
+  .appointment-card.is-past {
+    opacity: 0.65;
+  }
 }
 
 /* Booking slot buttons */
