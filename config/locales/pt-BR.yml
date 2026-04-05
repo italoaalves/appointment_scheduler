@@ -592,7 +592,11 @@ pt-BR:
         edit: "Editar"
         delete: "Excluir"
         delete_confirm: "Excluir este usuário permanentemente?"
+        swipe_hint: "Deslize ←"
         empty: "Nenhum membro na equipe ainda. Convide um secretário para começar."
+        filters:
+          search_placeholder: "Buscar membros da equipe..."
+          clear: "Limpar busca"
       show:
         title: "Membro da equipe"
         subtitle: "Veja os detalhes e as consultas deste usuário."

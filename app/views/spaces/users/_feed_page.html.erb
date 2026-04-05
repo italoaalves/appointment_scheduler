@@ -1,0 +1,13 @@
+<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <% users.each do |user| %>
+    <%= render "user", user: user %>
+  <% end %>
+</div>
+
+<% if users.next_page %>
+  <turbo-frame id="users-page-<%= users.next_page %>"
+               src="<%= users_path(page: users.next_page) %>"
+               loading="lazy">
+    <%= render "skeleton_loaders" %>
+  </turbo-frame>
+<% end %>
