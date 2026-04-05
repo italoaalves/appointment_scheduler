@@ -8,7 +8,12 @@ module Spaces
     before_action :set_user, only: [ :show, :edit, :update, :destroy ]
 
     def index
-      @users = current_tenant.users.order(:email).page(params[:page]).per(20)
+      @users = current_tenant.users.order(:email)
+      if params[:query].present?
+        sanitized = ActiveRecord::Base.sanitize_sql_like(params[:query].strip)
+        @users = @users.where("email ILIKE ? OR name ILIKE ?", "%#{sanitized}%", "%#{sanitized}%")
+      end
+      @users = @users.page(params[:page]).per(20)
     end
 
     def show

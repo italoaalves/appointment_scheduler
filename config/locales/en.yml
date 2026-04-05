@@ -622,7 +622,11 @@ en:
         edit: "Edit"
         delete: "Delete"
         delete_confirm: "Permanently delete this user?"
+        swipe_hint: "Swipe ←"
         empty: "No team members yet. Invite a secretary to get started."
+        filters:
+          search_placeholder: "Search team members..."
+          clear: "Clear search"
       show:
         title: "Team member"
         subtitle: "View team member details and their appointments."

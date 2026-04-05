@@ -1,0 +1,66 @@
+<div id="<%= dom_id(user) %>" class="user-card group relative overflow-hidden rounded-card card-glass" data-controller="swipe-actions">
+
+  <%# Action drawer — right edge on touch (swipe), bottom edge on hover devices %>
+  <div data-swipe-actions-target="actions"
+       class="absolute right-0 top-0 h-full w-28 grid grid-cols-2 place-content-center gap-1.5 px-3
+              bg-gradient-to-l from-white via-white/90 to-white/60
+              can-hover:top-auto can-hover:bottom-0 can-hover:left-0 can-hover:w-full can-hover:h-auto
+              can-hover:flex can-hover:flex-row can-hover:justify-end can-hover:px-3 can-hover:py-2
+              can-hover:bg-gradient-to-t can-hover:from-white can-hover:via-white/90 can-hover:to-white/60
+              z-[3] opacity-0 transition-[opacity,translate] duration-[250ms] ease-[cubic-bezier(0,0,0.2,1)]"
+       role="group"
+       aria-label="<%= t("space.users.index.table.actions") %>">
+    <% if current_user.can?(:manage_team) && !user.space_owner?(current_tenant) %>
+      <%= link_to edit_user_path(user),
+            class: "flex flex-col items-center gap-0.5 p-3 can-hover:p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400",
+            data: { turbo_frame: "_top", swipe_action: "" },
+            aria: { label: t("space.users.index.edit") } do %>
+        <svg class="w-5 h-5 can-hover:w-4 can-hover:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+        </svg>
+      <% end %>
+      <%= button_to user_path(user),
+            method: :delete,
+            data: { turbo_confirm: t("space.users.index.delete_confirm"), turbo_submits_with: t("shared.deleting"), swipe_action: "" },
+            class: "flex flex-col items-center gap-0.5 p-3 can-hover:p-2 rounded-lg text-red-400 hover:bg-red-100 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 cursor-pointer",
+            aria: { label: t("space.users.index.delete") } do %>
+        <svg class="w-5 h-5 can-hover:w-4 can-hover:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# Tappable info area — navigates to user detail %>
+  <%= link_to user_path(user),
+        class: "block cursor-pointer",
+        data: { turbo_frame: "_top" } do %>
+    <%# Card content — stays in place; action panel overlays on top %>
+    <div data-swipe-actions-target="content" class="relative z-[2] h-full p-4">
+      <div class="flex items-center gap-3">
+        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center font-display font-bold text-sm select-none">
+          <% initials = user.email.split('@').first(2).map { |w| w[0]&.upcase }.join %>
+          <%= initials.presence || "?" %>
+        </div>
+        <div class="min-w-0 flex-1">
+          <p class="font-display font-bold text-deep text-base leading-snug truncate"><%= user.email %></p>
+          <p class="font-body text-sm text-slate-500 mt-0.5 truncate"><%= user.name.presence || "—" %></p>
+        </div>
+      </div>
+      <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between">
+        <% if user.space_owner?(current_tenant) %>
+          <span class="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800"><%= t("space.users.owner") %></span>
+        <% else %>
+          <span class="text-sm text-slate-600"><%= user.role.presence || "—" %></span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Touch: swipe hint (hidden on pointer devices) %>
+  <% if current_user.can?(:manage_team) && !user.space_owner?(current_tenant) %>
+    <div data-swipe-actions-target="hint" class="can-hover:hidden px-4 pb-3 flex justify-end transition-opacity duration-[200ms]">
+      <span class="text-xs text-slate-400"><%= t("space.users.index.swipe_hint") %></span>
+    </div>
+  <% end %>
+</div>

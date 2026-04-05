@@ -1,67 +1,51 @@
+<% content_for(:wide_layout) { "" } %>
 <% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
   { label: t("breadcrumbs.dashboard"), path: root_path },
   { label: t("breadcrumbs.team") }
 ] } %>
-<div class="space-y-4">
-  <% page_actions = capture do %>
-    <% if current_user.can?(:manage_team) %>
-      <% if Billing::PlanEnforcer.can?(current_tenant, :create_team_member) %>
-        <%= link_to t("space.users.index.new_button"), new_user_path, class: button_classes(:primary) %>
-      <% else %>
-        <span class="text-sm text-slate-500"><%= t("billing.limits.team_members_exceeded") %></span>
+
+<% if turbo_frame_request? %>
+  <turbo-frame id="<%= request.headers["Turbo-Frame"] %>">
+    <%= render "feed_page", users: @users %>
+  </turbo-frame>
+<% else %>
+  <div class="space-y-6">
+    <% page_actions = capture do %>
+      <% if current_user.can?(:manage_team) %>
+        <% if Billing::PlanEnforcer.can?(current_tenant, :create_team_member) %>
+          <%= link_to t("space.users.index.new_button"), new_user_path, class: button_classes(:primary) %>
+        <% else %>
+          <span class="text-sm text-slate-500"><%= t("billing.limits.team_members_exceeded") %></span>
+        <% end %>
       <% end %>
     <% end %>
-  <% end %>
-  <%= render "application/shared/page_header", title: t("space.users.index.title"), actions: page_actions %>
+    <%= render "application/shared/page_header", title: t("space.users.index.title"), actions: page_actions %>
 
-  <% if @users.any? %>
-    <div class="card-glass overflow-hidden p-0">
-      <table class="min-w-full divide-y divide-slate-200 text-sm">
-        <thead class="bg-slate-50">
-          <tr>
-            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("space.users.index.table.email") %>
-            </th>
-            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("space.users.index.table.name") %>
-            </th>
-            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("space.users.index.table.role") %>
-            </th>
-            <th scope="col" class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("space.users.index.table.actions") %>
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-200">
-          <% @users.each do |user| %>
-            <tr class="hover:bg-slate-50">
-              <td class="px-4 py-2 align-top text-slate-900"><%= user.email %></td>
-              <td class="px-4 py-2 align-top text-slate-700"><%= user.name.presence || "—" %></td>
-              <td class="px-4 py-2 align-top text-slate-700">
-                <% if user.space_owner?(current_tenant) %>
-                  <span class="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800"><%= t("space.users.owner") %></span>
-                <% else %>
-                  <%= user.role.presence || "—" %>
-                <% end %>
-              </td>
-              <td class="px-4 py-2 align-top">
-                <div class="flex flex-wrap justify-end gap-1">
-                  <%= link_to t("space.users.index.view"), user_path(user), class: button_classes(:table_link) %>
-                  <% if current_user.can?(:manage_team) %>
-                    <%= link_to t("space.users.index.edit"), edit_user_path(user), class: button_classes(:table_link) %>
-                    <% unless user.space_owner?(current_tenant) %>
-                      <%= button_to t("space.users.index.delete"), user_path(user), method: :delete, data: { turbo_confirm: t("space.users.index.delete_confirm"), turbo_submits_with: t("shared.deleting") }, class: button_classes(:table_danger) %>
-                    <% end %>
-                  <% end %>
-                </div>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  <% else %>
-    <%= render "application/shared/empty_state", content: t("space.users.index.empty") %>
-  <% end %>
-</div>
+    <%= form_with url: users_path,
+                  method: :get,
+                  local: true,
+                  data: { controller: "auto-submit", turbo_frame: "users-feed" },
+                  class: "card-glass flex items-center gap-2 p-3" do %>
+      <div class="flex-1">
+        <%= text_field_tag :query, params[:query],
+                           placeholder: t("space.users.index.filters.search_placeholder"),
+                           class: "w-full rounded-md border-slate-300 text-base focus:border-slate-500 focus:ring-slate-500 py-2.5",
+                           data: { auto_submit_target: "input", action: "input->auto-submit#search" } %>
+      </div>
+      <%= link_to users_path,
+            class: "flex-shrink-0 p-2 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors",
+            aria: { label: t("space.users.index.filters.clear") },
+            data: { turbo_frame: "users-feed" } do %>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      <% end %>
+    <% end %>
+
+    <turbo-frame id="users-feed"
+                 data-controller="infinite-scroll"
+                 data-infinite-scroll-card-selector-value=".user-card">
+      <%= render "feed_page", users: @users %>
+    </turbo-frame>
+  </div>
+<% end %>
