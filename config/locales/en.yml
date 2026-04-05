@@ -553,6 +553,12 @@ en:
         delete: "Delete"
         delete_confirm: "Permanently delete this customer?"
         empty: "No customers yet. Add customers to assign appointments."
+        swipe_hint: "Swipe ←"
+        filters:
+          search: "Search"
+          search_placeholder: "Search by name..."
+          apply: "Filter"
+          clear: "Clear"
       show:
         title: "Customer"
         subtitle: "View customer details and appointment history."

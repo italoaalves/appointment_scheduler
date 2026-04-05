@@ -1,6 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+  static values = { cardSelector: { type: String, default: ".appointment-card" } }
+
   connect() {
     this.cardHeights = new WeakMap()
 
@@ -19,7 +21,7 @@ export default class extends Controller {
   }
 
   #observeCards() {
-    this.element.querySelectorAll(".appointment-card").forEach((card) => {
+    this.element.querySelectorAll(this.cardSelectorValue).forEach((card) => {
       if (!card.dataset.observed) {
         card.dataset.observed = "1"
         this.unloadObserver.observe(card)

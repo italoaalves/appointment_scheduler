@@ -524,6 +524,12 @@ pt-BR:
         delete: "Excluir"
         delete_confirm: "Excluir este cliente permanentemente?"
         empty: "Nenhum cliente ainda. Adicione clientes para atribuir consultas."
+        swipe_hint: "Deslize ←"
+        filters:
+          search: "Buscar"
+          search_placeholder: "Buscar por nome..."
+          apply: "Filtrar"
+          clear: "Limpar"
       show:
         title: "Cliente"
         subtitle: "Veja os detalhes e o histórico de consultas do cliente."

@@ -8,7 +8,13 @@ module Spaces
     before_action :set_customer, only: [ :show, :edit, :update, :destroy ]
 
     def index
-      @customers = current_tenant.customers.order(:name).page(params[:page]).per(20)
+      base = current_tenant.customers.order(:name)
+      if params[:query].present?
+        sanitized = ActiveRecord::Base.sanitize_sql_like(params[:query].strip)
+        base = base.where("name ILIKE ?", "%#{sanitized}%")
+      end
+      @customers = base.page(params[:page]).per(20)
+      @grouped_customers = @customers.group_by { |c| c.name[0]&.upcase || "#" }
     end
 
     def show
