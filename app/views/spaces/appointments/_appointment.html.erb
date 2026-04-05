@@ -8,39 +8,44 @@
      class="appointment-card group relative overflow-hidden rounded-card <%= in_progress ? 'card-active' : '' %>"
      data-controller="swipe-actions">
 
-  <%# Action panel — pinned to trailing edge, revealed by hover (desktop) or swipe (touch) %>
+  <%# Action drawer — right edge on touch (swipe), bottom edge on hover devices %>
   <div data-swipe-actions-target="actions"
-       class="absolute right-0 top-0 h-full w-15 flex flex-col items-center justify-center gap-2 px-2
-              bg-gradient-to-l from-deep/10 to-transparent z-[1] opacity-0 transition-opacity duration-[250ms]"
+       class="absolute right-0 top-0 h-full w-28 grid grid-cols-2 place-content-center gap-1.5 px-3
+              bg-gradient-to-l from-white via-white/90 to-white/60
+              can-hover:top-auto can-hover:bottom-0 can-hover:left-0 can-hover:w-full can-hover:h-auto
+              can-hover:flex can-hover:flex-row can-hover:justify-end can-hover:px-3 can-hover:py-2
+              can-hover:bg-gradient-to-t can-hover:from-white can-hover:via-white/90 can-hover:to-white/60
+              z-[3] opacity-0 transition-[opacity,translate] duration-[250ms] ease-[cubic-bezier(0,0,0.2,1)]"
        role="group"
        aria-label="<%= t("space.appointments.index.table.actions") %>">
     <% if appointment.pending? %>
       <%= button_to confirm_appointment_path(appointment),
             method: :patch,
             params: { source: "index" },
-            class: "flex flex-col items-center gap-0.5 p-2 rounded-lg bg-emerald-100 text-emerald-700 shadow-sm hover:bg-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 cursor-pointer",
+            class: "flex flex-col items-center gap-0.5 p-3 can-hover:p-2 rounded-lg text-emerald-500 hover:bg-emerald-100 hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-400 cursor-pointer",
+            data: { swipe_action: "" },
             aria: { label: t("space.appointments.index.confirm") } do %>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <svg class="w-5 h-5 can-hover:w-4 can-hover:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
         </svg>
       <% end %>
     <% end %>
     <% if appointment.confirmed? && appointment.scheduled_in_past? %>
       <%= link_to finish_form_appointment_path(appointment),
-            class: "flex flex-col items-center gap-0.5 p-2 rounded-lg bg-emerald-100 text-emerald-700 shadow-sm hover:bg-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-400",
-            data: { turbo_frame: "_top" },
+            class: "flex flex-col items-center gap-0.5 p-3 can-hover:p-2 rounded-lg text-emerald-500 hover:bg-emerald-100 hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-400",
+            data: { turbo_frame: "_top", swipe_action: "" },
             aria: { label: t("space.appointments.index.finish") } do %>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <svg class="w-5 h-5 can-hover:w-4 can-hover:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
       <% end %>
       <%= button_to no_show_appointment_path(appointment),
             method: :patch,
             params: { source: "index" },
-            data: { turbo_confirm: t("space.appointments.index.no_show_confirm") },
-            class: "flex flex-col items-center gap-0.5 p-2 rounded-lg bg-slate-100 text-slate-600 shadow-sm hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400 cursor-pointer",
+            data: { turbo_confirm: t("space.appointments.index.no_show_confirm"), swipe_action: "" },
+            class: "flex flex-col items-center gap-0.5 p-3 can-hover:p-2 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-400 cursor-pointer",
             aria: { label: t("space.appointments.index.no_show") } do %>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <svg class="w-5 h-5 can-hover:w-4 can-hover:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
       <% end %>
@@ -49,10 +54,10 @@
       <%= button_to cancel_appointment_path(appointment),
             method: :patch,
             params: { source: "index" },
-            data: { turbo_confirm: t("space.appointments.index.cancel_confirm") },
-            class: "flex flex-col items-center gap-0.5 p-2 rounded-lg bg-amber-100 text-amber-700 shadow-sm hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer",
+            data: { turbo_confirm: t("space.appointments.index.cancel_confirm"), swipe_action: "" },
+            class: "flex flex-col items-center gap-0.5 p-3 can-hover:p-2 rounded-lg text-amber-500 hover:bg-amber-100 hover:text-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer",
             aria: { label: t("space.appointments.index.cancel") } do %>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <svg class="w-5 h-5 can-hover:w-4 can-hover:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
         </svg>
       <% end %>
@@ -61,19 +66,19 @@
       <%= button_to appointment_path(appointment),
             method: :delete,
             params: { source: "index" },
-            data: { turbo_confirm: t("space.appointments.index.delete_confirm"), turbo_submits_with: t("shared.deleting") },
-            class: "flex flex-col items-center gap-0.5 p-2 rounded-lg bg-red-100 text-red-700 shadow-sm hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-400 cursor-pointer",
+            data: { turbo_confirm: t("space.appointments.index.delete_confirm"), turbo_submits_with: t("shared.deleting"), swipe_action: "" },
+            class: "flex flex-col items-center gap-0.5 p-3 can-hover:p-2 rounded-lg text-red-400 hover:bg-red-100 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 cursor-pointer",
             aria: { label: t("space.appointments.index.delete") } do %>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <svg class="w-5 h-5 can-hover:w-4 can-hover:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
         </svg>
       <% end %>
     <% end %>
   </div>
 
-  <%# Card content — slides left on hover (desktop) or swipe (touch) to reveal action panel %>
+  <%# Card content — stays in place; action panel overlays on top %>
   <div data-swipe-actions-target="content"
-       class="card-glass relative z-[2] h-full transition-transform duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)]">
+       class="card-glass relative z-[2] h-full">
 
     <%# Tappable info area — navigates to appointment detail %>
     <%= link_to appointment_path(appointment),
@@ -106,7 +111,7 @@
 
     <%# Touch: swipe hint (hidden on pointer devices) — shown whenever the drawer has at least one action %>
     <% if appointment.pending? || appointment.confirmed? || current_user.can?(:destroy_appointments) %>
-      <div class="can-hover:hidden px-4 pb-3 flex justify-end">
+      <div data-swipe-actions-target="hint" class="can-hover:hidden px-4 pb-3 flex justify-end transition-opacity duration-[200ms]">
         <span class="text-xs text-slate-400"><%= t("space.appointments.index.swipe_hint") %></span>
       </div>
     <% end %>
