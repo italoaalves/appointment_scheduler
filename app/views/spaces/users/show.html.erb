@@ -22,7 +22,7 @@
     <% end %>
   </header>
 
-  <div class="card-glass p-4">
+  <div class="card p-4">
     <dl class="space-y-3 text-sm">
       <div class="flex justify-between gap-4">
         <dt class="font-medium text-slate-700"><%= t("space.users.show.email") %></dt>
@@ -62,7 +62,7 @@
     <% if @user.appointments.any? %>
       <ul class="space-y-2">
         <% @user.appointments.each do |appointment| %>
-          <li class="card-glass p-3 text-sm">
+          <li class="card p-3 text-sm">
             <div class="flex items-start justify-between gap-3">
               <div>
                 <p class="text-slate-900">

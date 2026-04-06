@@ -5,7 +5,7 @@
 
 <% grouped_appointments.each do |date, appts| %>
   <div>
-    <div class="sticky top-0 z-10 -mx-1 px-1 py-2 mb-3">
+    <div class="sticky top-4 z-10 -mx-1 px-1 py-2 mb-3">
       <h2 class="font-display font-bold text-deep text-lg">
         <% if date.nil? %>
           <%= t("space.appointments.feed.unscheduled") %>

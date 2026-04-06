@@ -8,8 +8,8 @@
   <div class="space-y-8">
     <% grouped_appointments.each do |date, appts| %>
       <div>
-        <div class="sticky top-0 z-10 -mx-1 px-1 py-2 mb-3">
-          <h2 class="font-display font-bold text-deep text-lg">
+        <div class="sticky card-glass  z-10 -mx-1 my-6 px-2 py-1 mb-3" style="top: 111px;">
+          <h2 class="font-display font-bold text-deep text-lg mt-2 p-2">
             <% if date.nil? %>
               <%= t("space.appointments.feed.unscheduled") %>
             <% elsif date == today %>
