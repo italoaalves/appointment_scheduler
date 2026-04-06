@@ -12,7 +12,7 @@ class ProfilesController < ApplicationController
 
     if update_profile
       bypass_sign_in(@user, scope: :user) if password_changed?
-      redirect_to edit_profile_path, notice: t("profiles.update.notice")
+      redirect_to edit_profile_path
     else
       render :edit, status: :unprocessable_entity
     end

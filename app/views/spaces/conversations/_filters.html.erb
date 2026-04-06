@@ -9,7 +9,7 @@
       [t("spaces.conversations.index.filters.channel_sms"), "sms"],
       [t("spaces.conversations.index.filters.channel_instagram"), "instagram"],
       [t("spaces.conversations.index.filters.channel_messenger"), "messenger"]
-    ], params[:channel]), {}, { class: "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" } %>
+    ], params[:channel]), {}, { class: "form-input-sm" } %>
   </div>
 
   <%# Status filter %>
@@ -23,7 +23,7 @@
       [t("spaces.conversations.index.filters.status_pending"), "pending"],
       [t("spaces.conversations.index.filters.status_resolved"), "resolved"],
       [t("spaces.conversations.index.filters.status_closed"), "closed"]
-    ], params[:status]), {}, { class: "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500", style: params[:all].present? ? "" : "display: none" } %>
+    ], params[:status]), {}, { class: "form-input-sm", style: params[:all].present? ? "" : "display: none" } %>
   </div>
 
   <%# Priority filter %>
@@ -35,24 +35,24 @@
       [t("spaces.conversations.index.priority.normal"), "normal"],
       [t("spaces.conversations.index.priority.high"), "high"],
       [t("spaces.conversations.index.priority.urgent"), "urgent"]
-    ], params[:priority]), {}, { class: "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" } %>
+    ], params[:priority]), {}, { class: "form-input-sm" } %>
   </div>
 
   <%# Customer search %>
   <div>
     <%= f.label :customer, t("spaces.conversations.index.filters.customer"), class: "block text-sm font-medium text-slate-700 mb-1" %>
-    <%= f.text_field :customer, value: params[:customer], placeholder: t("spaces.conversations.index.filters.customer_placeholder"), class: "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+    <%= f.text_field :customer, value: params[:customer], placeholder: t("spaces.conversations.index.filters.customer_placeholder"), class: "form-input-sm" %>
   </div>
 
   <%# Date range %>
   <div>
     <%= f.label :since, t("spaces.conversations.index.filters.since"), class: "block text-sm font-medium text-slate-700 mb-1" %>
-    <%= f.date_field :since, value: params[:since], class: "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+    <%= f.date_field :since, value: params[:since], class: "form-input-sm" %>
   </div>
 
   <div>
     <%= f.label :until, t("spaces.conversations.index.filters.until"), class: "block text-sm font-medium text-slate-700 mb-1" %>
-    <%= f.date_field :until, value: params[:until], class: "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+    <%= f.date_field :until, value: params[:until], class: "form-input-sm" %>
   </div>
 
   <%# All conversations toggle %>

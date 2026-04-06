@@ -4,35 +4,30 @@
   { label: t("breadcrumbs.new") }
 ] } %>
 <div class="space-y-6">
-  <header>
-    <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
-      <%= t("space.appointments.new.title") %>
-    </h1>
-    <p class="mt-1 text-sm text-slate-600">
-      <%= t("space.appointments.new.subtitle") %>
-    </p>
-  </header>
+  <%= render "application/shared/page_header",
+             title: t("space.appointments.new.title"),
+             subtitle: t("space.appointments.new.subtitle") %>
 
-  <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+  <div class="card-solid">
     <%= form_with model: @appointment, class: "space-y-4" do |form| %>
       <div>
         <%= form.label :customer_id,
                        t("space.appointments.new.customer_label"),
-                       class: "block text-sm font-medium text-slate-700" %>
+                       class: form_label_classes %>
         <div class="mt-1">
           <%= form.collection_select :customer_id,
                                      current_tenant.customers.order(:name),
                                      :id, :name,
                                      { prompt: t("space.appointments.new.customer_prompt") },
-                                     class: "block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+                                     class: form_input_classes %>
         </div>
       </div>
 
       <div>
         <%= form.label :scheduled_at,
                        t("space.appointments.new.scheduled_for"),
-                       class: "block text-sm font-medium text-slate-700" %>
-        <div class="mt-1 inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+                       class: form_label_classes %>
+        <div class="mt-1 inline-flex items-center rounded-card border border-slate-300 bg-white px-3 py-2 text-sm text-deep">
           <% Time.use_zone(timezone_for(current_tenant)) do %>
             <%= form.datetime_select :scheduled_at,
                                      { start_year: Date.current.year },
@@ -44,12 +39,12 @@
       <div>
         <%= form.label :status,
                        t("space.appointments.new.status_label"),
-                       class: "block text-sm font-medium text-slate-700" %>
+                       class: form_label_classes %>
         <div class="mt-1">
           <%= form.select :status,
                           Appointment.statuses.keys.map { |s| [t("activerecord.attributes.appointment.status.#{s}"), s] },
                           {},
-                          class: "block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+                          class: form_input_classes %>
         </div>
       </div>
 

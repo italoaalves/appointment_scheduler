@@ -14,7 +14,7 @@ module Spaces
 
       def update
         if @space.update(availability_params)
-          redirect_to edit_settings_space_availability_path, notice: t("space.availability.update.notice")
+          redirect_to edit_settings_space_availability_path
         else
           render :edit
         end

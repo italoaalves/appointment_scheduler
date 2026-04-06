@@ -24,7 +24,7 @@ module Spaces
       end
       @personalized_link = current_tenant.build_personalized_scheduling_link(personalized_link_params)
       if @personalized_link.save
-        redirect_to scheduling_links_path, notice: t("space.personalized_scheduling_links.create.notice")
+        redirect_to scheduling_links_path
       else
         render :new
       end
@@ -35,7 +35,7 @@ module Spaces
 
     def update
       if @personalized_link.update(personalized_link_params)
-        redirect_to scheduling_links_path, notice: t("space.personalized_scheduling_links.update.notice")
+        redirect_to scheduling_links_path
       else
         render :edit
       end
@@ -43,7 +43,7 @@ module Spaces
 
     def destroy
       @personalized_link.destroy
-      redirect_to scheduling_links_path, notice: t("space.personalized_scheduling_links.destroy.notice")
+      redirect_to scheduling_links_path
     end
 
     private

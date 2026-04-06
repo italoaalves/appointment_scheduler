@@ -2,9 +2,7 @@
   <div class="space-y-8">
     <% grouped_customers.each do |letter, group| %>
       <div>
-        <div class="sticky card-glass  z-10 -mx-1 px-6 py-2 mb-3", style="top: 111px;">
-          <h2 class="font-display font-bold text-deep text-lg"><%= letter %></h2>
-        </div>
+        <%= render "application/shared/sticky_section", title: letter %>
 
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <% group.each do |customer| %>
@@ -14,13 +12,11 @@
       </div>
     <% end %>
 
-    <% if customers.next_page %>
-      <turbo-frame id="customers-page-<%= customers.next_page %>"
-                   src="<%= customers_path(page: customers.next_page, query: params[:query]) %>"
-                   loading="lazy">
-        <%= render "skeleton_loaders" %>
-      </turbo-frame>
-    <% end %>
+    <%= render "application/shared/feed_frame",
+               collection: customers,
+               frame_prefix: "customers-page",
+               next_page_path: customers_path(page: customers.next_page, query: params[:query]),
+               skeleton_partial: "skeleton_loaders" %>
   </div>
 <% else %>
   <%= render "application/shared/empty_state", content: t("space.customers.index.empty") %>

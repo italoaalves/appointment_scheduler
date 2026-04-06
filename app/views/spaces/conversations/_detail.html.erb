@@ -12,7 +12,7 @@
       <% when "low" %>
         <span class="px-2 py-1 rounded-full bg-blue-100 text-blue-800 text-xs"><%= t("spaces.conversations.index.priority.low") %></span>
       <% when "normal" %>
-        <span class="px-2 py-1 rounded-full bg-gray-100 text-gray-800 text-xs"><%= t("spaces.conversations.index.priority.normal") %></span>
+        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-xs"><%= t("spaces.conversations.index.priority.normal") %></span>
       <% when "high" %>
         <span class="px-2 py-1 rounded-full bg-orange-100 text-orange-800 text-xs"><%= t("spaces.conversations.index.priority.high") %></span>
       <% when "urgent" %>
@@ -97,9 +97,9 @@
     <% conversation.conversation_messages.chronological.each do |message| %>
       <div class="flex <%= message.outbound? ? "justify-end" : "justify-start" %>">
         <div class="max-w-[80%] rounded-2xl px-4 py-2 text-sm shadow-sm
-                    <%= message.outbound? ? "bg-indigo-600 text-white rounded-br-sm" : "bg-white text-slate-900 rounded-bl-sm border border-slate-200" %>">
+                    <%= message.outbound? ? "bg-electric text-white rounded-br-sm" : "bg-white text-slate-900 rounded-bl-sm border border-slate-200" %>">
           <p class="whitespace-pre-wrap break-words"><%= message.body.presence || t("spaces.conversations.index.template_message") %></p>
-          <div class="mt-1 flex items-center gap-1 <%= message.outbound? ? "justify-end text-indigo-200" : "justify-start text-slate-400" %> text-[11px]">
+          <div class="mt-1 flex items-center gap-1 <%= message.outbound? ? "justify-end text-electric/40" : "justify-start text-slate-400" %> text-[11px]">
             <span><%= message.created_at.strftime("%H:%M") %></span>
             <% if message.outbound? %>
               <%= t("spaces.conversations.index.status_#{message.status}") %>
@@ -118,9 +118,9 @@
       <%= f.text_area :body,
           rows: 2,
           placeholder: t("spaces.conversations.index.reply_placeholder"),
-          class: "flex-1 resize-none rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+          class: "flex-1 resize-none rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-electric/20 focus:border-electric" %>
       <%= f.submit t("spaces.conversations.index.send"),
-          class: "shrink-0 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700" %>
+          class: "shrink-0 rounded-lg bg-electric px-4 py-2 text-sm font-medium text-white hover:brightness-110" %>
     </div>
   <% end %>
 </div>

@@ -11,7 +11,7 @@
           <%= conversation.contact_name.presence || conversation.customer&.name || conversation.contact_identifier %>
         </span>
         <% if conversation.unread? %>
-          <span class="inline-block h-2 w-2 rounded-full bg-indigo-500" aria-label="<%= t("spaces.conversations.index.unread") %>"></span>
+          <span class="inline-block h-2 w-2 rounded-full bg-electric" aria-label="<%= t("spaces.conversations.index.unread") %>"></span>
         <% end %>
       </div>
 
@@ -29,7 +29,7 @@
         <% when "low" %>
           <span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800"><%= t("spaces.conversations.index.priority.low") %></span>
         <% when "normal" %>
-          <span class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-800"><%= t("spaces.conversations.index.priority.normal") %></span>
+          <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700"><%= t("spaces.conversations.index.priority.normal") %></span>
         <% when "high" %>
           <span class="px-2 py-0.5 rounded-full bg-orange-100 text-orange-800"><%= t("spaces.conversations.index.priority.high") %></span>
         <% when "urgent" %>

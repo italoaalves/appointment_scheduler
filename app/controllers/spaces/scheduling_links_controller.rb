@@ -27,7 +27,7 @@ module Spaces
       @scheduling_link.expires_at = nil if @scheduling_link.permanent?
 
       if @scheduling_link.save
-        redirect_to scheduling_link_path(@scheduling_link), notice: t("space.scheduling_links.create.notice")
+        redirect_to scheduling_link_path(@scheduling_link)
       else
         render :new
       end
@@ -40,7 +40,7 @@ module Spaces
       attrs = scheduling_link_params.to_h
       attrs[:expires_at] = nil if attrs["link_type"] == "permanent"
       if @scheduling_link.update(attrs)
-        redirect_to scheduling_link_path(@scheduling_link), notice: t("space.scheduling_links.update.notice")
+        redirect_to scheduling_link_path(@scheduling_link)
       else
         render :edit
       end
@@ -48,7 +48,7 @@ module Spaces
 
     def destroy
       @scheduling_link.destroy
-      redirect_to scheduling_links_path, notice: t("space.scheduling_links.destroy.notice")
+      redirect_to scheduling_links_path
     end
 
     private

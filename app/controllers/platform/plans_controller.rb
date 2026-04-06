@@ -72,7 +72,7 @@ module Platform
         end
 
         if @plan.save
-          redirect_to platform_plans_path, notice: t("platform.plans.#{render_action == :new ? 'create' : 'update'}.notice")
+          redirect_to platform_plans_path
         else
           render render_action, status: :unprocessable_entity
           raise ActiveRecord::Rollback

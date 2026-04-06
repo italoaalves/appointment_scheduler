@@ -11,7 +11,7 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-  <body class="min-h-screen bg-slate-50 text-slate-900">
+  <body class="min-h-screen text-deep" style="background: linear-gradient(160deg, #ffffff, #f0f9ff, #e0f2fe);">
     <%= render "shared/flash_messages", dismissible: false, container_class: "max-w-xl" %>
     <main class="mx-auto max-w-xl px-4 py-8">
       <%= yield %>

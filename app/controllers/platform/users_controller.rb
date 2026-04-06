@@ -31,7 +31,7 @@ module Platform
       @user.space_id = params[:user][:space_id].presence if params.dig(:user, :space_id).present?
 
       if @user.save
-        redirect_to platform_user_path(@user), notice: t("platform.users.create.notice")
+        redirect_to platform_user_path(@user)
       else
         render :new
       end
@@ -45,7 +45,7 @@ module Platform
       attrs[:space_id] = params[:user][:space_id].presence if params.dig(:user, :space_id).present?
 
       if @user.update(attrs)
-        redirect_to platform_user_path(@user), notice: t("platform.users.update.notice")
+        redirect_to platform_user_path(@user)
       else
         render :edit
       end
@@ -54,7 +54,7 @@ module Platform
     def destroy
       space_id = params[:space_id].presence
       @user.destroy
-      redirect_to platform_users_path(space_id: space_id), notice: t("platform.users.destroy.notice")
+      redirect_to platform_users_path(space_id: space_id)
     end
 
     def impersonate

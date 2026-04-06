@@ -13,7 +13,7 @@ module Spaces
 
       def update
         if @space.update(policy_params)
-          redirect_to edit_settings_space_policies_path, notice: t("space.policies.update.notice")
+          redirect_to edit_settings_space_policies_path
         else
           render :edit
         end

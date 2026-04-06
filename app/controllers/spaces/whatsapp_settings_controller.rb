@@ -25,7 +25,7 @@ module Spaces
       phone_number = current_tenant.create_whatsapp_phone_number(connect_params.merge(status: :active))
 
       if phone_number.persisted?
-        redirect_to settings_whatsapp_path, notice: t("spaces.whatsapp_settings.connected")
+        redirect_to settings_whatsapp_path
       else
         redirect_to settings_whatsapp_path, alert: phone_number.errors.full_messages.to_sentence
       end
@@ -37,7 +37,7 @@ module Spaces
       phone_number = current_tenant.whatsapp_phone_number
 
       if phone_number&.destroy
-        redirect_to settings_whatsapp_path, notice: t("spaces.whatsapp_settings.disconnected")
+        redirect_to settings_whatsapp_path
       else
         redirect_to settings_whatsapp_path, alert: t("spaces.whatsapp_settings.disconnect_failed")
       end

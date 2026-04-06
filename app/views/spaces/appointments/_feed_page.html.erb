@@ -8,28 +8,23 @@
   <div class="space-y-8">
     <% grouped_appointments.each do |date, appts| %>
       <div>
-        <div class="sticky card glass-nav  z-10 -mx-1 my-6 px-6 py-0.5 mb-8" style="top: 7rem;">
-          <h2 class="font-display font-bold text-deep text-lg mt-2 p-2">
-            <% if date.nil? %>
-              <%= t("space.appointments.feed.unscheduled") %>
-            <% elsif date == today %>
-              <%= t("space.appointments.feed.today") %>
-            <% elsif date == today + 1 %>
-              <%= t("space.appointments.feed.tomorrow") %>
-            <% elsif date == today - 1 %>
-              <%= t("space.appointments.feed.yesterday") %>
-            <% elsif (date - today).abs < 7 %>
-              <%= day_names[date.wday] %>
-            <% else %>
-              <%= "#{month_names[date.month]} #{date.day}" %>
-            <% end %>
-            <% if date %>
-              <span class="ml-2 text-sm font-normal text-slate-400">
-                <%= "#{date.day} #{abbr_months[date.month]} #{date.year}" %>
-              </span>
-            <% end %>
-          </h2>
-        </div>
+        <%
+          date_title = if date.nil?
+            t("space.appointments.feed.unscheduled")
+          elsif date == today
+            t("space.appointments.feed.today")
+          elsif date == today + 1
+            t("space.appointments.feed.tomorrow")
+          elsif date == today - 1
+            t("space.appointments.feed.yesterday")
+          elsif (date - today).abs < 7
+            day_names[date.wday]
+          else
+            "#{month_names[date.month]} #{date.day}"
+          end
+          date_subtitle = date ? "#{date.day} #{abbr_months[date.month]} #{date.year}" : nil
+        %>
+        <%= render "application/shared/sticky_section", title: date_title, subtitle: date_subtitle %>
 
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <% appts.each do |appointment| %>
@@ -39,13 +34,11 @@
       </div>
     <% end %>
 
-    <% if appointments.next_page %>
-      <turbo-frame id="appointments-page-<%= appointments.next_page %>"
-                   src="<%= appointments_path(page: appointments.next_page, status: params[:status], date_from: params[:date_from], date_to: params[:date_to]) %>"
-                   loading="lazy">
-        <%= render "skeleton_loaders" %>
-      </turbo-frame>
-    <% end %>
+    <%= render "application/shared/feed_frame",
+               collection: appointments,
+               frame_prefix: "appointments-page",
+               next_page_path: appointments_path(page: appointments.next_page, status: params[:status], date_from: params[:date_from], date_to: params[:date_to]),
+               skeleton_partial: "skeleton_loaders" %>
   </div>
 <% else %>
   <%= render "application/shared/empty_state", content: t("space.appointments.index.empty") %>
