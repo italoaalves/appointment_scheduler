@@ -19,20 +19,20 @@
 ## Billing & Subscriptions
 
 - **Provider:** Asaas (BRL only, monthly billing).
-- **Plans:** Two self-serve flat-rate plans (Starter, Pro). Enterprise is marketing-only — no engineering.
-- **Gating:** Primary = team members (`SpaceMembership` count). Secondary = feature access (e.g., personalized booking page is Pro-only) and customer cap (Starter: 100).
-- **Add-on:** WhatsApp message credits (metered, real per-message cost via WhatsApp Cloud API).
+- **Plans:**: All self serve and dynamic, managed by super admin.
+- **Gating:** Primary = team members (`SpaceMembership` count). Secondary = feature access application modules can be added in the bundled features of a plan.
+- **Add-on:** Message credits (metered with a platform virtual price per message real costs of each channel are part of the saas business not tenant). The whole credit flow should be auditable by the tenant with accurate timestamps and responsible user.
 
 ### Plan Definition
-- Plans are Ruby frozen constants in `Billing::Plan`, NOT a database table.
-- `plan_id` (string) is stored on `Subscription`. Plan changes require a deploy.
+- Plans are on a database table.
+- Plans adding new plans as a super admin should require a re-deploy for consistency.
 
 ### Subscription States & Rules
 - One active subscription per Space (unique partial index).
-- New Spaces: 14-day trial (full Pro features, no payment required).
+- New Spaces: 14-day trial (Super admin selected trial plan features, no payment required).
 - States: `trialing`, `active`, `past_due`, `canceled`, `expired`.
 - Expired Spaces: read-only dashboard, no new appointments/customers/links, public booking pages show "temporarily unavailable."
-- Data is **never deleted** due to billing status.
+- Data is **never deleted** due to billing status and LGPD, all users can always request to download their data.
 
 ### Plan Enforcement
 - Enforced at action boundaries (create, invite), not retroactively.
@@ -52,19 +52,19 @@
 - Webhook handlers do NOT set `Current.space` — they look up Space from the Asaas subscription/customer ID.
 
 ### WhatsApp
-- Messages sent via **WhatsApp Cloud API** (Meta) — no Twilio dependency.
+- Messages sent via **WhatsApp Cloud API** (Meta).
 - `Whatsapp::Client` is a lightweight HTTP wrapper (no SDK). Credentials in `Rails.application.credentials.whatsapp`.
 - Webhook signature validation via `X-Hub-Signature-256` + App Secret. Verify token for endpoint registration.
 - Inbound messages and delivery status updates processed async via `Whatsapp::ProcessWebhookJob`.
 - Space owners and members see incoming messages in the inbox (`spaces/inbox`).
 - Two message types: **template** (proactive, costs a credit) and **session** (free reply within 24h window).
 
-### WhatsApp Credits
+### Message Credits
 - Credits tied to a Space, not a User. One `MessageCredit` row per Space.
 - Deducted at send time, refunded on delivery failure.
 - Race conditions prevented via `pg_advisory_xact_lock(space_id)` inside a transaction.
-- Pro plan includes a monthly non-cumulative quota. Starter has none.
-- At zero credits, WhatsApp is disabled; email remains available.
+- Plans can include a monthly non-cumulative quota, defined by the super admin.
+- At zero credits, Inbox is disabled.
 
 ### Billing Audit Trail
 - `BillingEvent` is an immutable append-only log (no `updated_at`, no updates).
@@ -96,7 +96,7 @@
 ## Impersonation Rules
 
 - Impersonation must be auditable. Always log who impersonated whom.
-- Never allow privilege escalation through impersonation.
+- Never allow privilege escalation through impersonation, only super admin can impersonate other users.
 - Session state must clearly distinguish impersonated context.
 
 ## Performance
@@ -116,7 +116,7 @@
 
 ## Testing Standards
 
-- Prefer Test Driven Development.
+- Always use Test Driven Development.
 - Every service object needs: happy path, failure path, and edge case tests.
 - Background jobs must test idempotency and retry safety.
 - Prefer request specs over controller specs.
@@ -163,9 +163,7 @@ Examples:
 ## When Implementing Features
 
 1. Propose architecture first.
-2. Identify risks (security, performance, tenant leaks).
-3. Generate minimal but clean implementation.
-4. Include tests.
-5. Highlight trade-offs.
-
-Always optimize for long-term maintainability over speed of implementation.
+2. Write tests to fail (TDD)
+3. Identify risks (security, performance, tenant leaks).
+4. Generate minimal but clean implementation. Be pragmatic.
+5. Always optimize for long-term maintainability over speed of implementation.
