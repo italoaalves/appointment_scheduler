@@ -19,12 +19,12 @@
   <%= form_with model: @space, url: settings_space_availability_path, method: :patch, class: "space-y-6" do |form| %>
     <%= render "application/shared/error_messages", resource: @space %>
 
-    <div class="card-glass p-5">
+    <div class="card p-5">
       <h2 class="mb-4 text-sm font-semibold text-slate-800"><%= t("space.availability.edit.normal_hours_title") %></h2>
       <%= render "spaces/space/availability_schedule_fields", form: form %>
     </div>
 
-    <div class="card-glass p-5">
+    <div class="card p-5">
       <h2 class="mb-4 text-sm font-semibold text-slate-800"><%= t("space.availability.edit.scheduling_title") %></h2>
       <div class="space-y-4">
         <div>

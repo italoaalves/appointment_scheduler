@@ -23,7 +23,7 @@
                   method: :get,
                   local: true,
                   data: { controller: "auto-submit", turbo_frame: "customers-feed" },
-                  class: "card-glass flex items-center gap-2 p-3" do %>
+                  class: "sticky top-4 z-20 card-glass flex items-center gap-2 p-3" do %>
       <div class="flex-1">
         <%= text_field_tag :query, params[:query],
                            placeholder: t("space.customers.index.filters.search_placeholder"),

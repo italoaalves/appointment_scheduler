@@ -51,7 +51,7 @@
 
     <div class="mt-16 grid grid-cols-1 md:grid-cols-<%= @plans.size %> gap-8 justify-items-center">
       <% @plans.each do |plan| %>
-        <div class="card-glass relative flex flex-col w-full max-w-sm
+        <div class="card relative flex flex-col w-full max-w-sm
                     <%= plan.trial_default? ? 'ring-1 ring-[#00D2FF]' : '' %>"
              style="<%= plan.trial_default? ? 'box-shadow: 0 0 40px rgba(0,210,255,0.12), 0 6px 24px rgba(15,23,42,0.10), 0 0 0 1px rgba(0,210,255,0.3);' : '' %>">
 
@@ -132,7 +132,7 @@
     <p class="section-subheading mx-auto">Everything you need to run your practice.</p>
 
     <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-      <div class="card-glass">
+      <div class="card">
         <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-4" style="background: rgba(0,210,255,0.1);">
           <svg class="w-6 h-6" fill="none" stroke="#00D2FF" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -143,7 +143,7 @@
         <p class="mt-2 text-slate-600">Direct Meta Cloud API integration. No third-party middlemen. Messages arrive instantly and billing is transparent.</p>
       </div>
 
-      <div class="card-glass">
+      <div class="card">
         <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-4" style="background: rgba(0,210,255,0.1);">
           <svg class="w-6 h-6" fill="none" stroke="#00D2FF" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -154,7 +154,7 @@
         <p class="mt-2 text-slate-600">Your data is yours. Complete workspace separation with enterprise-grade security. No cross-tenant data leaks — by design.</p>
       </div>
 
-      <div class="card-glass">
+      <div class="card">
         <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-4" style="background: rgba(0,210,255,0.1);">
           <svg class="w-6 h-6" fill="none" stroke="#00D2FF" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"

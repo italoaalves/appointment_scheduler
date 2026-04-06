@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* ADD THIS LINE AT THE TOP */
+@source "../../views/**/*.erb"; 
+
 /* Targets devices with a real pointer (mouse/trackpad) — not screen-width based */
 @custom-variant can-hover (@media (hover: hover) and (pointer: fine));
 
@@ -22,6 +25,8 @@
 
   /* === Shadows / Glows === */
   --shadow-glow: 0 0 100px rgba(0, 210, 255, 0.15);
+
+  --spacing-sticky-offset: 130px;
 }
 
 @layer base {
@@ -82,45 +87,63 @@
 
   /* === Cards === */
 
-  /* Standard card — now uses the same glass treatment */
+  /* Standard card — solid white background */
   .card {
     @apply rounded-card p-6 md:p-8;
-    background: var(--color-hydro-glass);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: #ffffff;
     box-shadow:
       0 1px 3px rgba(15, 23, 42, 0.08),
       0 6px 24px rgba(15, 23, 42, 0.10),
       0 0 0 1px rgba(15, 23, 42, 0.08);
   }
 
-  /* Glassmorphism card — "Water Glass" style (navigational, overlays) */
+/* === Ultra-Glass Card === */
   .card-glass {
     @apply rounded-card p-6 md:p-8;
-    background: var(--color-hydro-glass);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    
+    /* Drop to 0.1 for maximum transparency */
+    background: rgba(255, 255, 255, 0.1); 
+    
+    /* Lower blur (12px-16px) makes it look like thin glass, not frosted plastic */
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    backdrop-filter: blur(16px) saturate(160%);
+    
+    /* Very faint border - use the 'deep' color at low opacity for a crisp edge */
+    border: 1px solid rgba(15, 23, 42, 0.05);
+    
     box-shadow:
-      0 1px 3px rgba(15, 23, 42, 0.08),
-      0 6px 24px rgba(15, 23, 42, 0.10),
-      0 0 0 1px rgba(15, 23, 42, 0.08);
+      /* This 'inset' is the secret: it creates the 'specular' edge highlight */
+      0 1px 0 0 rgba(255, 255, 255, 0.50) inset,
+      0 4px 12px rgba(15, 23, 42, 0.03),
+      0 12px 40px rgba(15, 23, 42, 0.06);
   }
 
-  /* Card state: Active appointment — slow-breathing cerulean glow */
-  .card-active {
-    animation: pulse-glow 2.5s ease-in-out infinite;
+  /* === Ultra-Glass Sticky Header === */
+  /* Use this for your date labels to match the cards */
+  .sticky-glass {
+    @apply sticky z-20 px-4 py-2 mb-4 rounded-xl;
+    top: var(--spacing-sticky-offset);
+    background: rgba(248, 250, 252, 0.4); /* Uses your 'mist' color slightly opaque */
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
   }
 
-  /* Card state: Alert / canceled / past-due — border flashes red */
-  .card-alert {
-    animation: border-pop 1s ease-in-out infinite;
+  /* Bottom sheet variant: more opaque for modal sheets */
+  .glass-sheet {
+    background: rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: blur(44px);
+    backdrop-filter: blur(44px);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 -8px 32px rgba(15, 23, 42, 0.12);
   }
 
-  /* Card state: Featured (next upcoming) — slow gradient flow */
-  .card-featured {
-    background-image: linear-gradient(-45deg, #fff, #E0F7FA, #fff, #E0F7FA);
-    background-size: 400%;
-    animation: flow-gradient 8s ease infinite;
+  /* Bottom nav variant: more transparent for overlay nav bar */
+  .glass-nav {
+    background: rgba(255, 255, 255, 0.7);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
   }
 
   /* Card state: Active appointment — slow-breathing cerulean glow */
