@@ -28,9 +28,9 @@ module Platform
           @manager.save!
           @space.update_columns(owner_id: @manager.id)
         end
-        redirect_to platform_space_path(@space), notice: t("platform.spaces.create.notice_with_manager")
+        redirect_to platform_space_path(@space)
       elsif @space.save
-        redirect_to platform_space_path(@space), notice: t("platform.spaces.create.notice")
+        redirect_to platform_space_path(@space)
       else
         render :new
       end
@@ -45,7 +45,7 @@ module Platform
 
     def update
       if @space.update(space_params)
-        redirect_to platform_space_path(@space), notice: t("platform.spaces.update.notice")
+        redirect_to platform_space_path(@space)
       else
         render :edit
       end
@@ -53,7 +53,7 @@ module Platform
 
     def destroy
       @space.destroy
-      redirect_to platform_spaces_path, notice: t("platform.spaces.destroy.notice")
+      redirect_to platform_spaces_path
     end
 
     private

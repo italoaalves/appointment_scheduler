@@ -1,0 +1,14 @@
+<%# Renders a sticky section title for feed pages.
+    Locals:
+      title:       (String, required) — the section heading text
+      subtitle:    (String, optional) — smaller text beside the title
+      extra_class: (String, optional) — additional CSS classes
+%>
+<div class="sticky-section <%= local_assigns[:extra_class] %>">
+  <h2 class="font-display font-bold text-deep text-lg mt-2 p-2">
+    <%= title %>
+    <% if local_assigns[:subtitle].present? %>
+      <span class="ml-2 text-sm font-normal text-slate-400"><%= subtitle %></span>
+    <% end %>
+  </h2>
+</div>

@@ -37,7 +37,7 @@ module Spaces
 
       if @user.save
         @user.send_reset_password_instructions
-        redirect_to user_path(@user), notice: t("space.users.create.notice")
+        redirect_to user_path(@user)
       else
         render :new
       end
@@ -48,7 +48,7 @@ module Spaces
 
     def update
       if @user.update(update_user_params)
-        redirect_to users_path, notice: t("space.users.update.notice")
+        redirect_to users_path
       else
         render :edit
       end
@@ -60,7 +60,7 @@ module Spaces
         return
       end
       @user.destroy
-      redirect_to users_path, notice: t("space.users.destroy.notice")
+      redirect_to users_path
     end
 
     private

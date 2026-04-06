@@ -37,7 +37,7 @@ module Spaces
       @customer = current_tenant.customers.build(customer_params)
 
       if @customer.save
-        redirect_to customer_path(@customer), notice: t("space.customers.create.notice")
+        redirect_to customer_path(@customer)
       else
         render :new
       end
@@ -48,7 +48,7 @@ module Spaces
 
     def update
       if @customer.update(customer_params)
-        redirect_to customer_path(@customer), notice: t("space.customers.update.notice")
+        redirect_to customer_path(@customer)
       else
         render :edit
       end
@@ -61,7 +61,7 @@ module Spaces
       end
 
       @customer.destroy
-      redirect_to customers_path, notice: t("space.customers.destroy.notice")
+      redirect_to customers_path
     end
 
     private

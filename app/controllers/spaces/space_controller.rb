@@ -12,7 +12,7 @@ module Spaces
 
     def update
       if @space.update(space_params)
-        redirect_to edit_settings_space_path, notice: t("space.settings.update.notice")
+        redirect_to edit_settings_space_path
       else
         render :edit
       end

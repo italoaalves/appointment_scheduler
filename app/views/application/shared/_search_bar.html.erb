@@ -1,0 +1,30 @@
+<%# Renders a sticky glass search bar with auto-submit.
+    Locals:
+      url:            (String, required)  — form action URL
+      query:          (String)            — current search value
+      placeholder:    (String)            — input placeholder text
+      turbo_frame:    (String, required)  — target Turbo Frame ID
+      clear_path:     (String, required)  — link to clear filters
+      clear_label:    (String, optional)  — accessible label for clear button
+      extra_class:    (String, optional)  — additional CSS classes on the form
+%>
+<%= form_with url: url,
+              method: :get,
+              local: true,
+              data: { controller: "auto-submit", turbo_frame: turbo_frame },
+              class: "card-glass sticky-filter flex items-center gap-2 p-3 #{local_assigns[:extra_class]}" do %>
+  <div class="flex-1">
+    <%= text_field_tag :query, query,
+                       placeholder: placeholder,
+                       class: "form-input-sm w-full",
+                       data: { auto_submit_target: "input", action: "input->auto-submit#search" } %>
+  </div>
+  <%= link_to clear_path,
+        class: "flex-shrink-0 p-2 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors",
+        aria: { label: local_assigns[:clear_label] || "Clear" },
+        data: { turbo_frame: turbo_frame } do %>
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+    </svg>
+  <% end %>
+<% end %>

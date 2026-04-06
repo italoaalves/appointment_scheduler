@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ADD THIS LINE AT THE TOP */
-@source "../../views/**/*.erb"; 
+@source "../../views/**/*.erb";
 
 /* Targets devices with a real pointer (mouse/trackpad) — not screen-width based */
 @custom-variant can-hover (@media (hover: hover) and (pointer: fine));
@@ -20,7 +20,9 @@
   /* === Radius === */
   --radius-card: 1.5rem;
 
-  --spacing-sticky-offset: 130px;
+  /* === Sticky stack === */
+  --spacing-sticky-filter: 1rem;
+  --spacing-sticky-section: 5rem;
 }
 
 @layer base {
@@ -36,7 +38,9 @@
 }
 
 @layer components {
-  /* === Buttons === */
+  /* ═══════════════════════════════════════════════
+     BUTTONS
+     ═══════════════════════════════════════════════ */
 
   /* Primary CTA — Electric Cyan, used sparingly */
   .btn-primary {
@@ -74,14 +78,73 @@
            disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
   }
 
-  /* Small variant modifier — combine with btn-* */
-  .btn-sm {
-    @apply px-4 py-2 text-sm;
+  /* Success — confirmations, positive actions */
+  .btn-success {
+    @apply inline-flex items-center justify-center px-6 py-3
+           bg-emerald-500 text-white font-medium
+           rounded-card cursor-pointer
+           transition-all duration-200
+           hover:bg-emerald-600
+           active:scale-[0.97] active:bg-emerald-700
+           focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
   }
 
-  /* === Cards === */
+  /* Cancel — amber, for cancellation/warning actions */
+  .btn-cancel {
+    @apply inline-flex items-center justify-center px-6 py-3
+           bg-amber-500 text-white font-medium
+           rounded-card cursor-pointer
+           transition-all duration-200
+           hover:bg-amber-600
+           active:scale-[0.97] active:bg-amber-700
+           focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
+  }
 
-  /* Standard card — solid white background */
+  /* Muted — low emphasis, for secondary/tertiary actions */
+  .btn-muted {
+    @apply inline-flex items-center justify-center px-6 py-3
+           bg-slate-100 text-slate-700 font-medium
+           rounded-card cursor-pointer
+           transition-all duration-200
+           hover:bg-slate-200
+           active:scale-[0.97] active:bg-slate-300
+           focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
+  }
+
+  /* Neutral — mid-tone, for balanced actions */
+  .btn-neutral {
+    @apply inline-flex items-center justify-center px-6 py-3
+           bg-slate-500 text-white font-medium
+           rounded-card cursor-pointer
+           transition-all duration-200
+           hover:bg-slate-600
+           active:scale-[0.97] active:bg-slate-700
+           focus:outline-none focus:ring-2 focus:ring-slate-500/50 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
+  }
+
+  /* Size modifiers — combine with btn-* */
+  .btn-sm { @apply px-4 py-2 text-sm; }
+  .btn-xs { @apply px-3 py-1.5 text-xs; }
+
+  /* ═══════════════════════════════════════════════
+     CARDS
+     ═══════════════════════════════════════════════ */
+
+  /* Solid card — opaque white, the workhorse surface */
+  .card-solid {
+    @apply rounded-card p-6 md:p-8;
+    background: #ffffff;
+    box-shadow:
+      0 1px 3px rgba(15, 23, 42, 0.08),
+      0 6px 24px rgba(15, 23, 42, 0.10),
+      0 0 0 1px rgba(15, 23, 42, 0.08);
+  }
+
+  /* Backward-compat alias — remove after full migration */
   .card {
     @apply rounded-card p-6 md:p-8;
     background: #ffffff;
@@ -91,41 +154,55 @@
       0 0 0 1px rgba(15, 23, 42, 0.08);
   }
 
-/* === Ultra-Glass Card === */
+  /* Glass card — transparent surface with backdrop blur (defaults to liquid) */
   .card-glass {
     @apply rounded-card p-6 md:p-8;
-    
-    /* Drop to 0.1 for maximum transparency */
-    background: rgba(255, 255, 255, 0.1); 
-    
-    /* Lower blur (12px-16px) makes it look like thin glass, not frosted plastic */
+    background: rgba(255, 255, 255, 0.15);
     -webkit-backdrop-filter: blur(16px) saturate(160%);
     backdrop-filter: blur(16px) saturate(160%);
-    
-    /* Very faint border - use the 'deep' color at low opacity for a crisp edge */
     border: 1px solid rgba(15, 23, 42, 0.05);
-    
     box-shadow:
-      /* This 'inset' is the secret: it creates the 'specular' edge highlight */
       0 1px 0 0 rgba(255, 255, 255, 0.50) inset,
       0 4px 12px rgba(15, 23, 42, 0.03),
       0 12px 40px rgba(15, 23, 42, 0.06);
   }
 
-  /* Bottom sheet variant: more opaque for modal sheets */
-  .glass-sheet {
-    background: rgba(255, 255, 255, 0.2);
-    -webkit-backdrop-filter: blur(44px);
-    backdrop-filter: blur(44px);
-    border: 1px solid rgba(15, 23, 42, 0.06);
-    box-shadow: 0 -8px 32px rgba(15, 23, 42, 0.12);
+  /* Card size modifiers */
+  .card-compact  { @apply p-4; }
+  .card-cozy     { @apply p-6 md:p-8; }
+  .card-spacious { @apply p-8 md:p-10; }
+
+  /* ═══════════════════════════════════════════════
+     GLASS TIERS
+     ═══════════════════════════════════════════════ */
+
+  /* Barely visible — breadcrumbs, floating pills */
+  .glass-subtle {
+    background: rgba(255, 255, 255, 0.08);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+    backdrop-filter: blur(8px) saturate(120%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: none;
   }
 
-  /* Bottom nav variant: more transparent for overlay nav bar */
-  .glass-nav {
-    background: rgba(255, 255, 255, 0.7);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
+  /* Default liquid glass — the main Hydro-Glass identity */
+  .glass-liquid {
+    background: rgba(255, 255, 255, 0.15);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid rgba(15, 23, 42, 0.05);
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.50) inset,
+      0 4px 12px rgba(15, 23, 42, 0.03),
+      0 12px 40px rgba(15, 23, 42, 0.06);
+  }
+
+  /* Opaque frosted — nav, flyouts, bottom sheets */
+  .glass-frosty {
+    background: rgba(255, 255, 255, 0.72);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.30);
     box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
   }
 
@@ -134,7 +211,29 @@
     animation: pulse-glow 2.5s ease-in-out infinite;
   }
 
-  /* === Form Fields === */
+  /* ═══════════════════════════════════════════════
+     STICKY SYSTEM
+     ═══════════════════════════════════════════════ */
+
+  /* Layer 1: Filter/search bars — sticks below breadcrumbs */
+  .sticky-filter {
+    @apply sticky z-20;
+    top: var(--spacing-sticky-filter);
+  }
+
+  /* Layer 2: Feed section titles — sticks below filter bar */
+  .sticky-section {
+    @apply sticky z-10 -mx-1 px-6 py-2 mb-4 rounded-xl;
+    top: var(--spacing-sticky-section);
+    background: rgba(255, 255, 255, 0.72);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    backdrop-filter: blur(20px) saturate(140%);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  }
+
+  /* ═══════════════════════════════════════════════
+     FORM FIELDS
+     ═══════════════════════════════════════════════ */
 
   .form-input {
     @apply w-full px-4 py-3
@@ -145,11 +244,26 @@
            focus:outline-none focus:border-electric focus:ring-2 focus:ring-electric/20;
   }
 
+  .form-input-sm {
+    @apply w-full px-3 py-2 text-sm
+           bg-white text-deep
+           border border-slate-300 rounded-lg
+           transition-colors duration-200
+           placeholder:text-slate-400
+           focus:outline-none focus:border-electric focus:ring-2 focus:ring-electric/20;
+  }
+
   .form-label {
     @apply block text-sm font-medium text-deep mb-1.5;
   }
 
-  /* === Badges === */
+  .form-label-sm {
+    @apply block text-xs font-medium text-slate-600;
+  }
+
+  /* ═══════════════════════════════════════════════
+     BADGES
+     ═══════════════════════════════════════════════ */
 
   .badge {
     @apply inline-flex items-center px-2.5 py-0.5
@@ -160,7 +274,17 @@
     @apply bg-cerulean/10 text-cerulean;
   }
 
-  /* === Section Headings === */
+  .badge-amber {
+    @apply bg-amber-100 text-amber-700;
+  }
+
+  .badge-emerald {
+    @apply bg-emerald-100 text-emerald-700;
+  }
+
+  /* ═══════════════════════════════════════════════
+     SECTION HEADINGS
+     ═══════════════════════════════════════════════ */
 
   .section-heading {
     @apply font-display text-3xl font-extrabold text-deep tracking-tight;
@@ -169,6 +293,10 @@
   .section-subheading {
     @apply text-lg text-slate-600 mt-2 max-w-2xl;
   }
+
+  /* ═══════════════════════════════════════════════
+     APPOINTMENT CARD STATES
+     ═══════════════════════════════════════════════ */
 
   /* Unloaded card state — preserves scroll height, hides content */
   .appointment-card.is-unloaded > * {
@@ -214,7 +342,7 @@ nav.pagination .gap {
   @apply px-1 text-slate-400;
 }
 
-/* === Card Animation Keyframes === */
+/* === Animation Keyframes === */
 
 @keyframes pulse-glow {
   0%, 100% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0); }

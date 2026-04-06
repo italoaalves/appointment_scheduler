@@ -41,7 +41,7 @@ module Spaces
       end
 
       if @appointment.save
-        redirect_to appointment_path(@appointment), notice: t("space.appointments.create.notice")
+        redirect_to appointment_path(@appointment)
       else
         render :new
       end
@@ -81,7 +81,7 @@ module Spaces
             appointment_id: @appointment.id
           )
         end
-        redirect_to appointments_path, notice: t("space.appointments.update.notice")
+        redirect_to appointments_path
       else
         render :edit
       end
@@ -89,7 +89,7 @@ module Spaces
 
     def destroy
       @appointment.update!(discarded_at: Time.current)
-      redirect_to appointments_path, notice: t("space.appointments.destroy.notice")
+      redirect_to appointments_path
     end
 
     def confirm
@@ -179,7 +179,7 @@ module Spaces
       end
     end
 
-    def build_success_streams(notice:)
+    def build_success_streams(notice: nil)
       streams = []
 
       source = params[:source]
@@ -211,7 +211,6 @@ module Spaces
         locals: { count: new_count }
       )
 
-      streams << turbo_stream.prepend("flash_messages", partial: "shared/flash_stream", locals: { type: :notice, message: notice })
       streams
     end
 

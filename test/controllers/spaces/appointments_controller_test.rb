@@ -55,10 +55,11 @@ module Spaces
       assert_includes response.body, "pending_appointments_badge"
     end
 
-    test "confirm via turbo_stream includes flash notice" do
+    test "confirm via turbo_stream replaces card without flash" do
       appt = pending_appointment
       patch confirm_appointment_path(appt), params: { source: "index" }, as: :turbo_stream
-      assert_includes response.body, "flash_messages"
+      assert_includes response.body, "pending_appointments_badge"
+      assert_not_includes response.body, "flash_messages"
     end
 
     test "confirm via html still redirects" do

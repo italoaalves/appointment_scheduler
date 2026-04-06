@@ -1,10 +1,7 @@
 <div class="space-y-6">
-  <header>
-    <h1 class="text-2xl font-semibold tracking-tight text-slate-900"><%= t("dashboard.title") %></h1>
-    <p class="mt-1 text-sm text-slate-600">
-      <%= t("dashboard.tenant_subtitle") %>
-    </p>
-  </header>
+  <%= render "application/shared/page_header",
+             title: t("dashboard.title"),
+             subtitle: t("dashboard.tenant_subtitle") %>
 
   <% if current_tenant.onboarding_complete? && current_tenant.personalized_scheduling_link.present? %>
     <% unless current_user.user_preference&.dismissed_welcome_card %>
@@ -25,7 +22,7 @@
           calendar_space: @calendar_space %>
   </div>
   <div class="grid gap-6 sm:grid-cols-2">
-    <div class="card">
+    <div class="card-solid">
       <h2 class="text-sm font-medium text-slate-900"><%= t("dashboard.admin.appointments_title") %></h2>
       <p class="mt-1 text-xs text-slate-600">
         <%= t("dashboard.admin.appointments_body") %>
@@ -35,7 +32,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card-solid">
       <h2 class="text-sm font-medium text-slate-900"><%= t("dashboard.admin.customers_title") %></h2>
       <p class="mt-1 text-xs text-slate-600">
         <%= t("dashboard.admin.customers_body") %>

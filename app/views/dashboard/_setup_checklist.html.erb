@@ -5,12 +5,12 @@
   subscription = space.subscription
   trial_active = subscription&.trialing?
 %>
-<div class="rounded-xl border border-indigo-200 bg-indigo-50 p-6 shadow-sm">
+<div class="rounded-card border border-electric/20 bg-electric/5 p-6 shadow-sm">
   <h2 class="text-lg font-semibold text-slate-900">
     <%= t("dashboard.onboarding.checklist_title") %>
   </h2>
   <p class="mt-2">
-    <%= link_to t("dashboard.setup_checklist.resume_onboarding"), onboarding_wizard_path, class: "text-sm font-medium text-indigo-700 hover:text-indigo-900 hover:underline" %>
+    <%= link_to t("dashboard.setup_checklist.resume_onboarding"), onboarding_wizard_path, class: "text-sm font-medium text-electric hover:text-electric/80 hover:underline" %>
   </p>
   <ul class="mt-4 space-y-3">
     <li class="flex items-start gap-3">
@@ -21,7 +21,7 @@
         <span class="mt-0.5 shrink-0 text-slate-400" aria-hidden="true">☐</span>
         <%= link_to t("dashboard.onboarding.set_business_hours"),
                     edit_settings_space_availability_path,
-                    class: "text-sm font-medium text-indigo-700 hover:text-indigo-900 hover:underline" %>
+                    class: "text-sm font-medium text-electric hover:text-electric/80 hover:underline" %>
       <% end %>
     </li>
     <li class="flex items-start gap-3">
@@ -32,7 +32,7 @@
         <span class="mt-0.5 shrink-0 text-slate-400" aria-hidden="true">☐</span>
         <%= link_to t("dashboard.onboarding.create_booking_link"),
                     new_scheduling_link_path,
-                    class: "text-sm font-medium text-indigo-700 hover:text-indigo-900 hover:underline" %>
+                    class: "text-sm font-medium text-electric hover:text-electric/80 hover:underline" %>
       <% end %>
     </li>
     <% if trial_active %>

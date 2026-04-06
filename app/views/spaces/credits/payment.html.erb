@@ -30,7 +30,7 @@
                     class="flex-1 truncate text-xs text-slate-600 text-left"><%= @pix_payload %></code>
               <button data-action="clipboard#copy"
                       data-clipboard-success-content="<%= t("billing.credits.pix_copied") %>"
-                      class="shrink-0 text-xs font-medium text-indigo-600 hover:text-indigo-800">
+                      class="shrink-0 text-xs font-medium text-electric hover:text-electric/80">
                 <%= t("billing.credits.copy_pix_code") %>
               </button>
             </div>
@@ -51,7 +51,7 @@
 
       <p class="text-xs text-slate-500"><%= t("billing.credits.waiting_payment") %></p>
       <%= link_to t("billing.credits.back_to_credits"), settings_credits_path,
-                  class: "text-sm text-indigo-600 hover:underline" %>
+                  class: "text-sm text-electric hover:underline" %>
     </div>
   <% end %>
 </div>

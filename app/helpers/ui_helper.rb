@@ -1,33 +1,20 @@
 # frozen_string_literal: true
 
 module UiHelper
-  TABLE_BTN_BASE = "inline-flex items-center justify-center btn-sm rounded-card font-medium cursor-pointer transition-all duration-200 " \
-                   "active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 " \
-                   "focus:outline-none focus:ring-2 focus:ring-offset-2"
-
   def button_classes(variant = :primary, extra_classes = nil)
     classes = case variant.to_sym
     when :primary     then "btn-primary"
     when :secondary   then "btn-secondary"
     when :danger, :destructive then "btn-danger"
-    when :success
-      "inline-flex items-center justify-center px-6 py-3 bg-emerald-500 text-white font-medium rounded-card cursor-pointer transition-all duration-200 hover:bg-emerald-600 active:scale-[0.97] active:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
-    when :cancel
-      "inline-flex items-center justify-center px-6 py-3 bg-amber-500 text-white font-medium rounded-card cursor-pointer transition-all duration-200 hover:bg-amber-600 active:scale-[0.97] active:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
-    when :muted
-      "inline-flex items-center justify-center px-6 py-3 bg-slate-100 text-slate-700 font-medium rounded-card cursor-pointer transition-all duration-200 hover:bg-slate-200 active:scale-[0.97] active:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
-    when :neutral
-      "inline-flex items-center justify-center px-6 py-3 bg-slate-500 text-white font-medium rounded-card cursor-pointer transition-all duration-200 hover:bg-slate-600 active:scale-[0.97] active:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
-    when :table_link
-      "#{TABLE_BTN_BASE} border border-slate-300 bg-white px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 focus:ring-slate-300"
-    when :table_success
-      "#{TABLE_BTN_BASE} bg-emerald-500 px-4 py-2 text-sm text-white hover:bg-emerald-600 focus:ring-emerald-500/50"
-    when :table_danger
-      "#{TABLE_BTN_BASE} bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700 focus:ring-red-500/50"
-    when :table_cancel
-      "#{TABLE_BTN_BASE} bg-amber-500 px-4 py-2 text-sm text-white hover:bg-amber-600 focus:ring-amber-500/50"
-    when :table_muted
-      "#{TABLE_BTN_BASE} bg-slate-500 px-4 py-2 text-sm text-white hover:bg-slate-600 focus:ring-slate-500/50"
+    when :success     then "btn-success"
+    when :cancel      then "btn-cancel"
+    when :muted       then "btn-muted"
+    when :neutral     then "btn-neutral"
+    when :table_link    then "btn-secondary btn-xs"
+    when :table_success then "btn-success btn-xs"
+    when :table_danger  then "btn-danger btn-xs"
+    when :table_cancel  then "btn-cancel btn-xs"
+    when :table_muted   then "btn-neutral btn-xs"
     else
       "btn-primary"
     end
@@ -39,7 +26,7 @@ module UiHelper
   end
 
   def form_label_classes_sm
-    "text-xs font-medium text-slate-600"
+    "form-label-sm"
   end
 
   def form_input_classes(extra = nil)
@@ -94,7 +81,7 @@ module UiHelper
       active ? "#{base} text-white border-white" : "#{base} text-slate-200 hover:text-white hover:bg-slate-800 border-transparent"
     when :mobile
       base = "block rounded-md px-3 py-2 text-sm font-medium"
-      active ? "#{base} bg-indigo-900/40 text-white" : "#{base} text-slate-100 hover:bg-slate-800"
+      active ? "#{base} bg-electric/20 text-white" : "#{base} text-slate-100 hover:bg-slate-800"
     else
       active ? "text-white" : "text-slate-200 hover:text-white hover:bg-slate-800"
     end

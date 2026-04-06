@@ -1,3 +1,22 @@
-<div class="card <%= local_assigns[:padding] || '' %>">
+<%# Renders a card surface.
+    Locals:
+      variant:     (:solid, :glass)         — default :solid
+      size:        (:compact, :cozy, :spacious) — default :cozy
+      glass:       (:subtle, :liquid, :frosty)  — glass modifier, only with variant: :glass
+      state:       (:active, :alert, :featured) — optional animation state
+      extra_class: (String)                 — additional CSS classes
+%>
+<% variant     = local_assigns.fetch(:variant, :solid) %>
+<% size        = local_assigns.fetch(:size, :cozy) %>
+<% glass_mod   = local_assigns[:glass] %>
+<% state       = local_assigns[:state] %>
+<% extra       = local_assigns[:extra_class] %>
+
+<% base = variant == :glass ? "card-glass" : "card-solid" %>
+<% size_class = { compact: "card-compact", cozy: "", spacious: "card-spacious" }[size] %>
+<% glass_class = glass_mod ? "glass-#{glass_mod}" : "" %>
+<% state_class = state ? "card-#{state}" : "" %>
+
+<div class="<%= [base, size_class, glass_class, state_class, extra].compact_blank.join(' ') %>">
   <%= yield %>
 </div>

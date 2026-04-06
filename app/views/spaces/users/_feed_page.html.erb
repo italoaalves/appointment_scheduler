@@ -4,10 +4,8 @@
   <% end %>
 </div>
 
-<% if users.next_page %>
-  <turbo-frame id="users-page-<%= users.next_page %>"
-               src="<%= users_path(page: users.next_page) %>"
-               loading="lazy">
-    <%= render "skeleton_loaders" %>
-  </turbo-frame>
-<% end %>
+<%= render "application/shared/feed_frame",
+           collection: users,
+           frame_prefix: "users-page",
+           next_page_path: users_path(page: users.next_page),
+           skeleton_partial: "skeleton_loaders" %>

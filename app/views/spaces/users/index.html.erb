@@ -19,27 +19,15 @@
         <% end %>
       <% end %>
     <% end %>
+    <%= render "application/shared/page_header", title: t("space.users.index.title"), actions: page_actions %>
 
-    <%= form_with url: users_path,
-                  method: :get,
-                  local: true,
-                  data: { controller: "auto-submit", turbo_frame: "users-feed" },
-                  class: "sticky top-4 card-glass flex items-center gap-2 p-3" do %>
-      <div class="flex-1">
-        <%= text_field_tag :query, params[:query],
-                           placeholder: t("space.users.index.filters.search_placeholder"),
-                           class: "w-full rounded-md border-slate-300 text-base focus:border-slate-500 focus:ring-slate-500 py-2.5",
-                           data: { auto_submit_target: "input", action: "input->auto-submit#search" } %>
-      </div>
-      <%= link_to users_path,
-            class: "flex-shrink-0 p-2 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors",
-            aria: { label: t("space.users.index.filters.clear") },
-            data: { turbo_frame: "users-feed" } do %>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      <% end %>
-    <% end %>
+    <%= render "application/shared/search_bar",
+               url: users_path,
+               query: params[:query],
+               placeholder: t("space.users.index.filters.search_placeholder"),
+               turbo_frame: "users-feed",
+               clear_path: users_path,
+               clear_label: t("space.users.index.filters.clear") %>
 
     <turbo-frame id="users-feed"
                  data-controller="infinite-scroll"

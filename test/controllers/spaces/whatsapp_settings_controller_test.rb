@@ -72,7 +72,7 @@ module Spaces
       end
 
       assert_redirected_to settings_whatsapp_path
-      assert_equal I18n.t("spaces.whatsapp_settings.connected"), flash[:notice]
+      assert_nil flash[:notice]
       assert spaces(:one).whatsapp_phone_number.active?
     end
 
@@ -178,7 +178,7 @@ module Spaces
       end
 
       assert_redirected_to settings_whatsapp_path
-      assert_equal I18n.t("spaces.whatsapp_settings.disconnected"), flash[:notice]
+      assert_nil flash[:notice]
       assert_nil spaces(:one).reload.whatsapp_phone_number
     end
 

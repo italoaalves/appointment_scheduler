@@ -20,7 +20,7 @@ module Platform
       @bundle = Billing::CreditBundle.new(bundle_params)
 
       if @bundle.save
-        redirect_to platform_credit_bundles_path, notice: t("platform.credit_bundles.create.notice")
+        redirect_to platform_credit_bundles_path
       else
         render :new, status: :unprocessable_entity
       end
@@ -31,7 +31,7 @@ module Platform
 
     def update
       if @bundle.update(bundle_params)
-        redirect_to platform_credit_bundles_path, notice: t("platform.credit_bundles.update.notice")
+        redirect_to platform_credit_bundles_path
       else
         render :edit, status: :unprocessable_entity
       end

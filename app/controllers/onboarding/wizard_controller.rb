@@ -47,7 +47,7 @@ module Onboarding
 
     def update_step3
       current_tenant.update!(onboarding_step: 3, completed_onboarding_at: Time.current)
-      redirect_to root_path, notice: t("onboarding.step3.completed_notice")
+      redirect_to root_path
     end
 
     def skip

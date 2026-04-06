@@ -32,7 +32,7 @@
                   method: :get,
                   local: true,
                   data: { turbo_frame: "appointments-feed" },
-                  class: "card-glass sticky top-4 z-20 flex flex-wrap items-end gap-3 p-4" do %>
+                  class: "card-glass sticky-filter flex flex-wrap items-end gap-3 p-4" do %>
       <div class="flex flex-col gap-1">
         <label for="status" class="<%= form_label_classes_sm %>"><%= t("space.appointments.filters.status") %></label>
         <%= select_tag :status,
@@ -48,15 +48,15 @@
                          ],
                          params[:status]
                        ),
-                       class: "rounded-md border-slate-300 text-sm focus:border-slate-500 focus:ring-slate-500" %>
+                       class: "form-input-sm" %>
       </div>
       <div class="flex flex-col gap-1">
         <label for="date_from" class="<%= form_label_classes_sm %>"><%= t("space.appointments.filters.from") %></label>
-        <%= date_field_tag :date_from, params[:date_from], class: "rounded-md border-slate-300 text-sm focus:border-slate-500 focus:ring-slate-500" %>
+        <%= date_field_tag :date_from, params[:date_from], class: "form-input-sm" %>
       </div>
       <div class="flex flex-col gap-1">
         <label for="date_to" class="<%= form_label_classes_sm %>"><%= t("space.appointments.filters.to") %></label>
-        <%= date_field_tag :date_to, params[:date_to], class: "rounded-md border-slate-300 text-sm focus:border-slate-500 focus:ring-slate-500" %>
+        <%= date_field_tag :date_to, params[:date_to], class: "form-input-sm" %>
       </div>
       <div class="flex gap-2">
         <%= submit_tag t("space.appointments.filters.apply"), class: button_classes(:primary), data: { turbo_submits_with: t("shared.submitting") } %>

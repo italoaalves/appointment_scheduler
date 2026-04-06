@@ -1,0 +1,14 @@
+<%# Renders a lazy-loading Turbo Frame for infinite scroll pagination.
+    Locals:
+      collection:      (Kaminari page) — the paginated collection
+      frame_prefix:    (String)        — e.g., "appointments-page", "customers-page"
+      next_page_path:  (String)        — URL for the next page (with query params)
+      skeleton_partial:(String)        — partial to render as loading placeholder
+%>
+<% if collection.next_page %>
+  <turbo-frame id="<%= frame_prefix %>-<%= collection.next_page %>"
+               src="<%= next_page_path %>"
+               loading="lazy">
+    <%= render skeleton_partial %>
+  </turbo-frame>
+<% end %>
