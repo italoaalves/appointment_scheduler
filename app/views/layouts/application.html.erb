@@ -26,7 +26,11 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen text-deep" style="background: linear-gradient(160deg, #ffffff 0%, #f0f9ff 50%, #e0f2fe 100%); background-attachment: fixed;">
+  <body class="min-h-screen text-deep"
+        style="background: linear-gradient(160deg, #ffffff 0%, #f0f9ff 50%, #e0f2fe 100%); background-attachment: fixed;"
+        data-confirm-title="<%= t('shared.confirm_modal.title') %>"
+        data-confirm-label="<%= t('shared.confirm_modal.confirm') %>"
+        data-cancel-label="<%= t('shared.confirm_modal.cancel') %>">
     <%= render "shared/email_confirmation_banner" if user_signed_in? && !current_user.confirmed? %>
     <% if user_signed_in? %>
       <% if impersonating? %>
@@ -148,6 +152,8 @@
     <div id="flash_messages">
       <%= render "shared/flash_messages" %>
     </div>
+
+    <div id="modal_container"></div>
 
     <main class="mx-auto px-4 py-8 pb-28 sm:pb-8 sm:pr-28 <%= content_for?(:settings_sidebar) ? 'max-w-5xl' : content_for?(:wide_layout) ? 'max-w-6xl' : 'max-w-4xl' %>">
       <%= yield(:breadcrumbs) if content_for?(:breadcrumbs) %>

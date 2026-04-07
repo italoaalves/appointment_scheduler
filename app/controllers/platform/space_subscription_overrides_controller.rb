@@ -12,9 +12,10 @@ module Platform
 
     def update
       case params[:override_action]
-      when "extend_trial"  then extend_trial
-      when "change_plan"   then change_plan
-      when "grant_credits" then grant_credits
+      when "extend_trial"            then extend_trial
+      when "change_plan"             then change_plan
+      when "grant_credits"           then grant_credits
+      when "reactivate_subscription" then reactivate_subscription
       else
         redirect_to platform_space_path(@space), alert: "Unknown action."
       end
@@ -95,6 +96,55 @@ module Platform
       end
 
       redirect_to platform_space_path(@space), notice: "#{amount} credits granted."
+    end
+
+    def reactivate_subscription
+      subscription = @space.subscription
+
+      unless subscription
+        redirect_to edit_platform_space_subscription_override_path(@space), alert: "No subscription to reactivate."
+        return
+      end
+
+      asaas_subscription_id = params[:asaas_subscription_id].to_s.strip
+      reason = params[:reason].to_s.strip
+
+      if asaas_subscription_id.blank?
+        redirect_to edit_platform_space_subscription_override_path(@space), alert: "Asaas subscription ID is required."
+        return
+      end
+
+      if reason.blank?
+        redirect_to edit_platform_space_subscription_override_path(@space), alert: "A reason is required for audit purposes."
+        return
+      end
+
+      old_status = subscription.status
+
+      ActiveRecord::Base.transaction do
+        subscription.update!(
+          status:                :active,
+          asaas_subscription_id: asaas_subscription_id,
+          canceled_at:           nil,
+          current_period_start:  Time.current,
+          current_period_end:    1.month.from_now
+        )
+
+        Billing::BillingEvent.create!(
+          space:        @space,
+          subscription: subscription,
+          event_type:   "manual_override",
+          metadata:     {
+            action:                "reactivate_subscription",
+            previous_status:       old_status,
+            asaas_subscription_id: asaas_subscription_id,
+            reason:                reason
+          },
+          actor_id:     current_user.id
+        )
+      end
+
+      redirect_to platform_space_path(@space), notice: "Subscription reactivated successfully."
     end
   end
 end

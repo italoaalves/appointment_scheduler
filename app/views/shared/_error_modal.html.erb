@@ -1,0 +1,44 @@
+<%# Error modal — injected via Turbo Stream into #modal_container.
+    Locals:
+      message: (String) — the error message to display
+%>
+<div id="modal_container">
+  <div data-controller="error-modal"
+       data-action="keydown.esc@window->error-modal#close"
+       class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="error-modal-title">
+
+    <%# Backdrop %>
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"
+         data-action="click->error-modal#close"
+         aria-hidden="true"></div>
+
+    <%# Panel %>
+    <div data-error-modal-target="panel"
+         class="relative z-10 w-full max-w-sm glass-frosty rounded-card p-6 text-center"
+         style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
+
+      <%# Warning icon %>
+      <div class="mx-auto mb-4 flex items-center justify-center w-12 h-12 rounded-full bg-red-100">
+        <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+      </div>
+
+      <p id="error-modal-title" class="font-display font-bold text-deep text-base mb-2">
+        <%= t("shared.error_modal.title") %>
+      </p>
+      <p class="text-slate-600 text-sm leading-relaxed"><%= message %></p>
+
+      <button type="button"
+              class="mt-5 w-full btn-primary btn-sm"
+              data-action="error-modal#close"
+              data-error-modal-dismiss>
+        <%= t("shared.error_modal.dismiss") %>
+      </button>
+    </div>
+  </div>
+</div>

@@ -57,11 +57,28 @@ module Spaces
     def destroy
       active_count = @customer.appointments.where(status: Appointment::SLOT_BLOCKING_STATUSES).count
       if active_count > 0
-        redirect_to customer_path(@customer), alert: t("space.customers.destroy.has_active_appointments", count: active_count) and return
+        message = t("space.customers.destroy.has_active_appointments", count: active_count)
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.replace(ActionView::RecordIdentifier.dom_id(@customer),
+                partial: "spaces/customers/customer",
+                locals: { customer: @customer, shake: true }),
+              turbo_stream.replace("modal_container",
+                partial: "shared/error_modal",
+                locals: { message: message })
+            ]
+          end
+          format.html { redirect_to customers_path, alert: message }
+        end
+        return
       end
 
       @customer.destroy
-      redirect_to customers_path
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.remove(ActionView::RecordIdentifier.dom_id(@customer)) }
+        format.html { redirect_to customers_path }
+      end
     end
 
     private

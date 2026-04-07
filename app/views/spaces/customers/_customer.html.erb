@@ -1,3 +1,4 @@
+<% shake = local_assigns.fetch(:shake, false) %>
 <% initials = customer.name.split.first(2).map { |w| w[0]&.upcase }.join %>
 <% avatar_colors = [
   "bg-cerulean/15 text-cerulean",
@@ -11,7 +12,7 @@
 
 <div id="<%= dom_id(customer) %>"
      class="customer-card group relative overflow-hidden rounded-card"
-     data-controller="swipe-actions">
+     data-controller="swipe-actions<%= shake ? ' card-error' : '' %>">
 
   <%# Action drawer — right edge on touch (swipe), bottom edge on hover devices %>
   <div data-swipe-actions-target="actions"

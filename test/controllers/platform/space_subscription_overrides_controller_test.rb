@@ -115,6 +115,63 @@ module Platform
       assert_redirected_to edit_platform_space_subscription_override_path(@space)
     end
 
+    # ── reactivate_subscription ──────────────────────────────────────────────
+
+    test "reactivate_subscription sets status to active and logs event" do
+      sign_in @admin
+      @subscription.update!(status: :expired, canceled_at: 1.day.ago, asaas_subscription_id: nil)
+
+      assert_difference "Billing::BillingEvent.count", 1 do
+        patch platform_space_subscription_override_path(@space), params: {
+          override_action: "reactivate_subscription",
+          asaas_subscription_id: "sub_abc123",
+          reason: "Customer verified active on Asaas dashboard"
+        }
+      end
+
+      assert_redirected_to platform_space_path(@space)
+      @subscription.reload
+      assert @subscription.active?
+      assert_equal "sub_abc123", @subscription.asaas_subscription_id
+      assert_nil @subscription.canceled_at
+      assert_not_nil @subscription.current_period_start
+      assert_not_nil @subscription.current_period_end
+
+      event = Billing::BillingEvent.order(:created_at).last
+      assert_equal "manual_override", event.event_type
+      assert_equal @admin.id, event.actor_id
+      assert_equal "reactivate_subscription", event.metadata["action"]
+      assert_equal "expired", event.metadata["previous_status"]
+      assert_equal "sub_abc123", event.metadata["asaas_subscription_id"]
+      assert_equal "Customer verified active on Asaas dashboard", event.metadata["reason"]
+    end
+
+    test "reactivate_subscription requires asaas_subscription_id" do
+      sign_in @admin
+
+      patch platform_space_subscription_override_path(@space), params: {
+        override_action: "reactivate_subscription",
+        asaas_subscription_id: "",
+        reason: "some reason"
+      }
+
+      assert_redirected_to edit_platform_space_subscription_override_path(@space)
+      assert_equal "trialing", @subscription.reload.status
+    end
+
+    test "reactivate_subscription requires reason" do
+      sign_in @admin
+
+      patch platform_space_subscription_override_path(@space), params: {
+        override_action: "reactivate_subscription",
+        asaas_subscription_id: "sub_abc123",
+        reason: ""
+      }
+
+      assert_redirected_to edit_platform_space_subscription_override_path(@space)
+      assert_equal "trialing", @subscription.reload.status
+    end
+
     test "unknown override_action redirects to space page" do
       sign_in @admin
 

@@ -141,6 +141,13 @@ pt-BR:
     submitting: "Salvando…"
     deleting: "Excluindo…"
     removing: "Removendo…"
+    error_modal:
+      title: "Não foi possível concluir"
+      dismiss: "Entendido"
+    confirm_modal:
+      title: "Tem certeza?"
+      confirm: "Confirmar"
+      cancel: "Cancelar"
     email_confirmation_banner:
       message: "Por favor, confirme seu e-mail. Verifique sua caixa de entrada ou"
       resend_link: "reenviar e-mail de confirmação"
@@ -1319,6 +1326,13 @@ pt-BR:
       confirm_extend: "Estender o teste por esse número de dias?"
       confirm_change: "Alterar o plano deste espaço imediatamente?"
       confirm_grant: "Conceder essa quantidade de créditos ao espaço?"
+      reactivate_subscription: "Reativar Assinatura"
+      reactivate_description: "Reative manualmente a assinatura vinculando-a a uma assinatura válida no Asaas. Isso define o status como ativo e reinicia o período de cobrança. Use quando o cliente tem uma assinatura válida no Asaas mas o status local está dessincronizado."
+      asaas_subscription_id_label: "ID da Assinatura Asaas"
+      reason_label: "Motivo (auditoria)"
+      reason_placeholder: "ex: Cliente reportou problema de cobrança, verificado ativo no Asaas"
+      reactivate_button: "Reativar Assinatura"
+      confirm_reactivate: "Isso definirá a assinatura como ativa e atualizará o ID da assinatura Asaas. Esta é uma ação destrutiva. Continuar?"
     dashboard:
       subtitle: "Área de administração da plataforma. Gestão de inquilinos pode ser adicionada aqui."
     unauthorized: "Você não tem permissão para acessar a área da plataforma."

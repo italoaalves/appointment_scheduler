@@ -170,6 +170,13 @@ en:
     submitting: "Saving…"
     deleting: "Deleting…"
     removing: "Removing…"
+    error_modal:
+      title: "Could not complete"
+      dismiss: "Got it"
+    confirm_modal:
+      title: "Are you sure?"
+      confirm: "Confirm"
+      cancel: "Cancel"
     email_confirmation_banner:
       message: "Please confirm your email address. Check your inbox or"
       resend_link: "resend confirmation email"
@@ -1324,6 +1331,13 @@ en:
       confirm_extend: "Extend the trial by this many days?"
       confirm_change: "Change this space's plan immediately?"
       confirm_grant: "Grant this many credits to the space?"
+      reactivate_subscription: "Reactivate Subscription"
+      reactivate_description: "Manually reactivate the subscription by linking it to a valid Asaas subscription. This sets the status to active and resets the billing period. Use this when a customer has a valid Asaas subscription but the local status is out of sync."
+      asaas_subscription_id_label: "Asaas Subscription ID"
+      reason_label: "Reason (audit)"
+      reason_placeholder: "e.g. Customer reported billing issue, verified active on Asaas"
+      reactivate_button: "Reactivate Subscription"
+      confirm_reactivate: "This will set the subscription to active and update the Asaas subscription ID. This is a destructive action. Continue?"
     dashboard:
       subtitle: "SaaS admin area. Tenant management can be added here."
     unauthorized: "You are not allowed to access the platform area."
