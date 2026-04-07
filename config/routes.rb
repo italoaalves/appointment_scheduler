@@ -112,6 +112,9 @@ Rails.application.routes.draw do
     resources :billing, only: [ :index ], controller: "billing"
     resources :plans, except: :destroy
     resources :credit_bundles, except: :destroy
+    resources :integrations, only: :index do
+      post :whatsapp_test, on: :collection
+    end
     resources :spaces do
       resources :appointments, only: [ :index, :show ], controller: "space_appointments"
       resources :customers, only: [ :index, :show ], controller: "space_customers"
