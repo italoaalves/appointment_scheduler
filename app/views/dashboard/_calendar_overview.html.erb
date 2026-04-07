@@ -1,4 +1,4 @@
-<div class="card-solid flex max-h-[65vh] min-h-0 flex-col p-0"
+<div class="card-solid flex max-h-[65vh] min-h-0 flex-col overflow-hidden p-0"
      data-controller="calendar-tabs">
   <div class="shrink-0 border-b border-slate-200">
     <nav class="flex -mb-px">
@@ -28,7 +28,6 @@
 
   <div class="relative min-h-0 flex-1 flex flex-col">
     <div data-calendar-tabs-target="scrollArea"
-         data-action="scroll->calendar-tabs#checkOverflow"
          class="min-h-0 flex-1 overflow-y-auto p-4">
       <% %i[today week month].each do |period| %>
         <% appointments = periods_data[period] %>
@@ -95,11 +94,6 @@
       <% end %>
     </div>
 
-    <div data-calendar-tabs-target="fadeOverlay"
-         hidden
-         class="pointer-events-none absolute left-0 right-0 z-10 h-8 bg-gradient-to-t from-white via-white/80 to-transparent"
-         style="bottom: 52px;">
-    </div>
 
     <footer class="shrink-0 border-t border-slate-100 bg-white px-4 py-3">
       <% %i[today week month].each do |period| %>

@@ -9,7 +9,7 @@
     <%= render "feed_page", users: @users %>
   </turbo-frame>
 <% else %>
-  <div class="space-y-6">
+  <div class="space-y-6" data-controller="sticky-stack">
     <% page_actions = capture do %>
       <% if current_user.can?(:manage_team) %>
         <% if Billing::PlanEnforcer.can?(current_tenant, :create_team_member) %>

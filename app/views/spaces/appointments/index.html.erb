@@ -22,7 +22,7 @@
     <% end %>
   </turbo-frame>
 <% else %>
-  <div class="space-y-6">
+  <div class="space-y-6" data-controller="sticky-stack">
     <% page_actions = capture do %>
       <%= link_to t("space.appointments.index.new_button"), new_appointment_path, class: button_classes(:primary) %>
     <% end %>
@@ -31,7 +31,7 @@
     <%= form_with url: appointments_path,
                   method: :get,
                   local: true,
-                  data: { turbo_frame: "appointments-feed" },
+                  data: { turbo_frame: "appointments-feed", sticky_stack_target: "filter" },
                   class: "card-glass sticky-filter flex flex-wrap items-end gap-3 p-4" do %>
       <div class="flex flex-col gap-1">
         <label for="status" class="<%= form_label_classes_sm %>"><%= t("space.appointments.filters.status") %></label>

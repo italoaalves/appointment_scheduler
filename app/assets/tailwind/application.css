@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
-/* ADD THIS LINE AT THE TOP */
-@source "../../views/**/*.erb";
+@source "../../views/**/*.{erb,html}";
+@source "../../helpers/**/*.rb";
+@source "../../javascript/**/*.js";
+@source "../../components/**/*.{rb,erb}";
 
 /* Targets devices with a real pointer (mouse/trackpad) — not screen-width based */
 @custom-variant can-hover (@media (hover: hover) and (pointer: fine));
@@ -22,7 +24,6 @@
 
   /* === Sticky stack === */
   --spacing-sticky-filter: 1rem;
-  --spacing-sticky-section: 5rem;
 }
 
 @layer base {
@@ -221,10 +222,11 @@
     top: var(--spacing-sticky-filter);
   }
 
-  /* Layer 2: Feed section titles — sticks below filter bar */
+  /* Layer 2: Feed section titles — sticks below filter bar.
+     CSS fallback for `top`; overridden at runtime by sticky_stack_controller. */
   .sticky-section {
     @apply sticky z-10 -mx-1 px-6 py-2 mb-4 rounded-xl;
-    top: var(--spacing-sticky-section);
+    top: 5rem;
     background: rgba(255, 255, 255, 0.72);
     -webkit-backdrop-filter: blur(20px) saturate(140%);
     backdrop-filter: blur(20px) saturate(140%);

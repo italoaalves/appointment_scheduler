@@ -9,7 +9,7 @@
     <%= render "feed_page", grouped_customers: @grouped_customers, customers: @customers %>
   </turbo-frame>
 <% else %>
-  <div class="space-y-6">
+  <div class="space-y-6" data-controller="sticky-stack">
     <% page_actions = capture do %>
       <% if Billing::PlanEnforcer.can?(current_tenant, :create_customer) %>
         <%= link_to t("space.customers.index.new_button"), new_customer_path, class: button_classes(:primary) %>

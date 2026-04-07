@@ -4,7 +4,7 @@
       subtitle:    (String, optional) — smaller text beside the title
       extra_class: (String, optional) — additional CSS classes
 %>
-<div class="sticky-section <%= local_assigns[:extra_class] %>">
+<div class="sticky-section <%= local_assigns[:extra_class] %>" data-sticky-stack-target="section">
   <h2 class="font-display font-bold text-deep text-lg mt-2 p-2">
     <%= title %>
     <% if local_assigns[:subtitle].present? %>

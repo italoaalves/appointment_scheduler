@@ -11,7 +11,7 @@
 <%= form_with url: url,
               method: :get,
               local: true,
-              data: { controller: "auto-submit", turbo_frame: turbo_frame },
+              data: { controller: "auto-submit", turbo_frame: turbo_frame, sticky_stack_target: "filter" },
               class: "card-glass sticky-filter flex items-center gap-2 p-3 #{local_assigns[:extra_class]}" do %>
   <div class="flex-1">
     <%= text_field_tag :query, query,
