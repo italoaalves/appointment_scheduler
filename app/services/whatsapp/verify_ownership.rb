@@ -40,7 +40,7 @@ module Whatsapp
     end
 
     def access_token
-      Rails.application.credentials.dig(:whatsapp, :access_token)
+      Rails.application.credentials.dig(:meta, :access_token)
     end
   end
 end

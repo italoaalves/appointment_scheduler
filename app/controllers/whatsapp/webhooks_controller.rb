@@ -15,7 +15,7 @@ module Whatsapp
       if mode == "subscribe" && token.present? &&
          ActiveSupport::SecurityUtils.secure_compare(
            token.to_s,
-           Rails.application.credentials.dig(:whatsapp, :verify_token).to_s
+           Rails.application.credentials.dig(:meta, :verify_token).to_s
          )
         render plain: challenge, status: :ok
       else
@@ -40,7 +40,7 @@ module Whatsapp
       signature = request.headers["X-Hub-Signature-256"]
       return false if signature.blank?
 
-      app_secret = Rails.application.credentials.dig(:whatsapp, :app_secret).to_s
+      app_secret = Rails.application.credentials.dig(:meta, :app_secret).to_s
       expected   = "sha256=" + OpenSSL::HMAC.hexdigest("SHA256", app_secret, request.raw_post)
 
       ActiveSupport::SecurityUtils.secure_compare(signature, expected)

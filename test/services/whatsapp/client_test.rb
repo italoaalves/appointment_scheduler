@@ -208,8 +208,8 @@ module Whatsapp
     test "constructor defaults phone_number_id and access_token from credentials" do
       Rails.application.credentials.stub(:dig, ->(key, *rest) {
         case [ key, *rest ]
-        when [ :whatsapp, :phone_number_id ] then "cred_phone_id"
-        when [ :whatsapp, :access_token ]    then "cred_access_token"
+        when [ :meta, :whatsapp, :phone_number_id ] then "cred_phone_id"
+        when [ :meta, :access_token ]               then "cred_access_token"
         end
       }) do
         client = Whatsapp::Client.new

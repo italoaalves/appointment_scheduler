@@ -104,11 +104,11 @@ module Whatsapp
     end
 
     def default_phone_number_id
-      Rails.application.credentials.dig(:whatsapp, :phone_number_id)
+      Rails.application.credentials.dig(:meta, :whatsapp, :phone_number_id)
     end
 
     def default_access_token
-      Rails.application.credentials.dig(:whatsapp, :access_token)
+      Rails.application.credentials.dig(:meta, :access_token)
     end
   end
 end
