@@ -1,0 +1,46 @@
+<div class="mx-auto max-w-3xl px-4 py-12">
+  <h1 class="font-display text-3xl font-extrabold text-deep tracking-tight"><%= t("legal.privacy_policy.title") %></h1>
+  <p class="mt-2 text-sm text-slate-500"><%= t("legal.privacy_policy.last_updated", date: "07/04/2026") %></p>
+
+  <div class="prose prose-slate mt-8 max-w-none text-sm leading-relaxed">
+    <h2><%= t("legal.privacy_policy.sections.intro.title") %></h2>
+    <p><%= t("legal.privacy_policy.sections.intro.body") %></p>
+
+    <h2><%= t("legal.privacy_policy.sections.data_collected.title") %></h2>
+    <ul>
+      <% t("legal.privacy_policy.sections.data_collected.items").each do |item| %>
+        <li><%= item %></li>
+      <% end %>
+    </ul>
+
+    <h2><%= t("legal.privacy_policy.sections.usage.title") %></h2>
+    <ul>
+      <% t("legal.privacy_policy.sections.usage.items").each do |item| %>
+        <li><%= item %></li>
+      <% end %>
+    </ul>
+
+    <h2><%= t("legal.privacy_policy.sections.whatsapp.title") %></h2>
+    <p><%= t("legal.privacy_policy.sections.whatsapp.body") %></p>
+
+    <h2><%= t("legal.privacy_policy.sections.sharing.title") %></h2>
+    <p><%= t("legal.privacy_policy.sections.sharing.body") %></p>
+
+    <h2><%= t("legal.privacy_policy.sections.retention.title") %></h2>
+    <p><%= t("legal.privacy_policy.sections.retention.body") %></p>
+
+    <h2><%= t("legal.privacy_policy.sections.rights.title") %></h2>
+    <p><%= t("legal.privacy_policy.sections.rights.body") %></p>
+    <ul>
+      <% t("legal.privacy_policy.sections.rights.items").each do |item| %>
+        <li><%= item %></li>
+      <% end %>
+    </ul>
+
+    <h2><%= t("legal.privacy_policy.sections.security.title") %></h2>
+    <p><%= t("legal.privacy_policy.sections.security.body") %></p>
+
+    <h2><%= t("legal.privacy_policy.sections.contact.title") %></h2>
+    <p><%= t("legal.privacy_policy.sections.contact.body") %></p>
+  </div>
+</div>

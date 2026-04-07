@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   get "up/ready" => "health#ready", as: :health_ready
 
   devise_for :users, controllers: { registrations: "users/registrations" }
+  get "privacy-policy", to: "legal#privacy_policy", as: :privacy_policy
   root "landing#index"
   get "dashboard", to: "dashboard#index", as: :dashboard
 

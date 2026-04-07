@@ -1108,6 +1108,54 @@ pt-BR:
       body: "O agendamento está temporariamente indisponível. Entre em contato diretamente com o estabelecimento."
       go_back: "Voltar"
 
+  legal:
+    privacy_policy:
+      title: "Política de Privacidade"
+      last_updated: "Última atualização: %{date}"
+      sections:
+        intro:
+          title: "Introdução"
+          body: "Esta política de privacidade descreve como o Agendador de Consultas (\"nós\", \"nosso\", \"a plataforma\") coleta, utiliza e protege os dados pessoais de seus usuários e seus clientes."
+        data_collected:
+          title: "Dados que Coletamos"
+          items:
+            - "Informações da conta: nome, e-mail, telefone"
+            - "Cadastro de clientes: nome, telefone, endereço (criados pelo usuário)"
+            - "Dados de agendamento: horários, status, histórico"
+            - "Dados de mensagens: conversas e conteúdo de mensagens do WhatsApp"
+            - "Dados de cobrança: status da assinatura, histórico de pagamentos (dados de pagamento são processados pelo Asaas e nunca armazenados em nossos servidores)"
+        usage:
+          title: "Como Usamos Seus Dados"
+          items:
+            - "Fornecer e operar o serviço de agendamento de consultas"
+            - "Enviar notificações e lembretes via WhatsApp"
+            - "Processar cobranças e assinaturas"
+            - "Melhorar a plataforma e a experiência do usuário"
+        whatsapp:
+          title: "Integração com WhatsApp"
+          body: "Utilizamos a API do WhatsApp Business (via Meta) para enviar e receber mensagens em nome de nossos usuários. As mensagens são transmitidas pela infraestrutura da Meta. Armazenamos o conteúdo das mensagens para fornecer a funcionalidade de caixa de entrada. Não vendemos ou compartilhamos o conteúdo das mensagens com terceiros."
+        sharing:
+          title: "Compartilhamento de Dados"
+          body: "Não vendemos dados pessoais. Compartilhamos dados apenas com provedores de serviço necessários para operar a plataforma: Asaas (processamento de pagamentos) e Meta (mensagens WhatsApp). Cada provedor está sujeito às suas próprias políticas de privacidade."
+        retention:
+          title: "Retenção de Dados"
+          body: "Retemos dados de usuários e clientes enquanto a conta estiver ativa. Em conformidade com a LGPD (Lei Geral de Proteção de Dados), os dados nunca são excluídos apenas por status de cobrança. Os usuários podem solicitar exportação ou exclusão de dados a qualquer momento."
+        rights:
+          title: "Seus Direitos"
+          body: "Sob a LGPD, você tem o direito de:"
+          items:
+            - "Acessar seus dados pessoais"
+            - "Corrigir dados incorretos"
+            - "Solicitar a exclusão de seus dados"
+            - "Exportar seus dados em formato portátil"
+            - "Revogar o consentimento a qualquer momento"
+        security:
+          title: "Segurança"
+          body: "Implementamos medidas de segurança padrão da indústria, incluindo criptografia em trânsito (TLS), armazenamento seguro de credenciais e isolamento de dados por inquilino. Chaves de API e segredos nunca são expostos em código do lado do cliente."
+        contact:
+          title: "Contato"
+          body: "Para questões relacionadas à privacidade, entre em contato conosco em privacy@agendadorconsultas.com.br."
+
   platform:
     billing:
       index:

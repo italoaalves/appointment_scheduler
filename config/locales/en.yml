@@ -1113,6 +1113,54 @@ en:
       body: "Scheduling is temporarily unavailable. Please contact the business directly."
       go_back: "Go back"
 
+  legal:
+    privacy_policy:
+      title: "Privacy Policy"
+      last_updated: "Last updated: %{date}"
+      sections:
+        intro:
+          title: "Introduction"
+          body: "This privacy policy describes how Agendador de Consultas (\"we\", \"our\", \"the platform\") collects, uses, and protects the personal data of its users and their customers."
+        data_collected:
+          title: "Data We Collect"
+          items:
+            - "Account information: name, email, phone number"
+            - "Customer records: name, phone number, address (created by the user)"
+            - "Appointment data: scheduling, status, history"
+            - "Messaging data: WhatsApp conversations and message content"
+            - "Billing data: subscription status, payment history (payment details are processed by Asaas and never stored on our servers)"
+        usage:
+          title: "How We Use Your Data"
+          items:
+            - "Providing and operating the appointment scheduling service"
+            - "Sending notifications and reminders via WhatsApp"
+            - "Processing billing and subscriptions"
+            - "Improving the platform and user experience"
+        whatsapp:
+          title: "WhatsApp Integration"
+          body: "We use the WhatsApp Business API (via Meta) to send and receive messages on behalf of our users. Messages are transmitted through Meta's infrastructure. We store message content to provide inbox functionality. We do not sell or share message content with third parties."
+        sharing:
+          title: "Data Sharing"
+          body: "We do not sell personal data. We share data only with service providers necessary to operate the platform: Asaas (payment processing) and Meta (WhatsApp messaging). Each provider is subject to their own privacy policies."
+        retention:
+          title: "Data Retention"
+          body: "We retain user and customer data for as long as the account is active. In compliance with LGPD (Brazilian General Data Protection Law), data is never deleted solely due to billing status. Users may request data export or deletion at any time."
+        rights:
+          title: "Your Rights"
+          body: "Under LGPD, you have the right to:"
+          items:
+            - "Access your personal data"
+            - "Correct inaccurate data"
+            - "Request deletion of your data"
+            - "Export your data in a portable format"
+            - "Revoke consent at any time"
+        security:
+          title: "Security"
+          body: "We implement industry-standard security measures including encryption in transit (TLS), secure credential storage, and tenant-level data isolation. API keys and secrets are never exposed in client-side code."
+        contact:
+          title: "Contact"
+          body: "For privacy-related inquiries, please contact us at privacy@agendadorconsultas.com.br."
+
   platform:
     billing:
       index:
