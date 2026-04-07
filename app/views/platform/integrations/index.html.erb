@@ -35,6 +35,15 @@
     </div>
   </div>
 
+  <%# ── Check Connection ── %>
+  <div class="card-glass p-5">
+    <h2 class="text-sm font-semibold text-slate-800"><%= t("platform.integrations.whatsapp.check_title") %></h2>
+    <p class="mt-1 text-xs text-slate-500"><%= t("platform.integrations.whatsapp.check_description") %></p>
+    <div class="mt-4">
+      <%= button_to t("platform.integrations.whatsapp.check_button"), whatsapp_check_platform_integrations_path, method: :post, class: button_classes(:secondary) %>
+    </div>
+  </div>
+
   <%# ── Send Test Message ── %>
   <div class="card-glass p-5">
     <h2 class="text-sm font-semibold text-slate-800"><%= t("platform.integrations.whatsapp.test_title") %></h2>

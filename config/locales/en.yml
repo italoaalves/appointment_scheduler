@@ -320,6 +320,7 @@ en:
       platform_billing: "Billing"
       platform_plans: "Plans"
       platform_credit_bundles: "Bundles"
+      platform_integrations: "Integrations"
       language:
         en: "EN"
         pt: "PT"
@@ -1242,6 +1243,12 @@ en:
         title: "Webhook URL"
         description: "Use this URL when configuring webhooks on the Meta developer dashboard."
       whatsapp:
+        check_title: "Check Connection"
+        check_description: "Verifies that the access token is valid, has the required permissions, and the phone number ID exists in the WhatsApp Business API."
+        check_button: "Check API Connection"
+        check_ok: "Connection OK — %{name} (%{phone})"
+        check_failed: "Connection failed: %{error}"
+        check_missing_credentials: "Access token or phone number ID is not configured."
         test_title: "Send Test Message"
         test_description: "Send a WhatsApp text message to verify the API connection. The recipient must be a registered test number."
         phone_label: "Phone number"

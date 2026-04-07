@@ -291,6 +291,7 @@ pt-BR:
       platform_billing: "Cobrança"
       platform_plans: "Planos"
       platform_credit_bundles: "Pacotes"
+      platform_integrations: "Integrações"
       language:
         en: "EN"
         pt: "PT"
@@ -1237,6 +1238,12 @@ pt-BR:
         title: "URL do Webhook"
         description: "Use esta URL ao configurar webhooks no painel de desenvolvedores da Meta."
       whatsapp:
+        check_title: "Verificar Conexão"
+        check_description: "Verifica se o access token é válido, tem as permissões necessárias, e o phone number ID existe na API do WhatsApp Business."
+        check_button: "Verificar Conexão API"
+        check_ok: "Conexão OK — %{name} (%{phone})"
+        check_failed: "Falha na conexão: %{error}"
+        check_missing_credentials: "Access token ou phone number ID não configurado."
         test_title: "Enviar Mensagem de Teste"
         test_description: "Envie uma mensagem WhatsApp para verificar a conexão com a API. O destinatário deve ser um número de teste registrado."
         phone_label: "Número de telefone"

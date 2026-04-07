@@ -113,6 +113,7 @@ Rails.application.routes.draw do
     resources :plans, except: :destroy
     resources :credit_bundles, except: :destroy
     resources :integrations, only: :index do
+      post :whatsapp_check, on: :collection
       post :whatsapp_test, on: :collection
     end
     resources :spaces do
