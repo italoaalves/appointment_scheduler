@@ -1222,6 +1222,29 @@ pt-BR:
         create: "Criar pacote"
         update: "Atualizar pacote"
         back: "Voltar para pacotes"
+    integrations:
+      title: "Integrações"
+      subtitle: "Conexões com serviços externos e diagnósticos."
+      credentials:
+        title: "Credenciais Meta API"
+        access_token: "Access Token"
+        app_secret: "App Secret"
+        verify_token: "Verify Token"
+        whatsapp_phone_number_id: "WhatsApp Phone Number ID"
+        configured: "Configurado"
+        missing: "Ausente"
+      webhook:
+        title: "URL do Webhook"
+        description: "Use esta URL ao configurar webhooks no painel de desenvolvedores da Meta."
+      whatsapp:
+        test_title: "Enviar Mensagem de Teste"
+        test_description: "Envie uma mensagem WhatsApp para verificar a conexão com a API. O destinatário deve ser um número de teste registrado."
+        phone_label: "Número de telefone"
+        send_test: "Enviar"
+        phone_required: "Número de telefone é obrigatório."
+        test_sent: "Mensagem enviada (wamid: %{wamid})."
+        test_failed: "Falha: %{error}"
+        test_message_body: "Mensagem de teste do diagnóstico de integrações da plataforma."
     subscription_overrides:
       title: "Alteração de assinatura"
       subtitle: "Alterações manuais de cobrança para %{name}."

@@ -1227,6 +1227,29 @@ en:
         create: "Create bundle"
         update: "Update bundle"
         back: "Back to bundles"
+    integrations:
+      title: "Integrations"
+      subtitle: "External service connections and diagnostics."
+      credentials:
+        title: "Meta API Credentials"
+        access_token: "Access Token"
+        app_secret: "App Secret"
+        verify_token: "Verify Token"
+        whatsapp_phone_number_id: "WhatsApp Phone Number ID"
+        configured: "Configured"
+        missing: "Missing"
+      webhook:
+        title: "Webhook URL"
+        description: "Use this URL when configuring webhooks on the Meta developer dashboard."
+      whatsapp:
+        test_title: "Send Test Message"
+        test_description: "Send a WhatsApp text message to verify the API connection. The recipient must be a registered test number."
+        phone_label: "Phone number"
+        send_test: "Send"
+        phone_required: "Phone number is required."
+        test_sent: "Message sent (wamid: %{wamid})."
+        test_failed: "Failed: %{error}"
+        test_message_body: "Test message from the platform integration diagnostics."
     subscription_overrides:
       title: "Subscription Override"
       subtitle: "Manual billing overrides for %{name}."

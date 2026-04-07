@@ -1,0 +1,51 @@
+<div class="space-y-6">
+  <%= render "application/shared/page_header",
+             title:    t("platform.integrations.title"),
+             subtitle: t("platform.integrations.subtitle") %>
+
+  <%# ── Meta API Credentials ── %>
+  <div class="card-glass overflow-hidden p-0">
+    <div class="border-b border-slate-200 px-5 py-3">
+      <h2 class="text-sm font-semibold text-slate-800"><%= t("platform.integrations.credentials.title") %></h2>
+    </div>
+    <div class="divide-y divide-slate-200">
+      <% @meta_credentials.each do |key, present| %>
+        <div class="flex items-center justify-between px-5 py-3">
+          <span class="text-sm font-medium text-slate-700"><%= t("platform.integrations.credentials.#{key}") %></span>
+          <% if present %>
+            <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+              <%= t("platform.integrations.credentials.configured") %>
+            </span>
+          <% else %>
+            <span class="inline-flex items-center rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-700">
+              <%= t("platform.integrations.credentials.missing") %>
+            </span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# ── Webhook URL ── %>
+  <div class="card-glass p-5">
+    <h2 class="text-sm font-semibold text-slate-800"><%= t("platform.integrations.webhook.title") %></h2>
+    <p class="mt-1 text-xs text-slate-500"><%= t("platform.integrations.webhook.description") %></p>
+    <div class="mt-3 rounded-md bg-slate-50 px-4 py-2.5">
+      <code class="text-sm text-slate-800"><%= whatsapp_webhooks_url %></code>
+    </div>
+  </div>
+
+  <%# ── Send Test Message ── %>
+  <div class="card-glass p-5">
+    <h2 class="text-sm font-semibold text-slate-800"><%= t("platform.integrations.whatsapp.test_title") %></h2>
+    <p class="mt-1 text-xs text-slate-500"><%= t("platform.integrations.whatsapp.test_description") %></p>
+
+    <%= form_with url: whatsapp_test_platform_integrations_path, method: :post, class: "mt-4 flex items-end gap-3" do |f| %>
+      <div class="flex-1">
+        <%= f.label :phone, t("platform.integrations.whatsapp.phone_label"), class: "block text-sm font-medium text-slate-700" %>
+        <%= f.telephone_field :phone, placeholder: "+5511999999999", class: "mt-1 block w-full rounded-md border-slate-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+      <%= f.submit t("platform.integrations.whatsapp.send_test"), class: button_classes(:primary) %>
+    <% end %>
+  </div>
+</div>
