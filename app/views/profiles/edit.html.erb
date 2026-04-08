@@ -51,4 +51,49 @@
       </div>
     <% end %>
   <% end %>
+
+  <%= render layout: "application/shared/card" do %>
+    <div class="space-y-5">
+      <div>
+        <h2 class="text-base font-semibold text-deep"><%= t("profiles.edit.export_title") %></h2>
+        <p class="mt-1 text-sm text-slate-600"><%= t("profiles.edit.export_body") %></p>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <%= button_to t("profiles.edit.export_action"),
+              request_data_export_profile_path,
+              method: :post,
+              class: button_classes(:secondary),
+              data: { turbo_confirm: t("profiles.edit.export_confirm"), turbo_submits_with: t("shared.submitting") } %>
+      </div>
+    </div>
+  <% end %>
+
+  <%= render layout: "application/shared/card" do %>
+    <div class="space-y-5">
+      <div>
+        <h2 class="text-base font-semibold text-rose-700"><%= t("profiles.edit.deletion_title") %></h2>
+        <p class="mt-1 text-sm text-slate-600"><%= t("profiles.edit.deletion_body") %></p>
+      </div>
+
+      <% if @active_deletion_request %>
+        <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <p class="font-medium"><%= t("profiles.edit.deletion_pending_title") %></p>
+          <p class="mt-1"><%= t("profiles.edit.deletion_pending_body", scheduled_for: l(@active_deletion_request.scheduled_for, format: :long)) %></p>
+        </div>
+
+        <%= button_to t("profiles.edit.cancel_deletion_action"),
+              cancel_deletion_request_profile_path,
+              method: :delete,
+              class: button_classes(:secondary),
+              data: { turbo_confirm: t("profiles.edit.cancel_deletion_confirm"), turbo_submits_with: t("shared.removing") } %>
+      <% else %>
+        <%= button_to t("profiles.edit.request_deletion_action"),
+              request_deletion_profile_path,
+              method: :post,
+              class: button_classes(:danger),
+              data: { turbo_confirm: t("profiles.edit.request_deletion_confirm"), turbo_submits_with: t("shared.deleting") } %>
+      <% end %>
+    </div>
+  <% end %>
 </div>

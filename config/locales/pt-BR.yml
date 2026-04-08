@@ -124,8 +124,36 @@ pt-BR:
       password_hint: "Deixe em branco para manter sua senha atual."
       submit: "Salvar"
       back: "Voltar"
+      export_title: "Exportar seus dados"
+      export_body: "Envie para seu e-mail um pacote ZIP com arquivos CSV dos dados vinculados à sua conta."
+      export_action: "Enviar exportação LGPD por e-mail"
+      export_confirm: "Deseja enviar sua exportação LGPD para o e-mail da conta?"
+      deletion_title: "Solicitar exclusão da conta"
+      deletion_body: "Inicie uma solicitação de exclusão com período de graça de 7 dias para poder revertê-la antes do processamento."
+      deletion_pending_title: "Solicitação de exclusão pendente"
+      deletion_pending_body: "Sua conta está agendada para exclusão em %{scheduled_for}."
+      request_deletion_action: "Solicitar exclusão"
+      request_deletion_confirm: "Deseja iniciar a solicitação de exclusão da conta?"
+      cancel_deletion_action: "Cancelar solicitação de exclusão"
+      cancel_deletion_confirm: "Deseja cancelar a solicitação de exclusão pendente?"
     update:
       notice: "Perfil atualizado."
+    request_deletion:
+      notice: "Solicitação de exclusão criada. Você ainda pode cancelá-la durante o período de graça."
+      already_pending: "Você já possui uma solicitação de exclusão pendente."
+    request_data_export:
+      notice: "Sua exportação LGPD está sendo preparada e será enviada para o seu e-mail."
+    cancel_deletion_request:
+      notice: "Solicitação de exclusão cancelada."
+      not_found: "Nenhuma solicitação de exclusão pendente foi encontrada."
+
+  data_exports:
+    package_mailer:
+      export_ready:
+        subject: "Sua exportação de dados LGPD"
+        greeting: "Olá, %{name}."
+        body: "Sua exportação LGPD está anexada em um pacote ZIP com arquivos CSV."
+        footer: "Guarde esse arquivo em local seguro. Em uma versão futura, podemos enviar um link seguro de armazenamento em vez do anexo."
 
   preferences:
     edit:

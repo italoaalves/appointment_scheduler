@@ -11,7 +11,11 @@ Rails.application.routes.draw do
 
   patch "dashboard/dismiss_welcome", to: "dashboard#dismiss_welcome", as: :dismiss_dashboard_welcome
 
-  resource :profile, only: [ :edit, :update ], controller: "profiles"
+  resource :profile, only: [ :edit, :update ], controller: "profiles" do
+    post :request_data_export
+    post :request_deletion
+    delete :cancel_deletion_request
+  end
   resource :preferences, only: [ :edit, :update ], controller: "preferences"
 
   get "booking/calendar/:token", to: "booking#calendar_ics", as: :booking_calendar_ics

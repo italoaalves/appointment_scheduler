@@ -153,8 +153,36 @@ en:
       password_hint: "Leave blank to keep your current password."
       submit: "Save"
       back: "Back"
+      export_title: "Export your data"
+      export_body: "Email yourself a ZIP package with CSV files for the data tied to your account."
+      export_action: "Email LGPD export"
+      export_confirm: "Send your LGPD export to your account email?"
+      deletion_title: "Request account deletion"
+      deletion_body: "Start a deletion request with a 7-day grace period so you can reverse it before the account is processed."
+      deletion_pending_title: "Deletion request pending"
+      deletion_pending_body: "Your account is scheduled for deletion on %{scheduled_for}."
+      request_deletion_action: "Request deletion"
+      request_deletion_confirm: "Start your account deletion request?"
+      cancel_deletion_action: "Cancel deletion request"
+      cancel_deletion_confirm: "Cancel your pending deletion request?"
     update:
       notice: "Profile updated."
+    request_deletion:
+      notice: "Deletion request created. You can still cancel it during the grace period."
+      already_pending: "You already have a pending deletion request."
+    request_data_export:
+      notice: "Your LGPD export is being prepared and will be sent to your email."
+    cancel_deletion_request:
+      notice: "Deletion request canceled."
+      not_found: "No pending deletion request was found."
+
+  data_exports:
+    package_mailer:
+      export_ready:
+        subject: "Your LGPD data export"
+        greeting: "Hello, %{name}."
+        body: "Your LGPD export is attached as a ZIP package containing CSV files."
+        footer: "Keep this file somewhere safe. A future version may send a secure storage link instead of an attachment."
 
   preferences:
     edit:

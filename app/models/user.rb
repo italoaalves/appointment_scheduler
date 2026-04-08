@@ -6,6 +6,7 @@ class User < ApplicationRecord
   has_one :space, through: :space_membership
 
   has_one :user_preference, dependent: :destroy
+  has_many :account_deletion_requests, dependent: :destroy
   has_many :user_permissions, dependent: :destroy
   accepts_nested_attributes_for :user_permissions, allow_destroy: true
 
