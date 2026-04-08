@@ -154,8 +154,8 @@
 
     <div id="modal_container"></div>
 
-    <% if content_for?(:inbox_layout) %>
-      <div class="flex-1 min-h-0 min-w-0 w-full max-w-full overflow-x-clip overflow-y-hidden pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:pb-0 sm:pr-20">
+    <% if @use_inbox_layout %>
+      <div class="flex flex-1 min-h-0 min-w-0 w-full max-w-full overflow-x-clip overflow-y-hidden pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:pb-0 sm:pr-28">
         <%= yield %>
       </div>
     <% elsif content_for?(:settings_sidebar) %>

@@ -1,11 +1,9 @@
-<% content_for(:inbox_layout) { true } %>
-
-<div class="flex h-full min-h-0 min-w-0 w-full max-w-full max-h-[calc(100dvh-var(--spacing-inbox-mobile-chrome))] flex-col overflow-x-hidden sm:max-h-[calc(100dvh-var(--spacing-inbox-desktop-chrome))]"
+<div class="flex h-[calc(100dvh-var(--spacing-inbox-mobile-chrome))] min-h-0 min-w-0 w-full max-w-full flex-col overflow-x-hidden sm:h-[calc(100dvh-var(--spacing-inbox-desktop-chrome))]"
      data-controller="inbox"
      data-inbox-tab-value="<%= params[:tab].presence || 'needs_reply' %>">
 
   <%# ── Segment bar ─────────────────────────────────────────────── %>
-  <div class="z-20 w-full max-w-full shrink-0 overflow-x-hidden glass-frosty border-b border-slate-200/40 px-4 py-3">
+  <div class="z-20 shrink-0 mx-3 mt-3 sm:mx-4 sm:mt-4 overflow-x-hidden card-glass rounded-2xl px-4 py-3">
     <div class="flex min-w-0 w-full max-w-full items-center gap-2 overflow-x-hidden">
 
       <%# Tab pills %>
@@ -81,7 +79,7 @@
   <div class="flex flex-1 min-h-0 min-w-0 w-full max-w-full overflow-x-hidden">
 
     <%# List panel — full width on mobile, fixed 320px on desktop %>
-    <div class="w-full max-w-full min-w-0 basis-full sm:w-80 sm:max-w-80 sm:basis-80 sm:shrink-0 overflow-x-hidden overflow-y-auto border-r border-slate-200/60 pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:pb-4"
+    <div class="inbox-list-panel overflow-x-hidden overflow-y-auto border-r border-slate-200/60 pb-4"
          data-inbox-target="listPanel">
       <%= turbo_frame_tag "conversation_list", class: "block w-full max-w-full min-w-0 overflow-x-hidden" do %>
         <% if @conversations.any? %>

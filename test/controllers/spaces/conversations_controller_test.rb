@@ -137,6 +137,16 @@ module Spaces
       refute_includes response.body, @open_conversation.contact_name
     end
 
+    test "index filters by search query" do
+      sign_in @manager
+
+      get spaces_inbox_index_path(q: "João")
+
+      assert_response :success
+      assert_includes response.body, @conversation.contact_name
+      refute_includes response.body, @open_conversation.contact_name
+    end
+
     test "index renders selected conversation detail when id is provided" do
       sign_in @manager
 

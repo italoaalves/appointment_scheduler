@@ -3,6 +3,7 @@
 module Spaces
   class ConversationsController < BaseController
     before_action :require_inbox_access
+    before_action :use_inbox_layout, only: [ :index, :show ]
     before_action :require_write_inbox, only: [ :reply, :reopen_with_template, :update, :assign, :resolve, :reopen ]
     before_action :set_conversation, only: [ :show, :reply, :reopen_with_template, :update, :assign, :resolve, :reopen ]
 
@@ -134,7 +135,8 @@ module Spaces
 
       # Full-text search across contact name and identifier
       if params[:q].present?
-        q = "%#{params[:q].strip}%"
+        sanitized = ActiveRecord::Base.sanitize_sql_like(params[:q].strip)
+        q = "%#{sanitized}%"
         scope = scope.where("contact_name ILIKE ? OR contact_identifier ILIKE ?", q, q)
       end
 
@@ -208,6 +210,10 @@ module Spaces
       @channel = Inbox::ChannelRegistry.for(@conversation.channel)
       @metrics = Inbox::ComputeMetrics.new(@conversation)
       @can_write_inbox = PermissionService.can?(user: current_user, permission: "write_inbox", space: current_tenant)
+    end
+
+    def use_inbox_layout
+      @use_inbox_layout = true
     end
   end
 end

@@ -15,3 +15,20 @@
   .settings-sidebar-desktop { display: block; }
   .settings-sidebar-mobile  { display: none; }
 }
+
+.inbox-list-panel {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex-basis: 100%;
+  align-self: stretch;
+}
+
+@media (min-width: 640px) {
+  .inbox-list-panel {
+    width: 20rem;
+    max-width: 20rem;
+    flex: 0 0 20rem;
+  }
+}

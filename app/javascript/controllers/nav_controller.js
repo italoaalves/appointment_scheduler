@@ -53,6 +53,15 @@ export default class extends Controller {
     this._closeFlyouts()
   }
 
+  closeSheetAfterNavigation(event) {
+    if (window.innerWidth >= 640) return
+
+    if (event.type === "click" && !event.target.closest("a")) return
+    if (event.type === "submit" && event.target.tagName !== "FORM") return
+
+    this._closeSheetsImmediately()
+  }
+
   toggleSheet(event) {
     event.stopPropagation()
 
@@ -113,6 +122,17 @@ export default class extends Controller {
       el.classList.add("hidden", "opacity-0", "translate-x-2")
       el.classList.remove("opacity-100", "translate-x-0")
     })
+  }
+
+  _closeSheetsImmediately() {
+    this.sheetTargets.forEach(el => {
+      el.classList.add("hidden", "translate-y-full")
+      el.classList.remove("translate-y-0")
+    })
+
+    if (this.hasSheetOverlayTarget) {
+      this.sheetOverlayTarget.classList.add("hidden")
+    }
   }
 
   _updateActiveStates() {
