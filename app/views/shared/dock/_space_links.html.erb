@@ -1,0 +1,22 @@
+<p class="px-3 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Workspace</p>
+<%= link_to users_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{nav_active?(:team) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+  <%= t("layout.nav.team") %>
+<% end %>
+<div class="h-px mx-3 my-1 bg-deep/6"></div>
+<p class="px-3 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Settings</p>
+<%= link_to edit_settings_space_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{settings_section_active?(:space) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+  <%= t("layout.nav.settings_space") %>
+<% end %>
+<%= link_to edit_settings_space_availability_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{settings_section_active?(:availability) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+  <%= t("layout.nav.settings_availability") %>
+<% end %>
+<%= link_to edit_settings_space_policies_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{settings_section_active?(:policies) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+  <%= t("layout.nav.settings_policies") %>
+<% end %>
+<div class="h-px mx-3 my-1 bg-deep/6"></div>
+<%= link_to settings_billing_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{settings_section_active?(:billing) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+  <%= t("layout.nav.billing") %>
+<% end %>
+<%= link_to settings_credits_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{settings_section_active?(:credits) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+  <%= t("layout.nav.credits") %>
+<% end %>

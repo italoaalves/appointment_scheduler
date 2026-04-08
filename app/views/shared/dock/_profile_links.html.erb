@@ -1,0 +1,19 @@
+<div class="px-3 py-2 border-b border-deep/6">
+  <p class="text-xs font-medium text-deep truncate"><%= current_user.name.presence || current_user.email %></p>
+  <p class="text-xs text-slate-400 truncate"><%= current_user.email %></p>
+</div>
+<div class="pt-1">
+  <%= link_to edit_profile_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:bg-slate-100/80 hover:text-deep transition-colors" do %>
+    <%= t("layout.nav.profile") %>
+  <% end %>
+  <%= link_to edit_preferences_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:bg-slate-100/80 hover:text-deep transition-colors" do %>
+    <%= t("layout.nav.preferences") %>
+  <% end %>
+  <div class="h-px mx-1 my-1 bg-deep/6"></div>
+  <%= button_to t("layout.nav.logout"),
+                destroy_user_session_path,
+                method: :delete,
+                data: { turbo: false },
+                form_class: "w-full",
+                class: "flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer" %>
+</div>

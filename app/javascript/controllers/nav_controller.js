@@ -24,6 +24,14 @@ export default class extends Controller {
     document.removeEventListener("turbo:load", this._handleTurboLoad)
   }
 
+  handleClick(event) {
+    if (window.innerWidth < 640) {
+      this.toggleSheet(event)
+    } else {
+      this.toggle(event)
+    }
+  }
+
   toggle(event) {
     event.stopPropagation()
     const group = event.params.group
