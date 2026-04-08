@@ -154,4 +154,12 @@ class ConversationTest < ActiveSupport::TestCase
     c = conversations(:open_with_messages)
     assert c.conversation_messages.count >= 2
   end
+
+  test "last_message_body is encrypted at rest" do
+    conversation = conversations(:needs_reply_one)
+    conversation.update!(last_message_body: "Sensitive summary")
+
+    assert_equal "Sensitive summary", conversation.reload.last_message_body
+    assert_not_equal "Sensitive summary", conversation.reload.ciphertext_for(:last_message_body)
+  end
 end

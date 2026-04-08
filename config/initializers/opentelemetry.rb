@@ -8,10 +8,12 @@ require "opentelemetry/instrumentation/net/http"
 require "opentelemetry/instrumentation/active_job"
 require "opentelemetry/instrumentation/action_pack"
 require "opentelemetry/instrumentation/active_record"
+require Rails.root.join("lib/observability/pii_span_scrubber")
 
 OpenTelemetry::SDK.configure do |c|
   c.service_name = "appointment-scheduler"
   c.service_version = ENV.fetch("APP_VERSION", "dev")
+  c.add_span_processor Observability::PiiSpanScrubber.new
 
   c.use "OpenTelemetry::Instrumentation::Rails"
   c.use "OpenTelemetry::Instrumentation::Pg"

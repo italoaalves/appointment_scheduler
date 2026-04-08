@@ -1,4 +1,6 @@
 class Message < ApplicationRecord
+  encrypts :content
+
   belongs_to :sender, class_name: "User"
   belongs_to :recipient, class_name: "User"
   belongs_to :messageable, polymorphic: true, optional: true

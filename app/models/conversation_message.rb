@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ConversationMessage < ApplicationRecord
+  encrypts :body
+
   belongs_to :conversation, touch: true
   belongs_to :sent_by, class_name: "User", optional: true
 

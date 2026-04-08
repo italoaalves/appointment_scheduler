@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require Rails.root.join("lib/observability/filtered_params")
+
 Rails.application.configure do
   config.lograge.enabled = true
   config.lograge.formatter = Lograge::Formatters::Json.new
@@ -30,11 +32,9 @@ Rails.application.configure do
   end
 
   config.lograge.custom_options = lambda do |event|
-    exceptions = %w[controller action format]
     {
-      params: event.payload[:params]&.except(*exceptions),
-      exception: event.payload[:exception]&.first,
-      exception_message: event.payload[:exception_object]&.message
+      params: Observability::FilteredParams.call(event.payload[:params]),
+      exception: event.payload[:exception]&.first
     }.compact
   end
 
