@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
   devise_for :users, controllers: { registrations: "users/registrations" }
   get "privacy-policy", to: "legal#privacy_policy", as: :privacy_policy
+  get "terms-of-service", to: "legal#terms_of_service", as: :terms_of_service
   root "landing#index"
   get "dashboard", to: "dashboard#index", as: :dashboard
 
