@@ -108,11 +108,33 @@ export default class extends Controller {
     }
   }
 
+  closeSheetOnNavigate(event) {
+    if (!this._isSheetNavigationEvent(event)) return
+
+    // The dock is turbo-permanent, so touch sheets need to collapse before the next page renders.
+    this.closeAllSheets()
+  }
+
   _closeFlyouts() {
     this.flyoutTargets.forEach(el => {
       el.classList.add("hidden", "opacity-0", "translate-x-2")
       el.classList.remove("opacity-100", "translate-x-0")
     })
+  }
+
+  _isSheetNavigationEvent(event) {
+    if (event.defaultPrevented) return false
+
+    if (event.type === "submit") {
+      return true
+    }
+
+    const link = event.target.closest("a[href]")
+    if (!link || !event.currentTarget.contains(link)) return false
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false
+    if (link.target === "_blank" || link.hasAttribute("download")) return false
+
+    return true
   }
 
   _updateActiveStates() {
