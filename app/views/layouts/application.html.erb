@@ -26,7 +26,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen text-deep"
+  <body class="min-h-screen flex flex-col overflow-x-hidden text-deep"
         style="background: linear-gradient(160deg, #ffffff 0%, #f0f9ff 50%, #e0f2fe 100%); background-attachment: fixed;"
         data-confirm-title="<%= t('shared.confirm_modal.title') %>"
         data-confirm-label="<%= t('shared.confirm_modal.confirm') %>"
@@ -154,18 +154,25 @@
 
     <div id="modal_container"></div>
 
-    <main class="mx-auto px-4 py-8 pb-28 sm:pb-8 sm:pr-28 <%= content_for?(:settings_sidebar) ? 'max-w-5xl' : content_for?(:wide_layout) ? 'max-w-6xl' : 'max-w-4xl' %>">
-      <%= yield(:breadcrumbs) if content_for?(:breadcrumbs) %>
-      <% if content_for?(:settings_sidebar) %>
+    <% if content_for?(:inbox_layout) %>
+      <div class="flex-1 min-h-0 min-w-0 w-full max-w-full overflow-x-clip overflow-y-hidden pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:pb-0 sm:pr-20">
+        <%= yield %>
+      </div>
+    <% elsif content_for?(:settings_sidebar) %>
+      <main class="mx-auto px-4 py-8 pb-28 sm:pb-8 sm:pr-28 max-w-5xl">
+        <%= yield(:breadcrumbs) if content_for?(:breadcrumbs) %>
         <div class="flex flex-col md:flex-row gap-6 md:gap-8">
           <%= yield(:settings_sidebar) %>
           <div class="flex-1 min-w-0">
             <%= yield %>
           </div>
         </div>
-      <% else %>
+      </main>
+    <% else %>
+      <main class="mx-auto px-4 py-8 pb-28 sm:pb-8 sm:pr-28 <%= content_for?(:wide_layout) ? 'max-w-6xl' : 'max-w-4xl' %>">
+        <%= yield(:breadcrumbs) if content_for?(:breadcrumbs) %>
         <%= yield %>
-      <% end %>
-    </main>
+      </main>
+    <% end %>
   </body>
 </html>

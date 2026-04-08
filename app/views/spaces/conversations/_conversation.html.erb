@@ -1,45 +1,46 @@
-<%= link_to spaces_inbox_path(conversation), data: { turbo_frame: "conversation_detail" }, class: "block p-4 hover:bg-slate-50 transition" do %>
-  <div class="flex items-start gap-3">
-    <div class="flex-shrink-0 mt-0.5">
-      <%= render "spaces/conversations/channel_badge", channel: conversation.channel %>
+<% urgency_border = case conversation.priority
+                    when "urgent" then "border-l-2 border-red-400"
+                    when "high"   then "border-l-2 border-orange-400"
+                    else ""
+                    end %>
+<% selected ||= false %>
+<% selected_classes = selected ? "bg-electric/5 border-l-2 border-electric" : "" %>
+<%= link_to spaces_inbox_path(conversation),
+            class: "flex w-full max-w-full min-w-0 items-start gap-3 overflow-hidden px-4 py-3.5 hover:bg-slate-50/80 transition-colors cursor-pointer #{urgency_border} #{selected_classes} #{conversation.unread? && !selected ? 'bg-electric/[0.03]' : ''}",
+            data: { turbo_frame: "conversation_detail", action: "click->inbox#conversationSelected", conversation_id: conversation.id } do %>
+
+  <%# Channel dot %>
+  <% channel_colors = { "whatsapp" => "bg-emerald-500", "email" => "bg-blue-500", "sms" => "bg-violet-500", "instagram" => "bg-pink-500", "messenger" => "bg-sky-500" } %>
+  <span class="mt-1.5 h-2 w-2 rounded-full shrink-0 <%= channel_colors[conversation.channel.to_s] || 'bg-slate-400' %>"></span>
+
+  <div class="flex-1 min-w-0 max-w-full overflow-hidden">
+    <%# Name row %>
+    <div class="mb-0.5 flex min-w-0 max-w-full items-center gap-2 overflow-hidden">
+      <span class="min-w-0 flex-1 truncate text-sm font-medium text-deep <%= conversation.unread? ? 'font-semibold' : '' %>">
+        <%= conversation.contact_name.presence || conversation.customer&.name || conversation.contact_identifier %>
+      </span>
+      <span class="max-w-20 shrink text-right truncate text-[11px] text-slate-400">
+        <%= time_ago_in_words(conversation.last_message_at) %>
+      </span>
     </div>
 
-    <div class="flex-1 min-w-0">
-      <%# Contact name and unread indicator %>
-      <div class="flex items-center gap-1.5 mb-1">
-        <span class="font-medium text-slate-900 truncate">
-          <%= conversation.contact_name.presence || conversation.customer&.name || conversation.contact_identifier %>
-        </span>
-        <% if conversation.unread? %>
-          <span class="inline-block h-2 w-2 rounded-full bg-electric" aria-label="<%= t("spaces.conversations.index.unread") %>"></span>
-        <% end %>
-      </div>
-
-      <p class="text-sm text-slate-500 truncate mb-1">
-        <%= conversation.last_message_body.presence || "—" %>
-      </p>
-
-      <%# Time ago and priority %>
-      <div class="flex items-center gap-2 text-xs text-slate-400">
-        <span>
-          <%= time_ago_in_words(conversation.last_message_at) %>
-        </span>
-        <%# Priority badge %>
-        <% case conversation.priority %>
-        <% when "low" %>
-          <span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800"><%= t("spaces.conversations.index.priority.low") %></span>
-        <% when "normal" %>
-          <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700"><%= t("spaces.conversations.index.priority.normal") %></span>
-        <% when "high" %>
-          <span class="px-2 py-0.5 rounded-full bg-orange-100 text-orange-800"><%= t("spaces.conversations.index.priority.high") %></span>
-        <% when "urgent" %>
-          <span class="px-2 py-0.5 rounded-full bg-red-100 text-red-800"><%= t("spaces.conversations.index.priority.urgent") %></span>
-        <% end %>
-
-        <% if conversation.sla_breached? %>
-          <span class="px-1.5 py-0.5 rounded-full bg-red-100 text-red-600 text-[10px] font-semibold"><%= t("spaces.conversations.index.sla_breached") %></span>
-        <% end %>
-      </div>
-    </div>
+    <%# Last message preview %>
+    <p class="max-w-full truncate text-xs leading-relaxed text-slate-500">
+      <% latest_message = conversation.conversation_messages.max_by(&:created_at) %>
+      <%= if conversation.last_message_body.present?
+            conversation.last_message_body
+          elsif latest_message&.message_type == "template"
+            t("spaces.conversations.index.template_message")
+          else
+            "—"
+          end %>
+    </p>
   </div>
+
+  <%# Unread indicator %>
+  <% if conversation.unread? %>
+    <span class="mt-2 h-2 w-2 rounded-full bg-electric shrink-0" aria-label="<%= t('spaces.conversations.index.unread') %>"></span>
+  <% else %>
+    <span class="mt-2 h-2 w-2 shrink-0"></span>
+  <% end %>
 <% end %>

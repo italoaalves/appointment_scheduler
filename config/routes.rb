@@ -68,6 +68,7 @@ Rails.application.routes.draw do
     resources :inbox, only: [ :index, :show, :update ], controller: "conversations" do
       member do
         post :reply
+        post :reopen_with_template
         patch :assign
         patch :resolve
         patch :reopen

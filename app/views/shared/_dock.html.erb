@@ -57,9 +57,9 @@
   </div>
 
   <%# The dock bar — bottom horizontal pill on mobile, right vertical pill on desktop %>
-  <nav class="fixed z-40 glass-frosty rounded-[2rem] dock-bottom-safe
+  <nav class="fixed z-50 glass-frosty rounded-[2rem] dock-bottom-safe
               inset-x-3 py-2 px-2
-              sm:inset-x-auto sm:right-4 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:py-4 sm:px-3">
+              sm:z-40 sm:inset-x-auto sm:right-4 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:py-4 sm:px-3">
 
     <%# Notification bell — desktop only, shown when there are unread notifications %>
     <% if defined?(unread_notifications_count) && unread_notifications_count > 0 %>

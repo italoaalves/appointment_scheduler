@@ -1,126 +1,175 @@
-<div class="p-4 border-b border-slate-200">
-  <div class="flex items-center justify-between mb-4">
-    <div class="flex items-center gap-2">
-      <%= render "spaces/conversations/channel_badge", channel: conversation.channel %>
-      <h2 class="text-lg font-semibold text-slate-900">
-        <%= conversation.contact_name.presence || conversation.customer&.name || conversation.contact_identifier %>
-      </h2>
-    </div>
-    <div class="flex items-center gap-2">
-      <%# Priority badge %>
-      <% case conversation.priority %>
-      <% when "low" %>
-        <span class="px-2 py-1 rounded-full bg-blue-100 text-blue-800 text-xs"><%= t("spaces.conversations.index.priority.low") %></span>
-      <% when "normal" %>
-        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-xs"><%= t("spaces.conversations.index.priority.normal") %></span>
-      <% when "high" %>
-        <span class="px-2 py-1 rounded-full bg-orange-100 text-orange-800 text-xs"><%= t("spaces.conversations.index.priority.high") %></span>
-      <% when "urgent" %>
-        <span class="px-2 py-1 rounded-full bg-red-100 text-red-800 text-xs"><%= t("spaces.conversations.index.priority.urgent") %></span>
-      <% end %>
-      <% if conversation.sla_breached? %>
-        <span class="px-2 py-1 rounded-full bg-red-100 text-red-600 text-xs font-semibold"><%= t("spaces.conversations.index.sla_breached") %></span>
-      <% end %>
-    </div>
-  </div>
+<% standalone ||= false %>
+<% channel ||= Inbox::ChannelRegistry.for(conversation.channel) %>
+<% can_write_inbox = local_assigns.fetch(:can_write_inbox, false) %>
+<% show_reply_composer = can_write_inbox && conversation.status != "resolved" %>
+<% send_blocked_reason = channel.send_blocked_reason(conversation) if show_reply_composer %>
+<% session_expiring_soon = channel.session_windowed? && conversation.session_expires_at.present? && conversation.session_expires_at.between?(Time.current, 30.minutes.from_now) %>
+<% last_outbound_message = conversation.conversation_messages.chronological.select(&:outbound?).last %>
+<% latest_send_failed = last_outbound_message&.failed? %>
+<div class="relative flex h-full min-h-0 min-w-0 flex-col overflow-hidden"
+     data-controller="conversation-drawer">
 
-  <div class="flex items-center gap-4 text-sm text-slate-500 mb-4">
-    <span><%= t("spaces.conversations.index.last_message_at", time: time_ago_in_words(conversation.last_message_at)) %></span>
-    <span><%= t("spaces.conversations.index.channel_#{conversation.channel}") %></span>
-    <% if conversation.assigned_to %>
-      <span><%= t("spaces.conversations.index.assigned_to", name: conversation.assigned_to.name) %></span>
+  <%# ── Sticky header ────────────────────────────────────────── %>
+  <div class="z-10 flex shrink-0 items-center gap-3 border-b border-slate-200/60 bg-white/80 px-4 py-3 backdrop-blur">
+
+    <%# Back button (mobile standalone + mobile split-panel) %>
+    <% if standalone %>
+      <%= link_to spaces_inbox_index_path,
+                  class: "sm:hidden p-1.5 -ml-1 rounded-xl text-slate-400 hover:text-deep hover:bg-slate-100 transition-colors",
+                  data: { turbo_frame: "_top" } do %>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      <% end %>
     <% else %>
-      <span><%= t("spaces.conversations.index.unassigned") %></span>
+      <button type="button"
+              class="sm:hidden p-1.5 -ml-1 rounded-xl text-slate-400 hover:text-deep hover:bg-slate-100 transition-colors"
+              data-action="click->inbox#backToList"
+              aria-label="<%= t('spaces.conversations.index.back') %>">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
     <% end %>
+
+    <%# Channel dot + Contact name %>
+    <% channel_colors = { "whatsapp" => "bg-emerald-500", "email" => "bg-blue-500", "sms" => "bg-violet-500", "instagram" => "bg-pink-500", "messenger" => "bg-sky-500" } %>
+    <span class="h-2.5 w-2.5 rounded-full shrink-0 <%= channel_colors[conversation.channel.to_s] || 'bg-slate-400' %>"></span>
+    <h2 class="min-w-0 flex-1 truncate font-display text-base font-bold text-deep">
+      <%= conversation.contact_name.presence || conversation.customer&.name || conversation.contact_identifier %>
+    </h2>
+
+    <%# Action buttons %>
+    <div class="flex shrink-0 items-center gap-1">
+      <%# Resolve / Reopen %>
+      <% if conversation.status != "resolved" %>
+        <%= button_to resolve_spaces_inbox_path(conversation),
+                      method: :patch,
+                      class: "p-2 rounded-xl text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors",
+                      title: t("spaces.conversations.index.resolve"),
+                      form: { data: { turbo_frame: "_top" } } do %>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        <% end %>
+      <% else %>
+        <%= button_to reopen_spaces_inbox_path(conversation),
+                      method: :patch,
+                      class: "p-2 rounded-xl text-slate-400 hover:text-electric hover:bg-electric/10 transition-colors",
+                      title: t("spaces.conversations.index.reopen"),
+                      form: { data: { turbo_frame: "_top" } } do %>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        <% end %>
+      <% end %>
+
+      <%# Info / metadata drawer toggle %>
+      <button type="button"
+              class="p-2 rounded-xl text-slate-400 hover:text-deep hover:bg-slate-100 transition-colors"
+              data-action="click->conversation-drawer#toggle"
+              aria-label="<%= t('spaces.conversations.detail.info') %>">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </button>
+    </div>
   </div>
 
-  <%# Status and actions %>
-  <div class="flex items-center gap-2 mb-4">
-    <span class="px-2 py-1 rounded-full bg-<%= conversation.status == "resolved" ? "green" : "amber" %>-100 text-<%= conversation.status == "resolved" ? "green" : "amber" %>-800 text-xs">
-      <%= t("spaces.conversations.index.status_#{conversation.status}") %>
-    </span>
-    <% if conversation.status != "resolved" %>
-      <%= link_to t("spaces.conversations.index.resolve"), resolve_spaces_inbox_path(conversation), method: :patch, class: "px-3 py-1 bg-green-100 text-green-800 text-xs rounded hover:bg-green-200 transition" %>
-    <% end %>
-    <% if conversation.status == "resolved" %>
-      <%= link_to t("spaces.conversations.index.reopen"), reopen_spaces_inbox_path(conversation), method: :patch, class: "px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded hover:bg-blue-200 transition" %>
-    <% end %>
-  </div>
+  <%# ── Scrollable message thread + drawer layout ─────────────── %>
+  <div class="relative flex min-h-0 min-w-0 flex-1 overflow-hidden">
 
-  <%# Conversation details %>
-  <div class="space-y-3 mb-4">
-    <div class="flex items-start gap-2">
-      <span class="text-slate-500 w-24 text-sm"><%= t("spaces.conversations.detail.status") %>:</span>
-      <span class="text-slate-900 text-sm"><%= t("spaces.conversations.detail.status_#{conversation.status}") %></span>
-    </div>
-
-    <div class="flex items-start gap-2">
-      <span class="text-slate-500 w-24 text-sm"><%= t("spaces.conversations.detail.priority") %>:</span>
-      <span class="text-slate-900 text-sm"><%= t("spaces.conversations.detail.priority_#{conversation.priority}") %></span>
-    </div>
-
-    <div class="flex items-start gap-2">
-      <span class="text-slate-500 w-24 text-sm"><%= t("spaces.conversations.detail.assigned_to") %>:</span>
-      <span class="text-slate-900 text-sm"><%= conversation.assigned_to&.name || t("spaces.conversations.detail.unassigned") %></span>
-    </div>
-
-    <div class="flex items-start gap-2">
-      <span class="text-slate-500 w-24 text-sm"><%= t("spaces.conversations.detail.channel") %>:</span>
-      <span class="text-slate-900 text-sm"><%= t("spaces.conversations.detail.channel_#{conversation.channel}") %></span>
-    </div>
-
-    <div class="flex items-start gap-2">
-      <span class="text-slate-500 w-24 text-sm"><%= t("spaces.conversations.detail.customer") %>:</span>
-      <span class="text-slate-900 text-sm"><%= conversation.contact_name.presence || conversation.customer&.name || conversation.contact_identifier %></span>
-    </div>
-
-    <div class="flex items-start gap-2">
-      <span class="text-slate-500 w-24 text-sm"><%= t("spaces.conversations.detail.conversation_id") %>:</span>
-      <span class="text-slate-900 text-sm"><%= conversation.id %></span>
-    </div>
-
-    <div class="flex items-start gap-2">
-      <span class="text-slate-500 w-24 text-sm"><%= t("spaces.conversations.detail.created_at") %>:</span>
-      <span class="text-slate-900 text-sm"><%= conversation.created_at.strftime("%d/%m/%Y %H:%M") %></span>
-    </div>
-
-    <div class="flex items-start gap-2">
-      <span class="text-slate-500 w-24 text-sm"><%= t("spaces.conversations.detail.last_message_at") %>:</span>
-      <span class="text-slate-900 text-sm"><%= conversation.last_message_at.strftime("%d/%m/%Y %H:%M") %></span>
-    </div>
-  </div>
-</div>
-
-<%# Messages %>
-<div class="flex-1 overflow-y-auto p-4">
-  <div class="space-y-4">
-    <% conversation.conversation_messages.chronological.each do |message| %>
-      <div class="flex <%= message.outbound? ? "justify-end" : "justify-start" %>">
-        <div class="max-w-[80%] rounded-2xl px-4 py-2 text-sm shadow-sm
-                    <%= message.outbound? ? "bg-electric text-white rounded-br-sm" : "bg-white text-slate-900 rounded-bl-sm border border-slate-200" %>">
-          <p class="whitespace-pre-wrap break-words"><%= message.body.presence || t("spaces.conversations.index.template_message") %></p>
-          <div class="mt-1 flex items-center gap-1 <%= message.outbound? ? "justify-end text-electric/40" : "justify-start text-slate-400" %> text-[11px]">
-            <span><%= message.created_at.strftime("%H:%M") %></span>
-            <% if message.outbound? %>
-              <%= t("spaces.conversations.index.status_#{message.status}") %>
-            <% end %>
+    <%# Messages area %>
+    <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+      <div class="flex-1 overflow-y-auto px-4 py-4 space-y-3"
+           data-controller="conversation-scroll"
+           data-conversation-scroll-target="messages">
+        <% conversation.conversation_messages.chronological.each do |message| %>
+          <div class="flex <%= message.outbound? ? 'justify-end' : 'justify-start' %>">
+            <div class="max-w-[78%] rounded-2xl px-3.5 py-2.5 text-sm shadow-sm
+                        <%= message.outbound? ? 'bg-electric text-white rounded-br-sm' : 'bg-white text-deep rounded-bl-sm border border-slate-200' %>">
+              <p class="whitespace-pre-wrap break-words leading-relaxed"><%= message.body.presence || t("spaces.conversations.index.template_message") %></p>
+              <div class="mt-1.5 flex items-center gap-1
+                          <%= message.outbound? ? 'justify-end text-white/50' : 'justify-start text-slate-400' %>
+                          text-[10px]">
+                <span><%= message.created_at.strftime("%H:%M") %></span>
+                <% if message.outbound? %>
+                  <% case message.status %>
+                  <% when "delivered" %>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                  <% when "read" %>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-cerulean/80" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                  <% when "failed" %>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-red-300" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                  <% end %>
+                <% end %>
+              </div>
+              <% if message.outbound? && message.failed? %>
+                <p class="mt-1 text-[10px] font-medium <%= message.outbound? ? 'text-red-200' : 'text-red-500' %>">
+                  <%= t("spaces.conversations.detail.not_delivered") %>
+                </p>
+              <% end %>
+            </div>
           </div>
-        </div>
+        <% end %>
       </div>
-    <% end %>
-  </div>
-</div>
 
-<%# Reply form %>
-<div class="border-t border-slate-200 p-4 bg-white">
-  <%= form_with url: reply_spaces_inbox_path(conversation), method: :post, scope: :reply, data: { turbo_frame: "conversation_detail" } do |f| %>
-    <div class="flex gap-2 items-end">
-      <%= f.text_area :body,
-          rows: 2,
-          placeholder: t("spaces.conversations.index.reply_placeholder"),
-          class: "flex-1 resize-none rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-electric/20 focus:border-electric" %>
-      <%= f.submit t("spaces.conversations.index.send"),
-          class: "shrink-0 rounded-lg bg-electric px-4 py-2 text-sm font-medium text-white hover:brightness-110" %>
+      <%# ── Reply composer ───────────────────────────────────── %>
+      <% if show_reply_composer %>
+        <div class="shrink-0 border-t border-slate-200/60 px-4 py-3 bg-white/90">
+          <% if latest_send_failed %>
+            <p class="mb-2 text-xs font-medium text-red-600"><%= t("spaces.conversations.detail.last_send_failed") %></p>
+          <% end %>
+
+          <% if session_expiring_soon %>
+            <p class="mb-2 text-xs text-amber-700">
+              <%= t("spaces.conversations.detail.session_expiring_soon") %>
+            </p>
+          <% elsif send_blocked_reason.present? %>
+            <div class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <p class="text-xs text-amber-700"><%= send_blocked_reason %></p>
+              <% if channel.can_send_template?(conversation) %>
+                <%= button_to t("spaces.conversations.detail.reopen_with_template"),
+                              reopen_with_template_spaces_inbox_path(conversation),
+                              method: :post,
+                              class: "btn-secondary btn-sm whitespace-nowrap #{latest_send_failed ? 'border-red-300 text-red-700 bg-red-50 hover:bg-red-100' : ''}",
+                              params: { standalone: standalone },
+                              data: { turbo_submits_with: t("spaces.conversations.detail.sending_template") },
+                              form: { data: { turbo_frame: "conversation_detail" } } %>
+              <% end %>
+            </div>
+          <% end %>
+
+          <%= form_with url: reply_spaces_inbox_path(conversation), method: :post,
+                        scope: :reply,
+                        data: { turbo_frame: "conversation_detail" } do |f| %>
+            <%= hidden_field_tag :standalone, standalone %>
+            <div class="flex items-end gap-2">
+              <%= f.text_area :body,
+                              rows: 1,
+                              placeholder: t("spaces.conversations.index.reply_placeholder"),
+                              class: "flex-1 resize-none overflow-hidden rounded-xl border border-slate-200 px-3 py-2.5 text-sm leading-relaxed focus:outline-none focus:border-electric focus:ring-2 focus:ring-electric/20 min-h-[2.5rem] max-h-32 disabled:bg-slate-50 disabled:text-slate-400",
+                              disabled: send_blocked_reason.present?,
+                              data: { controller: "auto-resize", action: "input->auto-resize#resize" } %>
+              <%= f.submit t("spaces.conversations.index.send"),
+                           class: "shrink-0 btn-primary btn-sm rounded-xl cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 #{latest_send_failed ? '!bg-red-500 hover:!bg-red-600 focus:!ring-red-300' : ''}",
+                           disabled: send_blocked_reason.present?,
+                           data: { turbo_submits_with: t("spaces.conversations.detail.sending_message") } %>
+            </div>
+          <% end %>
+        </div>
+      <% elsif !can_write_inbox %>
+        <div class="shrink-0 border-t border-slate-200/60 px-4 py-3 bg-white/90">
+          <p class="text-xs text-slate-500"><%= t("spaces.conversations.detail.read_only_notice") %></p>
+        </div>
+      <% end %>
     </div>
-  <% end %>
+
+    <%# ── Metadata drawer ─────────────────────────────────────── %>
+    <div class="hidden absolute inset-y-0 right-0 w-72 glass-frosty border-l border-slate-200/40 overflow-y-auto z-20 shadow-xl"
+         data-conversation-drawer-target="panel">
+      <%= render "spaces/conversations/conversation_info", conversation: conversation %>
+    </div>
+
+  </div>
 </div>

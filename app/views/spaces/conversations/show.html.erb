@@ -1,11 +1,12 @@
-<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
-  { label: t("breadcrumbs.dashboard"), path: root_path },
-  { label: t("spaces.conversations.index.title"), path: spaces_inbox_index_path },
-  { label: @conversation.contact_name || @conversation.contact_identifier }
-] } %>
+<% content_for(:inbox_layout) { true } %>
 
-<div class="flex flex-col h-[calc(100vh-100px)]">
-  <%= turbo_frame_tag "conversation_detail" do %>
-    <%= render "spaces/conversations/detail", conversation: @conversation %>
-  <% end %>
+<div class="flex h-full min-h-0 min-w-0 w-full max-w-full max-h-[calc(100dvh-var(--spacing-inbox-mobile-chrome))] flex-col overflow-x-clip overflow-y-hidden pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:pb-0 sm:max-h-[calc(100dvh-var(--spacing-inbox-desktop-chrome))]"
+     data-controller="inbox">
+
+  <%= render "spaces/conversations/detail_frame",
+             conversation: @conversation,
+             standalone: true,
+             channel: @channel,
+             can_write_inbox: @can_write_inbox %>
+
 </div>

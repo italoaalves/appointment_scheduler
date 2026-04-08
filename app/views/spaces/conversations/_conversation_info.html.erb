@@ -1,0 +1,83 @@
+<div class="p-4">
+  <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-4">
+    <%= t("spaces.conversations.detail.info") %>
+  </h3>
+
+  <dl class="space-y-4">
+    <%# Status %>
+    <div>
+      <dt class="text-xs text-slate-400 mb-1"><%= t("spaces.conversations.detail.status") %></dt>
+      <dd>
+        <span class="badge <%= conversation.status == 'resolved' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' %>">
+          <%= t("spaces.conversations.index.status_#{conversation.status}") %>
+        </span>
+      </dd>
+    </div>
+
+    <%# Priority %>
+    <div>
+      <dt class="text-xs text-slate-400 mb-1"><%= t("spaces.conversations.detail.priority") %></dt>
+      <dd>
+        <% priority_classes = { "low" => "bg-blue-100 text-blue-700", "normal" => "bg-slate-100 text-slate-600", "high" => "bg-orange-100 text-orange-700", "urgent" => "bg-red-100 text-red-700" } %>
+        <span class="badge <%= priority_classes[conversation.priority] || 'bg-slate-100 text-slate-600' %>">
+          <%= t("spaces.conversations.index.priority.#{conversation.priority}") %>
+        </span>
+      </dd>
+    </div>
+
+    <%# Assigned to %>
+    <div>
+      <dt class="text-xs text-slate-400 mb-1"><%= t("spaces.conversations.detail.assigned_to") %></dt>
+      <dd class="text-sm text-deep">
+        <%= conversation.assigned_to&.name || t("spaces.conversations.detail.unassigned") %>
+      </dd>
+    </div>
+
+    <%# Channel %>
+    <div>
+      <dt class="text-xs text-slate-400 mb-1"><%= t("spaces.conversations.detail.channel") %></dt>
+      <dd class="text-sm text-deep capitalize"><%= conversation.channel %></dd>
+    </div>
+
+    <%# Customer %>
+    <% if conversation.customer.present? %>
+      <div>
+        <dt class="text-xs text-slate-400 mb-1"><%= t("spaces.conversations.detail.customer") %></dt>
+        <dd class="text-sm text-electric hover:underline">
+          <%= link_to conversation.customer.name, customer_path(conversation.customer) %>
+        </dd>
+      </div>
+    <% end %>
+
+    <%# Contact identifier %>
+    <div>
+      <dt class="text-xs text-slate-400 mb-1"><%= t("spaces.conversations.detail.contact_identifier") %></dt>
+      <dd class="text-sm text-deep font-mono text-xs"><%= conversation.contact_identifier %></dd>
+    </div>
+
+    <%# SLA %>
+    <% if conversation.sla_breached? %>
+      <div>
+        <dt class="text-xs text-slate-400 mb-1"><%= t("spaces.conversations.index.sla_breached") %></dt>
+        <dd><span class="badge bg-red-100 text-red-700"><%= t("spaces.conversations.index.sla_breached") %></span></dd>
+      </div>
+    <% end %>
+
+    <%# Timestamps %>
+    <div>
+      <dt class="text-xs text-slate-400 mb-1"><%= t("spaces.conversations.detail.created_at") %></dt>
+      <dd class="text-xs text-slate-600"><%= conversation.created_at.strftime("%d/%m/%Y %H:%M") %></dd>
+    </div>
+
+    <div>
+      <dt class="text-xs text-slate-400 mb-1"><%= t("spaces.conversations.detail.last_message_at") %></dt>
+      <dd class="text-xs text-slate-600"><%= conversation.last_message_at.strftime("%d/%m/%Y %H:%M") %></dd>
+    </div>
+
+    <%# Conversation ID — small and copyable %>
+    <div>
+      <dt class="text-xs text-slate-400 mb-1"><%= t("spaces.conversations.detail.conversation_id") %></dt>
+      <dd class="text-[11px] text-slate-400 font-mono"><%= conversation.id %></dd>
+    </div>
+  </dl>
+</div>

@@ -46,10 +46,10 @@ module Spaces
       refute_includes response.body, "Bot Trigger"
     end
 
-    test "index shows all conversations with all=1" do
+    test "index shows all conversations with tab=all" do
       sign_in @manager
 
-      get spaces_inbox_index_path(all: "1")
+      get spaces_inbox_index_path(tab: "all")
 
       assert_response :success
       assert_includes response.body, "Bot Trigger"
@@ -75,14 +75,16 @@ module Spaces
       refute_includes response.body, @conversation.contact_name
     end
 
-    test "index filters by status" do
+    test "index filters by tab=open" do
       sign_in @manager
 
-      get spaces_inbox_index_path(all: "1", status: "open")
+      get spaces_inbox_index_path(tab: "open")
 
       assert_response :success
       assert_includes response.body, @open_conversation.contact_name
       refute_includes response.body, @conversation.contact_name
+      assert_includes response.body, "data-tab-name=\"open\""
+      assert_includes response.body, "bg-white text-deep shadow-sm"
     end
 
     test "index filters by priority — high returns no results" do
@@ -135,6 +137,28 @@ module Spaces
       refute_includes response.body, @open_conversation.contact_name
     end
 
+    test "index renders selected conversation detail when id is provided" do
+      sign_in @manager
+
+      get spaces_inbox_index_path(id: @conversation.id)
+
+      assert_response :success
+      assert_includes response.body, @conversation.contact_name
+      assert_includes response.body, @conversation.conversation_messages.chronological.first.body
+      refute_includes response.body, I18n.t("spaces.conversations.index.detail_placeholder")
+    end
+
+    test "index renders assignee filter options" do
+      sign_in @manager
+
+      get spaces_inbox_index_path
+
+      assert_response :success
+      assert_includes response.body, I18n.t("spaces.conversations.index.filters.assigned_to")
+      assert_includes response.body, @manager.name
+      assert_includes response.body, I18n.t("spaces.conversations.index.filters.include_unassigned")
+    end
+
     # ============ SHOW ============
 
     test "show displays messages and marks conversation as read" do
@@ -145,6 +169,26 @@ module Spaces
 
       assert_response :success
       assert_not @conversation.reload.unread
+    end
+
+    test "show hides reply composer for resolved conversation" do
+      @conversation.update!(status: :resolved)
+      sign_in @manager
+
+      get spaces_inbox_path(@conversation)
+
+      assert_response :success
+      assert_includes response.body, I18n.t("spaces.conversations.index.reopen")
+      refute_includes response.body, I18n.t("spaces.conversations.index.reply_placeholder")
+    end
+
+    test "show hides reply composer for read-only inbox users" do
+      sign_in @secretary
+
+      get spaces_inbox_path(@conversation)
+
+      assert_response :success
+      refute_includes response.body, I18n.t("spaces.conversations.index.reply_placeholder")
     end
 
     test "show returns 404 for conversation belonging to another space" do
@@ -210,6 +254,79 @@ module Spaces
 
       assert_redirected_to spaces_inbox_path(@conversation)
       assert_not_nil flash[:alert]
+    end
+
+    test "reply via turbo_stream shows flash immediately on send failure" do
+      @conversation.update!(session_expires_at: 23.hours.from_now)
+      sign_in @manager
+
+      fake_client = Object.new
+      fake_client.define_singleton_method(:send_text) { |**| raise Whatsapp::Client::ApiError.new("boom") }
+
+      Whatsapp::Client.stub(:for_space, fake_client) do
+        post reply_spaces_inbox_path(@conversation), params: { reply: { body: "Olá!" } }, as: :turbo_stream
+      end
+
+      assert_response :success
+      assert_equal Mime[:turbo_stream], response.media_type
+      assert_includes response.body, "flash_messages"
+      assert_includes response.body, I18n.t("inbox.errors.send_failed")
+      assert_includes response.body, "conversation_detail"
+      assert_includes response.body, "id=\"conversation_detail\""
+      assert_includes response.body, I18n.t("spaces.conversations.detail.not_delivered")
+    end
+
+    test "reopen_with_template sends template message and redirects 303" do
+      @conversation.update!(session_expires_at: 1.hour.ago)
+      sign_in @manager
+
+      mock_result = { "messages" => [ { "id" => "wamid.TEMPLATE123" } ] }
+      fake_client = Object.new
+      fake_client.define_singleton_method(:send_template) { |**| mock_result }
+
+      assert_difference "@conversation.conversation_messages.count", 1 do
+        Whatsapp::Client.stub(:for_space, fake_client) do
+          post reopen_with_template_spaces_inbox_path(@conversation)
+        end
+      end
+
+      assert_redirected_to spaces_inbox_path(@conversation)
+      assert_equal 303, response.status
+      assert_equal I18n.t("spaces.conversations.detail.template_sent"), flash[:notice]
+
+      message = @conversation.conversation_messages.order(:created_at).last
+      assert_equal "template", message.message_type
+      assert_equal "wamid.TEMPLATE123", message.external_message_id
+    end
+
+    test "reopen_with_template via turbo_stream shows flash immediately on send failure" do
+      @conversation.update!(session_expires_at: 1.hour.ago)
+      sign_in @manager
+
+      fake_client = Object.new
+      fake_client.define_singleton_method(:send_template) { |**| raise Whatsapp::Client::ApiError.new("boom") }
+
+      Whatsapp::Client.stub(:for_space, fake_client) do
+        post reopen_with_template_spaces_inbox_path(@conversation), as: :turbo_stream
+      end
+
+      assert_response :success
+      assert_equal Mime[:turbo_stream], response.media_type
+      assert_includes response.body, "flash_messages"
+      assert_includes response.body, I18n.t("inbox.errors.send_failed")
+      assert_includes response.body, "conversation_detail"
+      assert_includes response.body, "id=\"conversation_detail\""
+      assert_includes response.body, I18n.t("spaces.conversations.detail.not_delivered")
+    end
+
+    test "reopen_with_template requires write_inbox permission" do
+      @conversation.update!(session_expires_at: 1.hour.ago)
+      sign_in @secretary
+
+      post reopen_with_template_spaces_inbox_path(@conversation)
+
+      assert_equal I18n.t("inbox.write_denied"), flash[:alert]
+      assert_redirected_to spaces_inbox_index_path
     end
 
     # ============ UPDATE ============
