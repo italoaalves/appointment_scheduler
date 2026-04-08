@@ -24,6 +24,20 @@ class ActiveRecordEncryptionConfigTest < ActiveSupport::TestCase
     end
   end
 
+  test "raises in staging when keys are missing" do
+    with_env("SECRET_KEY_BASE_DUMMY" => nil) do
+      Rails.stub(:env, ActiveSupport::StringInquirer.new("staging")) do
+        Rails.application.credentials.stub(:dig, nil) do
+          error = assert_raises(ActiveRecord::Encryption::Errors::Configuration) do
+            Security::ActiveRecordEncryptionConfig.send(:resolved_keys)
+          end
+
+          assert_equal "Missing Active Record encryption keys for staging", error.message
+        end
+      end
+    end
+  end
+
   test "raises in production when keys are missing and dummy secret key base mode is disabled" do
     with_env("SECRET_KEY_BASE_DUMMY" => nil) do
       Rails.stub(:env, ActiveSupport::StringInquirer.new("production")) do
