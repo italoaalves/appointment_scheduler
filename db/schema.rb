@@ -10,18 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_08_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_08_133000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "account_deletion_requests", force: :cascade do |t|
     t.datetime "canceled_at"
+    t.datetime "completed_at"
+    t.string "cpf_cnpj_fingerprint"
     t.datetime "created_at", null: false
+    t.string "email_fingerprint"
+    t.string "name_fingerprint"
+    t.string "phone_fingerprint"
     t.datetime "requested_at", null: false
     t.datetime "scheduled_for", null: false
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.index ["completed_at"], name: "index_account_deletion_requests_on_completed_at"
+    t.index ["cpf_cnpj_fingerprint"], name: "index_account_deletion_requests_on_cpf_cnpj_fingerprint"
+    t.index ["email_fingerprint"], name: "index_account_deletion_requests_on_email_fingerprint"
+    t.index ["name_fingerprint"], name: "index_account_deletion_requests_on_name_fingerprint"
+    t.index ["phone_fingerprint"], name: "index_account_deletion_requests_on_phone_fingerprint"
+    t.index ["status", "scheduled_for"], name: "index_account_deletion_requests_on_status_and_scheduled_for"
     t.index ["user_id"], name: "index_account_deletion_requests_on_pending_user_id", unique: true, where: "(status = 0)"
     t.index ["user_id"], name: "index_account_deletion_requests_on_user_id"
   end

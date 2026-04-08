@@ -21,7 +21,11 @@ module AccountDeletionRequests
       request = @user.account_deletion_requests.create!(
         status: :pending,
         requested_at: Time.current,
-        scheduled_for: Time.current + GRACE_PERIOD
+        scheduled_for: Time.current + GRACE_PERIOD,
+        email_fingerprint: Security::AuditFingerprint.call(@user.email, purpose: :email),
+        name_fingerprint: Security::AuditFingerprint.call(@user.name, purpose: :name),
+        phone_fingerprint: Security::AuditFingerprint.call(@user.phone_number, purpose: :phone_number),
+        cpf_cnpj_fingerprint: Security::AuditFingerprint.call(@user.cpf_cnpj, purpose: :cpf_cnpj)
       )
 
       Result.new(success?: true, request:)
