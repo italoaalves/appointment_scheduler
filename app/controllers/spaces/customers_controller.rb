@@ -18,6 +18,16 @@ module Spaces
     end
 
     def show
+      AuditLogs::EventLogger.call(
+        event_type: "privacy.customer_viewed",
+        actor: audit_actor,
+        space: current_tenant,
+        subject: @customer,
+        request: request,
+        impersonated: impersonating?,
+        metadata: audit_context_metadata.merge(surface: "space_customer_show")
+      )
+
       @appointments = @customer.appointments
                                .includes(:space)
                                .where.not(status: :cancelled)

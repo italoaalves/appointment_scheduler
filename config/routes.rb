@@ -117,6 +117,7 @@ Rails.application.routes.draw do
     post "impersonation/stop", to: "impersonations#stop", as: :stop_impersonation
 
     resources :billing, only: [ :index ], controller: "billing"
+    resources :audit_logs, only: [ :index ]
     resources :plans, except: :destroy
     resources :credit_bundles, except: :destroy
     resources :integrations, only: :index do

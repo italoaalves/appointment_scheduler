@@ -318,6 +318,7 @@ pt-BR:
       availability: "Disponibilidade"
       tenants: "Inquilinos"
       platform_users: "Usuários"
+      platform_audit_logs: "Auditoria"
       logout: "Sair"
       profile: "Perfil"
       preferences: "Preferências"
@@ -1205,6 +1206,25 @@ pt-BR:
       last_updated: "Última atualização: %{date}"
 
   platform:
+    audit_logs:
+      index:
+        title: "Logs de auditoria"
+        subtitle: "Rastreie acessos sensíveis, exportações, exclusões, impersonação e mudanças de permissão."
+        query: "Buscar pessoa"
+        query_placeholder: "Email, telefone, CPF ou nome"
+        event_type: "Tipo de evento"
+        all_events: "Todos os eventos"
+        space: "Espaço"
+        all_spaces: "Todos os espaços"
+        filter: "Filtrar"
+        clear: "Limpar"
+        when: "Quando"
+        event: "Evento"
+        actor: "Ator"
+        subject: "Alvo"
+        context: "Contexto"
+        empty: "Nenhum log de auditoria encontrado para os filtros selecionados."
+        system_actor: "Sistema"
     billing:
       index:
         title: "Visão geral de cobrança"

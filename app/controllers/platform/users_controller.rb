@@ -29,8 +29,10 @@ module Platform
     def create
       @user = User.new(user_params)
       @user.space_id = params[:user][:space_id].presence if params.dig(:user, :space_id).present?
+      before_permissions = []
 
       if @user.save
+        audit_permission_change(user: @user, before_permissions:)
         redirect_to platform_user_path(@user)
       else
         render :new
@@ -43,8 +45,10 @@ module Platform
     def update
       attrs = user_params_without_blank_passwords
       attrs[:space_id] = params[:user][:space_id].presence if params.dig(:user, :space_id).present?
+      before_permissions = @user.permission_names
 
       if @user.update(attrs)
+        audit_permission_change(user: @user, before_permissions:)
         redirect_to platform_user_path(@user)
       else
         render :edit
@@ -64,6 +68,14 @@ module Platform
       end
 
       session[:impersonated_user_id] = @user.id
+      AuditLogs::EventLogger.call(
+        event_type: "auth.impersonation_started",
+        actor: real_current_user,
+        space: @user.space,
+        subject: @user,
+        request: request,
+        metadata: audit_context_metadata
+      )
       Rails.logger.info(
         "[IMPERSONATION_START] admin_id=#{real_current_user.id} " \
         "admin_email=#{real_current_user.email} " \
@@ -84,6 +96,26 @@ module Platform
       # :role is a free-text display label (e.g. "Manager"), not an authorization field.
       # system_role (admin privilege) is intentionally excluded.
       params.require(:user).permit(:email, :name, :phone_number, :password, :password_confirmation, :role, permission_names_param: []) # brakeman:disable:PermitAttributes
+    end
+
+    def audit_permission_change(user:, before_permissions:)
+      after_permissions = user.reload.user_permissions.order(:permission).pluck(:permission)
+      added_permissions = after_permissions - before_permissions
+      removed_permissions = before_permissions - after_permissions
+      return if added_permissions.empty? && removed_permissions.empty?
+
+      AuditLogs::EventLogger.call(
+        event_type: "authorization.team_permissions_changed",
+        actor: real_current_user,
+        space: user.space,
+        subject: user,
+        request: request,
+        metadata: audit_context_metadata.merge(
+          added_permissions: added_permissions,
+          removed_permissions: removed_permissions,
+          surface: "platform_user_editor"
+        )
+      )
     end
   end
 end

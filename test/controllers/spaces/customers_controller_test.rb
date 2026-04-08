@@ -105,5 +105,19 @@ module Spaces
         assert_equal "staff_entry", customer.whatsapp_opt_out_source
       end
     end
+
+    test "GET show writes an audit log for sensitive customer access" do
+      sign_in @manager_starter
+
+      assert_difference "AuditLog.count", 1 do
+        get customer_url(customers(:one))
+      end
+
+      assert_response :success
+      log = AuditLog.order(:id).last
+      assert_equal "privacy.customer_viewed", log.event_type
+      assert_equal @manager_starter, log.actor
+      assert_equal customers(:one).id, log.subject_id
+    end
   end
 end

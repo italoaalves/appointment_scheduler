@@ -103,9 +103,12 @@ module Platform
     # ── Impersonation ──────────────────────────────────────────────────────
     test "admin can impersonate non-admin user" do
       sign_in @admin
-      post impersonate_platform_user_url(@manager)
+      assert_difference "AuditLog.count", 1 do
+        post impersonate_platform_user_url(@manager)
+      end
       assert_redirected_to root_url
       assert_equal @manager.id, session[:impersonated_user_id]
+      assert_equal "auth.impersonation_started", AuditLog.order(:id).last.event_type
     end
 
     test "admin cannot impersonate another admin" do
@@ -124,9 +127,12 @@ module Platform
     test "impersonation stop clears session" do
       sign_in @admin
       post impersonate_platform_user_url(@manager)
-      post platform_stop_impersonation_url
+      assert_difference "AuditLog.count", 1 do
+        post platform_stop_impersonation_url
+      end
       assert_redirected_to platform_root_url
       assert_nil session[:impersonated_user_id]
+      assert_equal "auth.impersonation_stopped", AuditLog.order(:id).last.event_type
     end
   end
 end

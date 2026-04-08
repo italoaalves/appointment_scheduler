@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_08_133000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_08_143000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -55,6 +55,37 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_08_133000) do
     t.index ["space_id", "scheduled_at"], name: "index_appointments_unique_active_slot", unique: true, where: "((status = ANY (ARRAY[0, 1, 3])) AND (scheduled_at IS NOT NULL) AND (discarded_at IS NULL))"
     t.index ["space_id", "status", "scheduled_at"], name: "index_appointments_on_space_status_scheduled_at"
     t.index ["space_id"], name: "index_appointments_on_space_id"
+  end
+
+  create_table "audit_logs", force: :cascade do |t|
+    t.bigint "actor_user_id"
+    t.bigint "auditable_id"
+    t.string "auditable_type"
+    t.datetime "created_at", null: false
+    t.string "event_type", null: false
+    t.boolean "impersonated", default: false, null: false
+    t.string "ip_address"
+    t.jsonb "metadata", default: {}, null: false
+    t.string "request_id"
+    t.bigint "space_id"
+    t.string "subject_cpf_cnpj_fingerprint"
+    t.string "subject_email_fingerprint"
+    t.bigint "subject_id"
+    t.string "subject_name_fingerprint"
+    t.string "subject_phone_fingerprint"
+    t.string "subject_type"
+    t.index ["actor_user_id", "created_at"], name: "index_audit_logs_on_actor_user_id_and_created_at"
+    t.index ["actor_user_id"], name: "index_audit_logs_on_actor_user_id"
+    t.index ["auditable_type", "auditable_id"], name: "index_audit_logs_on_auditable_type_and_auditable_id"
+    t.index ["created_at"], name: "index_audit_logs_on_created_at"
+    t.index ["event_type"], name: "index_audit_logs_on_event_type"
+    t.index ["space_id", "created_at"], name: "index_audit_logs_on_space_id_and_created_at"
+    t.index ["space_id"], name: "index_audit_logs_on_space_id"
+    t.index ["subject_cpf_cnpj_fingerprint"], name: "index_audit_logs_on_subject_cpf_cnpj_fingerprint"
+    t.index ["subject_email_fingerprint"], name: "index_audit_logs_on_subject_email_fingerprint"
+    t.index ["subject_name_fingerprint"], name: "index_audit_logs_on_subject_name_fingerprint"
+    t.index ["subject_phone_fingerprint"], name: "index_audit_logs_on_subject_phone_fingerprint"
+    t.index ["subject_type", "subject_id"], name: "index_audit_logs_on_subject_type_and_subject_id"
   end
 
   create_table "availability_schedules", force: :cascade do |t|
@@ -458,6 +489,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_08_133000) do
   add_foreign_key "account_deletion_requests", "users"
   add_foreign_key "appointments", "customers"
   add_foreign_key "appointments", "spaces"
+  add_foreign_key "audit_logs", "spaces"
+  add_foreign_key "audit_logs", "users", column: "actor_user_id"
   add_foreign_key "availability_windows", "availability_schedules"
   add_foreign_key "billing_events", "spaces"
   add_foreign_key "billing_events", "subscriptions"

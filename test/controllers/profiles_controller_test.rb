@@ -81,10 +81,13 @@ class ProfilesControllerTest < ActionDispatch::IntegrationTest
     sign_in @trialing_user
 
     assert_enqueued_with(job: DataExports::PackageDeliveryJob, args: [ @trialing_user.id ]) do
-      post request_data_export_profile_path
+      assert_difference "AuditLog.count", 1 do
+        post request_data_export_profile_path
+      end
     end
 
     assert_redirected_to edit_profile_path
+    assert_equal "privacy.export_requested", AuditLog.order(:id).last.event_type
   end
 
   test "request data export is available to non-manager users too" do
@@ -102,7 +105,9 @@ class ProfilesControllerTest < ActionDispatch::IntegrationTest
 
     freeze_time do
       assert_difference "AccountDeletionRequest.count", 1 do
-        post request_deletion_profile_path
+        assert_difference "AuditLog.count", 1 do
+          post request_deletion_profile_path
+        end
       end
 
       request = @active_user.account_deletion_requests.order(:created_at).last
@@ -110,6 +115,7 @@ class ProfilesControllerTest < ActionDispatch::IntegrationTest
       assert_equal "pending", request.status
       assert_equal Time.current, request.requested_at
       assert_equal 7.days.from_now, request.scheduled_for
+      assert_equal "privacy.deletion_requested", AuditLog.order(:id).last.event_type
     end
   end
 
@@ -137,10 +143,13 @@ class ProfilesControllerTest < ActionDispatch::IntegrationTest
     sign_in @active_user
 
     freeze_time do
-      delete cancel_deletion_request_profile_path
+      assert_difference "AuditLog.count", 1 do
+        delete cancel_deletion_request_profile_path
+      end
       assert_redirected_to edit_profile_path
       assert_equal "canceled", request.reload.status
       assert_equal Time.current, request.canceled_at
+      assert_equal "privacy.deletion_canceled", AuditLog.order(:id).last.event_type
     end
   end
 end
