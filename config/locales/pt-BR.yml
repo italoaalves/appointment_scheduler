@@ -1116,6 +1116,7 @@ pt-BR:
       go_back: "Voltar"
 
   legal:
+    version: "Versão: %{version}"
     privacy_policy:
       title: "Política de Privacidade"
       last_updated: "Última atualização: %{date}"

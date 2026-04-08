@@ -1,6 +1,10 @@
 <div class="mx-auto max-w-3xl px-4 py-12">
   <h1 class="font-display text-3xl font-extrabold text-deep tracking-tight">Termos de Uso</h1>
-  <p class="mt-2 text-sm text-slate-500">Última atualização: 07/04/2026 | Versão: 1.0</p>
+  <p class="mt-2 text-sm text-slate-500">
+    <%= t("legal.terms_of_service.last_updated", date: l(@document.published_at.to_date)) %>
+    |
+    <%= t("legal.version", version: @document.version) %>
+  </p>
 
   <div class="prose prose-slate mt-8 max-w-none text-sm leading-relaxed">
     <h2>1. IDENTIFICAÇÃO DAS PARTES</h2>

@@ -59,6 +59,9 @@ pt-BR:
       update_loading: "Atualizando…"
       cancel_loading: "Cancelando…"
       trial_message: "Comece seu trial gratuito de 14 dias. Não precisa de cartão de crédito."
+      legal_required: "Antes de criar sua conta, precisamos registrar sua aceitação dos documentos legais vigentes."
+      accept_terms_html: "Li e aceito os %{terms_link} (versão %{version})."
+      accept_privacy_html: "Li e aceito a %{privacy_link} (versão %{version})."
       already_account: "Já tem uma conta?"
       sign_in_link: "Entrar"
     sessions:
@@ -90,3 +93,13 @@ pt-BR:
       not_saved:
         one: "Não foi possível salvar %{resource}: 1 erro"
         other: "Não foi possível salvar %{resource}: %{count} erros."
+
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            accept_terms_of_service:
+              accepted: "deve aceitar os Termos de Uso"
+            accept_privacy_policy:
+              accepted: "deve aceitar a Política de Privacidade"
