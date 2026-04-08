@@ -10,9 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_08_111000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_08_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "account_deletion_requests", force: :cascade do |t|
+    t.datetime "canceled_at"
+    t.datetime "created_at", null: false
+    t.datetime "requested_at", null: false
+    t.datetime "scheduled_for", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_account_deletion_requests_on_pending_user_id", unique: true, where: "(status = 0)"
+    t.index ["user_id"], name: "index_account_deletion_requests_on_user_id"
+  end
 
   create_table "appointments", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -432,6 +444,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_08_111000) do
     t.index ["space_id"], name: "index_whatsapp_phone_numbers_on_space_id", unique: true, where: "(space_id IS NOT NULL)"
   end
 
+  add_foreign_key "account_deletion_requests", "users"
   add_foreign_key "appointments", "customers"
   add_foreign_key "appointments", "spaces"
   add_foreign_key "availability_windows", "availability_schedules"
