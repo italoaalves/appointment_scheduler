@@ -59,6 +59,7 @@ module Spaces
 
     def whatsapp_available?
       return false if @appointment.customer&.phone.blank?
+      return false unless @appointment.customer&.whatsapp_opted_in?
       return false unless Billing::PlanEnforcer.can?(@space, :send_whatsapp)
 
       true

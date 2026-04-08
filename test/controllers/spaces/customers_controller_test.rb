@@ -50,12 +50,60 @@ module Spaces
 
       assert_difference "Customer.count", 1 do
         post customers_url, params: {
-          customer: { name: "New Customer", phone: "+5511999000001" }
+          customer: { name: "New Customer", phone: "+5511999000001", whatsapp_opt_in: "0" }
         }
       end
 
       assert_response :redirect
       assert_not_equal I18n.t("billing.limits.customers_exceeded"), flash[:alert]
+    end
+
+    test "POST create stores whatsapp consent when checked" do
+      sign_in @manager_pro
+
+      freeze_time do
+        assert_difference "Customer.count", 1 do
+          post customers_url, params: {
+            customer: {
+              name: "WhatsApp Consent Customer",
+              phone: "+5511999000002",
+              whatsapp_opt_in: "1"
+            }
+          }
+        end
+
+        customer = Customer.order(:id).last
+        assert customer.whatsapp_opted_in?
+        assert_equal Time.current, customer.whatsapp_opted_in_at
+        assert_equal "staff_entry", customer.whatsapp_opt_in_source
+      end
+    end
+
+    test "PATCH update revokes whatsapp consent when unchecked" do
+      sign_in @manager_starter
+      customer = customers(:one)
+      customer.update!(
+        whatsapp_opted_in_at: 2.days.ago,
+        whatsapp_opt_in_source: "booking_form"
+      )
+
+      freeze_time do
+        patch customer_url(customer), params: {
+          customer: {
+            name: customer.name,
+            phone: customer.phone,
+            email: customer.email,
+            address: customer.address,
+            whatsapp_opt_in: "0"
+          }
+        }
+
+        assert_redirected_to customer_url(customer)
+        customer.reload
+        assert_not customer.whatsapp_opted_in?
+        assert_equal Time.current, customer.whatsapp_opted_out_at
+        assert_equal "staff_entry", customer.whatsapp_opt_out_source
+      end
     end
   end
 end

@@ -10,7 +10,9 @@ module Users
           name: "New User",
           email: "new_user@example.com",
           phone_number: "+5511999990099",
-          password: "password123"
+          password: "password123",
+          accept_terms_of_service: "1",
+          accept_privacy_policy: "1"
         }
       }
 
@@ -26,7 +28,9 @@ module Users
           name: "No Phone",
           email: "no_phone@example.com",
           phone_number: "",
-          password: "password123"
+          password: "password123",
+          accept_terms_of_service: "1",
+          accept_privacy_policy: "1"
         }
       }
 
@@ -43,7 +47,9 @@ module Users
           name: "Dup Phone",
           email: "dup_phone@example.com",
           phone_number: "+5511999990050",
-          password: "password123"
+          password: "password123",
+          accept_terms_of_service: "1",
+          accept_privacy_policy: "1"
         }
       }
 
@@ -60,7 +66,9 @@ module Users
           name: "Fmt User",
           email: "fmt_user@example.com",
           phone_number: "(55) 11 99999-0088",
-          password: "password123"
+          password: "password123",
+          accept_terms_of_service: "1",
+          accept_privacy_policy: "1"
         }
       }
 

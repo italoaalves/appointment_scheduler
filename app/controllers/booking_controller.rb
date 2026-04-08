@@ -112,7 +112,7 @@ class BookingController < ApplicationController
   end
 
   def booking_params
-    params.permit(:customer_name, :customer_email, :customer_phone, :customer_address, :scheduled_at)
+    params.permit(:customer_name, :customer_email, :customer_phone, :customer_address, :scheduled_at, :whatsapp_opt_in)
   end
 
   def find_or_create_customer
@@ -132,7 +132,9 @@ class BookingController < ApplicationController
       email:   email,
       name:    bp[:customer_name].to_s.strip.presence,
       phone:   phone,
-      address: bp[:customer_address].to_s.strip.presence
+      address: bp[:customer_address].to_s.strip.presence,
+      whatsapp_opt_in: bp[:whatsapp_opt_in],
+      consent_source: "booking_form"
     )
   rescue ArgumentError
     flash.now[:alert] = t("booking.email_or_phone_required")

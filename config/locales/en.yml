@@ -575,6 +575,10 @@ en:
         phone: "Phone"
         email: "Email"
         address: "Address"
+        whatsapp_consent: "WhatsApp consent"
+        whatsapp_consent_granted: "Authorized on %{date}"
+        whatsapp_consent_revoked: "Revoked on %{date}"
+        whatsapp_consent_missing: "Not provided"
         edit_customer: "Edit customer"
         all_customers: "All customers"
         delete_customer: "Delete customer"
@@ -582,6 +586,9 @@ en:
         appointments_title: "Appointments"
         no_appointments: "No appointments for this customer yet."
         status_prefix: "Status:"
+      form:
+        whatsapp_opt_in_label: "Authorize appointment reminders and updates via WhatsApp"
+        whatsapp_opt_in_hint: "Required before sending proactive appointment messages to this customer."
       new:
         title: "New customer"
         subtitle: "Add a customer to your space (name, phone, email, address)."
@@ -1078,6 +1085,8 @@ en:
     email_placeholder: "your@email.com"
     address_label: "Address (optional)"
     address_placeholder: "Your address"
+    whatsapp_opt_in_label: "I authorize this business to send me appointment reminders and updates via WhatsApp"
+    whatsapp_opt_in_hint: "Optional. Only check this if you want messages sent to the phone number above."
     submit: "Request appointment"
     submit_loading: "Booking…"
     create:

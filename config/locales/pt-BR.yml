@@ -546,6 +546,10 @@ pt-BR:
         phone: "Telefone"
         email: "E-mail"
         address: "Endereço"
+        whatsapp_consent: "Consentimento WhatsApp"
+        whatsapp_consent_granted: "Autorizado em %{date}"
+        whatsapp_consent_revoked: "Revogado em %{date}"
+        whatsapp_consent_missing: "Não informado"
         edit_customer: "Editar cliente"
         all_customers: "Todos os clientes"
         delete_customer: "Excluir cliente"
@@ -553,6 +557,9 @@ pt-BR:
         appointments_title: "Consultas"
         no_appointments: "Nenhuma consulta para este cliente ainda."
         status_prefix: "Status:"
+      form:
+        whatsapp_opt_in_label: "Autorizar lembretes e atualizações por WhatsApp"
+        whatsapp_opt_in_hint: "Exigido para enviar mensagens proativas sobre consultas a este cliente."
       new:
         title: "Novo cliente"
         subtitle: "Adicione um cliente ao seu espaço (nome, telefone, email, endereço)."
@@ -1073,6 +1080,8 @@ pt-BR:
     email_placeholder: "seu@email.com"
     address_label: "Endereço (opcional)"
     address_placeholder: "Seu endereço"
+    whatsapp_opt_in_label: "Autorizo receber lembretes e atualizações desta empresa por WhatsApp"
+    whatsapp_opt_in_hint: "Opcional. Use apenas se você quiser receber mensagens no número informado acima."
     submit: "Solicitar consulta"
     submit_loading: "Solicitando…"
     create:

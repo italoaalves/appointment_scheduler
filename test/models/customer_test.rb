@@ -19,6 +19,40 @@ class CustomerTest < ActiveSupport::TestCase
     assert customer.valid?
   end
 
+  test "whatsapp consent is not granted by default" do
+    customer = customers(:one)
+
+    assert_not customer.whatsapp_opted_in?
+  end
+
+  test "grant_whatsapp_consent records active consent metadata" do
+    freeze_time do
+      customer = customers(:one)
+
+      customer.grant_whatsapp_consent(source: "staff_entry")
+
+      assert customer.whatsapp_opted_in?
+      assert_equal Time.current, customer.whatsapp_opted_in_at
+      assert_equal "staff_entry", customer.whatsapp_opt_in_source
+    end
+  end
+
+  test "revoke_whatsapp_consent marks consent as inactive" do
+    customer = customers(:one)
+    customer.update!(
+      whatsapp_opted_in_at: 2.days.ago,
+      whatsapp_opt_in_source: "booking_form"
+    )
+
+    freeze_time do
+      customer.revoke_whatsapp_consent(source: "staff_entry")
+
+      assert_not customer.whatsapp_opted_in?
+      assert_equal Time.current, customer.whatsapp_opted_out_at
+      assert_equal "staff_entry", customer.whatsapp_opt_out_source
+    end
+  end
+
   test "has many appointments" do
     customer = customers(:one)
     assert customer.appointments.any?

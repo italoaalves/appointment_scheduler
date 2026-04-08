@@ -157,7 +157,11 @@ module Spaces
     # -------------------------------------------------------------------------
 
     test "whatsapp dispatch uses correct template name per event" do
-      @customer.update!(phone: "+5511999990099")
+      @customer.update!(
+        phone: "+5511999990099",
+        whatsapp_opted_in_at: Time.current,
+        whatsapp_opt_in_source: "staff_entry"
+      )
 
       [ :appointment_confirmed, :appointment_cancelled, :appointment_rescheduled ].each do |event|
         received_template = nil
@@ -180,7 +184,12 @@ module Spaces
     end
 
     test "whatsapp template components include customer name, date, and time" do
-      @customer.update!(phone: "+5511999990099", name: "Maria Silva")
+      @customer.update!(
+        phone: "+5511999990099",
+        name: "Maria Silva",
+        whatsapp_opted_in_at: Time.current,
+        whatsapp_opt_in_source: "staff_entry"
+      )
       @appointment.update!(scheduled_at: Time.zone.parse("2026-06-15 14:30:00"))
 
       received_template = nil
@@ -200,6 +209,25 @@ module Spaces
       params = received_template[:components].first[:parameters]
       texts  = params.map { |p| p[:text] }
       assert_includes texts, "Maria Silva"
+    end
+
+    test "whatsapp delivery is skipped when customer has no consent" do
+      @customer.update!(phone: "+5511999990099", email: nil)
+
+      delivery_called = false
+      fake_channel = Object.new
+      fake_channel.define_singleton_method(:deliver) do |**|
+        delivery_called = true
+        { success: true }
+      end
+
+      Billing::PlanEnforcer.stub(:can?, true) do
+        Messaging::Channels::Whatsapp.stub(:new, fake_channel) do
+          NotificationDispatcher.call(event: :appointment_confirmed, appointment: @appointment)
+        end
+      end
+
+      assert_not delivery_called
     end
 
     test "in-app failure does not block email delivery" do

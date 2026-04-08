@@ -35,11 +35,12 @@ module Spaces
         redirect_to customers_path, alert: t("billing.limits.customers_exceeded") and return
       end
       @customer = current_tenant.customers.build(customer_params)
+      @customer.apply_whatsapp_consent(checked: whatsapp_opt_in_param, source: "staff_entry")
 
       if @customer.save
         redirect_to customer_path(@customer)
       else
-        render :new
+        render :new, status: :unprocessable_entity
       end
     end
 
@@ -47,10 +48,17 @@ module Spaces
     end
 
     def update
-      if @customer.update(customer_params)
+      @customer.assign_attributes(customer_params)
+      @customer.apply_whatsapp_consent(
+        checked: whatsapp_opt_in_param,
+        source: "staff_entry",
+        revoke_on_uncheck: true
+      )
+
+      if @customer.save
         redirect_to customer_path(@customer)
       else
-        render :edit
+        render :edit, status: :unprocessable_entity
       end
     end
 
@@ -87,8 +95,16 @@ module Spaces
       @customer = current_tenant.customers.find(params[:id])
     end
 
+    def customer_form_params
+      @customer_form_params ||= params.require(:customer).permit(:name, :phone, :address, :email, :whatsapp_opt_in)
+    end
+
     def customer_params
-      params.require(:customer).permit(:name, :phone, :address, :email)
+      customer_form_params.except(:whatsapp_opt_in)
+    end
+
+    def whatsapp_opt_in_param
+      customer_form_params[:whatsapp_opt_in]
     end
   end
 end

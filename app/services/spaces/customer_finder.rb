@@ -2,13 +2,19 @@
 
 module Spaces
   class CustomerFinder
-    def self.find_or_create(space:, email:, name: nil, phone: nil, address: nil)
+    def self.find_or_create(space:, email:, name: nil, phone: nil, address: nil, whatsapp_opt_in: nil, consent_source: nil)
       raise ArgumentError, "email or phone is required" if email.blank? && phone.blank?
 
       name = name.to_s.strip.presence || "Guest"
       customer = space.customers.find_by("LOWER(email) = LOWER(?)", email) if email.present?
       customer ||= space.customers.find_by(phone: phone) if phone.present? && customer.nil?
       customer ||= space.customers.create!(name: name, phone: phone, email: email, address: address)
+
+      if ActiveModel::Type::Boolean.new.cast(whatsapp_opt_in)
+        customer.grant_whatsapp_consent(source: consent_source || "unknown")
+        customer.save! if customer.changed?
+      end
+
       customer
     end
 
