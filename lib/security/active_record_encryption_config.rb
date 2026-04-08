@@ -39,13 +39,18 @@ module Security
       end
 
       def fallback_keys
-        return local_fallback_keys if LOCAL_ENVIRONMENTS.include?(Rails.env)
+        return derived_fallback_keys if secret_key_base_fallback_allowed?
 
         raise ActiveRecord::Encryption::Errors::Configuration,
               "Missing Active Record encryption keys for #{Rails.env}"
       end
 
-      def local_fallback_keys
+      def secret_key_base_fallback_allowed?
+        # Rails sets SECRET_KEY_BASE_DUMMY during build-time asset precompilation.
+        LOCAL_ENVIRONMENTS.include?(Rails.env) || ENV["SECRET_KEY_BASE_DUMMY"].present?
+      end
+
+      def derived_fallback_keys
         secret_key_base = Rails.application.secret_key_base
 
         raise ActiveRecord::Encryption::Errors::Configuration, "Missing secret_key_base" if secret_key_base.blank?
