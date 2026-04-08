@@ -1162,6 +1162,9 @@ pt-BR:
         contact:
           title: "Contato"
           body: "Para questões relacionadas à privacidade, entre em contato conosco em privacy@agendadorconsultas.com.br."
+    terms_of_service:
+      title: "Termos de Uso"
+      last_updated: "Última atualização: %{date}"
 
   platform:
     billing:

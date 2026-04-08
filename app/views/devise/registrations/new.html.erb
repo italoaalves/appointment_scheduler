@@ -35,6 +35,15 @@
           <%= t("devise.registrations.trial_message") %>
         </p>
       </div>
+
+      <div class="mt-6">
+        <p class="text-center text-xs text-slate-500">
+          Ao criar sua conta, você concorda com nossos
+          <%= link_to "Termos de Uso", terms_of_service_path, class: "text-deep hover:underline", target: "_blank" %>
+          e
+          <%= link_to "Política de Privacidade", privacy_policy_path, class: "text-deep hover:underline", target: "_blank" %>.
+        </p>
+      </div>
     <% end %>
 
     <p class="mt-6 text-center text-sm text-slate-600">

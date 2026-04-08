@@ -1167,6 +1167,9 @@ en:
         contact:
           title: "Contact"
           body: "For privacy-related inquiries, please contact us at privacy@agendadorconsultas.com.br."
+    terms_of_service:
+      title: "Terms of Service"
+      last_updated: "Last updated: %{date}"
 
   platform:
     billing:

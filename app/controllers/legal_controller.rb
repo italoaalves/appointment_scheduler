@@ -5,4 +5,5 @@ class LegalController < ApplicationController
   skip_before_action :set_locale, raise: false
 
   def privacy_policy; end
+  def terms_of_service; end
 end
