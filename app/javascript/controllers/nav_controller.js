@@ -10,11 +10,13 @@ const GROUP_PATTERNS = {
 
 const ACTIVE_CLASSES   = ["bg-electric/15", "text-electric"]
 const INACTIVE_CLASSES = ["text-slate-400", "hover:text-deep", "hover:bg-slate-100/60"]
+const FLYOUT_CLOSE_DELAY = 150
 
 export default class extends Controller {
   static targets = ["flyout", "sheet", "sheetOverlay"]
 
   connect() {
+    this.flyoutCloseTimeout = null
     this._updateActiveStates()
     this._handleTurboLoad = () => this._updateActiveStates()
     document.addEventListener("turbo:load", this._handleTurboLoad)
@@ -22,6 +24,7 @@ export default class extends Controller {
 
   disconnect() {
     document.removeEventListener("turbo:load", this._handleTurboLoad)
+    this._clearFlyoutCloseTimer()
   }
 
   handleClick(event) {
@@ -34,6 +37,7 @@ export default class extends Controller {
 
   toggle(event) {
     event.stopPropagation()
+    this._clearFlyoutCloseTimer()
     const group = event.params.group
     const panel = this.flyoutTargets.find(el => el.dataset.navGroup === group)
     if (!panel) return
@@ -53,11 +57,18 @@ export default class extends Controller {
     this._closeFlyouts()
   }
 
+  queueFlyoutClose() {
+    this._clearFlyoutCloseTimer()
+    this.flyoutCloseTimeout = setTimeout(() => this._closeFlyouts(), FLYOUT_CLOSE_DELAY)
+  }
+
+  cancelFlyoutClose() {
+    this._clearFlyoutCloseTimer()
+  }
+
   closeSheetAfterNavigation(event) {
     if (window.innerWidth >= 640) return
-
-    if (event.type === "click" && !event.target.closest("a")) return
-    if (event.type === "submit" && event.target.tagName !== "FORM") return
+    if (!this._isSheetNavigationEvent(event)) return
 
     this._closeSheetsImmediately()
   }
@@ -118,6 +129,7 @@ export default class extends Controller {
   }
 
   _closeFlyouts() {
+    this._clearFlyoutCloseTimer()
     this.flyoutTargets.forEach(el => {
       el.classList.add("hidden", "opacity-0", "translate-x-2")
       el.classList.remove("opacity-100", "translate-x-0")
@@ -133,6 +145,28 @@ export default class extends Controller {
     if (this.hasSheetOverlayTarget) {
       this.sheetOverlayTarget.classList.add("hidden")
     }
+  }
+
+  _isSheetNavigationEvent(event) {
+    if (event.defaultPrevented) return false
+
+    if (event.type === "submit") {
+      return true
+    }
+
+    const link = event.target.closest("a[href]")
+    if (!link || !event.currentTarget.contains(link)) return false
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false
+    if (link.target === "_blank" || link.hasAttribute("download")) return false
+
+    return true
+  }
+
+  _clearFlyoutCloseTimer() {
+    if (!this.flyoutCloseTimeout) return
+
+    clearTimeout(this.flyoutCloseTimeout)
+    this.flyoutCloseTimeout = null
   }
 
   _updateActiveStates() {

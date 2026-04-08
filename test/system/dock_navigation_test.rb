@@ -68,7 +68,31 @@ class DockNavigationTest < ApplicationSystemTestCase
       })()
     JS
 
-    assert_selector "[data-nav-target='flyout'][data-nav-group='appointments'].hidden", visible: :all
+    assert_selector "[data-nav-target='flyout'][data-nav-group='appointments'].hidden", visible: :all, wait: 1
+  end
+
+  test "desktop dock flyouts stay open while moving from the icon into the submenu" do
+    resize_window_to(1400, 900)
+
+    visit dashboard_path
+
+    find("button[data-nav-group-param='appointments']", visible: :all).click
+    assert_selector "[data-nav-target='flyout'][data-nav-group='appointments']:not(.hidden)", visible: :all
+
+    page.execute_script(<<~JS)
+      (() => {
+        const button = document.querySelector("button[data-nav-group-param='appointments']")
+        const wrapper = button.closest(".relative")
+        const flyout = document.querySelector("[data-nav-target='flyout'][data-nav-group='appointments']")
+
+        wrapper.dispatchEvent(new MouseEvent("mouseleave", { bubbles: true }))
+        flyout.dispatchEvent(new MouseEvent("mouseenter", { bubbles: true }))
+      })()
+    JS
+
+    sleep 0.2
+
+    assert_selector "[data-nav-target='flyout'][data-nav-group='appointments']:not(.hidden)", visible: :all
   end
 
   private
