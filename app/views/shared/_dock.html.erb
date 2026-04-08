@@ -1,0 +1,176 @@
+<%# Unified dock — horizontal pill at bottom on mobile, vertical pill on right on desktop %>
+<div id="dock"
+     class="contents"
+     data-controller="nav"
+     data-turbo-permanent>
+
+  <%# Sheet overlay — mobile only %>
+  <div class="sm:hidden fixed inset-0 z-30 bg-black/40 hidden"
+       data-nav-target="sheetOverlay"
+       data-action="click->nav#closeAll"></div>
+
+  <%# Appointments sheet — mobile only %>
+  <div class="sm:hidden fixed bottom-24 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
+       style="padding-bottom: env(safe-area-inset-bottom);"
+       data-nav-target="sheet"
+       data-nav-group="appointments">
+    <div class="mx-4 mb-2 rounded-3xl overflow-hidden glass-frosty">
+      <div class="flex justify-center pt-3 pb-1">
+        <div class="w-10 h-1 rounded-full bg-slate-200"></div>
+      </div>
+      <div class="p-2">
+        <%= render "shared/dock/appointments_links" %>
+      </div>
+    </div>
+  </div>
+
+  <%# Space sheet — mobile only, managers only %>
+  <% if current_user.can?(:manage_space) %>
+    <div class="sm:hidden fixed bottom-24 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
+         style="padding-bottom: env(safe-area-inset-bottom);"
+         data-nav-target="sheet"
+         data-nav-group="space">
+      <div class="mx-4 mb-2 rounded-3xl overflow-hidden glass-frosty">
+        <div class="flex justify-center pt-3 pb-1">
+          <div class="w-10 h-1 rounded-full bg-slate-200"></div>
+        </div>
+        <div class="p-2">
+          <%= render "shared/dock/space_links" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Profile sheet — mobile only %>
+  <div class="sm:hidden fixed bottom-24 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
+       style="padding-bottom: env(safe-area-inset-bottom);"
+       data-nav-target="sheet"
+       data-nav-group="profile">
+    <div class="mx-4 mb-2 rounded-3xl overflow-hidden glass-frosty">
+      <div class="flex justify-center pt-3 pb-1">
+        <div class="w-10 h-1 rounded-full bg-slate-200"></div>
+      </div>
+      <div class="p-2">
+        <%= render "shared/dock/profile_links" %>
+      </div>
+    </div>
+  </div>
+
+  <%# The dock bar — bottom horizontal pill on mobile, right vertical pill on desktop %>
+  <nav class="fixed z-40 glass-frosty rounded-[2rem] dock-bottom-safe
+              inset-x-3 py-2 px-2
+              sm:inset-x-auto sm:right-4 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:py-4 sm:px-3">
+
+    <%# Notification bell — desktop only, shown when there are unread notifications %>
+    <% if defined?(unread_notifications_count) && unread_notifications_count > 0 %>
+      <div class="hidden sm:block relative mb-0.5" data-controller="dropdown" data-action="click@window->dropdown#close">
+        <button type="button"
+                class="relative flex items-center justify-center w-14 h-14 rounded-2xl text-slate-400 hover:text-deep hover:bg-slate-100/60 transition-colors cursor-pointer"
+                data-action="dropdown#toggle"
+                aria-label="<%= t('notifications.in_app.dropdown.title') %>">
+          <%= render "shared/icons/bell", class: "h-[30px] w-[30px]" %>
+          <span class="absolute top-2.5 right-2.5 flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+          </span>
+        </button>
+        <div data-dropdown-target="menu" class="hidden absolute right-full mr-3 top-0 z-50 min-w-[280px]">
+          <%= render "shared/notification_dropdown" %>
+        </div>
+      </div>
+      <div class="hidden sm:block w-12 h-px my-0.5 bg-deep/8"></div>
+    <% end %>
+
+    <div class="flex items-center justify-around w-full sm:flex-col sm:w-auto sm:justify-start sm:gap-1.5">
+
+      <%# Home / Logo %>
+      <%= link_to root_path,
+                  class: "flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl hover:bg-slate-100/60 transition-colors #{nav_group_active?(:dashboard) ? 'text-electric' : 'text-slate-400'}",
+                  aria: { label: "Home" } do %>
+        <%= image_tag "anella-logo.png", class: "w-6 h-6 sm:w-10 sm:h-10 rounded-md sm:rounded-xl object-contain", alt: "Anella" %>
+        <span class="text-[10px] font-medium sm:hidden">Home</span>
+      <% end %>
+
+      <div class="hidden sm:block w-12 h-px my-0.5 bg-deep/8"></div>
+
+      <%# Appointments %>
+      <div class="relative">
+        <button type="button"
+                class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:appointments) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60' %>"
+                data-action="click->nav#handleClick"
+                data-nav-group-param="appointments"
+                aria-label="Appointments">
+          <%= render "shared/icons/calendar_days", class: "h-5 w-5 sm:h-[30px] sm:w-[30px]" %>
+          <span class="text-[10px] font-medium sm:hidden">Schedule</span>
+        </button>
+        <%# Desktop flyout %>
+        <div class="hidden opacity-0 translate-x-2 absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 w-52 transition-all duration-150 glass-frosty rounded-[1.25rem]"
+             data-nav-target="flyout"
+             data-nav-group="appointments"
+             data-action="mouseleave->nav#closeFlyout">
+          <div class="p-2">
+            <%= render "shared/dock/appointments_links" %>
+          </div>
+        </div>
+      </div>
+
+      <%# Communication — only when entitled %>
+      <% if defined?(current_tenant) && Billing::PlanEnforcer.can?(current_tenant, :send_whatsapp) %>
+        <%= link_to spaces_inbox_index_path,
+                    class: "flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors #{nav_group_active?(:communication) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60'}",
+                    aria: { label: "Inbox" } do %>
+          <%= render "shared/icons/chat_bubble", class: "h-5 w-5 sm:h-[30px] sm:w-[30px]" %>
+          <span class="text-[10px] font-medium sm:hidden">Inbox</span>
+        <% end %>
+      <% end %>
+
+      <%# Space — managers only %>
+      <% if current_user.can?(:manage_space) %>
+        <div class="relative">
+          <button type="button"
+                  class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:space) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60' %>"
+                  data-action="click->nav#handleClick"
+                  data-nav-group-param="space"
+                  aria-label="Workspace">
+            <%= render "shared/icons/building_office", class: "h-5 w-5 sm:h-[30px] sm:w-[30px]" %>
+            <span class="text-[10px] font-medium sm:hidden">Workspace</span>
+          </button>
+          <%# Desktop flyout %>
+          <div class="hidden opacity-0 translate-x-2 absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 w-52 transition-all duration-150 glass-frosty rounded-[1.25rem]"
+               data-nav-target="flyout"
+               data-nav-group="space"
+               data-action="mouseleave->nav#closeFlyout">
+            <div class="p-2">
+              <%= render "shared/dock/space_links" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="hidden sm:block w-12 h-px my-0.5 bg-deep/8"></div>
+
+      <%# Profile %>
+      <div class="relative">
+        <button type="button"
+                class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:profile) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60' %>"
+                data-action="click->nav#handleClick"
+                data-nav-group-param="profile"
+                aria-label="Profile">
+          <%= render "shared/icons/user_circle", class: "h-5 w-5 sm:h-[30px] sm:w-[30px]" %>
+          <span class="text-[10px] font-medium sm:hidden">Profile</span>
+        </button>
+        <%# Desktop flyout %>
+        <div class="hidden opacity-0 translate-x-2 absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 w-52 transition-all duration-150 glass-frosty rounded-[1.25rem]"
+             data-nav-target="flyout"
+             data-nav-group="profile"
+             data-action="mouseleave->nav#closeFlyout">
+          <div class="p-2">
+            <%= render "shared/dock/profile_links" %>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </nav>
+
+</div>

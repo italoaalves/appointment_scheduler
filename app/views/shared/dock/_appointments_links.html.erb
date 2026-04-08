@@ -1,0 +1,13 @@
+<p class="px-3 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Appointments</p>
+<%= link_to root_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{nav_active?(:dashboard) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+  <%= t("layout.nav.dashboard") %>
+<% end %>
+<%= link_to appointments_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{nav_active?(:appointments) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+  <%= t("layout.nav.all_appointments") %>
+<% end %>
+<%= link_to scheduling_links_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{nav_active?(:booking_links) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+  <%= t("layout.nav.booking_links") %>
+<% end %>
+<%= link_to customers_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors #{nav_active?(:customers) ? 'bg-electric/10 text-electric font-medium' : 'text-slate-600 hover:bg-slate-100/80 hover:text-deep'}" do %>
+  <%= t("layout.nav.customers") %>
+<% end %>

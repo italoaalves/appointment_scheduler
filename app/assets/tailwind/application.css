@@ -207,6 +207,16 @@
     box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
   }
 
+  /* Dock bottom position — safe-area aware on mobile, auto on desktop */
+  .dock-bottom-safe {
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  }
+  @media (min-width: 640px) {
+    .dock-bottom-safe {
+      bottom: auto;
+    }
+  }
+
   /* Card state: Active appointment — slow-breathing cerulean glow */
   .card-active {
     animation: pulse-glow 2.5s ease-in-out infinite;
