@@ -145,13 +145,17 @@ class InboxLayoutTest < ApplicationSystemTestCase
       (() => {
         const list = document.querySelector("[data-inbox-target='listPanel']")
         const detail = document.querySelector("[data-inbox-target='detailPanel']")
+        const shell = document.querySelector("[data-role='inbox-shell']")
         const listRect = list.getBoundingClientRect()
         const detailRect = detail.getBoundingClientRect()
+        const shellRect = shell.getBoundingClientRect()
 
         return {
           listWidth: listRect.width,
           detailWidth: detailRect.width,
-          sideBySide: detailRect.left >= listRect.right - 1
+          sideBySide: detailRect.left >= listRect.right - 1,
+          shellLeft: shellRect.left,
+          shellRightGap: window.innerWidth - shellRect.right
         }
       })()
     JS
@@ -159,6 +163,8 @@ class InboxLayoutTest < ApplicationSystemTestCase
     assert_in_delta 320, metrics["listWidth"], 10
     assert_operator metrics["detailWidth"], :>, metrics["listWidth"]
     assert metrics["sideBySide"], "expected inbox panels to remain side by side on desktop"
+    assert_operator metrics["shellLeft"], :>, 20, "expected inbox shell to be centered away from the left edge, got #{metrics.inspect}"
+    assert_operator metrics["shellRightGap"], :>, metrics["shellLeft"], "expected extra dock gutter on the right, got #{metrics.inspect}"
     assert_selector "[data-conversation-id='#{@conversation.id}'].bg-electric\\/5", visible: :all
   end
 
