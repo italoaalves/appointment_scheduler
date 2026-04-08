@@ -23,9 +23,13 @@ class User < ApplicationRecord
   # Set to true in Users::RegistrationsController to enforce phone presence
   # on the public sign-up form only (not admin or manager-created users).
   attr_accessor :require_phone_number
+  attr_accessor :require_legal_acceptance, :accept_terms_of_service, :accept_privacy_policy
 
   before_validation :normalize_phone_number
+  before_validation :capture_legal_acceptance, on: :create
   validates :phone_number, presence: true, if: :require_phone_number
+  validates :accept_terms_of_service, acceptance: { accept: "1" }, if: :require_legal_acceptance, allow_nil: false
+  validates :accept_privacy_policy, acceptance: { accept: "1" }, if: :require_legal_acceptance, allow_nil: false
   validates :phone_number, uniqueness: { allow_blank: true, message: :cannot_be_verified }
   validate :phone_number_locked_during_trial, if: :phone_number_changed?
 
@@ -102,6 +106,20 @@ class User < ApplicationRecord
     return if user_preference.present?
 
     create_user_preference!(locale: I18n.default_locale.to_s)
+  end
+
+  def capture_legal_acceptance
+    accepted_at = Time.current
+
+    if accept_terms_of_service == "1"
+      self.terms_of_service_accepted_at ||= accepted_at
+      self.terms_of_service_version ||= Legal::DocumentCatalog.fetch(:terms_of_service).version
+    end
+
+    return unless accept_privacy_policy == "1"
+
+    self.privacy_policy_accepted_at ||= accepted_at
+    self.privacy_policy_version ||= Legal::DocumentCatalog.fetch(:privacy_policy).version
   end
 
   def create_owner_space

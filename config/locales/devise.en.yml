@@ -59,6 +59,9 @@ en:
       update_loading: "Updating…"
       cancel_loading: "Canceling…"
       trial_message: "Start your 14-day free trial. No credit card required."
+      legal_required: "Before creating your account, we need to record your acceptance of the current legal documents."
+      accept_terms_html: "I have read and accept the %{terms_link} (version %{version})."
+      accept_privacy_html: "I have read and accept the %{privacy_link} (version %{version})."
       already_account: "Already have an account?"
       sign_in_link: "Sign In"
     sessions:
@@ -89,3 +92,13 @@ en:
       not_saved:
         one: "1 error prohibited this %{resource} from being saved:"
         other: "%{count} errors prohibited this %{resource} from being saved:"
+
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            accept_terms_of_service:
+              accepted: "must accept the Terms of Service"
+            accept_privacy_policy:
+              accepted: "must accept the Privacy Policy"

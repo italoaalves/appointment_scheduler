@@ -5,10 +5,18 @@ module Users
     def build_resource(hash = {})
       super
       resource.require_phone_number = true
+      resource.require_legal_acceptance = true
     end
 
     def sign_up_params
-      p = params.require(:user).permit(:name, :email, :password, :phone_number)
+      p = params.require(:user).permit(
+        :name,
+        :email,
+        :password,
+        :phone_number,
+        :accept_terms_of_service,
+        :accept_privacy_policy
+      )
       p[:password_confirmation] = p[:password]
       p
     end

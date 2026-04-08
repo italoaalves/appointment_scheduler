@@ -4,6 +4,11 @@ class LegalController < ApplicationController
   skip_before_action :authenticate_user!, raise: false
   skip_before_action :set_locale, raise: false
 
-  def privacy_policy; end
-  def terms_of_service; end
+  def privacy_policy
+    @document = Legal::DocumentCatalog.fetch(:privacy_policy)
+  end
+
+  def terms_of_service
+    @document = Legal::DocumentCatalog.fetch(:terms_of_service)
+  end
 end

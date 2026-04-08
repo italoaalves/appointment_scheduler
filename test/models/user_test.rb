@@ -75,6 +75,37 @@ class UserTest < ActiveSupport::TestCase
     assert user.errors[:phone_number].any?
   end
 
+  test "requires legal acceptance when require_legal_acceptance flag is set" do
+    user = User.new(
+      email: "no_legal_acceptance@example.com",
+      password: "password123",
+      require_legal_acceptance: true
+    )
+
+    assert_not user.valid?
+    assert user.errors[:accept_terms_of_service].any?
+    assert user.errors[:accept_privacy_policy].any?
+  end
+
+  test "captures legal acceptance timestamps and versions for accepted registration" do
+    freeze_time do
+      user = User.create!(
+        email: "legal_acceptance@example.com",
+        password: "password123",
+        phone_number: "+5511999990099",
+        require_phone_number: true,
+        require_legal_acceptance: true,
+        accept_terms_of_service: "1",
+        accept_privacy_policy: "1"
+      )
+
+      assert_equal Time.current, user.terms_of_service_accepted_at
+      assert_equal Time.current, user.privacy_policy_accepted_at
+      assert_equal Legal::DocumentCatalog.fetch(:terms_of_service).version, user.terms_of_service_version
+      assert_equal Legal::DocumentCatalog.fetch(:privacy_policy).version, user.privacy_policy_version
+    end
+  end
+
   test "does not require phone_number for admin-created users" do
     user = User.new(email: "admin_created@example.com", password: "password123", space: @space)
     user.valid?

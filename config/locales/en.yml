@@ -1121,6 +1121,7 @@ en:
       go_back: "Go back"
 
   legal:
+    version: "Version: %{version}"
     privacy_policy:
       title: "Privacy Policy"
       last_updated: "Last updated: %{date}"
