@@ -34,8 +34,10 @@ module Spaces
       @user = User.new(user_params)
       @user.space_id = current_tenant.id
       @user.password = SecureRandom.hex(32)
+      before_permissions = []
 
       if @user.save
+        audit_permission_change(user: @user, before_permissions:)
         @user.send_reset_password_instructions
         redirect_to user_path(@user)
       else
@@ -47,7 +49,10 @@ module Spaces
     end
 
     def update
+      before_permissions = @user.permission_names
+
       if @user.update(update_user_params)
+        audit_permission_change(user: @user, before_permissions:)
         redirect_to users_path
       else
         render :edit
@@ -83,6 +88,26 @@ module Spaces
       permitted = [ :role ]
       permitted << { permission_names_param: [] } if current_user.can?(:manage_team, space: current_tenant)
       params.require(:user).permit(permitted)
+    end
+
+    def audit_permission_change(user:, before_permissions:)
+      after_permissions = user.reload.user_permissions.order(:permission).pluck(:permission)
+      added_permissions = after_permissions - before_permissions
+      removed_permissions = before_permissions - after_permissions
+      return if added_permissions.empty? && removed_permissions.empty?
+
+      AuditLogs::EventLogger.call(
+        event_type: "authorization.team_permissions_changed",
+        actor: audit_actor,
+        space: current_tenant,
+        subject: user,
+        request: request,
+        impersonated: impersonating?,
+        metadata: audit_context_metadata.merge(
+          added_permissions: added_permissions,
+          removed_permissions: removed_permissions
+        )
+      )
     end
   end
 end

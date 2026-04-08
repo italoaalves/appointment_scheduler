@@ -103,5 +103,41 @@ module Spaces
       assert_select "turbo-frame#users-feed"
       assert_select "div.user-card", minimum: 1
     end
+
+    test "POST create denied by missing permission writes audit log" do
+      sign_in users(:secretary)
+
+      assert_difference "AuditLog.count", 1 do
+        post users_url, params: { user: { email: "blocked@example.com", name: "Blocked User" } }
+      end
+
+      assert_redirected_to users_url
+      log = AuditLog.order(:id).last
+      assert_equal "authorization.permission_denied", log.event_type
+      assert_equal users(:secretary), log.actor
+    end
+
+    test "PATCH update logs permission changes" do
+      sign_in @manager_pro
+      team_member = @manager_pro.space.users.create!(
+        email: "permission-target-#{SecureRandom.hex(4)}@example.com",
+        name: "Permission Target",
+        password: SecureRandom.hex(16)
+      )
+
+      assert_difference "AuditLog.count", 1 do
+        patch user_url(team_member), params: {
+          user: {
+            role: "Assistant",
+            permission_names_param: [ "manage_customers", "read_inbox" ]
+          }
+        }
+      end
+
+      assert_redirected_to users_url
+      log = AuditLog.order(:id).last
+      assert_equal "authorization.team_permissions_changed", log.event_type
+      assert_equal team_member.id, log.subject_id
+    end
   end
 end

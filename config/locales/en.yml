@@ -347,6 +347,7 @@ en:
       availability: "Availability"
       tenants: "Tenants"
       platform_users: "Users"
+      platform_audit_logs: "Audit Logs"
       logout: "Log out"
       profile: "Profile"
       preferences: "Preferences"
@@ -1210,6 +1211,25 @@ en:
       last_updated: "Last updated: %{date}"
 
   platform:
+    audit_logs:
+      index:
+        title: "Audit Logs"
+        subtitle: "Trace privacy-sensitive access, exports, deletions, impersonation, and permission actions."
+        query: "Person search"
+        query_placeholder: "Email, phone, CPF, or name"
+        event_type: "Event type"
+        all_events: "All events"
+        space: "Space"
+        all_spaces: "All spaces"
+        filter: "Filter"
+        clear: "Clear"
+        when: "When"
+        event: "Event"
+        actor: "Actor"
+        subject: "Subject"
+        context: "Context"
+        empty: "No audit logs found for the selected filters."
+        system_actor: "System"
     billing:
       index:
         title: "Billing Overview"

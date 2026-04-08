@@ -20,11 +20,25 @@ class ProfilesController < ApplicationController
 
   def request_data_export
     DataExports::PackageDeliveryJob.perform_later(@user.id)
+    AuditLogs::EventLogger.call(
+      event_type: "privacy.export_requested",
+      actor: audit_actor,
+      space: current_tenant,
+      subject: @user,
+      request: request,
+      impersonated: impersonating?,
+      metadata: audit_context_metadata.merge(source: "profile_settings")
+    )
     redirect_to edit_profile_path, notice: t("profiles.request_data_export.notice")
   end
 
   def request_deletion
-    result = AccountDeletionRequests::Requester.call(user: @user)
+    result = AccountDeletionRequests::Requester.call(
+      user: @user,
+      actor: audit_actor,
+      request: request,
+      metadata: audit_context_metadata.merge(source: "profile_settings", impersonated: impersonating?)
+    )
 
     if result.success?
       redirect_to edit_profile_path, notice: t("profiles.request_deletion.notice")
@@ -34,7 +48,12 @@ class ProfilesController < ApplicationController
   end
 
   def cancel_deletion_request
-    result = AccountDeletionRequests::Canceler.call(user: @user)
+    result = AccountDeletionRequests::Canceler.call(
+      user: @user,
+      actor: audit_actor,
+      request: request,
+      metadata: audit_context_metadata.merge(source: "profile_settings", impersonated: impersonating?)
+    )
 
     if result.success?
       redirect_to edit_profile_path, notice: t("profiles.cancel_deletion_request.notice")

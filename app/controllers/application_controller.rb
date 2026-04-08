@@ -34,6 +34,18 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def audit_actor
+    real_current_user || current_user
+  end
+
+  def audit_context_metadata
+    {
+      controller: controller_path,
+      action: action_name,
+      method: request.request_method
+    }
+  end
+
   def current_tenant
     @current_tenant ||= current_user&.space
   end

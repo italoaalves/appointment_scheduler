@@ -21,6 +21,7 @@ module AccountDeletionRequests
 
         @request.user.with_lock do
           persist_audit_fingerprints!
+          log_completion!
           revoke_access!
           anonymize_user!
           complete_request!
@@ -86,6 +87,16 @@ module AccountDeletionRequests
 
     def complete_request!
       @request.update!(status: :completed, completed_at: Time.current)
+    end
+
+    def log_completion!
+      AuditLogs::EventLogger.call(
+        event_type: "privacy.deletion_completed",
+        space: user.space,
+        subject: user,
+        auditable: @request,
+        metadata: { source: "retention_job", automated: true }
+      )
     end
 
     def anonymized_email

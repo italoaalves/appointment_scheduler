@@ -6,7 +6,8 @@ module Impersonation
   included do
     helper_method :impersonating?, :real_current_user
     before_action :validate_impersonation, if: :impersonating?
-    after_action :audit_impersonation_write, if: :impersonating?
+    before_action :capture_impersonation_state
+    after_action :audit_impersonation_write, if: :impersonating_during_request?
   end
 
   def impersonating?
@@ -30,8 +31,31 @@ module Impersonation
 
   private
 
+  def capture_impersonation_state
+    @impersonating_during_request = impersonating?
+  end
+
+  def impersonating_during_request?
+    @impersonating_during_request
+  end
+
   def audit_impersonation_write
     return if request.get? || request.head?
+    return if controller_path == "platform/impersonations"
+
+    AuditLogs::EventLogger.call(
+      event_type: "auth.impersonated_write",
+      actor: real_current_user,
+      space: current_tenant,
+      subject: current_user,
+      request: request,
+      impersonated: true,
+      metadata: {
+        controller: controller_path,
+        action: action_name,
+        method: request.request_method
+      }
+    )
 
     Rails.logger.info(
       "[IMPERSONATION] write_action=true" \
