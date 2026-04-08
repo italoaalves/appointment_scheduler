@@ -14,7 +14,7 @@
        style="padding-bottom: env(safe-area-inset-bottom);"
        data-nav-target="sheet"
        data-nav-group="appointments"
-       data-action="click->nav#closeSheetOnNavigate submit->nav#closeSheetOnNavigate">
+       data-action="click->nav#closeSheetAfterNavigation submit->nav#closeSheetAfterNavigation">
     <div class="mx-4 mb-2 rounded-3xl overflow-hidden glass-frosty">
       <div class="flex justify-center pt-3 pb-1">
         <div class="w-10 h-1 rounded-full bg-slate-200"></div>
@@ -31,7 +31,7 @@
          style="padding-bottom: env(safe-area-inset-bottom);"
          data-nav-target="sheet"
          data-nav-group="space"
-         data-action="click->nav#closeSheetOnNavigate submit->nav#closeSheetOnNavigate">
+         data-action="click->nav#closeSheetAfterNavigation submit->nav#closeSheetAfterNavigation">
       <div class="mx-4 mb-2 rounded-3xl overflow-hidden glass-frosty">
         <div class="flex justify-center pt-3 pb-1">
           <div class="w-10 h-1 rounded-full bg-slate-200"></div>
@@ -48,7 +48,7 @@
        style="padding-bottom: env(safe-area-inset-bottom);"
        data-nav-target="sheet"
        data-nav-group="profile"
-       data-action="click->nav#closeSheetOnNavigate submit->nav#closeSheetOnNavigate">
+       data-action="click->nav#closeSheetAfterNavigation submit->nav#closeSheetAfterNavigation">
     <div class="mx-4 mb-2 rounded-3xl overflow-hidden glass-frosty">
       <div class="flex justify-center pt-3 pb-1">
         <div class="w-10 h-1 rounded-full bg-slate-200"></div>
@@ -60,9 +60,9 @@
   </div>
 
   <%# The dock bar — bottom horizontal pill on mobile, right vertical pill on desktop %>
-  <nav class="fixed z-40 glass-frosty rounded-[2rem] dock-bottom-safe
+  <nav class="fixed z-50 glass-frosty rounded-[2rem] dock-bottom-safe
               inset-x-3 py-2 px-2
-              sm:inset-x-auto sm:right-4 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:py-4 sm:px-3">
+              sm:z-40 sm:inset-x-auto sm:right-4 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:py-4 sm:px-3">
 
     <%# Notification bell — desktop only, shown when there are unread notifications %>
     <% if defined?(unread_notifications_count) && unread_notifications_count > 0 %>
@@ -97,7 +97,7 @@
       <div class="hidden sm:block w-12 h-px my-0.5 bg-deep/8"></div>
 
       <%# Appointments %>
-      <div class="relative">
+      <div class="relative" data-action="mouseenter->nav#cancelFlyoutClose mouseleave->nav#queueFlyoutClose">
         <button type="button"
                 class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:appointments) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60' %>"
                 data-action="click->nav#handleClick"
@@ -110,7 +110,7 @@
         <div class="hidden opacity-0 translate-x-2 absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 w-52 transition-all duration-150 glass-frosty rounded-[1.25rem]"
              data-nav-target="flyout"
              data-nav-group="appointments"
-             data-action="mouseleave->nav#closeFlyout">
+             data-action="mouseenter->nav#cancelFlyoutClose mouseleave->nav#queueFlyoutClose">
           <div class="p-2">
             <%= render "shared/dock/appointments_links" %>
           </div>
@@ -129,8 +129,8 @@
 
       <%# Space — managers only %>
       <% if current_user.can?(:manage_space) %>
-        <div class="relative">
-          <button type="button"
+      <div class="relative" data-action="mouseenter->nav#cancelFlyoutClose mouseleave->nav#queueFlyoutClose">
+        <button type="button"
                   class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:space) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60' %>"
                   data-action="click->nav#handleClick"
                   data-nav-group-param="space"
@@ -142,7 +142,7 @@
           <div class="hidden opacity-0 translate-x-2 absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 w-52 transition-all duration-150 glass-frosty rounded-[1.25rem]"
                data-nav-target="flyout"
                data-nav-group="space"
-               data-action="mouseleave->nav#closeFlyout">
+               data-action="mouseenter->nav#cancelFlyoutClose mouseleave->nav#queueFlyoutClose">
             <div class="p-2">
               <%= render "shared/dock/space_links" %>
             </div>
@@ -153,7 +153,7 @@
       <div class="hidden sm:block w-12 h-px my-0.5 bg-deep/8"></div>
 
       <%# Profile %>
-      <div class="relative">
+      <div class="relative" data-action="mouseenter->nav#cancelFlyoutClose mouseleave->nav#queueFlyoutClose">
         <button type="button"
                 class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl transition-colors cursor-pointer <%= nav_group_active?(:profile) ? 'bg-electric/15 text-electric' : 'text-slate-400 hover:text-deep hover:bg-slate-100/60' %>"
                 data-action="click->nav#handleClick"
@@ -166,7 +166,7 @@
         <div class="hidden opacity-0 translate-x-2 absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 w-52 transition-all duration-150 glass-frosty rounded-[1.25rem]"
              data-nav-target="flyout"
              data-nav-group="profile"
-             data-action="mouseleave->nav#closeFlyout">
+             data-action="mouseenter->nav#cancelFlyoutClose mouseleave->nav#queueFlyoutClose">
           <div class="p-2">
             <%= render "shared/dock/profile_links" %>
           </div>

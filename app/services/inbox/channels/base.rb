@@ -13,6 +13,10 @@ module Inbox
         raise NotImplementedError, "#{self.class}#send_message not implemented"
       end
 
+      def send_template(conversation, template_name:, sent_by:)
+        raise NotImplementedError, "#{self.class}#send_template not implemented"
+      end
+
       # Does this channel have a session window that expires?
       def session_windowed?
         false
@@ -25,6 +29,14 @@ module Inbox
 
       # Human-readable reason why sending is blocked, or nil if allowed.
       def send_blocked_reason(conversation)
+        nil
+      end
+
+      def can_send_template?(_conversation)
+        false
+      end
+
+      def self.default_reengagement_template
         nil
       end
     end

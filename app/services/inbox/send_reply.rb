@@ -13,6 +13,7 @@ module Inbox
 
     def call
       channel = ChannelRegistry.for(@conversation.channel)
+      credit_deduction = nil
 
       unless channel.can_send?(@conversation)
         return Result.new(success?: false, error: channel.send_blocked_reason(@conversation))
@@ -21,8 +22,8 @@ module Inbox
       cost = channel.send_cost(@conversation)
 
       if cost > 0
-        deduction = Billing::CreditManager.deduct(space: @space)
-        unless deduction[:success]
+        credit_deduction = Billing::CreditManager.deduct(space: @space)
+        unless credit_deduction[:success]
           return Result.new(success?: false, error: I18n.t("inbox.errors.insufficient_credits"))
         end
       end
@@ -43,8 +44,19 @@ module Inbox
 
       Result.new(success?: true, message: msg)
     rescue => e
+      Billing::CreditManager.refund(space: @space, source: credit_deduction[:source]) if credit_deduction&.dig(:success)
+
+      failed_message = ConversationMessage.create!(
+        conversation: @conversation,
+        direction: :outbound,
+        body: @body,
+        status: :failed,
+        sent_by: @sent_by,
+        credit_cost: 0
+      )
+
       Rails.logger.error("[Inbox::SendReply] #{e.class}: #{e.message}")
-      Result.new(success?: false, error: I18n.t("inbox.errors.send_failed"))
+      Result.new(success?: false, message: failed_message, error: I18n.t("inbox.errors.send_failed"))
     end
 
     private

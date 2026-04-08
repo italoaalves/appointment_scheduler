@@ -24,6 +24,8 @@
 
   /* === Sticky stack === */
   --spacing-sticky-filter: 1rem;
+  --spacing-inbox-mobile-chrome: 13rem;
+  --spacing-inbox-desktop-chrome: 5rem;
 }
 
 @layer base {

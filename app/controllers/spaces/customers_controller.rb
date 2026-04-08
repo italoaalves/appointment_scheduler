@@ -69,7 +69,7 @@ module Spaces
                 locals: { message: message })
             ]
           end
-          format.html { redirect_to customers_path, alert: message }
+          format.html { redirect_back fallback_location: customer_path(@customer), alert: message }
         end
         return
       end

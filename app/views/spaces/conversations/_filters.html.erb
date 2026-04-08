@@ -1,7 +1,7 @@
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-  <%# Channel filter %>
+<div class="grid grid-cols-2 gap-3">
+  <%# Channel %>
   <div>
-    <%= f.label :channel, t("spaces.conversations.index.filters.channel"), class: "block text-sm font-medium text-slate-700 mb-1" %>
+    <%= f.label :channel, t("spaces.conversations.index.filters.channel"), class: "form-label-sm mb-1" %>
     <%= f.select :channel, options_for_select([
       [t("spaces.conversations.index.filters.all_channels"), ""],
       [t("spaces.conversations.index.filters.channel_whatsapp"), "whatsapp"],
@@ -12,23 +12,9 @@
     ], params[:channel]), {}, { class: "form-input-sm" } %>
   </div>
 
-  <%# Status filter %>
+  <%# Priority %>
   <div>
-    <%= f.label :status, t("spaces.conversations.index.filters.status"), class: "block text-sm font-medium text-slate-700 mb-1" %>
-    <%= f.select :status, options_for_select([
-      [t("spaces.conversations.index.filters.all_statuses"), ""],
-      [t("spaces.conversations.index.filters.status_automated"), "automated"],
-      [t("spaces.conversations.index.filters.status_needs_reply"), "needs_reply"],
-      [t("spaces.conversations.index.filters.status_open"), "open"],
-      [t("spaces.conversations.index.filters.status_pending"), "pending"],
-      [t("spaces.conversations.index.filters.status_resolved"), "resolved"],
-      [t("spaces.conversations.index.filters.status_closed"), "closed"]
-    ], params[:status]), {}, { class: "form-input-sm", style: params[:all].present? ? "" : "display: none" } %>
-  </div>
-
-  <%# Priority filter %>
-  <div>
-    <%= f.label :priority, t("spaces.conversations.index.filters.priority"), class: "block text-sm font-medium text-slate-700 mb-1" %>
+    <%= f.label :priority, t("spaces.conversations.index.filters.priority"), class: "form-label-sm mb-1" %>
     <%= f.select :priority, options_for_select([
       [t("spaces.conversations.index.filters.all_priorities"), ""],
       [t("spaces.conversations.index.priority.low"), "low"],
@@ -38,26 +24,36 @@
     ], params[:priority]), {}, { class: "form-input-sm" } %>
   </div>
 
-  <%# Customer search %>
-  <div>
-    <%= f.label :customer, t("spaces.conversations.index.filters.customer"), class: "block text-sm font-medium text-slate-700 mb-1" %>
-    <%= f.text_field :customer, value: params[:customer], placeholder: t("spaces.conversations.index.filters.customer_placeholder"), class: "form-input-sm" %>
-  </div>
-
   <%# Date range %>
   <div>
-    <%= f.label :since, t("spaces.conversations.index.filters.since"), class: "block text-sm font-medium text-slate-700 mb-1" %>
+    <%= f.label :since, t("spaces.conversations.index.filters.since"), class: "form-label-sm mb-1" %>
     <%= f.date_field :since, value: params[:since], class: "form-input-sm" %>
   </div>
 
   <div>
-    <%= f.label :until, t("spaces.conversations.index.filters.until"), class: "block text-sm font-medium text-slate-700 mb-1" %>
+    <%= f.label :until, t("spaces.conversations.index.filters.until"), class: "form-label-sm mb-1" %>
     <%= f.date_field :until, value: params[:until], class: "form-input-sm" %>
   </div>
 
-  <%# All conversations toggle %>
-  <div class="flex items-end">
-    <%= f.check_box :all, { checked: params[:all].present? }, "1", "0" %>
-    <%= f.label :all, t("spaces.conversations.index.all_toggle"), class: "ml-2 text-sm text-slate-700" %>
+  <%# Assigned to %>
+  <div class="col-span-2">
+    <%= f.label :assigned_to, t("spaces.conversations.index.filters.assigned_to"), class: "form-label-sm mb-1" %>
+    <% assignee_options = (@space_users || current_tenant.users.order(:name)).map { |user| [user.name.presence || user.email, user.id] } %>
+    <%= f.select :assigned_to, options_for_select(
+      [[t("spaces.conversations.index.filters.include_unassigned"), "none"]] + assignee_options,
+      params[:assigned_to]
+    ), { include_blank: t("spaces.conversations.index.filters.assigned_to") }, { class: "form-input-sm" } %>
+  </div>
+
+  <div class="col-span-2 flex flex-wrap gap-3 pt-1">
+    <label class="inline-flex items-center gap-2 text-xs text-slate-500">
+      <%= f.check_box :unread, { checked: params[:unread] == "true", class: "rounded border-slate-300 text-electric focus:ring-electric/30" }, "true", "false" %>
+      <span><%= t("spaces.conversations.index.filters.unread") %></span>
+    </label>
+
+    <label class="inline-flex items-center gap-2 text-xs text-slate-500">
+      <%= f.check_box :sla_breached, { checked: params[:sla_breached] == "true", class: "rounded border-slate-300 text-electric focus:ring-electric/30" }, "true", "false" %>
+      <span><%= t("spaces.conversations.index.filters.only_breached") %></span>
+    </label>
   </div>
 </div>

@@ -84,4 +84,29 @@ class Inbox::SendReplyTest < ActiveSupport::TestCase
 
     assert_equal count_before, ConversationMessage.count
   end
+
+  test "creates failed outbound message when provider send fails" do
+    @conversation.update!(session_expires_at: 23.hours.from_now)
+    fake_client = Object.new
+    fake_client.define_singleton_method(:send_text) { |**| raise Whatsapp::Client::ApiError.new("boom") }
+
+    result = nil
+    assert_difference "ConversationMessage.count", 1 do
+      Whatsapp::Client.stub(:for_space, fake_client) do
+        result = Inbox::SendReply.new(
+          conversation: @conversation,
+          body: "Hello!",
+          sent_by: @user,
+          space: @space
+        ).call
+      end
+    end
+
+    refute result.success?
+    assert_equal I18n.t("inbox.errors.send_failed"), result.error
+    message = ConversationMessage.order(:created_at).last
+    assert message.failed?
+    assert_equal "Hello!", message.body
+    assert_equal "outbound", message.direction
+  end
 end
