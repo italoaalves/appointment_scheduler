@@ -6,8 +6,10 @@ require "ostruct"
 
 module ActiveSupport
   class TestCase
-    # Run tests in parallel with specified workers
-    parallelize(workers: :number_of_processors)
+    # Default to serial execution because PostgreSQL fixture reloads are not
+    # deterministic under multi-process test runs in this environment.
+    workers = ENV.fetch("PARALLEL_WORKERS", "1").to_i
+    parallelize(workers: workers) if workers > 1
 
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
