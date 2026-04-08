@@ -83,6 +83,20 @@
                  class="form-input"
                  placeholder="<%= t("booking.address_placeholder") %>" />
         </div>
+        <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+          <input type="hidden" name="whatsapp_opt_in" value="0" />
+          <label for="whatsapp_opt_in" class="flex items-start gap-3 text-sm text-slate-700">
+            <input type="checkbox"
+                   name="whatsapp_opt_in"
+                   id="whatsapp_opt_in"
+                   value="1"
+                   class="mt-1 rounded border-slate-300 text-electric focus:ring-electric" />
+            <span>
+              <span class="font-medium text-slate-900"><%= t("booking.whatsapp_opt_in_label") %></span>
+              <span class="mt-1 block text-xs text-slate-500"><%= t("booking.whatsapp_opt_in_hint") %></span>
+            </span>
+          </label>
+        </div>
       </div>
     </div>
 
