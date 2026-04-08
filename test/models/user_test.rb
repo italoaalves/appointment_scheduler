@@ -164,6 +164,33 @@ class UserTest < ActiveSupport::TestCase
     assert_nil user.phone_number
   end
 
+  test "phone_number supports exact-match queries while remaining encrypted at rest" do
+    user = User.create!(
+      email: "encrypted_phone@example.com",
+      password: "password123",
+      phone_number: "+5511999990100",
+      space: @space
+    )
+
+    assert_equal user, User.find_by(phone_number: "+5511999990100")
+    assert_equal "+5511999990100", user.reload.phone_number
+    assert_not_equal "+5511999990100", user.reload.ciphertext_for(:phone_number)
+  end
+
+  test "cpf_cnpj is encrypted at rest" do
+    user = User.create!(
+      email: "encrypted_cpf@example.com",
+      password: "password123",
+      phone_number: "+5511999990101",
+      space: @space
+    )
+
+    user.update!(cpf_cnpj: "12345678901")
+
+    assert_equal "12345678901", user.reload.cpf_cnpj
+    assert_not_equal "12345678901", user.reload.ciphertext_for(:cpf_cnpj)
+  end
+
   test "existing user without phone_number can be saved without phone presence error" do
     # Fixtures load via SQL bypassing model validations (no phone_number).
     # Ensure they can still be saved — the flag is not set for non-registration paths.

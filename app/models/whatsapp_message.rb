@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class WhatsappMessage < ApplicationRecord
+  encrypts :body
+
   belongs_to :whatsapp_conversation
   belongs_to :sent_by, class_name: "User", optional: true
 

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Conversation < ApplicationRecord
+  encrypts :last_message_body
+
   belongs_to :space
   belongs_to :customer, optional: true
   belongs_to :assigned_to, class_name: "User", optional: true

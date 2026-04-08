@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+  encrypts :phone_number, deterministic: true
+  encrypts :cpf_cnpj
+
   has_one :space_membership, dependent: :destroy, autosave: true
   has_one :space, through: :space_membership
 

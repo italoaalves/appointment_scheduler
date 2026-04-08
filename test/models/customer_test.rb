@@ -19,6 +19,22 @@ class CustomerTest < ActiveSupport::TestCase
     assert customer.valid?
   end
 
+  test "phone lookups still work when phone and address are encrypted at rest" do
+    customer = spaces(:one).customers.create!(
+      name: "Encrypted Customer",
+      email: "encrypted_customer@example.com",
+      phone: "+5511999990111",
+      address: "Rua Segura, 42"
+    )
+
+    assert_equal customer, spaces(:one).customers.find_by(phone: "+5511999990111")
+    assert_equal customer, Spaces::CustomerFinder.find_existing(space: spaces(:one), phone: "+5511999990111")
+    assert_equal "+5511999990111", customer.reload.phone
+    assert_equal "Rua Segura, 42", customer.reload.address
+    assert_not_equal "+5511999990111", customer.reload.ciphertext_for(:phone)
+    assert_not_equal "Rua Segura, 42", customer.reload.ciphertext_for(:address)
+  end
+
   test "whatsapp consent is not granted by default" do
     customer = customers(:one)
 

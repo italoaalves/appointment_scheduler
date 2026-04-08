@@ -3,6 +3,9 @@
 class Customer < ApplicationRecord
   include SpaceScoped
 
+  encrypts :phone, deterministic: true
+  encrypts :address
+
   belongs_to :space
   belongs_to :user, optional: true
   has_many :appointments, dependent: :nullify

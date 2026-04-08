@@ -59,4 +59,15 @@ class WhatsappMessageTest < ActiveSupport::TestCase
   test "chronological scope orders by created_at asc" do
     assert_equal "\"whatsapp_messages\".\"created_at\" ASC", WhatsappMessage.chronological.order_values.first.to_sql
   end
+
+  test "body is encrypted at rest" do
+    message = WhatsappMessage.create!(
+      whatsapp_conversation: whatsapp_conversations(:one),
+      direction: :outbound,
+      body: "Sensitive WhatsApp reply"
+    )
+
+    assert_equal "Sensitive WhatsApp reply", message.reload.body
+    assert_not_equal "Sensitive WhatsApp reply", message.reload.ciphertext_for(:body)
+  end
 end

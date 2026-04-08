@@ -76,4 +76,13 @@ class ConversationMessageTest < ActiveSupport::TestCase
     m = valid_message.tap(&:save!)
     assert_equal 0, m.credit_cost
   end
+
+  test "body is encrypted at rest" do
+    message = valid_message
+    message.body = "Sensitive inbox reply"
+    message.save!
+
+    assert_equal "Sensitive inbox reply", message.reload.body
+    assert_not_equal "Sensitive inbox reply", message.reload.ciphertext_for(:body)
+  end
 end
