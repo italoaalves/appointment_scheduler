@@ -119,6 +119,21 @@ class AppointmentTest < ActiveSupport::TestCase
     assert_equal @space.slot_duration_minutes, appointment.effective_duration_minutes
   end
 
+  test "broadcasts booking slot updates after commit" do
+    broadcast_space = nil
+
+    Booking::SlotUpdatesBroadcaster.stub(:broadcast_for, ->(space) { broadcast_space = space }) do
+      @space.appointments.create!(
+        customer: @customer,
+        scheduled_at: 5.days.from_now.change(hour: 14),
+        status: :pending,
+        duration_minutes: 30
+      )
+    end
+
+    assert_equal @space, broadcast_space
+  end
+
   # ── Advisory lock (SQL injection prevention) ───────────────────────────────
 
   test "acquire_slot_advisory_lock uses parameterized query instead of interpolation" do

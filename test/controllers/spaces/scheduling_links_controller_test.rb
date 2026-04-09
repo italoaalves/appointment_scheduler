@@ -13,6 +13,18 @@ module Spaces
     # spaces(:one) already has 4 scheduling links in fixtures (permanent_link,
     # single_use_link, expired_link, used_link) which is above the Starter limit of 3.
 
+    test "GET index renders the refreshed overview, featured card, and link rows" do
+      sign_in @manager_starter
+
+      get scheduling_links_url
+
+      assert_response :success
+      assert_select "[data-role='settings-intro']"
+      assert_select "[data-role='personalized-link-card']"
+      assert_select "[data-role='link-library-panel']"
+      assert_select "[data-role='scheduling-link-row']", minimum: 1
+    end
+
     test "POST create redirects with limit alert when Starter plan is at 3 links" do
       sign_in @manager_starter
 
@@ -37,6 +49,19 @@ module Spaces
 
       assert_response :redirect
       assert_not_equal I18n.t("billing.limits.scheduling_links_exceeded"), flash[:alert]
+    end
+
+    test "GET index keeps the link library shell when no reusable links exist" do
+      sign_in @manager_pro
+      spaces(:two).scheduling_links.delete_all
+
+      get scheduling_links_url
+
+      assert_response :success
+      assert_select "[data-role='settings-intro']"
+      assert_select "[data-role='personalized-link-card']"
+      assert_select "[data-role='link-library-panel']"
+      assert_select "[data-role='scheduling-links-empty-state']"
     end
   end
 end

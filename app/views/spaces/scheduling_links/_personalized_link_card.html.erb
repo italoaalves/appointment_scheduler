@@ -1,0 +1,79 @@
+<% feature_available = Billing::PlanEnforcer.can?(space, :access_personalized_booking_page) %>
+<% public_url = personalized_link.present? ? book_by_slug_url(slug: personalized_link.slug) : nil %>
+
+<%= render "application/shared/card",
+           extra_class: "rounded-[1.65rem] border border-white/70 p-5 sm:p-6" do %>
+  <section data-role="personalized-link-card" class="space-y-5">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div class="space-y-1">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"><%= t("space.scheduling_links.index.personalized.eyebrow") %></p>
+        <h2 class="text-xl font-semibold tracking-tight text-deep"><%= t("space.scheduling_links.index.personalized.title") %></h2>
+        <p class="max-w-3xl text-sm leading-6 text-slate-600"><%= t("space.scheduling_links.index.personalized.subtitle") %></p>
+      </div>
+
+      <% if personalized_link.present? %>
+        <span class="status-pill status-pill-accent"><%= t("space.scheduling_links.index.personalized.live_badge") %></span>
+      <% elsif feature_available %>
+        <span class="status-pill status-pill-warning"><%= t("space.scheduling_links.index.personalized.setup_badge") %></span>
+      <% else %>
+        <span class="status-pill status-pill-neutral"><%= t("space.scheduling_links.index.personalized.unavailable_badge") %></span>
+      <% end %>
+    </div>
+
+    <% if personalized_link.present? %>
+      <div class="space-y-3">
+        <div class="url-field">
+          <span class="w-full truncate"><%= public_url %></span>
+        </div>
+        <p class="text-sm leading-6 text-slate-600"><%= personalized_link_constraints(space) %></p>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <button type="button"
+                data-controller="clipboard"
+                data-clipboard-text-value="<%= public_url %>"
+                data-action="click->clipboard#copy"
+                class="<%= button_classes(:primary, "btn-sm") %>">
+          <%= t("space.scheduling_links.show.copy") %>
+        </button>
+
+        <%= link_to t("space.personalized_scheduling_links.index.view"),
+                    book_by_slug_path(slug: personalized_link.slug),
+                    target: "_blank",
+                    rel: "noopener",
+                    class: button_classes(:secondary, "btn-sm") %>
+
+        <%= link_to t("space.personalized_scheduling_links.index.edit"),
+                    edit_personalized_scheduling_link_path,
+                    class: button_classes(:secondary, "btn-sm") %>
+
+        <%= button_to t("space.personalized_scheduling_links.index.remove"),
+                      personalized_scheduling_link_path,
+                      method: :delete,
+                      data: {
+                        turbo_confirm: t("space.personalized_scheduling_links.index.remove_confirm"),
+                        turbo_submits_with: t("shared.removing")
+                      },
+                      class: button_classes(:secondary, "btn-sm text-red-600 border-red-200 hover:border-red-300 hover:bg-red-50") %>
+      </div>
+    <% elsif feature_available %>
+      <div class="space-y-3">
+        <p class="text-sm leading-6 text-slate-600"><%= t("space.scheduling_links.index.personalized.create_body") %></p>
+        <div class="flex flex-wrap gap-2">
+          <%= link_to t("space.personalized_scheduling_links.index.create_button"),
+                      new_personalized_scheduling_link_path,
+                      class: button_classes(:primary) %>
+        </div>
+      </div>
+    <% else %>
+      <div class="space-y-3">
+        <p class="text-sm leading-6 text-slate-600"><%= t("space.scheduling_links.index.personalized.unavailable_body") %></p>
+        <div class="flex flex-wrap gap-2">
+          <%= link_to t("space.scheduling_links.index.personalized.view_plans"),
+                      settings_billing_path,
+                      class: button_classes(:secondary) %>
+        </div>
+      </div>
+    <% end %>
+  </section>
+<% end %>

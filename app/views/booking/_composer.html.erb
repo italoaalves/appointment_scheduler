@@ -1,0 +1,218 @@
+<% booking_timezone = local_assigns[:booking_timezone].presence || booking_timezone_name(space) %>
+<% selected_date = booking_date_input_value(
+     space: space,
+     fallback_date: today_in_space,
+     selected_date: params[:date].presence,
+     scheduled_at: params[:scheduled_at].presence
+   ) %>
+
+<section class="booking-step-card booking-step-card-current"
+         data-booking-target="flowStep"
+         data-step-name="schedule">
+  <div class="booking-step-card-head">
+    <div class="space-y-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="booking-step-kicker"><%= t("booking.schedule_step.badge") %></span>
+        <span class="booking-step-state booking-step-state-current"
+              data-booking-target="stepState"
+              data-step-name="schedule"><%= t("booking.step_states.current") %></span>
+      </div>
+
+      <div class="space-y-1">
+        <h2 class="booking-step-heading"><%= t("booking.schedule_step.title") %></h2>
+        <p class="booking-step-helper"><%= t("booking.schedule_step.helper") %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="booking-step-panel booking-step-panel-open"
+       data-booking-target="stepPanel"
+       data-step-name="schedule">
+    <div class="booking-schedule-grid">
+      <div class="booking-step-subsection">
+        <div class="space-y-1.5">
+          <p class="booking-subsection-label"><%= t("booking.choose_date") %></p>
+          <p class="booking-step-helper"><%= t("booking.choose_date_hint", timezone: booking_timezone) %></p>
+        </div>
+
+        <div class="booking-date-picker" data-role="booking-date-picker">
+          <div class="booking-input-shell">
+            <label for="booking_date" class="sr-only"><%= t("booking.choose_date") %></label>
+            <input type="date"
+                   name="date"
+                   id="booking_date"
+                   min="<%= today_in_space.iso8601 %>"
+                   max="<%= (today_in_space + 60.days).iso8601 %>"
+                   value="<%= selected_date %>"
+                   class="<%= form_input_classes %>"
+                   data-booking-target="dateInput" />
+          </div>
+        </div>
+      </div>
+
+      <div class="booking-step-subsection">
+        <div class="space-y-1.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <p class="booking-subsection-label"><%= t("booking.choose_time") %></p>
+            <span class="booking-live-pill"><%= t("booking.schedule_step.live_badge") %></span>
+          </div>
+          <p class="booking-step-helper"><%= t("booking.choose_time_hint") %></p>
+        </div>
+
+        <%= render "booking/slot_picker" %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<input type="hidden"
+       name="scheduled_at"
+       value="<%= params[:scheduled_at] %>"
+       data-booking-target="scheduledAt"
+       required />
+
+<section class="booking-step-card booking-step-card-locked"
+         data-booking-target="flowStep"
+         data-step-name="details">
+  <div class="booking-step-card-head">
+    <div class="space-y-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="booking-step-kicker"><%= t("booking.details_step.badge") %></span>
+        <span class="booking-step-state booking-step-state-locked"
+              data-booking-target="stepState"
+              data-step-name="details"><%= t("booking.step_states.up_next") %></span>
+      </div>
+
+      <div class="space-y-1">
+        <h2 class="booking-step-heading"><%= t("booking.details_step.title") %></h2>
+        <p class="booking-step-helper" data-role="booking-contact-hint"><%= t("booking.details_hint") %></p>
+      </div>
+    </div>
+  </div>
+
+  <p class="booking-step-preview booking-step-preview-visible"
+     data-booking-target="stepPreview"
+     data-step-name="details"><%= t("booking.details_step.locked") %></p>
+
+  <div class="booking-step-panel booking-step-panel-hidden"
+       data-booking-target="stepPanel"
+       data-step-name="details">
+    <div class="booking-details-grid booking-details-fields">
+      <div class="sm:col-span-2">
+        <label for="customer_name" class="<%= form_label_classes %>"><%= t("booking.name_label") %></label>
+        <input type="text"
+               name="customer_name"
+               id="customer_name"
+               required
+               value="<%= params[:customer_name] %>"
+               class="<%= form_input_classes %>"
+               placeholder="<%= t("booking.name_placeholder") %>"
+               data-booking-target="nameInput" />
+      </div>
+
+      <div>
+        <label for="customer_phone" class="<%= form_label_classes %>"><%= t("booking.phone_label") %></label>
+        <input type="tel"
+               name="customer_phone"
+               id="customer_phone"
+               value="<%= params[:customer_phone] %>"
+               class="<%= form_input_classes %>"
+               placeholder="<%= t("booking.phone_placeholder") %>"
+               data-booking-target="phoneInput" />
+      </div>
+
+      <div>
+        <label for="customer_email" class="<%= form_label_classes %>"><%= t("booking.email_label") %></label>
+        <input type="email"
+               name="customer_email"
+               id="customer_email"
+               value="<%= params[:customer_email] %>"
+               class="<%= form_input_classes %>"
+               placeholder="<%= t("booking.email_placeholder") %>"
+               data-booking-target="emailInput" />
+      </div>
+    </div>
+
+    <div class="booking-optional-details-panel" data-role="booking-optional-details-panel">
+      <div class="space-y-1">
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"><%= t("booking.optional_details_title") %></p>
+        <p class="text-sm leading-6 text-slate-600"><%= t("booking.optional_details_hint") %></p>
+      </div>
+
+      <div class="mt-4">
+        <label for="customer_address" class="<%= form_label_classes %>"><%= t("booking.address_label") %></label>
+        <input type="text"
+               name="customer_address"
+               id="customer_address"
+               value="<%= params[:customer_address] %>"
+               class="<%= form_input_classes %>"
+               placeholder="<%= t("booking.address_placeholder") %>" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="booking-step-card booking-step-card-locked"
+         data-booking-target="flowStep"
+         data-step-name="review">
+  <div class="booking-step-card-head">
+    <div class="space-y-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="booking-step-kicker"><%= t("booking.review_step.badge") %></span>
+        <span class="booking-step-state booking-step-state-locked"
+              data-booking-target="stepState"
+              data-step-name="review"><%= t("booking.step_states.up_next") %></span>
+      </div>
+
+      <div class="space-y-1">
+        <h2 class="booking-step-heading"><%= t("booking.review_step.title") %></h2>
+        <p class="booking-step-helper"><%= t("booking.review_and_submit_hint") %></p>
+      </div>
+    </div>
+  </div>
+
+  <p class="booking-step-preview booking-step-preview-visible"
+     data-booking-target="stepPreview"
+     data-step-name="review"><%= t("booking.review_step.locked") %></p>
+
+  <div class="booking-step-panel booking-step-panel-hidden"
+       data-booking-target="stepPanel"
+       data-step-name="review">
+    <%= render "booking/summary_card",
+               space: space,
+               interactive: true,
+               embedded: true %>
+
+    <div class="booking-consent-panel booking-consent-panel-disabled"
+         data-role="booking-consent-panel"
+         data-booking-target="whatsappPanel">
+      <input type="hidden" name="whatsapp_opt_in" value="0" />
+
+      <label for="whatsapp_opt_in" class="flex items-start gap-3 text-sm text-slate-700">
+        <input type="checkbox"
+               name="whatsapp_opt_in"
+               id="whatsapp_opt_in"
+               value="1"
+               class="mt-1 rounded border-slate-300 text-electric focus:ring-electric"
+               data-booking-target="whatsappCheckbox"
+               disabled />
+        <span>
+          <span class="font-medium text-slate-900"><%= t("booking.whatsapp_opt_in_label") %></span>
+          <span class="mt-1 block text-xs leading-5 text-slate-500"><%= t("booking.whatsapp_opt_in_hint") %></span>
+        </span>
+      </label>
+    </div>
+
+    <div class="booking-action-bar" data-role="booking-action-bar">
+      <p class="booking-submit-note"><%= t("booking.submit_hint") %></p>
+
+      <button type="submit"
+              disabled
+              data-booking-target="submitBtn"
+              data-turbo-submits-with="<%= t("booking.submit_loading") %>"
+              class="<%= button_classes(:primary, "w-full justify-center sm:w-auto") %>">
+        <%= t("booking.submit") %>
+      </button>
+    </div>
+  </div>
+</section>

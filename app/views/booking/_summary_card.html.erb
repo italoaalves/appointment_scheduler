@@ -1,0 +1,117 @@
+<% appointment = local_assigns[:appointment] %>
+<% interactive = local_assigns.fetch(:interactive, false) %>
+<% duration_minutes = appointment&.effective_duration_minutes || space.slot_duration_minutes %>
+<% summary_date = booking_date_label(appointment&.scheduled_at, space: space) %>
+<% summary_time = booking_time_range_label(appointment&.scheduled_at, duration_minutes: duration_minutes, space: space) %>
+<% summary_status = local_assigns[:status_label] %>
+<% summary_timezone = booking_timezone_name(space) %>
+<% embedded = local_assigns.fetch(:embedded, false) %>
+
+<% summary_content = capture do %>
+  <section data-role="booking-summary-card" class="<%= embedded ? "booking-summary-card booking-summary-card-embedded" : "space-y-5" %>">
+    <div class="space-y-1">
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"><%= t("booking.summary.eyebrow") %></p>
+      <h2 class="text-lg font-semibold text-deep"><%= local_assigns[:title].presence || t("booking.summary.title") %></h2>
+      <p class="text-sm leading-6 text-slate-600"><%= local_assigns[:subtitle].presence || t("booking.summary.subtitle") %></p>
+    </div>
+
+    <div class="rounded-[1.25rem] border border-slate-200/80 bg-slate-50/80 p-4">
+      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"><%= t("booking.summary.business") %></p>
+      <p class="mt-1 text-base font-semibold text-deep"><%= space.name %></p>
+      <% if booking_business_type_label(space).present? %>
+        <p class="mt-1 text-sm leading-6 text-slate-600"><%= booking_business_type_label(space) %></p>
+      <% end %>
+    </div>
+
+    <% if interactive %>
+      <div class="booking-summary-stage">
+        <div data-booking-target="summaryPlaceholder"
+             class="booking-summary-placeholder booking-summary-placeholder-visible">
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"><%= t("booking.summary.placeholder_title") %></p>
+          <p class="mt-2 text-sm leading-6 text-slate-600"><%= t("booking.summary.placeholder") %></p>
+        </div>
+
+        <div data-booking-target="summaryContent"
+             class="booking-summary-content booking-summary-content-hidden">
+          <div class="booking-summary-row">
+            <p class="text-sm text-slate-500"><%= t("booking.summary.date") %></p>
+            <p class="text-sm font-medium text-deep text-right" data-booking-target="summaryDate"><%= t("booking.summary.not_selected") %></p>
+          </div>
+
+          <div class="booking-summary-row">
+            <p class="text-sm text-slate-500"><%= t("booking.summary.time") %></p>
+            <p class="text-sm font-medium text-deep text-right" data-booking-target="summaryTime"><%= t("booking.summary.not_selected") %></p>
+          </div>
+
+          <div class="booking-summary-row">
+            <p class="text-sm text-slate-500"><%= t("booking.summary.duration") %></p>
+            <p class="text-sm font-medium text-deep text-right"><%= booking_duration_label(duration_minutes) %></p>
+          </div>
+
+          <div class="booking-summary-row">
+            <p class="text-sm text-slate-500"><%= t("booking.summary.timezone") %></p>
+            <p class="text-sm font-medium text-deep text-right"><%= summary_timezone %></p>
+          </div>
+
+          <% if space.address.present? %>
+            <div class="booking-summary-row">
+              <p class="text-sm text-slate-500"><%= t("booking.summary.address") %></p>
+              <p class="text-sm font-medium text-deep text-right"><%= space.address %></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <div class="space-y-3">
+        <div class="booking-summary-row">
+          <p class="text-sm text-slate-500"><%= t("booking.summary.date") %></p>
+          <p class="text-sm font-medium text-deep text-right"><%= summary_date %></p>
+        </div>
+
+        <div class="booking-summary-row">
+          <p class="text-sm text-slate-500"><%= t("booking.summary.time") %></p>
+          <p class="text-sm font-medium text-deep text-right"><%= summary_time %></p>
+        </div>
+
+        <div class="booking-summary-row">
+          <p class="text-sm text-slate-500"><%= t("booking.summary.duration") %></p>
+          <p class="text-sm font-medium text-deep text-right"><%= booking_duration_label(duration_minutes) %></p>
+        </div>
+
+        <div class="booking-summary-row">
+          <p class="text-sm text-slate-500"><%= t("booking.summary.timezone") %></p>
+          <p class="text-sm font-medium text-deep text-right"><%= summary_timezone %></p>
+        </div>
+
+        <% if space.address.present? %>
+          <div class="booking-summary-row">
+            <p class="text-sm text-slate-500"><%= t("booking.summary.address") %></p>
+            <p class="text-sm font-medium text-deep text-right"><%= space.address %></p>
+          </div>
+        <% end %>
+
+        <% if summary_status.present? %>
+          <div class="booking-summary-row">
+            <p class="text-sm text-slate-500"><%= t("booking.thank_you.status") %></p>
+            <div class="text-right">
+              <span class="status-pill status-pill-warning"><%= summary_status %></span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="booking-summary-callout">
+      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"><%= t("booking.summary.next_steps_title") %></p>
+      <p class="mt-2 text-sm leading-6 text-slate-600"><%= t("booking.summary.next_steps_body") %></p>
+    </div>
+  </section>
+<% end %>
+
+<% if embedded %>
+  <%= summary_content %>
+<% else %>
+  <%= render "application/shared/card", extra_class: "booking-summary-card" do %>
+    <%= summary_content %>
+  <% end %>
+<% end %>

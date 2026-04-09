@@ -1,111 +1,49 @@
-<div class="space-y-6">
-  <header class="text-center">
-    <h1 class="font-display text-2xl font-extrabold text-deep tracking-tight">
-      <%= @space.name %>
-    </h1>
-    <% if @space.business_type.present? %>
-      <p class="mt-1 text-sm text-slate-600"><%= @space.business_type %></p>
-    <% end %>
-    <% if @space.business_hours.present? %>
-      <p class="mt-2 text-xs text-slate-500"><%= t("booking.business_hours") %> <%= @space.business_hours %></p>
-    <% end %>
-  </header>
+<% booking_timezone = booking_timezone_name(@space) %>
+<% today_in_space = Time.current.in_time_zone(booking_timezone).to_date %>
+<% business_weekdays = @space.business_weekdays %>
 
-  <% business_weekdays = @space.business_weekdays %>
-<%= form_with url: @booking_context.form_url, method: :post, class: "space-y-4", data: { controller: "booking", booking_slots_url_value: @booking_context.slots_path, booking_business_weekdays_value: business_weekdays.to_json } do |form| %>
-    <div class="card-solid card-compact">
-      <h2 class="text-sm font-semibold text-slate-800"><%= t("booking.choose_date") %></h2>
-      <div class="mt-2">
-        <label for="booking_date" class="sr-only"><%= t("booking.choose_date") %></label>
-        <% today_in_space = Time.current.in_time_zone(timezone_for(@space)).to_date %>
-        <input type="date"
-               name="date"
-               id="booking_date"
-               min="<%= today_in_space.iso8601 %>"
-               max="<%= (today_in_space + 60.days).iso8601 %>"
-               value="<%= today_in_space.iso8601 %>"
-               class="form-input-sm"
-               data-booking-target="dateInput"
-               data-action="change->booking#loadSlots" />
-      </div>
+<div class="booking-page"
+     data-controller="booking"
+     data-booking-slots-url-value="<%= @booking_context.slots_path %>"
+     data-booking-business-weekdays-value="<%= business_weekdays.to_json %>"
+     data-booking-timezone-value="<%= booking_timezone %>"
+     data-booking-locale-value="<%= I18n.locale %>"
+     data-booking-step-labels-value="<%= {
+       current: t("booking.step_states.current"),
+       complete: t("booking.step_states.complete"),
+       locked: t("booking.step_states.up_next")
+     }.to_json %>">
+  <%= turbo_stream_from [ @space, :booking_slots ] %>
+
+  <div class="booking-flow-shell booking-flow-shell-sidebar">
+    <aside class="booking-flow-hero-rail booking-hero-sticky">
+      <%= render "booking/hero",
+                 eyebrow: t("booking.hero.eyebrow"),
+                 title: @space.name,
+                 subtitle: t("booking.hero.subtitle"),
+                 supporting_text: booking_business_type_label(@space),
+                 chips: booking_hero_chips(@space),
+                 details: @space.address.presence,
+                 mobile_collapsible: true,
+                 compact_items: [
+                   booking_availability_label(@space),
+                   booking_duration_label(@space.slot_duration_minutes)
+                 ],
+                 extra_class: "booking-hero-sidebar" %>
+    </aside>
+
+    <div class="booking-flow-stage">
+      <%= form_with url: @booking_context.form_url,
+                    method: :post,
+                    class: "booking-flow",
+                    data: { role: "booking-composer" } do |form| %>
+        <%= render "booking/composer",
+                   form: form,
+                   space: @space,
+                   today_in_space: today_in_space,
+                   booking_timezone: booking_timezone %>
+        <%= render "booking/slot_sync", space: @space %>
+      <% end %>
     </div>
-
-    <div class="card-solid card-compact"
-         data-booking-target="slotsContainer"
-         data-loading-text="<%= t("booking.loading_slots") %>"
-         data-empty-text="<%= t("booking.no_slots") %>"
-         data-choose-text="<%= t("booking.choose_time_prompt") %>"
-         data-error-text="<%= t("booking.error_loading_slots") %>"
-         data-retry-text="<%= t("booking.retry") %>">
-      <h2 class="text-sm font-semibold text-slate-800"><%= t("booking.choose_time") %></h2>
-      <p class="mt-1 text-xs text-slate-500"><%= t("booking.loading_slots") %></p>
-      <template data-booking-target="slotTemplate">
-        <button type="button" class="slot-btn"></button>
-      </template>
-      <template data-booking-target="errorTemplate">
-        <div class="col-span-full space-y-2">
-          <p class="text-sm text-red-600"></p>
-          <button type="button"
-                  class="text-sm font-medium text-slate-700 underline hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-1 rounded">
-          </button>
-        </div>
-      </template>
-      <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3" data-booking-target="slotsList">
-      </div>
-    </div>
-
-    <input type="hidden" name="scheduled_at" data-booking-target="scheduledAt" required />
-
-    <div class="card-solid card-compact">
-      <h2 class="text-sm font-semibold text-slate-800"><%= t("booking.your_details") %></h2>
-      <div class="mt-3 space-y-3">
-        <div>
-          <label for="customer_name" class="form-label"><%= t("booking.name_label") %></label>
-          <input type="text" name="customer_name" id="customer_name" required
-                 class="form-input"
-                 placeholder="<%= t("booking.name_placeholder") %>" />
-        </div>
-        <div>
-          <label for="customer_phone" class="form-label"><%= t("booking.phone_label") %></label>
-          <input type="tel" name="customer_phone" id="customer_phone"
-                 class="form-input"
-                 placeholder="<%= t("booking.phone_placeholder") %>" />
-        </div>
-        <div>
-          <label for="customer_email" class="form-label"><%= t("booking.email_label") %></label>
-          <input type="email" name="customer_email" id="customer_email"
-                 class="form-input"
-                 placeholder="<%= t("booking.email_placeholder") %>" />
-        </div>
-        <div>
-          <label for="customer_address" class="form-label"><%= t("booking.address_label") %></label>
-          <input type="text" name="customer_address" id="customer_address"
-                 class="form-input"
-                 placeholder="<%= t("booking.address_placeholder") %>" />
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-          <input type="hidden" name="whatsapp_opt_in" value="0" />
-          <label for="whatsapp_opt_in" class="flex items-start gap-3 text-sm text-slate-700">
-            <input type="checkbox"
-                   name="whatsapp_opt_in"
-                   id="whatsapp_opt_in"
-                   value="1"
-                   class="mt-1 rounded border-slate-300 text-electric focus:ring-electric" />
-            <span>
-              <span class="font-medium text-slate-900"><%= t("booking.whatsapp_opt_in_label") %></span>
-              <span class="mt-1 block text-xs text-slate-500"><%= t("booking.whatsapp_opt_in_hint") %></span>
-            </span>
-          </label>
-        </div>
-      </div>
-    </div>
-
-    <div class="flex flex-wrap gap-3">
-      <button type="submit" disabled data-booking-target="submitBtn"
-              data-turbo-submits-with="<%= t("booking.submit_loading") %>"
-              class="<%= button_classes(:primary) %>">
-        <%= t("booking.submit") %>
-      </button>
-    </div>
-  <% end %>
+  </div>
 </div>

@@ -8,7 +8,7 @@
 
 import { Turbo } from "@hotwired/turbo-rails"
 
-Turbo.setConfirmMethod((message, _element, _submitter) => {
+const confirmMethod = (message, _element, _submitter) => {
   return new Promise((resolve) => {
     const body  = document.body
     const title        = body.dataset.confirmTitle || "Tem certeza?"
@@ -86,4 +86,10 @@ Turbo.setConfirmMethod((message, _element, _submitter) => {
     overlay.querySelector("[data-role='cancel']")?.addEventListener("click",   () => close(false))
     overlay.querySelector("[data-role='confirm']")?.addEventListener("click",  () => close(true))
   })
-})
+}
+
+if (Turbo.config?.forms) {
+  Turbo.config.forms.confirm = confirmMethod
+} else {
+  Turbo.setConfirmMethod(confirmMethod)
+}

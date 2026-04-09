@@ -1,0 +1,4 @@
+<div id="<%= dom_id(space, :booking_slots_sync) %>"
+     hidden
+     data-booking-target="slotsSync"
+     data-refresh-key="<%= local_assigns[:refresh_key].presence || SecureRandom.hex(8) %>"></div>
