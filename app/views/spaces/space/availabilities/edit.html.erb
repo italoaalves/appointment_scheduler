@@ -6,45 +6,44 @@
 <% content_for(:settings_sidebar) do %>
   <%= render "shared/settings_sidebar" %>
 <% end %>
+
 <div class="space-y-6">
-  <header>
-    <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
-      <%= t("space.availability.edit.title") %>
-    </h1>
-    <p class="mt-1 text-sm text-slate-600">
-      <%= t("space.availability.edit.subtitle") %>
-    </p>
-  </header>
+  <%= render "application/shared/settings_intro",
+             eyebrow: t("settings.sidebar.business"),
+             title: t("space.availability.edit.title"),
+             subtitle: t("space.availability.edit.subtitle"),
+             statuses: [
+               settings_intro_status(t("space.settings.edit.timezone_label"), @space.timezone, tone: :accent),
+               settings_intro_status(t("space.settings.edit.slot_duration_label"), "#{@space.slot_duration_minutes} #{t('space.settings.edit.minutes')}", tone: :neutral)
+             ] %>
 
   <%= form_with model: @space, url: settings_space_availability_path, method: :patch, class: "space-y-6" do |form| %>
     <%= render "application/shared/error_messages", resource: @space %>
 
-    <div class="card p-5">
-      <h2 class="mb-4 text-sm font-semibold text-slate-800"><%= t("space.availability.edit.normal_hours_title") %></h2>
+    <%= render "application/shared/settings_panel",
+               title: t("space.availability.edit.normal_hours_title"),
+               description: t("space.availability.edit.hours_hint") do %>
       <%= render "spaces/space/availability_schedule_fields", form: form %>
-    </div>
+    <% end %>
 
-    <div class="card p-5">
-      <h2 class="mb-4 text-sm font-semibold text-slate-800"><%= t("space.availability.edit.scheduling_title") %></h2>
+    <%= render "application/shared/settings_panel",
+               title: t("space.availability.edit.scheduling_title"),
+               description: t("space.availability.edit.scheduling_hint") do %>
       <div class="space-y-4">
         <div>
-          <%= form.label :slot_duration_minutes,
-                         t("space.settings.edit.slot_duration_label"),
-                         class: "block text-sm font-medium text-slate-700" %>
+          <%= form.label :slot_duration_minutes, t("space.settings.edit.slot_duration_label"), class: form_label_classes %>
           <%= form.select :slot_duration_minutes,
                           [ [ "15 #{t('space.settings.edit.minutes')}", 15 ], [ "30 #{t('space.settings.edit.minutes')}", 30 ], [ "45 #{t('space.settings.edit.minutes')}", 45 ], [ "60 #{t('space.settings.edit.minutes')}", 60 ], [ "90 #{t('space.settings.edit.minutes')}", 90 ], [ "120 #{t('space.settings.edit.minutes')}", 120 ] ],
                           {},
-                          class: "mt-1 block w-full max-w-sm rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
-          <p class="mt-1.5 text-xs text-slate-500">
-            <%= t("space.settings.edit.slot_duration_notice") %>
-          </p>
+                          class: form_input_classes("max-w-sm") %>
+          <p class="mt-1.5 text-xs text-slate-500"><%= t("space.settings.edit.slot_duration_notice") %></p>
         </div>
+
         <% show_other = @space.timezone.present? && !ApplicationHelper::COMMON_TIMEZONES.include?(@space.timezone) %>
         <% tz_select_initial = show_other ? ApplicationHelper::OTHER_TIMEZONE_VALUE : (@space.timezone.presence || "") %>
         <% tz_other_initial = show_other ? @space.timezone : "" %>
         <div data-controller="conditional-field" data-conditional-field-show-when-value="<%= ApplicationHelper::OTHER_TIMEZONE_VALUE %>">
-          <label for="space_timezone"
-                 class="block text-sm font-medium text-slate-700"><%= t("space.settings.edit.timezone_label") %></label>
+          <label for="space_timezone" class="<%= form_label_classes %>"><%= t("space.settings.edit.timezone_label") %></label>
           <input type="hidden"
                  name="space[timezone]"
                  id="space_timezone_hidden"
@@ -54,27 +53,26 @@
             <select id="space_timezone"
                     data-conditional-field-target="source"
                     data-action="conditional-field#toggle"
-                    class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500">
-              <% options = common_timezone_options_for_select(@space.timezone) %>
-              <% options.each do |label, value| %>
+                    class="<%= form_input_classes %>">
+              <% common_timezone_options_for_select(@space.timezone).each do |label, value| %>
                 <option value="<%= value %>" <%= "selected" if value == tz_select_initial %>><%= label %></option>
               <% end %>
             </select>
             <input type="text"
                    data-conditional-field-target="target"
                    data-action="input->conditional-field#syncFromTarget"
-                   class="<%= 'hidden' unless show_other %> block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                   class="<%= [('hidden' unless show_other), form_input_classes].compact.join(' ') %>"
                    value="<%= tz_other_initial %>"
                    placeholder="<%= t('space.settings.edit.timezone_other_placeholder') %>" />
           </div>
         </div>
       </div>
-    </div>
+    <% end %>
 
-    <div class="flex flex-wrap gap-3">
-      <%= form.submit t("space.availability.edit.submit"),
-                      class: button_classes(:primary),
-                      data: { turbo_submits_with: t("shared.submitting") } %>
-    </div>
+    <%= render "application/shared/settings_action_bar", hint: settings_availability_summary(@space) do %>
+        <%= form.submit t("space.availability.edit.submit"),
+                        class: "#{button_classes(:primary)} w-full justify-center lg:w-auto",
+                        data: { turbo_submits_with: t("shared.submitting") } %>
+    <% end %>
   <% end %>
 </div>

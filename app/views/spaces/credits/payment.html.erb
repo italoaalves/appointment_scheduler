@@ -7,51 +7,61 @@
 <% content_for(:settings_sidebar) do %>
   <%= render "shared/settings_sidebar" %>
 <% end %>
-<div class="space-y-4"
+<div class="space-y-6"
      data-controller="purchase-status"
      data-purchase-status-url-value="<%= status_settings_credits_path(purchase_id: @purchase.id) %>"
      data-purchase-status-interval-value="5000"
      data-success-url="<%= settings_credits_path(notice: t("billing.credits.purchase_completed")) %>"
      data-failure-url="<%= settings_credits_path(alert: t("billing.credits.purchase_failed")) %>">
-  <%= render "application/shared/card", padding: "p-6" do %>
-    <div class="text-center space-y-4">
+  <%= render "application/shared/settings_intro",
+             eyebrow: t("settings.sidebar.billing_section"),
+             title: t("billing.credits.waiting_payment"),
+             subtitle: t("billing.credits.purchase_initiated") %>
 
+  <%= render "application/shared/settings_panel",
+             title: t("billing.credits.waiting_payment"),
+             description: t("billing.credits.purchase_initiated") do %>
+    <div class="space-y-5 text-center">
       <% if @pix_qr_code.present? %>
-        <p class="text-sm font-medium text-slate-700"><%= t("billing.credits.pix_instructions") %></p>
-        <div class="flex justify-center">
-          <%= image_tag "data:image/png;base64,#{@pix_qr_code}",
-                        alt: "PIX QR Code",
-                        class: "w-48 h-48 border border-slate-200 rounded-lg" %>
-        </div>
-        <% if @pix_payload.present? %>
-          <div data-controller="clipboard" class="space-y-2">
-            <div class="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+        <div class="space-y-4">
+          <p class="text-sm font-medium text-slate-700"><%= t("billing.credits.pix_instructions") %></p>
+          <div class="flex justify-center">
+            <%= image_tag "data:image/png;base64,#{@pix_qr_code}",
+                          alt: "PIX QR Code",
+                          class: "h-48 w-48 rounded-card border border-slate-200" %>
+          </div>
+          <% if @pix_payload.present? %>
+            <div data-controller="clipboard" class="settings-info-tile space-y-3 text-left">
               <code data-clipboard-target="source"
-                    class="flex-1 truncate text-xs text-slate-600 text-left"><%= @pix_payload %></code>
+                    class="block break-all text-xs text-slate-600"><%= @pix_payload %></code>
               <button data-action="clipboard#copy"
                       data-clipboard-success-content="<%= t("billing.credits.pix_copied") %>"
-                      class="shrink-0 text-xs font-medium text-electric hover:text-electric/80">
+                      class="<%= button_classes(:secondary, 'btn-sm') %>">
                 <%= t("billing.credits.copy_pix_code") %>
               </button>
             </div>
-          </div>
-        <% end %>
-
+          <% end %>
+        </div>
       <% elsif @purchase.bank_slip_url.present? %>
-        <p class="text-sm font-medium text-slate-700"><%= t("billing.credits.boleto_instructions") %></p>
-        <%= link_to t("billing.credits.show.view_boleto"),
-                    @purchase.bank_slip_url,
-                    target: "_blank", rel: "noopener noreferrer",
-                    class: button_classes(:primary) %>
-        <p class="text-xs text-slate-500"><%= t("billing.credits.boleto_clearing_warning") %></p>
-
+        <div class="space-y-4">
+          <p class="text-sm font-medium text-slate-700"><%= t("billing.credits.boleto_instructions") %></p>
+          <div class="flex justify-center">
+            <%= link_to t("billing.credits.show.view_boleto"),
+                        @purchase.bank_slip_url,
+                        target: "_blank", rel: "noopener noreferrer",
+                        class: button_classes(:primary) %>
+          </div>
+          <p class="text-xs text-slate-500"><%= t("billing.credits.boleto_clearing_warning") %></p>
+        </div>
       <% else %>
         <p class="text-sm font-medium text-slate-700"><%= t("billing.credits.cc_processing") %></p>
       <% end %>
 
       <p class="text-xs text-slate-500"><%= t("billing.credits.waiting_payment") %></p>
-      <%= link_to t("billing.credits.back_to_credits"), settings_credits_path,
-                  class: "text-sm text-electric hover:underline" %>
+      <div class="flex justify-center">
+        <%= link_to t("billing.credits.back_to_credits"), settings_credits_path,
+                    class: button_classes(:secondary, "btn-sm") %>
+      </div>
     </div>
   <% end %>
 </div>

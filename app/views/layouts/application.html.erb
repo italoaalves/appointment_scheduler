@@ -161,11 +161,11 @@
         <%= yield %>
       </div>
     <% elsif content_for?(:settings_sidebar) %>
-      <main class="mx-auto px-4 py-8 pb-28 sm:pb-8 sm:pr-28 max-w-5xl">
+      <main class="mx-auto w-full max-w-7xl px-4 py-6 pb-[calc(8.5rem+env(safe-area-inset-bottom))] sm:py-8 sm:pb-8 sm:pr-28">
         <%= yield(:breadcrumbs) if content_for?(:breadcrumbs) %>
-        <div class="flex flex-col md:flex-row gap-6 md:gap-8">
+        <div data-role="settings-shell" class="settings-shell">
           <%= yield(:settings_sidebar) %>
-          <div class="flex-1 min-w-0">
+          <div class="settings-shell-content">
             <%= yield %>
           </div>
         </div>

@@ -28,6 +28,8 @@ module Spaces
 
       assert_response :success
       assert_includes response.body, whatsapp_phone_numbers(:space_number).display_number
+      assert_includes response.body, I18n.t("spaces.whatsapp_settings.connected_description")
+      assert_not_includes response.body, I18n.t("spaces.whatsapp_settings.no_number")
     end
 
     test "show displays connect button when no number is connected" do

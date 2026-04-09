@@ -1,31 +1,35 @@
-<%# Desktop: vertical sidebar; Mobile: horizontal scrollable tabs %>
-<%# Desktop sidebar %>
-<nav aria-label="<%= t("settings.sidebar.label") %>" class="settings-sidebar-desktop w-48 shrink-0">
-  <ul class="space-y-1">
-    <li class="px-3 py-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
-      <%= t("settings.sidebar.business") %>
-    </li>
-    <%= settings_sidebar_link t("settings.sidebar.space"), edit_settings_space_path, :space %>
-    <%= settings_sidebar_link t("settings.sidebar.availability"), edit_settings_space_availability_path, :availability %>
-    <%= settings_sidebar_link t("settings.sidebar.policies"), edit_settings_space_policies_path, :policies %>
+<nav aria-label="<%= t("settings.sidebar.label") %>" data-role="settings-sidebar" class="settings-sidebar-rail sticky-filter space-y-4 min-w-0">
+  <div class="settings-sidebar-mobile md:hidden">
+    <div class="glass-frosty overflow-x-auto rounded-[1.6rem] border border-white/60 px-2 py-2 shadow-sm" style="-webkit-overflow-scrolling: touch">
+      <ul class="flex min-w-max gap-2">
+        <% settings_navigation_groups.each do |group| %>
+          <% group[:items].each do |label, path, section| %>
+            <%= settings_sidebar_link label, path, section, variant: :mobile %>
+          <% end %>
+        <% end %>
+      </ul>
+    </div>
+  </div>
 
-    <li class="my-2 border-t border-slate-200"></li>
+  <div class="settings-sidebar-desktop hidden md:block md:w-full">
+    <div data-role="settings-sidebar-card" class="glass-frosty rounded-[1.75rem] border border-white/60 p-3 shadow-sm md:max-h-[calc(100vh-2rem)] md:overflow-y-auto">
+      <div class="mb-3 px-3 pt-2">
+        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500"><%= t("settings.sidebar.eyebrow") %></p>
+        <p class="mt-2 text-sm leading-6 text-slate-600"><%= t("settings.sidebar.subtitle") %></p>
+      </div>
 
-    <li class="px-3 py-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
-      <%= t("settings.sidebar.billing_section") %>
-    </li>
-    <%= settings_sidebar_link t("settings.sidebar.billing"), settings_billing_path, :billing %>
-    <%= settings_sidebar_link t("settings.sidebar.credits"), settings_credits_path, :credits %>
-  </ul>
-</nav>
-
-<%# Mobile: horizontal tabs %>
-<nav aria-label="<%= t("settings.sidebar.label") %>" class="settings-sidebar-mobile mb-4 overflow-x-auto" style="-webkit-overflow-scrolling: touch">
-  <ul class="flex min-w-max gap-1 border-b border-slate-200">
-    <%= settings_sidebar_link t("settings.sidebar.space"), edit_settings_space_path, :space, variant: :mobile %>
-    <%= settings_sidebar_link t("settings.sidebar.availability"), edit_settings_space_availability_path, :availability, variant: :mobile %>
-    <%= settings_sidebar_link t("settings.sidebar.policies"), edit_settings_space_policies_path, :policies, variant: :mobile %>
-    <%= settings_sidebar_link t("settings.sidebar.billing"), settings_billing_path, :billing, variant: :mobile %>
-    <%= settings_sidebar_link t("settings.sidebar.credits"), settings_credits_path, :credits, variant: :mobile %>
-  </ul>
+      <div class="space-y-4" data-role="settings-navigation">
+        <% settings_navigation_groups.each do |group| %>
+          <section class="space-y-2">
+            <h2 class="px-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400"><%= group[:title] %></h2>
+            <ul class="space-y-1">
+              <% group[:items].each do |label, path, section| %>
+                <%= settings_sidebar_link label, path, section %>
+              <% end %>
+            </ul>
+          </section>
+        <% end %>
+      </div>
+    </div>
+  </div>
 </nav>

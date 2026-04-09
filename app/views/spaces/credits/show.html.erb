@@ -6,97 +6,107 @@
 <% content_for(:settings_sidebar) do %>
   <%= render "shared/settings_sidebar" %>
 <% end %>
-<div class="space-y-4">
-  <%= render "application/shared/page_header",
-             title:   t("billing.credits.show.title"),
-             subtitle: t("billing.credits.show.subtitle") %>
+<div class="space-y-6">
+  <%= render "application/shared/settings_intro",
+             eyebrow: t("settings.sidebar.billing_section"),
+             title: t("billing.credits.show.title"),
+             subtitle: t("billing.credits.show.subtitle"),
+             statuses: [
+               settings_intro_status(t("billing.credits.show.balance_title"), (@credit&.balance || 0).to_s, tone: :accent),
+               (@subscription&.plan&.feature?(:whatsapp_included_quota) ? settings_intro_status(t("billing.credits.show.monthly_quota"), (@credit&.monthly_quota_remaining || 0).to_s, tone: :neutral) : nil)
+             ] %>
 
-  <%# Current balance card %>
-  <%= render "application/shared/card" do %>
-    <h2 class="text-sm font-semibold text-slate-800"><%= t("billing.credits.show.balance_title") %></h2>
-    <div class="mt-3 grid gap-4 sm:grid-cols-2">
-      <div>
-        <p class="text-xs text-slate-500"><%= t("billing.credits.show.purchased_balance") %></p>
-        <p class="mt-1 text-2xl font-bold text-slate-900"><%= @credit&.balance || 0 %></p>
+  <%= render "application/shared/settings_panel",
+             title: t("billing.credits.show.balance_title"),
+             description: t("billing.credits.show.balance_hint") do %>
+    <div class="grid gap-4 lg:grid-cols-2">
+      <div class="settings-info-tile">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("billing.credits.show.purchased_balance") %></p>
+        <p class="mt-1 text-2xl font-bold text-deep"><%= @credit&.balance || 0 %></p>
       </div>
       <% if @subscription&.plan&.feature?(:whatsapp_included_quota) %>
-        <div>
-          <p class="text-xs text-slate-500"><%= t("billing.credits.show.monthly_quota") %></p>
-          <p class="mt-1 text-2xl font-bold text-slate-900"><%= @credit&.monthly_quota_remaining || 0 %></p>
+        <div class="settings-info-tile">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("billing.credits.show.monthly_quota") %></p>
+          <p class="mt-1 text-2xl font-bold text-deep"><%= @credit&.monthly_quota_remaining || 0 %></p>
         </div>
       <% end %>
     </div>
   <% end %>
 
-  <%# Pending purchases — shown only when the user has payments awaiting settlement %>
   <% if @pending_purchases.any? %>
-    <%= render "application/shared/card" do %>
-      <h2 class="mb-3 text-sm font-semibold text-slate-800"><%= t("billing.credits.show.pending_purchases") %></h2>
-      <ul class="divide-y divide-slate-200">
+    <%= render "application/shared/settings_panel",
+               title: t("billing.credits.show.pending_purchases"),
+               description: t("billing.credits.show.pending_purchases_hint") do %>
+      <div class="space-y-3">
         <% @pending_purchases.each do |purchase| %>
-          <li class="flex items-center justify-between py-3">
-            <div>
-              <p class="text-sm font-medium text-slate-900"><%= purchase.amount %> <%= t("billing.credits.show.credits") %></p>
-              <p class="text-xs text-slate-400"><%= l(purchase.created_at, format: :long) %></p>
+          <div class="settings-info-tile flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div class="space-y-1">
+              <p class="text-sm font-semibold text-deep"><%= purchase.amount %> <%= t("billing.credits.show.credits") %></p>
+              <p class="text-xs text-slate-500"><%= l(purchase.created_at, format: :long) %></p>
             </div>
-            <% if purchase.pix_qr_code_base64.present? %>
-              <%= link_to t("billing.credits.show.view_qr_code"),
-                          payment_settings_credits_path(purchase_id: purchase.id),
-                          class: button_classes(:primary) + " text-sm px-3 py-1.5" %>
-            <% elsif purchase.bank_slip_url.present? %>
-              <%= link_to t("billing.credits.show.view_boleto"),
-                          purchase.bank_slip_url,
-                          target: "_blank",
-                          rel: "noopener noreferrer",
-                          class: button_classes(:secondary) + " text-sm px-3 py-1.5" %>
-            <% elsif purchase.invoice_url.present? %>
-              <%= link_to t("billing.credits.show.pay_now"),
-                          purchase.invoice_url,
-                          target: "_blank",
-                          rel: "noopener noreferrer",
-                          class: button_classes(:primary) + " text-sm px-3 py-1.5" %>
-            <% end %>
-          </li>
+
+            <div class="flex flex-wrap gap-2">
+              <% if purchase.pix_qr_code_base64.present? %>
+                <%= link_to t("billing.credits.show.view_qr_code"),
+                            payment_settings_credits_path(purchase_id: purchase.id),
+                            class: button_classes(:primary, "btn-sm") %>
+              <% elsif purchase.bank_slip_url.present? %>
+                <%= link_to t("billing.credits.show.view_boleto"),
+                            purchase.bank_slip_url,
+                            target: "_blank",
+                            rel: "noopener noreferrer",
+                            class: button_classes(:secondary, "btn-sm") %>
+              <% elsif purchase.invoice_url.present? %>
+                <%= link_to t("billing.credits.show.pay_now"),
+                            purchase.invoice_url,
+                            target: "_blank",
+                            rel: "noopener noreferrer",
+                            class: button_classes(:primary, "btn-sm") %>
+              <% end %>
+            </div>
+          </div>
         <% end %>
-      </ul>
+      </div>
+
       <% if @pending_purchases.any? { |p| p.bank_slip_url.present? } %>
-        <p class="mt-3 text-xs text-slate-500"><%= t("billing.credits.boleto_clearing_warning") %></p>
+        <p class="text-xs text-slate-500"><%= t("billing.credits.boleto_clearing_warning") %></p>
       <% end %>
     <% end %>
   <% end %>
 
-  <%# Purchase bundles %>
-  <%= render "application/shared/card" do %>
-    <h2 class="mb-4 text-sm font-semibold text-slate-800"><%= t("billing.credits.show.purchase_title") %></h2>
-    <div class="grid gap-4 sm:grid-cols-3">
+  <%= render "application/shared/settings_panel",
+             title: t("billing.credits.show.purchase_title"),
+             description: t("billing.credits.show.purchase_hint") do %>
+    <div class="grid gap-4 xl:grid-cols-3">
       <% @bundles.each do |bundle| %>
-        <div class="card p-4 text-center">
-          <p class="text-2xl font-bold text-slate-900"><%= bundle.amount %></p>
-          <p class="text-sm text-slate-500"><%= t("billing.credits.show.credits") %></p>
-          <p class="mt-1 text-sm font-medium text-slate-700"><%= number_to_currency(bundle.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %></p>
-          <%= link_to t("billing.credits.show.purchase"),
-                      checkout_settings_credits_path(bundle_id: bundle.id),
-                      class: "mt-3 w-full #{button_classes(:primary)}" %>
-        </div>
+        <%= render "application/shared/card",
+                   extra_class: "h-full rounded-card p-4 text-center" do %>
+          <div class="flex h-full flex-col">
+            <p class="text-3xl font-bold text-deep"><%= bundle.amount %></p>
+            <p class="mt-1 text-sm text-slate-500"><%= t("billing.credits.show.credits") %></p>
+            <p class="mt-2 text-sm font-medium text-slate-700"><%= number_to_currency(bundle.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %></p>
+            <%= link_to t("billing.credits.show.purchase"),
+                        checkout_settings_credits_path(bundle_id: bundle.id),
+                        class: "mt-4 w-full #{button_classes(:primary)}" %>
+          </div>
+        <% end %>
       <% end %>
     </div>
   <% end %>
 
-  <%# Credit usage history %>
   <% if @events.any? %>
-    <div class="card overflow-hidden p-0">
-      <div class="border-b border-slate-200 px-5 py-3">
-        <h2 class="text-sm font-semibold text-slate-800"><%= t("billing.credits.show.history_title") %></h2>
-      </div>
-      <ul class="divide-y divide-slate-200">
+    <%= render "application/shared/settings_panel",
+               title: t("billing.credits.show.history_title"),
+               description: t("billing.credits.show.history_hint") do %>
+      <div class="space-y-3">
         <% @events.each do |event| %>
-          <li class="flex items-center justify-between px-5 py-3">
-            <span class="text-sm text-slate-700"><%= billing_event_label(event.event_type) %></span>
-            <span class="text-xs text-slate-400"><%= l(event.created_at, format: :long) %></span>
-          </li>
+          <div class="settings-info-tile flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+            <span class="text-sm font-medium text-deep"><%= billing_event_label(event.event_type) %></span>
+            <span class="text-xs text-slate-500"><%= l(event.created_at, format: :long) %></span>
+          </div>
         <% end %>
-      </ul>
-    </div>
+      </div>
+    <% end %>
   <% else %>
     <%= render "application/shared/empty_state", content: t("billing.credits.show.no_history") %>
   <% end %>
