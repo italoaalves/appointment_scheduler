@@ -231,7 +231,7 @@ Devise.setup do |config|
 
   # When set to false, does not sign a user in automatically after their password is
   # reset. Defaults to true, so a user is signed in automatically after a reset.
-  # config.sign_in_after_reset_password = true
+  config.sign_in_after_reset_password = false
 
   # ==> Configuration for :encryptable
   # Allow you to use another hashing or encryption algorithm besides bcrypt (default).
@@ -275,6 +275,40 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
+  oauth_credentials = Rails.application.credentials[:oauth] || {}
+  google_client_id = oauth_credentials.dig(:google, :client_id).presence || (Rails.env.test? ? "test-google-client-id" : nil)
+  google_client_secret = oauth_credentials.dig(:google, :client_secret).presence || (Rails.env.test? ? "test-google-client-secret" : nil)
+
+  if google_client_id.present? && google_client_secret.present?
+    config.omniauth :google_oauth2,
+      google_client_id,
+      google_client_secret,
+      scope: "openid email profile",
+      access_type: "online",
+      prompt: "select_account"
+  end
+
+  apple_service_id = oauth_credentials.dig(:apple, :service_id).presence || (Rails.env.test? ? "test.apple.service" : nil)
+  apple_team_id = oauth_credentials.dig(:apple, :team_id).presence || (Rails.env.test? ? "TESTTEAMID" : nil)
+  apple_key_id = oauth_credentials.dig(:apple, :key_id).presence || (Rails.env.test? ? "TESTKEYID" : nil)
+  apple_private_key = oauth_credentials.dig(:apple, :private_key).presence
+
+  if Rails.env.test? && apple_private_key.blank?
+    apple_private_key = OpenSSL::PKey::EC.generate("prime256v1").to_pem
+  end
+
+  if apple_service_id.present? && apple_team_id.present? && apple_key_id.present? && apple_private_key.present?
+    config.omniauth :apple,
+      apple_service_id,
+      "",
+      scope: "email name",
+      team_id: apple_team_id,
+      key_id: apple_key_id,
+      pem: apple_private_key
+  end
+
+  app_base_url = Rails.application.credentials.dig(:app, :base_url).presence
+  OmniAuth.config.full_host = app_base_url if app_base_url.present?
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or

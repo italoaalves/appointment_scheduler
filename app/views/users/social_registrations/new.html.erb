@@ -1,37 +1,29 @@
 <div class="min-h-screen flex items-center justify-center">
   <div class="max-w-md w-full card-solid p-8">
-    <h2 class="font-display text-2xl font-extrabold text-deep tracking-tight text-center mb-6">
-      <%= t("devise.registrations.title") %>
+    <h2 class="font-display text-2xl font-extrabold text-deep tracking-tight text-center mb-2">
+      <%= t("social_registrations.new.title", provider: provider_name) %>
     </h2>
 
-    <%= render "devise/shared/social_buttons",
-               resource_name: resource_name,
-               resource_class: resource_class,
-               variant: :sign_up %>
+    <p class="mb-6 text-center text-sm text-slate-600">
+      <%= t("social_registrations.new.subtitle", provider: provider_name) %>
+    </p>
 
-    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-      <%= render "devise/shared/error_messages", resource: resource %>
-
-      <% if f.object.respond_to?(:name) %>
-        <div class="mb-4">
-          <%= f.label :name, t("devise.registrations.name"), class: form_label_classes %>
-          <%= f.text_field :name, class: form_input_classes %>
-        </div>
-      <% end %>
+    <%= form_with model: @user, scope: :user, url: user_social_registration_path do |f| %>
+      <%= render "devise/shared/error_messages", resource: @user %>
 
       <div class="mb-4">
-        <%= f.label :email, t("devise.registrations.email"), class: form_label_classes %>
-        <%= f.email_field :email, class: form_input_classes %>
+        <%= f.label :name, t("social_registrations.new.name"), class: form_label_classes %>
+        <%= f.text_field :name, class: form_input_classes %>
       </div>
 
       <div class="mb-4">
-        <%= f.label :phone_number, t("devise.registrations.phone_number"), class: form_label_classes %>
-        <%= f.telephone_field :phone_number, autocomplete: "tel", class: form_input_classes %>
+        <%= f.label :email, t("social_registrations.new.email"), class: form_label_classes %>
+        <%= f.email_field :email, readonly: true, class: form_input_classes("bg-slate-100 cursor-not-allowed") %>
       </div>
 
       <div class="mb-4">
-        <%= f.label :password, t("devise.registrations.password"), class: form_label_classes %>
-        <%= f.password_field :password, autocomplete: "new-password", class: form_input_classes %>
+        <%= f.label :phone_number, t("social_registrations.new.phone_number"), class: form_label_classes %>
+        <%= f.telephone_field :phone_number, autocomplete: "tel", required: true, class: form_input_classes %>
       </div>
 
       <div class="mb-4 rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
@@ -73,16 +65,15 @@
       </div>
 
       <div>
-        <%= f.submit t("devise.registrations.sign_up_button"), class: button_classes(:primary) + " w-full", data: { turbo_submits_with: t("devise.registrations.submit_loading") } %>
-        <p class="mt-2 text-center text-sm text-slate-600">
-          <%= t("devise.registrations.trial_message") %>
-        </p>
+        <%= f.submit t("social_registrations.new.submit"),
+                     class: "#{button_classes(:primary)} w-full",
+                     data: { turbo_submits_with: t("social_registrations.new.submit_loading") } %>
       </div>
     <% end %>
 
     <p class="mt-6 text-center text-sm text-slate-600">
-      <%= t("devise.registrations.already_account") %>
-      <%= link_to t("devise.registrations.sign_in_link"), new_session_path(resource_name),
+      <%= link_to t("social_registrations.new.back_to_sign_in"),
+                  new_user_session_path,
                   class: "text-slate-900 font-medium hover:underline" %>
     </p>
   </div>

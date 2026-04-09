@@ -1,12 +1,15 @@
 class User < ApplicationRecord
   encrypts :phone_number, deterministic: true
   encrypts :cpf_cnpj
+  encrypts :totp_secret
 
   has_one :space_membership, dependent: :destroy, autosave: true
   has_one :space, through: :space_membership
 
   has_one :user_preference, dependent: :destroy
   has_many :account_deletion_requests, dependent: :destroy
+  has_many :user_identities, dependent: :destroy
+  has_many :user_recovery_codes, dependent: :destroy
   has_many :user_permissions, dependent: :destroy
   accepts_nested_attributes_for :user_permissions, allow_destroy: true
 
@@ -20,7 +23,8 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, :confirmable, :timeoutable
+         :recoverable, :rememberable, :validatable, :confirmable, :timeoutable, :omniauthable,
+         omniauth_providers: %i[google_oauth2 apple]
 
   enum :system_role, { super_admin: 0 }, prefix: false
 
@@ -67,6 +71,28 @@ class User < ApplicationRecord
 
   def can?(permission, space: nil)
     PermissionService.can?(user: self, permission: permission, space: space)
+  end
+
+  def mfa_enabled?
+    mfa_enabled_at.present?
+  end
+
+  def mfa_required?
+    super_admin? || mfa_enabled?
+  end
+
+  def mfa_setup_required?
+    super_admin? && !mfa_enabled?
+  end
+
+  def passkeys_enabled?
+    false
+  end
+
+  def totp_provisioning_uri(secret: totp_secret)
+    return if secret.blank?
+
+    ROTP::TOTP.new(secret, issuer: "Anella").provisioning_uri(email)
   end
 
   def space_owner?(space = nil)

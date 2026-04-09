@@ -194,6 +194,57 @@ en:
     update:
       notice: "Preferences updated."
 
+  social_registrations:
+    new:
+      title: "Finish your %{provider} sign up"
+      subtitle: "We just need a couple of required details before we create your account."
+      name: "Full Name"
+      email: "Email"
+      phone_number: "Phone number"
+      submit: "Finish sign up"
+      submit_loading: "Creating account…"
+      back_to_sign_in: "Back to sign in"
+    create:
+      notice: "%{provider} account connected successfully."
+    linked_account_notice: "%{provider} is now connected to your account."
+    session_expired: "Your social sign-up session expired. Please try again."
+    errors:
+      email_required: "We could not complete sign in because your provider did not share an email address."
+      identity_conflict: "That social account is already linked to another user."
+      provider_already_linked: "This provider is already connected to your account."
+      invalid_auth: "We could not read the provider response. Please try again."
+
+  mfa:
+    challenge:
+      title: "Verify it’s you"
+      subtitle: "Super admin access requires a second factor before we open the platform."
+      otp_label: "Authenticator code"
+      recovery_divider: "or use a recovery code"
+      recovery_code_label: "Recovery code"
+      submit: "Verify code"
+      recovery_submit: "Use recovery code"
+      submit_loading: "Verifying…"
+      expired: "Your MFA session expired. Please sign in again."
+      errors:
+        invalid_code: "That code was not recognized. Try again."
+        replayed_code: "That authenticator code was already used. Wait for a new one and try again."
+        blank_code: "Enter an authenticator code or recovery code to continue."
+    totp_enrollment:
+      title: "Set up your authenticator"
+      subtitle: "Scan this QR code in your authenticator app, then enter the current 6-digit code."
+      secret_label: "Manual setup key"
+      code_label: "Authenticator code"
+      submit: "Enable MFA"
+      submit_loading: "Enabling…"
+      errors:
+        invalid_code: "That authenticator code was not recognized. Try again."
+    recovery_codes:
+      title: "Save your recovery codes"
+      subtitle: "These one-time codes let you back into the platform if you lose your authenticator."
+      warning: "Store these codes somewhere safe. They are shown only once."
+      submit: "I saved these codes"
+      submit_loading: "Continuing…"
+
   shared:
     submitting: "Saving…"
     deleting: "Deleting…"

@@ -76,16 +76,8 @@
 - No raw card data touches our servers (tokenization via Asaas).
 - Meta credentials stored in `Rails.application.credentials.meta` (`app_secret`, `access_token`, `verify_token`, plus `whatsapp.phone_number_id`). Never in ENV, never in code.
 
-### Billing Code Location
-- Services: `app/services/billing/`
-- Jobs: `app/jobs/billing/`
-- Background jobs load Space explicitly and do NOT set `Current.space`.
-
-### WhatsApp Code Location
-- Services: `app/services/whatsapp/` — `Whatsapp::Client` (HTTP wrapper)
-- Jobs: `app/jobs/whatsapp/` — `Whatsapp::ProcessWebhookJob`
-- Controllers: `app/controllers/whatsapp/` — `Whatsapp::WebhooksController`
-- Inbox: `app/controllers/spaces/inbox_controller.rb`
+### Code Locations
+See `.claude/business/code-locations.md` for service/job/controller paths by domain.
 
 ## Platform vs Tenant Boundary
 

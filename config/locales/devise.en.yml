@@ -31,6 +31,12 @@ en:
     omniauth_callbacks:
       failure: "Could not authenticate you from %{kind} because \"%{reason}\"."
       success: "Successfully authenticated from %{kind} account."
+    shared:
+      social:
+        google: "Continue with Google"
+        apple: "Continue with Apple"
+        divider_sign_in: "or continue with email"
+        divider_sign_up: "or create account with email"
     passwords:
       submit_loading: "Sending…"
       change_loading: "Changing…"

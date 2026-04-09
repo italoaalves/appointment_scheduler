@@ -1,0 +1,44 @@
+<div class="min-h-screen flex items-center justify-center">
+  <div class="max-w-md w-full card-solid p-8 space-y-6">
+    <div class="text-center">
+      <h2 class="font-display text-2xl font-extrabold text-deep tracking-tight">
+        <%= t("mfa.challenge.title") %>
+      </h2>
+      <p class="mt-2 text-sm text-slate-600"><%= t("mfa.challenge.subtitle") %></p>
+    </div>
+
+    <% if flash.now[:alert].present? || flash[:alert].present? %>
+      <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+        <%= flash.now[:alert].presence || flash[:alert] %>
+      </div>
+    <% end %>
+
+    <%= form_with url: user_mfa_challenge_path, class: "space-y-4" do |form| %>
+      <div>
+        <%= form.label :otp_attempt, t("mfa.challenge.otp_label"), class: form_label_classes %>
+        <%= form.text_field :otp_attempt,
+                            autocomplete: "one-time-code",
+                            inputmode: "numeric",
+                            class: form_input_classes,
+                            maxlength: 6 %>
+      </div>
+
+      <%= form.submit t("mfa.challenge.submit"), class: "#{button_classes(:primary)} w-full", data: { turbo_submits_with: t("mfa.challenge.submit_loading") } %>
+    <% end %>
+
+    <div class="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-slate-400">
+      <span class="h-px flex-1 bg-slate-200"></span>
+      <span><%= t("mfa.challenge.recovery_divider") %></span>
+      <span class="h-px flex-1 bg-slate-200"></span>
+    </div>
+
+    <%= form_with url: user_mfa_challenge_path, class: "space-y-4" do |form| %>
+      <div>
+        <%= form.label :recovery_code_attempt, t("mfa.challenge.recovery_code_label"), class: form_label_classes %>
+        <%= form.text_field :recovery_code_attempt, autocomplete: "one-time-code", class: form_input_classes %>
+      </div>
+
+      <%= form.submit t("mfa.challenge.recovery_submit"), class: "#{button_classes(:secondary)} w-full", data: { turbo_submits_with: t("mfa.challenge.submit_loading") } %>
+    <% end %>
+  </div>
+</div>

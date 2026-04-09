@@ -4,6 +4,11 @@
       <%= t("devise.sessions.title") %>
     </h2>
 
+    <%= render "devise/shared/social_buttons",
+               resource_name: resource_name,
+               resource_class: resource_class,
+               variant: :sign_in %>
+
     <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
       <div class="mb-4">
         <%= f.label :email, t("devise.sessions.email"), class: form_label_classes %>

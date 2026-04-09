@@ -3,7 +3,20 @@ Rails.application.routes.draw do
   get "up" => "health#show", as: :rails_health_check
   get "up/ready" => "health#ready", as: :health_ready
 
-  devise_for :users, controllers: { registrations: "users/registrations" }
+  devise_for :users, controllers: {
+    registrations: "users/registrations",
+    sessions: "users/sessions",
+    omniauth_callbacks: "users/omniauth_callbacks"
+  }
+  scope :users, as: :user do
+    resource :social_registration, only: [ :new, :create ], module: :users
+
+    namespace :mfa, module: "users/mfa" do
+      resource :challenge, only: [ :show, :create ]
+      resource :totp_enrollment, only: [ :new, :create ]
+      resource :recovery_codes, only: [ :show, :create ]
+    end
+  end
   get "privacy-policy", to: "legal#privacy_policy", as: :privacy_policy
   get "terms-of-service", to: "legal#terms_of_service", as: :terms_of_service
   root "landing#index"

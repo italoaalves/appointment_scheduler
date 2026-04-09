@@ -165,6 +165,57 @@ pt-BR:
     update:
       notice: "Preferências atualizadas."
 
+  social_registrations:
+    new:
+      title: "Conclua seu cadastro com %{provider}"
+      subtitle: "Só precisamos de mais alguns dados obrigatórios antes de criar sua conta."
+      name: "Nome completo"
+      email: "Email"
+      phone_number: "Número de telefone"
+      submit: "Concluir cadastro"
+      submit_loading: "Criando conta…"
+      back_to_sign_in: "Voltar para o login"
+    create:
+      notice: "Conta %{provider} conectada com sucesso."
+    linked_account_notice: "%{provider} agora está conectado à sua conta."
+    session_expired: "Sua sessão de cadastro social expirou. Tente novamente."
+    errors:
+      email_required: "Não foi possível concluir o login porque o provedor não compartilhou um endereço de e-mail."
+      identity_conflict: "Essa conta social já está vinculada a outro usuário."
+      provider_already_linked: "Esse provedor já está conectado à sua conta."
+      invalid_auth: "Não foi possível ler a resposta do provedor. Tente novamente."
+
+  mfa:
+    challenge:
+      title: "Confirme que é você"
+      subtitle: "O acesso de super admin exige um segundo fator antes de abrir a plataforma."
+      otp_label: "Código do autenticador"
+      recovery_divider: "ou use um código de recuperação"
+      recovery_code_label: "Código de recuperação"
+      submit: "Verificar código"
+      recovery_submit: "Usar código de recuperação"
+      submit_loading: "Verificando…"
+      expired: "Sua sessão de MFA expirou. Faça login novamente."
+      errors:
+        invalid_code: "Esse código não foi reconhecido. Tente novamente."
+        replayed_code: "Esse código do autenticador já foi usado. Aguarde um novo e tente novamente."
+        blank_code: "Informe um código do autenticador ou um código de recuperação para continuar."
+    totp_enrollment:
+      title: "Configure seu autenticador"
+      subtitle: "Escaneie este QR code no seu app autenticador e informe o código atual de 6 dígitos."
+      secret_label: "Chave para configuração manual"
+      code_label: "Código do autenticador"
+      submit: "Ativar MFA"
+      submit_loading: "Ativando…"
+      errors:
+        invalid_code: "Esse código do autenticador não foi reconhecido. Tente novamente."
+    recovery_codes:
+      title: "Salve seus códigos de recuperação"
+      subtitle: "Esses códigos de uso único permitem recuperar o acesso à plataforma se você perder o autenticador."
+      warning: "Guarde esses códigos em um local seguro. Eles serão exibidos apenas uma vez."
+      submit: "Já salvei esses códigos"
+      submit_loading: "Continuando…"
+
   shared:
     submitting: "Salvando…"
     deleting: "Excluindo…"

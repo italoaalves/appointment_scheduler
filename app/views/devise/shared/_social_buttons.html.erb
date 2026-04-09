@@ -1,0 +1,19 @@
+<% providers = resource_class.omniauth_providers.select { |provider| Devise.omniauth_configs.key?(provider) } %>
+<% if providers.any? %>
+  <div class="mb-6 space-y-3">
+    <% providers.each do |provider| %>
+      <% label_key = provider.to_s == "apple" ? "apple" : "google" %>
+      <%= button_to t("devise.shared.social.#{label_key}"),
+                    omniauth_authorize_path(resource_name, provider),
+                    method: :post,
+                    form: { data: { turbo: false }, class: "w-full" },
+                    class: "#{button_classes(:secondary)} w-full justify-center" %>
+    <% end %>
+  </div>
+
+  <div class="mb-6 flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-slate-400">
+    <span class="h-px flex-1 bg-slate-200"></span>
+    <span><%= t("devise.shared.social.divider_#{variant}") %></span>
+    <span class="h-px flex-1 bg-slate-200"></span>
+  </div>
+<% end %>
