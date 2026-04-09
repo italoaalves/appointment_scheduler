@@ -375,6 +375,7 @@
   }
 
   .booking-hero {
+    --booking-hero-compact-progress: 0;
     @apply overflow-hidden rounded-[1.9rem] border border-electric/20 px-6 py-6 shadow-sm shadow-sky-100/60 sm:px-7 sm:py-7 lg:px-8 lg:py-8;
   }
 
@@ -387,6 +388,10 @@
   }
 
   .booking-hero-mobile-expanded {
+    display: block;
+  }
+
+  .booking-hero-mobile-stage {
     display: block;
   }
 
@@ -413,18 +418,45 @@
       z-index: 30;
     }
 
-    .booking-page-mobile-hero-compact .booking-hero {
-      padding: 1rem 1.25rem;
-      border-radius: 1.4rem;
+    .booking-page-mobile-hero-ready .booking-hero {
+      padding-block: calc(1rem + ((1 - var(--booking-hero-compact-progress)) * 0.5rem));
+      padding-inline: calc(1.25rem + ((1 - var(--booking-hero-compact-progress)) * 0.25rem));
+      border-radius: calc(1.4rem + ((1 - var(--booking-hero-compact-progress)) * 0.5rem));
     }
 
-    .booking-page-mobile-hero-compact .booking-hero-mobile-expanded {
-      display: none;
+    .booking-page-mobile-hero-ready [data-role="booking-hero"][data-mobile-collapsible="true"] {
+      position: relative;
     }
 
-    .booking-page-mobile-hero-compact .booking-hero-mobile-compact {
+    .booking-page-mobile-hero-ready .booking-hero-mobile-stage {
+      position: relative;
+      height: var(--booking-hero-stage-height, auto);
+      min-height: var(--booking-hero-stage-height, auto);
+    }
+
+    .booking-page-mobile-hero-ready .booking-hero-mobile-expanded,
+    .booking-page-mobile-hero-ready .booking-hero-mobile-compact {
       display: block;
-      padding: 0.45rem 0 0.7rem;
+      position: absolute;
+      inset: 0 0 auto 0;
+      width: 100%;
+      backface-visibility: hidden;
+      will-change: opacity, transform;
+    }
+
+    .booking-page-mobile-hero-ready .booking-hero-mobile-expanded {
+      opacity: calc(1 - var(--booking-hero-compact-progress));
+      transform: translateY(calc(var(--booking-hero-compact-progress) * -18px)) scale(calc(1 - (var(--booking-hero-compact-progress) * 0.035)));
+      transform-origin: top center;
+      pointer-events: none;
+    }
+
+    .booking-page-mobile-hero-ready .booking-hero-mobile-compact {
+      opacity: var(--booking-hero-compact-progress);
+      transform: translateY(calc((1 - var(--booking-hero-compact-progress)) * 18px)) scale(calc(0.96 + (var(--booking-hero-compact-progress) * 0.04)));
+      transform-origin: top center;
+      padding: 0.2rem 0 0.35rem;
+      pointer-events: none;
     }
   }
 
@@ -536,7 +568,7 @@
   }
 
   .booking-schedule-grid {
-    @apply grid gap-4 lg:grid-cols-[minmax(15rem,0.78fr)_minmax(0,1.22fr)];
+    @apply grid gap-4;
   }
 
   .booking-step-subsection {
@@ -862,6 +894,45 @@
     opacity: 0;
     transform: scale(0.72);
     box-shadow: 0 0 0 5px rgba(0, 122, 255, 0.12);
+  }
+
+  .booking-slot-option-removing {
+    @apply pointer-events-none border-rose-200/80 text-slate-400 opacity-0;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(254, 242, 242, 0.9)),
+      radial-gradient(circle at top left, rgba(248, 113, 113, 0.16), transparent 40%);
+    transform: scale(0.94);
+    filter: saturate(0.72);
+    transition-delay: var(--booking-slot-removal-delay, 0ms);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.78),
+      0 12px 20px -20px rgba(248, 113, 113, 0.44);
+  }
+
+  .booking-slot-option-removing::before,
+  .booking-slot-option-removing::after {
+    opacity: 0;
+    transform: scale(0.88);
+    transition-delay: var(--booking-slot-removal-delay, 0ms);
+  }
+
+  .booking-slot-option-removing .booking-slot-option-context {
+    @apply text-rose-500/80;
+  }
+
+  .booking-slot-option-removing .booking-slot-option-label {
+    @apply text-slate-400;
+  }
+
+  .booking-slot-option-removing .booking-slot-option-indicator {
+    @apply border-rose-200/80 bg-rose-50/90 text-rose-300;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.82),
+      0 8px 18px -18px rgba(248, 113, 113, 0.38);
+  }
+
+  .booking-slot-option-removing .booking-slot-option-indicator-core {
+    @apply border-rose-200 bg-rose-100;
   }
 }
 

@@ -37,8 +37,12 @@ export default class extends Controller {
 
   connect() {
     this.requestSequence = 0
+    this.liveSlotAnimationId = 0
     this.mobileHeroInteracted = false
+    this.mobileHeroProgress = 0
+    this.mobileHeroAnimation = null
     this.lastSlotsRefreshKey = this.hasSlotsSyncTarget ? this.slotsSyncTarget.dataset.refreshKey : null
+    this.cacheMobileHeroElements()
 
     this.bindInputListeners()
     this.bindViewportListeners()
@@ -46,6 +50,7 @@ export default class extends Controller {
     this.syncWhatsappConsent()
     this.syncFormState({ initial: true })
     this.updateSummary()
+    this.syncMobileHeroState({ immediate: true })
     this.scheduleMobileHeroSync()
     this.loadSlots({ preserveSelection: this.hasSelectedSlot(), source: "initial" })
   }
@@ -54,6 +59,8 @@ export default class extends Controller {
     this.unbindInputListeners()
     this.unbindViewportListeners()
     this.cancelMobileHeroSync()
+    this.resetMobileHeroState()
+    this.cancelLiveSlotAnimation()
     if (this.flatpickrInstance) this.flatpickrInstance.destroy()
     this.abortInFlightRequest()
   }
@@ -135,6 +142,7 @@ export default class extends Controller {
     const slotsUrl = this.hasSlotsUrlValue ? this.slotsUrlValue : this.defaultSlotsUrl()
 
     this.abortInFlightRequest()
+    this.cancelLiveSlotAnimation()
     this.renderLoadingState({ background })
 
     const abortController = new AbortController()
@@ -186,10 +194,20 @@ export default class extends Controller {
   }
 
   renderSlots(slots, { selectedSlotValue = "", source = "manual" } = {}) {
+    const previousSelection = selectedSlotValue.trim()
+
+    if (this.shouldAnimateLiveSlotRemoval(slots, { source })) {
+      this.animateLiveSlotRemoval(slots, { previousSelection, source })
+      return
+    }
+
+    this.commitSlotsRender(slots, { previousSelection, source })
+  }
+
+  commitSlotsRender(slots, { previousSelection = "", source = "manual" } = {}) {
     this.slotsListTarget.innerHTML = ""
     this.slotsListTarget.setAttribute("aria-busy", "false")
 
-    const previousSelection = selectedSlotValue.trim()
     let restoredSelection = null
 
     if (slots.length === 0) {
@@ -210,17 +228,7 @@ export default class extends Controller {
     this.slotsStatusTarget.textContent = this.slotsContainerTarget.dataset.chooseText || "Choose a time:"
 
     slots.forEach((slot) => {
-      const button = this.slotTemplateTarget.content.cloneNode(true).querySelector("button")
-      const label = this.formatTime(slot.value, slot.label)
-      const context = this.slotContextLabel(slot.value)
-
-      button.dataset.slotValue = slot.value
-      button.dataset.slotLabel = label
-      button.setAttribute("aria-pressed", "false")
-      button.querySelector("[data-slot-context]").textContent = context
-      button.querySelector("[data-slot-label]").textContent = label
-      button.addEventListener("click", () => this.selectSlot(button))
-
+      const button = this.buildSlotButton(slot)
       if (slot.value === previousSelection) restoredSelection = button
       this.slotsListTarget.appendChild(button)
     })
@@ -234,6 +242,93 @@ export default class extends Controller {
       this.clearSelectedSlot()
       this.slotsStatusTarget.textContent = this.selectedUnavailableText()
     }
+  }
+
+  buildSlotButton(slot) {
+    const button = this.slotTemplateTarget.content.cloneNode(true).querySelector("button")
+    const label = this.formatTime(slot.value, slot.label)
+    const context = this.slotContextLabel(slot.value)
+
+    button.dataset.slotValue = slot.value
+    button.dataset.slotLabel = label
+    button.setAttribute("aria-pressed", "false")
+    button.querySelector("[data-slot-context]").textContent = context
+    button.querySelector("[data-slot-label]").textContent = label
+    button.addEventListener("click", () => this.selectSlot(button))
+
+    return button
+  }
+
+  shouldAnimateLiveSlotRemoval(slots, { source = "manual" } = {}) {
+    if (source !== "live" || this.prefersReducedMotion()) return false
+
+    const currentButtons = this.currentSlotButtons()
+    if (currentButtons.length === 0) return false
+
+    const nextSlotValues = new Set(slots.map((slot) => slot.value))
+    return currentButtons.some((button) => !nextSlotValues.has(button.dataset.slotValue))
+  }
+
+  animateLiveSlotRemoval(slots, { previousSelection = "", source = "live" } = {}) {
+    const currentButtons = this.currentSlotButtons()
+    const nextSlotValues = new Set(slots.map((slot) => slot.value))
+    const removedButtons = currentButtons.filter((button) => !nextSlotValues.has(button.dataset.slotValue))
+
+    if (removedButtons.length === 0) {
+      this.commitSlotsRender(slots, { previousSelection, source })
+      return
+    }
+
+    const animationId = ++this.liveSlotAnimationId
+
+    currentButtons.forEach((button) => {
+      button.setAttribute("disabled", "disabled")
+      button.setAttribute("tabindex", "-1")
+    })
+
+    removedButtons.forEach((button, index) => {
+      button.style.setProperty("--booking-slot-removal-delay", `${this.liveSlotRemovalDelay(index)}ms`)
+      button.classList.add("booking-slot-option-removing")
+    })
+
+    this.liveSlotAnimationTimer = window.setTimeout(() => {
+      if (animationId !== this.liveSlotAnimationId) return
+
+      this.liveSlotAnimationTimer = null
+      this.commitSlotsRender(slots, { previousSelection, source })
+    }, this.liveSlotRemovalDuration(removedButtons.length))
+  }
+
+  cancelLiveSlotAnimation() {
+    this.liveSlotAnimationId += 1
+
+    if (this.liveSlotAnimationTimer) {
+      window.clearTimeout(this.liveSlotAnimationTimer)
+      this.liveSlotAnimationTimer = null
+    }
+
+    this.currentSlotButtons().forEach((button) => {
+      button.classList.remove("booking-slot-option-removing")
+      button.style.removeProperty("--booking-slot-removal-delay")
+      button.removeAttribute("disabled")
+      button.removeAttribute("tabindex")
+    })
+  }
+
+  liveSlotRemovalDelay(index) {
+    return Math.min(index * 45, 135)
+  }
+
+  liveSlotRemovalDuration(buttonCount) {
+    return 220 + this.liveSlotRemovalDelay(Math.max(buttonCount - 1, 0)) + 100
+  }
+
+  currentSlotButtons() {
+    return Array.from(this.slotsListTarget.querySelectorAll(".booking-slot-option"))
+  }
+
+  prefersReducedMotion() {
+    return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches || false
   }
 
   showError({ background = false } = {}) {
@@ -558,6 +653,14 @@ export default class extends Controller {
     return this.hasTimezoneValue ? this.timezoneValue : Intl.DateTimeFormat().resolvedOptions().timeZone
   }
 
+  cacheMobileHeroElements() {
+    this.mobileHeroCard = this.element.querySelector(".booking-flow-hero-rail .booking-hero")
+    this.mobileHeroContent = this.mobileHeroCard?.querySelector('[data-role="booking-hero"][data-mobile-collapsible="true"]')
+    this.mobileHeroStage = this.mobileHeroContent?.querySelector(".booking-hero-mobile-stage")
+    this.mobileHeroExpanded = this.mobileHeroContent?.querySelector(".booking-hero-mobile-expanded")
+    this.mobileHeroCompact = this.mobileHeroContent?.querySelector(".booking-hero-mobile-compact")
+  }
+
   bindViewportListeners() {
     this.scrollListener = () => this.scheduleMobileHeroSync()
     this.resizeListener = () => this.scheduleMobileHeroSync()
@@ -584,7 +687,8 @@ export default class extends Controller {
   }
 
   scheduleMobileHeroSync() {
-    this.cancelMobileHeroSync()
+    if (this.mobileHeroSyncFrame) return
+
     this.mobileHeroSyncFrame = window.requestAnimationFrame(() => {
       this.mobileHeroSyncFrame = null
       this.syncMobileHeroState()
@@ -598,15 +702,133 @@ export default class extends Controller {
     this.mobileHeroSyncFrame = null
   }
 
-  syncMobileHeroState() {
-    const shouldCompact = this.shouldCompactMobileHero()
-    this.element.classList.toggle("booking-page-mobile-hero-compact", shouldCompact)
+  syncMobileHeroState({ immediate = false } = {}) {
+    if (!this.mobileHeroContent || !this.mobileHeroStage) return
+
+    const targetProgress = this.targetMobileHeroProgress()
+    const nextProgress = immediate ? targetProgress : this.nextMobileHeroProgress(targetProgress)
+
+    this.mobileHeroProgress = nextProgress
+    this.renderMobileHeroState(nextProgress)
+
+    if (!immediate && Math.abs(targetProgress - nextProgress) > 0.01) {
+      this.scheduleMobileHeroSync()
+    }
   }
 
-  shouldCompactMobileHero() {
-    if (!window.matchMedia("(max-width: 1023px)").matches) return false
+  targetMobileHeroProgress() {
+    if (!this.mobileHeroViewportActive()) return 0
 
-    return this.currentScrollTop() > 16 || this.mobileHeroInteracted || this.detailsStarted()
+    if (this.mobileHeroInteracted || this.detailsStarted()) return 1
+
+    const compactLeadIn = 10
+    const compactDistance = 132
+    const scrollProgress = this.clamp((this.currentScrollTop() - compactLeadIn) / compactDistance, 0, 1)
+
+    return this.easeOutQuint(scrollProgress)
+  }
+
+  nextMobileHeroProgress(targetProgress) {
+    const frameTimestamp = window.performance?.now() || Date.now()
+
+    if (this.prefersReducedMotion()) {
+      this.mobileHeroAnimation = null
+      return targetProgress
+    }
+
+    const currentProgress = Number.isFinite(this.mobileHeroProgress) ? this.mobileHeroProgress : targetProgress
+    const distance = Math.abs(targetProgress - currentProgress)
+    if (distance < 0.003) {
+      this.mobileHeroAnimation = null
+      return targetProgress
+    }
+
+    if (this.shouldRestartMobileHeroAnimation(targetProgress)) {
+      this.mobileHeroAnimation = this.buildMobileHeroAnimation(currentProgress, targetProgress, frameTimestamp)
+    }
+
+    const animation = this.mobileHeroAnimation
+    if (!animation) return targetProgress
+
+    const elapsedMs = frameTimestamp - animation.startedAt
+    const timelineProgress = this.clamp(elapsedMs / animation.duration, 0, 1)
+    const easedProgress = this.easeOutQuint(timelineProgress)
+    const nextProgress = this.interpolate(animation.from, animation.to, easedProgress)
+
+    if (timelineProgress >= 1 || Math.abs(animation.to - nextProgress) < 0.003) {
+      this.mobileHeroAnimation = null
+      return targetProgress
+    }
+
+    return this.clamp(nextProgress, 0, 1)
+  }
+
+  shouldRestartMobileHeroAnimation(targetProgress) {
+    if (!this.mobileHeroAnimation) return true
+
+    return Math.abs(targetProgress - this.mobileHeroAnimation.to) > 0.01
+  }
+
+  buildMobileHeroAnimation(fromProgress, toProgress, startedAt) {
+    const travelDistance = Math.abs(toProgress - fromProgress)
+    const duration = Math.max(1000 * travelDistance, 220)
+
+    return {
+      from: fromProgress,
+      to: toProgress,
+      startedAt,
+      duration
+    }
+  }
+
+  renderMobileHeroState(progress) {
+    if (!this.mobileHeroCard || !this.mobileHeroStage) return
+
+    if (!this.mobileHeroViewportActive()) {
+      this.resetMobileHeroState()
+      return
+    }
+
+    this.element.classList.add("booking-page-mobile-hero-ready")
+    this.element.classList.toggle("booking-page-mobile-hero-compact", progress > 0.82)
+    this.mobileHeroCard.style.setProperty("--booking-hero-compact-progress", progress.toFixed(3))
+    this.updateMobileHeroStageHeight(progress)
+  }
+
+  updateMobileHeroStageHeight(progress) {
+    if (!this.mobileHeroExpanded || !this.mobileHeroCompact) return
+
+    const expandedHeight = this.mobileHeroExpanded.offsetHeight
+    const compactHeight = this.mobileHeroCompact.offsetHeight
+    if (expandedHeight === 0 || compactHeight === 0) return
+
+    const stageHeight = this.interpolate(expandedHeight, compactHeight, progress)
+    this.mobileHeroStage.style.setProperty("--booking-hero-stage-height", `${stageHeight.toFixed(2)}px`)
+  }
+
+  resetMobileHeroState() {
+    this.element.classList.remove("booking-page-mobile-hero-ready")
+    this.element.classList.remove("booking-page-mobile-hero-compact")
+    this.mobileHeroCard?.style.removeProperty("--booking-hero-compact-progress")
+    this.mobileHeroStage?.style.removeProperty("--booking-hero-stage-height")
+    this.mobileHeroProgress = 0
+    this.mobileHeroAnimation = null
+  }
+
+  mobileHeroViewportActive() {
+    return window.matchMedia("(max-width: 1023px)").matches
+  }
+
+  interpolate(start, end, progress) {
+    return start + (end - start) * progress
+  }
+
+  clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max)
+  }
+
+  easeOutQuint(value) {
+    return 1 - ((1 - value) ** 5)
   }
 
   currentScrollTop() {

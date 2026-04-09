@@ -14,54 +14,58 @@
            variant: :glass,
            glass: :frosty,
            extra_class: [ "booking-hero", local_assigns[:extra_class] ].compact.join(" ") do %>
-  <section data-role="booking-hero" class="<%= compact ? "space-y-3.5" : "space-y-4" %>">
+  <section data-role="booking-hero"
+           data-mobile-collapsible="<%= mobile_collapsible %>"
+           class="<%= compact ? "space-y-3.5" : "space-y-4" %>">
     <% if mobile_collapsible %>
-      <div class="booking-hero-mobile-expanded">
-        <div class="<%= compact ? "space-y-1.5" : "space-y-2" %>">
-          <% if local_assigns[:eyebrow].present? %>
-            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"><%= eyebrow %></p>
-          <% end %>
-
+      <div class="booking-hero-mobile-stage">
+        <div class="booking-hero-mobile-expanded">
           <div class="<%= compact ? "space-y-1.5" : "space-y-2" %>">
-            <h1 class="<%= compact ? "font-display text-2xl font-extrabold tracking-tight text-deep sm:text-[2rem]" : "font-display text-3xl font-extrabold tracking-tight text-deep sm:text-4xl" %>"><%= title %></h1>
-
-            <% if local_assigns[:supporting_text].present? %>
-              <p class="text-sm font-medium text-slate-700"><%= supporting_text %></p>
+            <% if local_assigns[:eyebrow].present? %>
+              <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"><%= eyebrow %></p>
             <% end %>
 
-            <% if local_assigns[:subtitle].present? %>
-              <p class="<%= compact ? "max-w-2xl text-sm leading-6 text-slate-600" : "max-w-3xl text-sm leading-6 text-slate-600 sm:text-[0.95rem]" %>"><%= subtitle %></p>
-            <% end %>
+            <div class="<%= compact ? "space-y-1.5" : "space-y-2" %>">
+              <h1 class="<%= compact ? "font-display text-2xl font-extrabold tracking-tight text-deep sm:text-[2rem]" : "font-display text-3xl font-extrabold tracking-tight text-deep sm:text-4xl" %>"><%= title %></h1>
+
+              <% if local_assigns[:supporting_text].present? %>
+                <p class="text-sm font-medium text-slate-700"><%= supporting_text %></p>
+              <% end %>
+
+              <% if local_assigns[:subtitle].present? %>
+                <p class="<%= compact ? "max-w-2xl text-sm leading-6 text-slate-600" : "max-w-3xl text-sm leading-6 text-slate-600 sm:text-[0.95rem]" %>"><%= subtitle %></p>
+              <% end %>
+            </div>
           </div>
-        </div>
 
-        <% if chips.any? %>
-          <div class="flex flex-wrap gap-2">
-            <% chips.each do |chip| %>
-              <span class="<%= tone_classes.fetch(chip[:tone].to_sym, tone_classes[:neutral]) %>">
-                <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500"><%= chip[:label] %></span>
-                <span class="font-medium"><%= chip[:value] %></span>
-              </span>
-            <% end %>
-          </div>
-        <% end %>
-
-        <% if local_assigns[:details].present? %>
-          <p class="max-w-3xl text-sm leading-6 text-slate-600"><%= details %></p>
-        <% end %>
-      </div>
-
-      <div class="booking-hero-mobile-compact">
-        <div class="space-y-1.5">
-          <h1 class="font-display text-xl font-extrabold tracking-tight text-deep"><%= title %></h1>
-
-          <% if compact_items.any? %>
-            <div class="booking-hero-mobile-facts booking-hero-mobile-facts-compact">
-              <% compact_items.each do |item| %>
-                <span class="booking-hero-mobile-fact"><%= item %></span>
+          <% if chips.any? %>
+            <div class="flex flex-wrap gap-2">
+              <% chips.each do |chip| %>
+                <span class="<%= tone_classes.fetch(chip[:tone].to_sym, tone_classes[:neutral]) %>">
+                  <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500"><%= chip[:label] %></span>
+                  <span class="font-medium"><%= chip[:value] %></span>
+                </span>
               <% end %>
             </div>
           <% end %>
+
+          <% if local_assigns[:details].present? %>
+            <p class="max-w-3xl text-sm leading-6 text-slate-600"><%= details %></p>
+          <% end %>
+        </div>
+
+        <div class="booking-hero-mobile-compact">
+          <div class="space-y-1.5">
+            <h1 class="font-display text-xl font-extrabold tracking-tight text-deep"><%= title %></h1>
+
+            <% if compact_items.any? %>
+              <div class="booking-hero-mobile-facts booking-hero-mobile-facts-compact">
+                <% compact_items.each do |item| %>
+                  <span class="booking-hero-mobile-fact"><%= item %></span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
         </div>
       </div>
     <% else %>

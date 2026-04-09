@@ -50,6 +50,50 @@ class BookingFlowTest < ApplicationSystemTestCase
     assert_selector "button[data-booking-target='submitBtn']:not([disabled])"
   end
 
+  test "live slot refresh animates a booked slot before removing it" do
+    resize_window_to(1400, 900)
+    visit book_path(token: @link.token)
+
+    target_date = Time.current.in_time_zone(@space.effective_timezone).to_date
+    live_slots = BookingSlotsSerializer.to_json(
+      @space.available_slots(from_date: target_date, to_date: target_date, limit: 3)
+    )
+
+    assert_operator live_slots.length, :>=, 2
+
+    removed_slot = live_slots.first
+    remaining_slots = live_slots.drop(1)
+
+    assert_selector ".booking-slot-option[data-slot-value='#{removed_slot[:value]}']"
+
+    page.execute_script(<<~JS)
+      window.__bookingTestOriginalFetch = window.fetch
+      window.fetch = () => Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(#{remaining_slots.to_json})
+      })
+
+      const element = document.querySelector("[data-controller~='booking']")
+      const controller = window.Stimulus.getControllerForElementAndIdentifier(element, "booking")
+      const syncTarget = controller.slotsSyncTarget
+
+      syncTarget.dataset.refreshKey = "test-live-refresh"
+      controller.slotsSyncTargetConnected(syncTarget)
+    JS
+
+    assert_selector ".booking-slot-option-removing[data-slot-value='#{removed_slot[:value]}']"
+    assert_selector "[data-booking-target='slotsStatus']", text: I18n.t("booking.refreshing_slots")
+    assert_no_selector ".booking-slot-option[data-slot-value='#{removed_slot[:value]}']"
+    assert_selector ".booking-slot-option[data-slot-value='#{remaining_slots.first[:value]}']"
+  ensure
+    page.execute_script(<<~JS)
+      if (window.__bookingTestOriginalFetch) {
+        window.fetch = window.__bookingTestOriginalFetch
+        delete window.__bookingTestOriginalFetch
+      }
+    JS
+  end
+
   test "desktop booking layout keeps the hero in a compact sticky rail" do
     resize_window_to(1440, 900)
     visit book_path(token: @link.token)
@@ -103,10 +147,12 @@ class BookingFlowTest < ApplicationSystemTestCase
     JS
 
     assert_selector "[data-booking-target='slotsList'] .booking-slot-option", minimum: 1
-    assert_no_selector ".booking-page.booking-page-mobile-hero-compact", visible: :all
-    assert_selector ".booking-hero-mobile-expanded", visible: :all
-    assert_no_selector ".booking-hero-mobile-compact", visible: true
-    assert_text I18n.t("booking.hero.subtitle")
+    initial_state = mobile_hero_state
+
+    assert initial_state["ready"]
+    assert_operator initial_state["progress"], :<, 0.12
+    assert_operator initial_state["expandedOpacity"], :>, 0.9
+    assert_operator initial_state["compactOpacity"], :<, 0.12
     refute_includes [ "transparent", "rgba(0, 0, 0, 0)" ], hero_styles["backgroundColor"]
     refute_equal "0px", hero_styles["borderTopWidth"]
 
@@ -116,10 +162,13 @@ class BookingFlowTest < ApplicationSystemTestCase
       window.dispatchEvent(new Event("scroll"))
     JS
 
-    assert_selector ".booking-page.booking-page-mobile-hero-compact", visible: :all
-    assert_no_selector ".booking-hero-mobile-expanded", visible: true
-    assert_selector ".booking-hero-mobile-compact", visible: true
-    assert_no_text I18n.t("booking.hero.subtitle")
+    compacted_state = wait_for_mobile_hero_compaction(min_progress: 0.9)
+
+    assert_operator compacted_state["progress"], :>, 0.8
+    assert_operator compacted_state["compactOpacity"], :>, 0.75
+    assert_operator compacted_state["expandedOpacity"], :<, 0.25
+    assert_operator compacted_state["stageHeight"], :<, initial_state["stageHeight"] - 40
+    assert_operator compacted_state["heroPaddingTop"], :<, initial_state["heroPaddingTop"]
     assert_text I18n.t("booking.summary.duration_minutes", count: @space.slot_duration_minutes)
   ensure
     page.execute_script("window.scrollTo(0, 0)")
@@ -129,7 +178,10 @@ class BookingFlowTest < ApplicationSystemTestCase
     resize_window_to(390, 844)
     visit book_path(token: @link.token)
 
-    assert_no_selector ".booking-page.booking-page-mobile-hero-compact", visible: :all
+    initial_state = mobile_hero_state
+
+    assert initial_state["ready"]
+    assert_operator initial_state["progress"], :<, 0.12
 
     page.execute_script(<<~JS)
       const input = document.querySelector("#booking_date")
@@ -137,9 +189,12 @@ class BookingFlowTest < ApplicationSystemTestCase
       input.dispatchEvent(new Event("change", { bubbles: true }))
     JS
 
-    assert_selector ".booking-page.booking-page-mobile-hero-compact", visible: :all
-    assert_no_selector ".booking-hero-mobile-expanded", visible: true
-    assert_selector ".booking-hero-mobile-compact", visible: true
+    compacted_state = wait_for_mobile_hero_compaction(min_progress: 0.9)
+
+    assert_operator compacted_state["progress"], :>, 0.9
+    assert_operator compacted_state["compactOpacity"], :>, 0.8
+    assert_operator compacted_state["expandedOpacity"], :<, 0.2
+    assert_operator compacted_state["stageHeight"], :<, initial_state["stageHeight"] - 40
   end
 
   test "mobile booking flow scrolls forward when the next step unlocks" do
@@ -213,6 +268,51 @@ class BookingFlowTest < ApplicationSystemTestCase
         aligned = metrics["scrollY"] > 0 && metrics["cardTop"] < initial_top - 120
 
         return metrics if aligned
+
+        sleep 0.05
+      end
+    end
+  end
+
+  def mobile_hero_state
+    page.evaluate_script(<<~JS)
+      (() => {
+        const pageRoot = document.querySelector(".booking-page")
+        const hero = document.querySelector(".booking-hero")
+        const stage = document.querySelector(".booking-hero-mobile-stage")
+        const expanded = document.querySelector(".booking-hero-mobile-expanded")
+        const compact = document.querySelector(".booking-hero-mobile-compact")
+        if (!pageRoot || !hero || !stage || !expanded || !compact) return null
+
+        const heroStyles = window.getComputedStyle(hero)
+        const expandedStyles = window.getComputedStyle(expanded)
+        const compactStyles = window.getComputedStyle(compact)
+        const progress = Number.parseFloat(heroStyles.getPropertyValue("--booking-hero-compact-progress")) || 0
+
+        return {
+          ready: pageRoot.classList.contains("booking-page-mobile-hero-ready"),
+          progress,
+          expandedOpacity: Number.parseFloat(expandedStyles.opacity) || 0,
+          compactOpacity: Number.parseFloat(compactStyles.opacity) || 0,
+          heroPaddingTop: Number.parseFloat(heroStyles.paddingTop) || 0,
+          stageHeight: stage.getBoundingClientRect().height || 0
+        }
+      })()
+    JS
+  end
+
+  def wait_for_mobile_hero_compaction(min_progress: 0.8)
+    Timeout.timeout(Capybara.default_max_wait_time) do
+      loop do
+        state = mobile_hero_state
+        next unless state
+
+        compacted = state["ready"] &&
+                    state["progress"] >= min_progress &&
+                    state["compactOpacity"] > 0.7 &&
+                    state["expandedOpacity"] < 0.3
+
+        return state if compacted
 
         sleep 0.05
       end
