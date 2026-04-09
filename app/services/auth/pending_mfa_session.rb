@@ -6,6 +6,8 @@ module Auth
     VERIFIED_AT_KEY = "auth.mfa_verified_at"
     VERIFIED_USER_ID_KEY = "auth.mfa_verified_user_id"
     PENDING_TOTP_SECRET_KEY = "auth.pending_totp_secret"
+    PASSKEY_REGISTRATION_CHALLENGE_KEY = "auth.passkey_registration_challenge"
+    PASSKEY_AUTHENTICATION_CHALLENGE_KEY = "auth.passkey_authentication_challenge"
     RECOVERY_CODES_KEY = "auth.pending_recovery_codes"
     EXPIRY = 10.minutes
     MAX_ATTEMPTS = 5
@@ -96,8 +98,34 @@ module Auth
       session.delete(RECOVERY_CODES_KEY)
     end
 
+    def self.store_passkey_registration_challenge(session:, challenge:)
+      session[PASSKEY_REGISTRATION_CHALLENGE_KEY] = challenge
+    end
+
+    def self.passkey_registration_challenge(session:)
+      session[PASSKEY_REGISTRATION_CHALLENGE_KEY]
+    end
+
+    def self.clear_passkey_registration_challenge(session:)
+      session.delete(PASSKEY_REGISTRATION_CHALLENGE_KEY)
+    end
+
+    def self.store_passkey_authentication_challenge(session:, challenge:)
+      session[PASSKEY_AUTHENTICATION_CHALLENGE_KEY] = challenge
+    end
+
+    def self.passkey_authentication_challenge(session:)
+      session[PASSKEY_AUTHENTICATION_CHALLENGE_KEY]
+    end
+
+    def self.clear_passkey_authentication_challenge(session:)
+      session.delete(PASSKEY_AUTHENTICATION_CHALLENGE_KEY)
+    end
+
     def self.clear(session:)
       clear_pending_totp_secret(session:)
+      clear_passkey_registration_challenge(session:)
+      clear_passkey_authentication_challenge(session:)
       clear_recovery_codes(session:)
       session.delete(PENDING_KEY)
       nil

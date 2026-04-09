@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_09_113100) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_09_130100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -407,6 +407,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_113100) do
     t.index ["user_id"], name: "index_user_identities_on_user_id"
   end
 
+  create_table "user_passkeys", force: :cascade do |t|
+    t.boolean "backup_eligible"
+    t.boolean "backup_state"
+    t.datetime "created_at", null: false
+    t.string "external_id", null: false
+    t.string "label", null: false
+    t.datetime "last_used_at"
+    t.boolean "platform_authenticator", default: false, null: false
+    t.text "public_key", null: false
+    t.bigint "sign_count", default: 0, null: false
+    t.jsonb "transports", default: [], null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["external_id"], name: "index_user_passkeys_on_external_id", unique: true
+    t.index ["user_id"], name: "index_user_passkeys_on_user_id"
+  end
+
   create_table "user_permissions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "permission", null: false
@@ -462,10 +479,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_113100) do
     t.string "totp_secret"
     t.string "unconfirmed_email"
     t.datetime "updated_at", null: false
+    t.string "webauthn_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["phone_number"], name: "index_users_on_phone_number", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["webauthn_id"], name: "index_users_on_webauthn_id", unique: true
   end
 
   create_table "whatsapp_conversations", force: :cascade do |t|
@@ -549,6 +568,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_113100) do
   add_foreign_key "subscriptions", "billing_plans", column: "pending_billing_plan_id"
   add_foreign_key "subscriptions", "spaces"
   add_foreign_key "user_identities", "users"
+  add_foreign_key "user_passkeys", "users"
   add_foreign_key "user_permissions", "users"
   add_foreign_key "user_preferences", "users"
   add_foreign_key "user_recovery_codes", "users"

@@ -13,6 +13,11 @@ Rails.application.routes.draw do
 
     namespace :mfa, module: "users/mfa" do
       resource :challenge, only: [ :show, :create ]
+      resource :passkeys, only: [ :create ] do
+        post :registration_options
+        post :authentication_options
+        post :authenticate
+      end
       resource :totp_enrollment, only: [ :new, :create ]
       resource :recovery_codes, only: [ :show, :create ]
     end

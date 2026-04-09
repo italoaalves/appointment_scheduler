@@ -15,6 +15,7 @@ Rails.application.config.filter_parameters += [
   :otp,
   :otp_attempt,
   :recovery_code_attempt,
+  :public_key_credential,
   :publicKeyCredential,
   :credential,
   :attestation_object,

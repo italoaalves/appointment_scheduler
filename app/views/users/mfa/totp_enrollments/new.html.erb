@@ -13,6 +13,21 @@
       </div>
     <% end %>
 
+    <%= render "users/mfa/passkey_panel",
+               title: t("mfa.passkeys.register_title"),
+               subtitle: t("mfa.passkeys.register_subtitle"),
+               button_text: t("mfa.passkeys.register"),
+               action_name: :register,
+               show_label: true,
+               options_url: registration_options_user_mfa_passkeys_path,
+               submit_url: user_mfa_passkeys_path %>
+
+    <div class="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-slate-400">
+      <span class="h-px flex-1 bg-slate-200"></span>
+      <span><%= t("mfa.totp_enrollment.alternative_divider") %></span>
+      <span class="h-px flex-1 bg-slate-200"></span>
+    </div>
+
     <div class="grid gap-6 md:grid-cols-[220px_minmax(0,1fr)] md:items-start">
       <div class="rounded-2xl border border-slate-200 bg-white p-4 flex items-center justify-center">
         <%= raw(@qr_code_svg) %>

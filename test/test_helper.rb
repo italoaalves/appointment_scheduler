@@ -4,6 +4,8 @@ require "rails/test_help"
 require "minitest/mock"
 require "omniauth"
 require "ostruct"
+require "webauthn"
+require "webauthn/fake_client"
 
 OmniAuth.config.test_mode = true
 
@@ -28,6 +30,12 @@ module OmniAuthTestHelpers
   end
 end
 
+module WebAuthnTestHelpers
+  def webauthn_fake_client(origin: Array(WebAuthn.configuration.allowed_origins).first)
+    WebAuthn::FakeClient.new(origin)
+  end
+end
+
 module ActiveSupport
   class TestCase
     # Default to serial execution because PostgreSQL fixture reloads are not
@@ -40,6 +48,7 @@ module ActiveSupport
 
     # Add more helper methods to be used by all tests here...
     include OmniAuthTestHelpers
+    include WebAuthnTestHelpers
   end
 end
 

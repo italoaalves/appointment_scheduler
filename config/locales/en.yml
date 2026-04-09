@@ -218,6 +218,7 @@ en:
     challenge:
       title: "Verify it’s you"
       subtitle: "Super admin access requires a second factor before we open the platform."
+      passkey_divider: "or use an authenticator code"
       otp_label: "Authenticator code"
       recovery_divider: "or use a recovery code"
       recovery_code_label: "Recovery code"
@@ -229,15 +230,34 @@ en:
         invalid_code: "That code was not recognized. Try again."
         replayed_code: "That authenticator code was already used. Wait for a new one and try again."
         blank_code: "Enter an authenticator code or recovery code to continue."
+        authentication_failed: "We could not verify that passkey. Try again."
     totp_enrollment:
       title: "Set up your authenticator"
       subtitle: "Scan this QR code in your authenticator app, then enter the current 6-digit code."
+      alternative_divider: "or set up an authenticator app"
       secret_label: "Manual setup key"
       code_label: "Authenticator code"
       submit: "Enable MFA"
       submit_loading: "Enabling…"
       errors:
         invalid_code: "That authenticator code was not recognized. Try again."
+    passkeys:
+      register_title: "Prefer a passkey?"
+      register_subtitle: "Use Face ID, Touch ID, Windows Hello, or a security key. Passkeys are the recommended MFA method."
+      authenticate_title: "Use your passkey"
+      authenticate_subtitle: "Approve the prompt on this device to continue with super admin access."
+      label: "Device label"
+      label_placeholder: "MacBook Pro"
+      register: "Add passkey"
+      register_loading: "Waiting for passkey…"
+      authenticate: "Continue with passkey"
+      authenticate_loading: "Waiting for passkey…"
+      errors:
+        generic: "We could not complete that passkey request. Try again."
+        unsupported_browser: "This browser does not support passkeys."
+        label_blank: "Name this passkey before you continue."
+        registration_failed: "We could not register that passkey. Try again."
+        passkeys_unavailable: "No passkeys are available for this account yet."
     recovery_codes:
       title: "Save your recovery codes"
       subtitle: "These one-time codes let you back into the platform if you lose your authenticator."

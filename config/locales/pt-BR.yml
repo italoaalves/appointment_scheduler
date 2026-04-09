@@ -189,6 +189,7 @@ pt-BR:
     challenge:
       title: "Confirme que é você"
       subtitle: "O acesso de super admin exige um segundo fator antes de abrir a plataforma."
+      passkey_divider: "ou use um código do autenticador"
       otp_label: "Código do autenticador"
       recovery_divider: "ou use um código de recuperação"
       recovery_code_label: "Código de recuperação"
@@ -200,15 +201,34 @@ pt-BR:
         invalid_code: "Esse código não foi reconhecido. Tente novamente."
         replayed_code: "Esse código do autenticador já foi usado. Aguarde um novo e tente novamente."
         blank_code: "Informe um código do autenticador ou um código de recuperação para continuar."
+        authentication_failed: "Não foi possível verificar essa passkey. Tente novamente."
     totp_enrollment:
       title: "Configure seu autenticador"
       subtitle: "Escaneie este QR code no seu app autenticador e informe o código atual de 6 dígitos."
+      alternative_divider: "ou configure um app autenticador"
       secret_label: "Chave para configuração manual"
       code_label: "Código do autenticador"
       submit: "Ativar MFA"
       submit_loading: "Ativando…"
       errors:
         invalid_code: "Esse código do autenticador não foi reconhecido. Tente novamente."
+    passkeys:
+      register_title: "Prefere uma passkey?"
+      register_subtitle: "Use Face ID, Touch ID, Windows Hello ou uma chave física. Passkeys são o método recomendado de MFA."
+      authenticate_title: "Use sua passkey"
+      authenticate_subtitle: "Aprove a solicitação neste dispositivo para continuar com o acesso de super admin."
+      label: "Nome do dispositivo"
+      label_placeholder: "MacBook Pro"
+      register: "Adicionar passkey"
+      register_loading: "Aguardando passkey…"
+      authenticate: "Continuar com passkey"
+      authenticate_loading: "Aguardando passkey…"
+      errors:
+        generic: "Não foi possível concluir essa operação com passkey. Tente novamente."
+        unsupported_browser: "Este navegador não oferece suporte a passkeys."
+        label_blank: "Dê um nome a esta passkey antes de continuar."
+        registration_failed: "Não foi possível registrar essa passkey. Tente novamente."
+        passkeys_unavailable: "Ainda não há passkeys disponíveis para esta conta."
     recovery_codes:
       title: "Salve seus códigos de recuperação"
       subtitle: "Esses códigos de uso único permitem recuperar o acesso à plataforma se você perder o autenticador."

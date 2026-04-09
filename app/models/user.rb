@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_one :user_preference, dependent: :destroy
   has_many :account_deletion_requests, dependent: :destroy
   has_many :user_identities, dependent: :destroy
+  has_many :user_passkeys, dependent: :destroy
   has_many :user_recovery_codes, dependent: :destroy
   has_many :user_permissions, dependent: :destroy
   accepts_nested_attributes_for :user_permissions, allow_destroy: true
@@ -86,13 +87,20 @@ class User < ApplicationRecord
   end
 
   def passkeys_enabled?
-    false
+    user_passkeys.exists?
   end
 
   def totp_provisioning_uri(secret: totp_secret)
     return if secret.blank?
 
     ROTP::TOTP.new(secret, issuer: "Anella").provisioning_uri(email)
+  end
+
+  def ensure_webauthn_id!
+    return webauthn_id if webauthn_id.present?
+
+    update!(webauthn_id: WebAuthn.generate_user_id)
+    webauthn_id
   end
 
   def space_owner?(space = nil)
