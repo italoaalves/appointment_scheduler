@@ -1,0 +1,38 @@
+<% statuses = Array(local_assigns[:statuses]).compact_blank %>
+
+<%= render "application/shared/card",
+           variant: :glass,
+           glass: :frosty,
+           extra_class: "settings-intro-card overflow-hidden rounded-[1.75rem] border border-white/50 px-5 py-5 shadow-sm shadow-sky-100/70 sm:px-6 sm:py-6" do %>
+  <div data-role="settings-intro" class="space-y-4">
+    <div class="space-y-2">
+      <% if local_assigns[:eyebrow].present? %>
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"><%= eyebrow %></p>
+      <% end %>
+
+      <div class="space-y-2">
+        <h1 class="font-display text-2xl font-extrabold tracking-tight text-deep sm:text-3xl"><%= title %></h1>
+        <% if local_assigns[:subtitle].present? %>
+          <p class="max-w-3xl text-sm leading-6 text-slate-600 sm:text-[0.95rem]"><%= subtitle %></p>
+        <% end %>
+      </div>
+    </div>
+
+    <% if statuses.any? %>
+      <div class="flex flex-wrap gap-2">
+        <% tone_classes = {
+             neutral: "border-white/60 bg-white/70 text-slate-700",
+             success: "border-emerald-200/80 bg-emerald-50/90 text-emerald-800",
+             warning: "border-amber-200/80 bg-amber-50/90 text-amber-800",
+             accent: "border-electric/20 bg-electric/10 text-electric"
+           } %>
+        <% statuses.each do |status| %>
+          <span class="inline-flex min-h-11 items-center gap-2 rounded-full border px-3 py-2 text-sm <%= tone_classes.fetch(status[:tone].to_sym, tone_classes[:neutral]) %>">
+            <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500"><%= status[:label] %></span>
+            <span class="font-medium"><%= status[:value] %></span>
+          </span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

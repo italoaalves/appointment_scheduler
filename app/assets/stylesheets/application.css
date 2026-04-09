@@ -8,10 +8,60 @@
  * This file is for plain CSS overrides only.
  */
 
+.settings-shell {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.settings-shell-content {
+  width: 100%;
+  min-width: 0;
+}
+
+.settings-intro-card {
+  position: static;
+  background: rgba(255, 255, 255, 0.52);
+  -webkit-backdrop-filter: blur(18px) saturate(132%);
+  backdrop-filter: blur(18px) saturate(132%);
+  border-color: rgba(0, 122, 255, 0.28);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.46) inset,
+    0 6px 20px rgba(15, 23, 42, 0.05),
+    0 14px 38px rgba(14, 165, 233, 0.08);
+}
+
+.settings-sidebar-rail {
+  width: 100%;
+  align-self: stretch;
+}
+
 .settings-sidebar-desktop { display: none; }
 .settings-sidebar-mobile  { display: block; }
 
 @media (min-width: 768px) {
+  .settings-shell {
+    display: grid;
+    grid-template-columns: 25vw minmax(0, 1fr);
+    align-items: start;
+    gap: 2rem;
+  }
+
+  .settings-shell-content {
+    width: auto;
+  }
+
+  .settings-intro-card {
+    position: sticky;
+    top: 1rem;
+    z-index: 10;
+  }
+
+  .settings-sidebar-rail {
+    align-self: start;
+  }
+
   .settings-sidebar-desktop { display: block; }
   .settings-sidebar-mobile  { display: none; }
 }

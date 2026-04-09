@@ -48,7 +48,7 @@
   /* Primary CTA — Electric Cyan, used sparingly */
   .btn-primary {
     @apply inline-flex items-center justify-center px-6 py-3
-           bg-electric text-white font-display font-bold
+           appearance-none border-0 bg-electric text-white font-display font-bold
            rounded-card cursor-pointer
            transition-all duration-200
            hover:brightness-110 hover:shadow-lg
@@ -60,7 +60,7 @@
   /* Secondary — outlined, for less prominent actions */
   .btn-secondary {
     @apply inline-flex items-center justify-center px-6 py-3
-           bg-white text-deep font-medium
+           appearance-none bg-white text-deep font-medium
            border border-slate-300 rounded-card cursor-pointer
            transition-all duration-200
            hover:bg-slate-50 hover:border-slate-400 hover:shadow-sm
@@ -72,7 +72,7 @@
   /* Danger — destructive actions */
   .btn-danger {
     @apply inline-flex items-center justify-center px-6 py-3
-           bg-red-600 text-white font-medium
+           appearance-none border-0 bg-red-600 text-white font-medium
            rounded-card cursor-pointer
            transition-all duration-200
            hover:bg-red-700
@@ -84,7 +84,7 @@
   /* Success — confirmations, positive actions */
   .btn-success {
     @apply inline-flex items-center justify-center px-6 py-3
-           bg-emerald-500 text-white font-medium
+           appearance-none border-0 bg-emerald-500 text-white font-medium
            rounded-card cursor-pointer
            transition-all duration-200
            hover:bg-emerald-600
@@ -96,7 +96,7 @@
   /* Cancel — amber, for cancellation/warning actions */
   .btn-cancel {
     @apply inline-flex items-center justify-center px-6 py-3
-           bg-amber-500 text-white font-medium
+           appearance-none border-0 bg-amber-500 text-white font-medium
            rounded-card cursor-pointer
            transition-all duration-200
            hover:bg-amber-600
@@ -108,7 +108,7 @@
   /* Muted — low emphasis, for secondary/tertiary actions */
   .btn-muted {
     @apply inline-flex items-center justify-center px-6 py-3
-           bg-slate-100 text-slate-700 font-medium
+           appearance-none border-0 bg-slate-100 text-slate-700 font-medium
            rounded-card cursor-pointer
            transition-all duration-200
            hover:bg-slate-200
@@ -120,7 +120,7 @@
   /* Neutral — mid-tone, for balanced actions */
   .btn-neutral {
     @apply inline-flex items-center justify-center px-6 py-3
-           bg-slate-500 text-white font-medium
+           appearance-none border-0 bg-slate-500 text-white font-medium
            rounded-card cursor-pointer
            transition-all duration-200
            hover:bg-slate-600
@@ -273,6 +273,38 @@
 
   .form-label-sm {
     @apply block text-xs font-medium text-slate-600;
+  }
+
+  /* ═══════════════════════════════════════════════
+     SETTINGS CONTROLS
+     ═══════════════════════════════════════════════ */
+
+  .settings-info-tile {
+    @apply rounded-card border border-slate-200/80 bg-slate-50 p-4;
+  }
+
+  .settings-choice-card {
+    @apply flex min-h-12 cursor-pointer items-center gap-3 rounded-card border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition
+           hover:border-slate-300 hover:bg-slate-50
+           focus-within:border-electric/30 focus-within:ring-2 focus-within:ring-electric/20
+           has-[:checked]:border-electric/30 has-[:checked]:bg-electric/10 has-[:checked]:text-electric has-[:checked]:shadow-sm has-[:checked]:shadow-electric/10;
+  }
+
+  .settings-choice-chip {
+    @apply inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 transition
+           hover:border-electric/20 hover:bg-electric/5
+           focus-within:border-electric/30 focus-within:ring-2 focus-within:ring-electric/20
+           has-[:checked]:border-electric/30 has-[:checked]:bg-electric/10 has-[:checked]:text-electric has-[:checked]:shadow-sm has-[:checked]:shadow-electric/10;
+  }
+
+  .settings-chip-button {
+    @apply inline-flex min-h-11 items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition
+           hover:border-electric/20 hover:bg-electric/5
+           focus:outline-none focus:ring-2 focus:ring-electric/20 focus:ring-offset-2;
+  }
+
+  .settings-chip-button-danger {
+    @apply border-red-200 text-red-600 hover:border-red-300 hover:bg-red-50 focus:ring-red-200;
   }
 
   /* ═══════════════════════════════════════════════

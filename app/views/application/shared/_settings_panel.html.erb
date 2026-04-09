@@ -1,0 +1,17 @@
+<%= render "application/shared/card",
+           extra_class: ["rounded-[1.5rem] p-5 sm:p-6", local_assigns[:extra_class]].compact.join(" ") do %>
+  <section class="space-y-5">
+    <% if local_assigns[:title].present? || local_assigns[:description].present? %>
+      <div class="space-y-1">
+        <% if local_assigns[:title].present? %>
+          <h2 class="text-base font-semibold text-deep"><%= title %></h2>
+        <% end %>
+        <% if local_assigns[:description].present? %>
+          <p class="text-sm leading-6 text-slate-600"><%= description %></p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= yield %>
+  </section>
+<% end %>
