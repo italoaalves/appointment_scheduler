@@ -1,0 +1,58 @@
+<% booking_url = book_url(token: scheduling_link.token) %>
+<% status = scheduling_link_status(scheduling_link) %>
+<% tone_class = {
+     neutral: "status-pill status-pill-neutral",
+     success: "status-pill status-pill-success",
+     warning: "status-pill status-pill-warning",
+     danger: "status-pill status-pill-danger",
+     accent: "status-pill status-pill-accent"
+   }.fetch(status[:tone], "status-pill status-pill-neutral") %>
+
+<article data-role="scheduling-link-row" class="link-library-row">
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+    <div class="min-w-0 space-y-3">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="<%= tone_class %>"><%= status[:label] %></span>
+        <span class="status-pill status-pill-neutral"><%= scheduling_link_type_label(scheduling_link) %></span>
+      </div>
+
+      <div class="space-y-1">
+        <h3 class="text-base font-semibold text-deep"><%= scheduling_link.name.presence || t("space.scheduling_links.show.untitled") %></h3>
+        <p class="text-sm leading-6 text-slate-600"><%= scheduling_link_metadata(scheduling_link) %></p>
+      </div>
+
+      <div class="url-field max-w-3xl">
+        <span class="w-full truncate"><%= booking_url %></span>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2 lg:max-w-sm lg:justify-end">
+      <button type="button"
+              data-controller="clipboard"
+              data-clipboard-text-value="<%= booking_url %>"
+              data-action="click->clipboard#copy"
+              class="<%= button_classes(:primary, "btn-sm") %>">
+        <%= t("space.scheduling_links.show.copy") %>
+      </button>
+
+      <%= link_to t("space.scheduling_links.index.view"),
+                  book_path(token: scheduling_link.token),
+                  target: "_blank",
+                  rel: "noopener",
+                  class: button_classes(:secondary, "btn-sm") %>
+
+      <%= link_to t("space.scheduling_links.index.edit"),
+                  edit_scheduling_link_path(scheduling_link),
+                  class: button_classes(:secondary, "btn-sm") %>
+
+      <%= button_to t("space.scheduling_links.index.delete"),
+                    scheduling_link_path(scheduling_link),
+                    method: :delete,
+                    data: {
+                      turbo_confirm: t("space.scheduling_links.index.delete_confirm"),
+                      turbo_submits_with: t("shared.deleting")
+                    },
+                    class: button_classes(:secondary, "btn-sm text-red-600 border-red-200 hover:border-red-300 hover:bg-red-50") %>
+    </div>
+  </div>
+</article>

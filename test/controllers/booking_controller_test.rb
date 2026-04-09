@@ -14,6 +14,51 @@ class BookingControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "show renders a centered guided booking flow with sticky hero and reactive step cards" do
+    get book_url(token: @link.token)
+
+    assert_response :success
+    assert_select "body.booking-shell"
+    assert_select ".booking-page"
+    assert_select ".booking-flow-shell"
+    assert_select ".booking-hero-sticky"
+    assert_select "[data-role='booking-hero']"
+    assert_select "[data-role='booking-composer']"
+    assert_select "[data-role='booking-summary-card']"
+    assert_select "[data-booking-target='flowStep']", count: 3
+    assert_select "[data-step-name='schedule']"
+    assert_select "[data-step-name='details']"
+    assert_select "[data-step-name='review']"
+    assert_select "[data-role='booking-date-picker']"
+    assert_select "[data-role='booking-slot-picker']"
+    assert_select "[data-booking-target='slotsContainer'][data-morning-text]"
+    assert_select "template [data-slot-context]"
+    assert_select "template .booking-slot-option-indicator-core"
+    assert_select "[data-booking-target='slotsSync']"
+    assert_select "[data-role='booking-optional-details-panel']"
+    assert_select "[data-role='booking-consent-panel']"
+    assert_select "[data-role='booking-action-bar']"
+    assert_select "[data-booking-target='summaryPlaceholder']", /#{Regexp.escape(I18n.t("booking.summary.placeholder"))}/
+    assert_select "[data-role='booking-contact-hint']", I18n.t("booking.details_hint")
+  end
+
+  test "show uses the effective availability timezone across the booking flow" do
+    @space.create_availability_schedule!(timezone: "America/New_York")
+
+    get book_url(token: @link.token)
+
+    assert_response :success
+    assert_match I18n.t("booking.choose_date_hint", timezone: "America/New_York"), response.body
+    assert_match "America/New_York", response.body
+  end
+
+  test "show no longer relies on inline body styling" do
+    get book_url(token: @link.token)
+
+    assert_response :success
+    assert_no_match(/<body[^>]*style=/, response.body)
+  end
+
   test "show includes optional whatsapp consent checkbox" do
     get book_url(token: @link.token)
 
@@ -117,6 +162,26 @@ class BookingControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
+  test "create preserves in-progress booking details when the selected slot becomes invalid" do
+    @space.update!(request_max_days_ahead: 1)
+    scheduled = 3.days.from_now.change(hour: 10, min: 0, sec: 0)
+
+    post "/book/#{@link.token}", params: {
+      customer_name: "Taylor Test",
+      customer_phone: "+5511999999999",
+      customer_address: "123 Calm Street",
+      date: scheduled.to_date.iso8601,
+      scheduled_at: scheduled.strftime("%Y-%m-%d %H:%M")
+    }
+
+    assert_response :unprocessable_entity
+    assert_select "input#customer_name[value='Taylor Test']"
+    assert_select "input#customer_phone[value='+5511999999999']"
+    assert_select "input#customer_address[value='123 Calm Street']"
+    assert_select "input#booking_date[value='#{scheduled.to_date.iso8601}']"
+    assert_select "input[data-booking-target='scheduledAt'][value='#{scheduled.strftime("%Y-%m-%d %H:%M")}']"
+  end
+
   test "single-use link is marked as used after booking" do
     scheduled = 3.days.from_now.change(hour: 14, min: 0, sec: 0)
     post "/book/#{@single_use.token}", params: {
@@ -132,6 +197,17 @@ class BookingControllerTest < ActionDispatch::IntegrationTest
   test "thank_you page renders for valid token" do
     get thank_you_book_url(token: @link.token)
     assert_response :success
+  end
+
+  test "thank_you page reuses the public booking shell and summary card" do
+    get thank_you_book_url(token: @link.token)
+
+    assert_response :success
+    assert_select "body.booking-shell"
+    assert_select ".booking-page"
+    assert_select "[data-role='booking-hero']"
+    assert_select "[data-role='booking-summary-card']"
+    assert_select "[data-role='booking-confirmation-card']"
   end
 
   # ── Subscription restriction ──────────────────────────────────────────────
@@ -159,5 +235,36 @@ class BookingControllerTest < ActionDispatch::IntegrationTest
 
     get book_url(token: @link.token)
     assert_response :success
+  end
+
+  test "invalid link uses the shared public state card" do
+    get book_url(token: "nonexistent")
+
+    assert_response :not_found
+    assert_select "body.booking-shell"
+    assert_select ".booking-page"
+    assert_select "[data-role='booking-state-card']"
+  end
+
+  test "expired link uses the shared public state card" do
+    expired = scheduling_links(:expired_link)
+
+    get book_url(token: expired.token)
+
+    assert_response :gone
+    assert_select "body.booking-shell"
+    assert_select ".booking-page"
+    assert_select "[data-role='booking-state-card']"
+  end
+
+  test "unavailable link uses the shared public state card" do
+    subscriptions(:one).update!(status: :expired)
+
+    get book_url(token: @link.token)
+
+    assert_response :service_unavailable
+    assert_select "body.booking-shell"
+    assert_select ".booking-page"
+    assert_select "[data-role='booking-state-card']"
   end
 end

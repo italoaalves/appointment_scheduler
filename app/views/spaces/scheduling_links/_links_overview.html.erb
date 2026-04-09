@@ -1,0 +1,5 @@
+<%= render "application/shared/settings_intro",
+           eyebrow: t("space.scheduling_links.index.eyebrow"),
+           title: t("space.scheduling_links.index.title"),
+           subtitle: t("space.scheduling_links.index.subtitle"),
+           statuses: scheduling_links_intro_statuses(space, personalized_link: personalized_link) %>

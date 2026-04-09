@@ -1,4 +1,13 @@
-<div class="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-  <h1 class="text-xl font-semibold text-slate-900"><%= t("booking.invalid.title") %></h1>
-  <p class="mt-2 text-sm text-slate-600"><%= t("booking.invalid.body") %></p>
+<div class="booking-page">
+  <%= render "booking/hero",
+             eyebrow: t("booking.hero.eyebrow"),
+             title: t("booking.state.shell_title"),
+             subtitle: t("booking.state.shell_subtitle") %>
+
+  <%= render "booking/state_card",
+             title: t("booking.invalid.title"),
+             body: t("booking.invalid.body"),
+             next_step: t("booking.invalid.next_step"),
+             action_label: t("booking.state.back_home"),
+             action_path: root_path %>
 </div>

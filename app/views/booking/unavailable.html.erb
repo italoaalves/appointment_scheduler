@@ -1,7 +1,16 @@
-<div class="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-  <h1 class="text-xl font-semibold text-slate-900"><%= t("booking.unavailable.title") %></h1>
-  <p class="mt-2 text-sm text-slate-600"><%= t("booking.unavailable.body") %></p>
-  <p class="mt-4">
-    <%= link_to t("booking.unavailable.go_back"), "javascript:history.back()", class: "text-sm font-medium text-slate-600 hover:text-slate-900 underline" %>
-  </p>
+<div class="booking-page">
+  <%= render "booking/hero",
+             eyebrow: t("booking.hero.eyebrow"),
+             title: @space&.name || t("booking.state.shell_title"),
+             subtitle: t("booking.state.shell_subtitle"),
+             supporting_text: booking_business_type_label(@space),
+             chips: booking_hero_chips(@space),
+             details: @space&.address.presence %>
+
+  <%= render "booking/state_card",
+             title: t("booking.unavailable.title"),
+             body: t("booking.unavailable.body"),
+             next_step: t("booking.unavailable.next_step"),
+             action_label: t("booking.state.back_home"),
+             action_path: root_path %>
 </div>

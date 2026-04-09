@@ -2,112 +2,57 @@
   { label: t("breadcrumbs.dashboard"), path: root_path },
   { label: t("breadcrumbs.booking_links") }
 ] } %>
-<div class="space-y-4">
-  <% page_actions = capture do %>
-    <% if Billing::PlanEnforcer.can?(current_tenant, :create_scheduling_link) %>
-      <%= link_to t("space.scheduling_links.index.new_button"), new_scheduling_link_path, class: button_classes(:primary) %>
-    <% else %>
-      <span class="text-sm text-slate-500"><%= t("billing.limits.scheduling_links_exceeded") %></span>
-    <% end %>
-  <% end %>
-  <%= render "application/shared/page_header", title: t("space.scheduling_links.index.title"), actions: page_actions %>
+
+<div class="space-y-6">
+  <%= render "spaces/scheduling_links/links_overview",
+             space: current_tenant,
+             personalized_link: @personalized_link %>
 
   <% if current_user.can?(:manage_personalized_links) %>
-    <div class="card p-4">
-      <h2 class="text-sm font-semibold text-slate-800"><%= t("space.personalized_scheduling_links.index.title") %></h2>
-      <% if @personalized_link.present? %>
-        <p class="mt-1 text-xs text-slate-600"><%= t("space.personalized_scheduling_links.index.has_link_hint") %></p>
-        <div class="mt-2 flex flex-wrap items-center gap-2">
-          <input type="text"
-                 readonly
-                 value="<%= book_by_slug_url(slug: @personalized_link.slug) %>"
-                 class="block flex-1 min-w-0 rounded-md border border-slate-300 bg-slate-50 px-2 py-1.5 text-xs text-slate-700 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
-                 aria-label="<%= t("space.scheduling_links.show.booking_url") %>" />
-          <button type="button"
-                  data-controller="clipboard"
-                  data-clipboard-text-value="<%= book_by_slug_url(slug: @personalized_link.slug) %>"
-                  data-action="click->clipboard#copy"
-                  class="<%= button_classes(:table_link) %>">
-            <%= t("space.scheduling_links.show.copy") %>
-          </button>
-          <%= link_to t("space.personalized_scheduling_links.index.view"), book_by_slug_path(slug: @personalized_link.slug), target: "_blank", class: button_classes(:table_link) %>
-          <%= link_to t("space.personalized_scheduling_links.index.edit"), edit_personalized_scheduling_link_path, class: button_classes(:table_link) %>
-          <%= button_to t("space.personalized_scheduling_links.index.remove"), personalized_scheduling_link_path, method: :delete, data: { turbo_confirm: t("space.personalized_scheduling_links.index.remove_confirm"), turbo_submits_with: t("shared.removing") }, class: button_classes(:destructive) %>
-        </div>
-      <% else %>
-        <p class="mt-1 text-xs text-slate-600"><%= t("space.personalized_scheduling_links.index.empty_hint") %></p>
-        <%= link_to t("space.personalized_scheduling_links.index.create_button"), new_personalized_scheduling_link_path, class: "mt-2 #{button_classes(:primary)}" %>
-      <% end %>
-    </div>
+    <%= render "spaces/scheduling_links/personalized_link_card",
+               space: current_tenant,
+               personalized_link: @personalized_link %>
   <% end %>
 
-  <% if @scheduling_links.any? %>
-    <div class="card overflow-hidden p-0">
-      <table class="min-w-full divide-y divide-slate-200 text-sm">
-        <thead class="bg-slate-50">
-          <tr>
-            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("space.scheduling_links.index.table.name") %>
-            </th>
-            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("space.scheduling_links.index.table.url") %>
-            </th>
-            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("space.scheduling_links.index.table.type") %>
-            </th>
-            <th scope="col" class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("space.scheduling_links.index.table.status") %>
-            </th>
-            <th scope="col" class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <%= t("space.scheduling_links.index.table.actions") %>
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-200">
-          <% @scheduling_links.each do |link| %>
-            <% booking_url = book_url(token: link.token) %>
-            <tr class="hover:bg-slate-50">
-              <td class="px-4 py-2 align-top text-slate-900">
-                <%= link.name.presence || "—" %>
-              </td>
-              <td class="px-4 py-2 align-top">
-                <div class="flex items-center gap-1 max-w-[220px]">
-                  <span class="truncate text-xs text-slate-600" title="<%= booking_url %>"><%= truncate(booking_url, length: 45) %></span>
-                  <button type="button"
-                          data-controller="clipboard"
-                          data-clipboard-text-value="<%= booking_url %>"
-                          data-action="click->clipboard#copy"
-                          class="<%= button_classes(:table_link) %> shrink-0">
-                    <%= t("space.scheduling_links.show.copy") %>
-                  </button>
-                </div>
-              </td>
-              <td class="px-4 py-2 align-top">
-                <%= render "application/shared/status_badge", status: nil, label: link.link_type.humanize %>
-              </td>
-              <td class="px-4 py-2 align-top text-slate-700">
-                <% if link.usable? %>
-                  <span class="text-emerald-600"><%= t("space.scheduling_links.index.active") %></span>
-                <% else %>
-                  <span class="text-slate-500"><%= t("space.scheduling_links.index.inactive") %></span>
-                <% end %>
-              </td>
-              <td class="px-4 py-2 align-top">
-                <div class="flex flex-wrap justify-end gap-1">
-                  <%= link_to t("space.scheduling_links.index.view"), scheduling_link_path(link), class: button_classes(:table_link) %>
-                  <%= link_to t("space.scheduling_links.index.edit"), edit_scheduling_link_path(link), class: button_classes(:table_link) %>
-                  <%= button_to t("space.scheduling_links.index.delete"), scheduling_link_path(link), method: :delete, data: { turbo_confirm: t("space.scheduling_links.index.delete_confirm"), turbo_submits_with: t("shared.deleting") }, class: button_classes(:table_danger) %>
-                </div>
-              </td>
-            </tr>
+  <%= render "application/shared/settings_panel",
+             title: t("space.scheduling_links.index.library.title"),
+             description: t("space.scheduling_links.index.library.description") do %>
+    <div data-role="link-library-panel" class="space-y-5">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div class="space-y-1">
+          <p class="text-sm font-medium text-slate-700"><%= t("space.scheduling_links.index.library.action_hint") %></p>
+          <% unless Billing::PlanEnforcer.can?(current_tenant, :create_scheduling_link) %>
+            <p class="text-sm leading-6 text-slate-500"><%= t("billing.limits.scheduling_links_exceeded") %></p>
           <% end %>
-        </tbody>
-      </table>
+        </div>
+
+        <% if Billing::PlanEnforcer.can?(current_tenant, :create_scheduling_link) %>
+          <%= link_to t("space.scheduling_links.index.new_button"),
+                      new_scheduling_link_path,
+                      class: button_classes(:primary) %>
+        <% end %>
+      </div>
+
+      <% if @scheduling_links.any? %>
+        <div class="space-y-3">
+          <%= render partial: "spaces/scheduling_links/scheduling_link_row",
+                     collection: @scheduling_links,
+                     as: :scheduling_link %>
+        </div>
+      <% else %>
+        <div data-role="scheduling-links-empty-state" class="rounded-[1.4rem] border border-dashed border-slate-200 bg-slate-50/80 p-6 text-center">
+          <h3 class="text-base font-semibold text-deep"><%= t("space.scheduling_links.index.library.empty_title") %></h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600"><%= t("space.scheduling_links.index.library.empty_body") %></p>
+
+          <% if Billing::PlanEnforcer.can?(current_tenant, :create_scheduling_link) %>
+            <div class="mt-4">
+              <%= link_to t("space.scheduling_links.index.create_cta"),
+                          new_scheduling_link_path,
+                          class: button_classes(:primary) %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     </div>
-  <% else %>
-    <%= render "application/shared/empty_state",
-               content: t("space.scheduling_links.index.empty"),
-               cta_path: (new_scheduling_link_path if Billing::PlanEnforcer.can?(current_tenant, :create_scheduling_link)),
-               cta_text: t("space.scheduling_links.index.create_cta") %>
   <% end %>
 </div>

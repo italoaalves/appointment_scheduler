@@ -1,0 +1,43 @@
+<div class="booking-slot-picker"
+     data-role="booking-slot-picker"
+     data-booking-target="slotsContainer"
+     data-loading-text="<%= t("booking.loading_slots") %>"
+     data-refreshing-text="<%= t("booking.refreshing_slots") %>"
+     data-empty-text="<%= t("booking.no_slots") %>"
+     data-choose-text="<%= t("booking.choose_time_prompt") %>"
+     data-error-text="<%= t("booking.error_loading_slots") %>"
+     data-morning-text="<%= t("booking.slot_context.morning") %>"
+     data-afternoon-text="<%= t("booking.slot_context.afternoon") %>"
+     data-evening-text="<%= t("booking.slot_context.evening") %>"
+     data-night-text="<%= t("booking.slot_context.night") %>"
+     data-selected-unavailable-text="<%= t("booking.slot_unavailable_refresh") %>"
+     data-retry-text="<%= t("booking.retry") %>">
+  <p class="booking-step-helper" data-booking-target="slotsStatus" role="status" aria-live="polite"><%= t("booking.loading_slots") %></p>
+
+  <template data-booking-target="slotTemplate">
+    <button type="button" class="booking-slot-option">
+      <span class="booking-slot-option-copy">
+        <span class="booking-slot-option-context" data-slot-context></span>
+        <span class="booking-slot-option-label" data-slot-label></span>
+      </span>
+      <span class="booking-slot-option-indicator" aria-hidden="true">
+        <span class="booking-slot-option-indicator-core"></span>
+      </span>
+    </button>
+  </template>
+
+  <template data-booking-target="errorTemplate">
+    <div class="booking-slot-feedback booking-slot-feedback-error">
+      <div class="space-y-3">
+        <p></p>
+        <button type="button"
+                class="inline-flex items-center rounded-full border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-700 transition hover:border-red-300 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-200 focus:ring-offset-2">
+        </button>
+      </div>
+    </div>
+  </template>
+
+  <div class="booking-slot-region" aria-live="polite">
+    <div class="booking-slot-grid" data-booking-target="slotsList"></div>
+  </div>
+</div>

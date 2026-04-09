@@ -9,6 +9,7 @@ class Appointment < ApplicationRecord
   belongs_to :customer, optional: true
 
   before_validation :set_duration_from_space, on: :create
+  after_commit :broadcast_booking_slot_updates
 
   validate :customer_belongs_to_space, if: :customer_id?
   validate :no_double_booking, if: :requires_slot_validation?
@@ -84,5 +85,9 @@ class Appointment < ApplicationRecord
     self.class.connection.exec_query(
       "SELECT pg_advisory_xact_lock($1)", "AdvisoryLock", [ lock_key ]
     )
+  end
+
+  def broadcast_booking_slot_updates
+    Booking::SlotUpdatesBroadcaster.broadcast_for(space)
   end
 end
