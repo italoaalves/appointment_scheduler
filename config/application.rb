@@ -11,6 +11,10 @@ module AppointmentScheduler
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 
+    # Tailwind builds into app/assets/builds; register it explicitly so
+    # clean Docker build contexts still include tailwind.css in Propshaft.
+    config.assets.paths << Rails.root.join("app/assets/builds")
+
     # Internationalization
     config.i18n.available_locales = [ :en, :'pt-BR' ]
     config.i18n.default_locale = :'pt-BR'
