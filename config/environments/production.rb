@@ -62,15 +62,26 @@ Rails.application.configure do
     host: Rails.application.credentials.dig(:mailer, :host) || "example.com"
   }
 
-  # Specify outgoing SMTP server. Add smtp/* credentials via rails credentials:edit.
-  config.action_mailer.smtp_settings = {
-    user_name: Rails.application.credentials.dig(:smtp, :user_name),
-    password: Rails.application.credentials.dig(:smtp, :password),
-    address: Rails.application.credentials.dig(:smtp, :address) || "smtp.example.com",
-    port: Rails.application.credentials.dig(:smtp, :port) || 587,
-    authentication: :plain,
-    enable_starttls_auto: true
-  }
+  resend_api_key = Rails.application.credentials.dig(:resend, :api_key).presence ||
+    Rails.application.credentials.dig(:email, :api_key).presence
+
+  if resend_api_key
+    config.action_mailer.delivery_method = :resend_api
+    config.action_mailer.resend_api_settings = {
+      api_key: resend_api_key,
+      user_agent: "appointment_scheduler/#{Rails.env}"
+    }
+  else
+    # Specify outgoing SMTP server. Add smtp/* credentials via rails credentials:edit.
+    config.action_mailer.smtp_settings = {
+      user_name: Rails.application.credentials.dig(:smtp, :user_name),
+      password: Rails.application.credentials.dig(:smtp, :password),
+      address: Rails.application.credentials.dig(:smtp, :address) || "smtp.example.com",
+      port: Rails.application.credentials.dig(:smtp, :port) || 587,
+      authentication: :plain,
+      enable_starttls_auto: true
+    }
+  end
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

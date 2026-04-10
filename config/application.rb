@@ -1,6 +1,7 @@
 require_relative "boot"
 
 require "rails/all"
+require_relative "../lib/action_mailer/delivery_methods/resend_api"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -14,6 +15,7 @@ module AppointmentScheduler
     # Tailwind builds into app/assets/builds; register it explicitly so
     # clean Docker build contexts still include tailwind.css in Propshaft.
     config.assets.paths << Rails.root.join("app/assets/builds")
+    ActionMailer::Base.add_delivery_method :resend_api, ActionMailer::DeliveryMethods::ResendApi
 
     # Internationalization
     config.i18n.available_locales = [ :en, :'pt-BR' ]
