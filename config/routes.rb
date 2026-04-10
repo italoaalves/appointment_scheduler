@@ -34,6 +34,22 @@ Rails.application.routes.draw do
     post :request_deletion
     delete :cancel_deletion_request
   end
+  scope "profile", module: "profiles", as: "profile" do
+    get "security", to: "security#show"
+
+    scope module: "security", path: "security", as: "security" do
+      resource :totp_enrollment, only: [ :new, :create, :destroy ]
+      resources :passkeys, only: [ :create, :destroy ] do
+        collection do
+          post :registration_options
+        end
+      end
+      resource :recovery_codes, only: [ :show ] do
+        post :regenerate
+        post :acknowledge
+      end
+    end
+  end
   resource :preferences, only: [ :edit, :update ], controller: "preferences"
 
   get "booking/calendar/:token", to: "booking#calendar_ics", as: :booking_calendar_ics

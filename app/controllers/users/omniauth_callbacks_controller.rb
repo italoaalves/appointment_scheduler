@@ -40,7 +40,7 @@ module Users
         sign_in_and_redirect result.user, event: :authentication
       when :linked_account
         log_identity_linked(result)
-        redirect_to edit_profile_path, notice: t("social_registrations.linked_account_notice", provider: provider_name(result.provider))
+        redirect_to(origin_path || edit_profile_path, notice: t("social_registrations.linked_account_notice", provider: provider_name(result.provider)))
       when :pending_signup
         log_signup_started(result)
         redirect_to new_user_social_registration_path
@@ -51,7 +51,7 @@ module Users
     end
 
     def failure_redirect_path
-      current_user.present? ? edit_profile_path : new_user_session_path
+      current_user.present? ? (origin_path || edit_profile_path) : new_user_session_path
     end
 
     def provider_name(provider)
@@ -59,6 +59,17 @@ module Users
       when "apple" then "Apple"
       else "Google"
       end
+    end
+
+    def origin_path
+      origin = request.env.dig("omniauth.params", "origin").presence || request.env["omniauth.origin"].presence
+      return if origin.blank?
+
+      candidate = origin.to_s
+      return if candidate.start_with?("//")
+      return unless candidate.start_with?("/")
+
+      candidate
     end
 
     def log_sign_in(result)

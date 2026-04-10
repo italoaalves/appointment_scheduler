@@ -3,7 +3,7 @@
     <%= link_to t("platform.space_appointments.index.customers"), platform_space_customers_path(@space), class: button_classes(:secondary) %>
     <%= link_to t("platform.space_appointments.index.back_to_space"), platform_space_path(@space), class: button_classes(:secondary) %>
   <% end %>
-  <%= render "application/shared/page_header", title: t("platform.space_appointments.index.title", space: @space.name), actions: page_actions %>
+  <%= render "shared/page_header", title: t("platform.space_appointments.index.title", space: @space.name), actions: page_actions %>
 
   <%= form_with url: platform_space_appointments_path(@space),
                 method: :get,
@@ -69,7 +69,7 @@
                 <%= format_appointment_time(appointment.scheduled_at, space: appointment.space, format: :short) || "—" %>
               </td>
               <td class="px-4 py-2 align-top">
-                <%= render "application/shared/status_badge", status: appointment.status %>
+                <%= render "shared/status_badge", status: appointment.status %>
               </td>
               <td class="px-4 py-2 align-top">
                 <%= link_to t("platform.appointments.index.view"), platform_space_appointment_path(@space, appointment), class: button_classes(:table_link) %>
@@ -81,6 +81,6 @@
     </div>
     <%= paginate @appointments, params: { status: params[:status], date_from: params[:date_from], date_to: params[:date_to] } %>
   <% else %>
-    <%= render "application/shared/empty_state", content: t("platform.appointments.index.empty") %>
+    <%= render "shared/empty_state", content: t("platform.appointments.index.empty") %>
   <% end %>
 </div>

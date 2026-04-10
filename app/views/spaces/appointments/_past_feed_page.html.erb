@@ -21,7 +21,7 @@
       end
       date_subtitle = date ? "#{date.day} #{abbr_months[date.month]} #{date.year}" : nil
     %>
-    <%= render "application/shared/sticky_section", title: date_title, subtitle: date_subtitle %>
+    <%= render "shared/sticky_section", title: date_title, subtitle: date_subtitle %>
 
     <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <% appts.each do |appointment| %>

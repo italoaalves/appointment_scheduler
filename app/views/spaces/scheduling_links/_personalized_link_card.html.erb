@@ -1,7 +1,7 @@
 <% feature_available = Billing::PlanEnforcer.can?(space, :access_personalized_booking_page) %>
 <% public_url = personalized_link.present? ? book_by_slug_url(slug: personalized_link.slug) : nil %>
 
-<%= render "application/shared/card",
+<%= render "shared/card",
            extra_class: "rounded-[1.65rem] border border-white/70 p-5 sm:p-6" do %>
   <section data-role="personalized-link-card" class="space-y-5">
     <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

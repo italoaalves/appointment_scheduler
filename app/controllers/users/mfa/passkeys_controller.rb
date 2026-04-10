@@ -13,7 +13,7 @@ module Users
       end
 
       def create
-        result = Auth::Mfa::Webauthn::RegisterPasskey.call(
+        result = Auth::Mfa::CompletePasskeyRegistration.call(
           user: @mfa_user,
           session: session,
           credential: credential_payload,
@@ -24,9 +24,7 @@ module Users
           return render json: { error: error_message_for(result.error) }, status: error_status_for(result.error)
         end
 
-        @mfa_user.update!(mfa_enabled_at: (@mfa_user.mfa_enabled_at || Time.current))
-        recovery_codes = Auth::Mfa::GenerateRecoveryCodes.call(user: @mfa_user)
-        Auth::PendingMfaSession.store_recovery_codes(session:, codes: recovery_codes)
+        Auth::PendingMfaSession.store_recovery_codes(session:, codes: result.recovery_codes) if result.recovery_codes.present?
 
         AuditLogs::EventLogger.call(
           event_type: "auth.mfa_passkey_registered",

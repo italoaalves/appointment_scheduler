@@ -1,0 +1,43 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("breadcrumbs.profile"), path: edit_profile_path },
+  { label: t("profiles.security.title"), path: profile_security_path },
+  { label: t("mfa.recovery_codes.title") }
+] } %>
+<% content_for(:settings_sidebar) do %>
+  <%= render "shared/account_settings_sidebar" %>
+<% end %>
+
+<div class="space-y-6">
+  <%= render "shared/settings_intro",
+             eyebrow: t("account.sidebar.security"),
+             title: t("mfa.recovery_codes.title"),
+             subtitle: t("mfa.recovery_codes.subtitle"),
+             statuses: [
+               settings_intro_status(t("profiles.security.recovery_codes.title"), @recovery_codes.count.to_s, tone: :accent)
+             ] %>
+
+  <%= form_with url: acknowledge_profile_security_recovery_codes_path, class: "space-y-6" do |form| %>
+    <%= render "shared/settings_panel" do %>
+      <div class="space-y-6">
+        <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <%= t("mfa.recovery_codes.warning") %>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-2">
+          <% @recovery_codes.each do |code| %>
+            <div class="settings-info-tile font-mono text-sm text-deep">
+              <%= code %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%= render "shared/settings_action_bar" do %>
+      <%= form.submit t("mfa.recovery_codes.submit"),
+                      class: "#{button_classes(:primary)} w-full justify-center lg:w-auto",
+                      data: { turbo_submits_with: t("mfa.recovery_codes.submit_loading") } %>
+    <% end %>
+  <% end %>
+</div>

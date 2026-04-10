@@ -16,7 +16,7 @@
      data-plan-change-current-price-value="<%= @subscription&.billing_plan&.price_cents || 0 %>"
      data-plan-change-payment-method-value="<%= @subscription&.payment_method %>">
 
-  <%= render "application/shared/settings_intro",
+  <%= render "shared/settings_intro",
              eyebrow: t("settings.sidebar.billing_section"),
              title: t("billing.edit.title"),
              subtitle: t("billing.edit.subtitle"),
@@ -36,7 +36,7 @@
   </form>
 
   <div data-plan-change-target="grid">
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("billing.edit.plan_grid_title"),
                description: t("billing.edit.plan_grid_hint") do %>
       <div class="grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
@@ -50,7 +50,7 @@
                                 "border-slate-200"
                               end %>
 
-          <%= render "application/shared/card",
+          <%= render "shared/card",
                      extra_class: "h-full rounded-card border-2 p-5 #{border_classes}" do %>
             <div class="flex h-full flex-col">
               <div class="mb-3 flex min-h-[1.5rem] flex-wrap gap-1.5">
@@ -111,7 +111,7 @@
   </div>
 
   <div data-plan-change-target="confirmation" hidden class="space-y-4">
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("billing.edit.confirm_change"),
                description: t("billing.edit.confirm_change_hint") do %>
       <div class="grid gap-4 xl:grid-cols-3 xl:items-center">
@@ -153,7 +153,7 @@
       <%= t("billing.edit.manual_payment_warning") %>
     </div>
 
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("billing.edit.change_payment_method"),
                description: t("billing.edit.payment_method_hint") do %>
       <div class="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
@@ -169,7 +169,7 @@
       </div>
     <% end %>
 
-    <%= render "application/shared/settings_action_bar", hint: t("billing.edit.confirmation_hint") do %>
+    <%= render "shared/settings_action_bar", hint: t("billing.edit.confirmation_hint") do %>
       <button type="button" data-action="plan-change#back"
               class="<%= "#{button_classes(:secondary)} w-full justify-center lg:w-auto" %>">
         <%= t("billing.edit.back") %>

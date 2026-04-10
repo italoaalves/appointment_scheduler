@@ -1,0 +1,219 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("breadcrumbs.profile"), path: edit_profile_path },
+  { label: t("profiles.security.title") }
+] } %>
+<% content_for(:settings_sidebar) do %>
+  <%= render "shared/account_settings_sidebar" %>
+<% end %>
+
+<% active_methods = [] %>
+<% active_methods << t("profiles.security.status.authenticator_app") if @user.totp_enabled? %>
+<% active_methods << t("profiles.security.status.passkeys_count", count: @passkeys.count) if @passkeys.any? %>
+<% linked_accounts_count = @identities.count %>
+<% identities_by_provider = @identities.index_by(&:provider) %>
+
+<div class="space-y-6">
+  <%= render "shared/settings_intro",
+             eyebrow: t("account.sidebar.eyebrow"),
+             title: t("profiles.security.title"),
+             subtitle: t("profiles.security.subtitle"),
+             statuses: [
+               settings_intro_status(t("profiles.security.status.mfa"), (@user.mfa_enabled? ? t("profiles.security.status.enabled") : t("profiles.security.status.disabled")), tone: (@user.mfa_enabled? ? :success : :warning)),
+               settings_intro_status(t("profiles.security.status.policy"), (@user.super_admin? ? t("profiles.security.status.required") : t("profiles.security.status.optional")), tone: (@user.super_admin? ? :accent : :neutral)),
+               settings_intro_status(t("profiles.security.status.linked_accounts"), (linked_accounts_count.positive? ? t("profiles.security.status.linked_accounts_count", count: linked_accounts_count) : t("profiles.security.status.none_linked")), tone: (linked_accounts_count.positive? ? :accent : :neutral)),
+               settings_intro_status(t("profiles.security.passkeys.title"), (@passkeys.any? ? t("profiles.security.status.passkeys_count", count: @passkeys.count) : t("profiles.security.status.disabled")), tone: (@passkeys.any? ? :success : :neutral))
+             ] %>
+
+  <%= render "shared/settings_panel",
+             title: t("profiles.security.status.title"),
+             description: t("profiles.security.status.description") do %>
+    <div class="grid gap-4 lg:grid-cols-4">
+      <div class="settings-info-tile">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("profiles.security.status.mfa") %></p>
+        <p class="mt-1 text-sm font-semibold text-deep"><%= @user.mfa_enabled? ? t("profiles.security.status.enabled") : t("profiles.security.status.disabled") %></p>
+      </div>
+
+      <div class="settings-info-tile">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("profiles.security.status.policy") %></p>
+        <p class="mt-1 text-sm font-semibold text-deep"><%= @user.super_admin? ? t("profiles.security.status.required") : t("profiles.security.status.optional") %></p>
+      </div>
+
+      <div class="settings-info-tile">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("profiles.security.status.active_methods") %></p>
+        <p class="mt-1 text-sm font-semibold text-deep"><%= active_methods.presence&.join(" · ") || t("profiles.security.status.none") %></p>
+      </div>
+
+      <div class="settings-info-tile">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("profiles.security.status.recovery_codes") %></p>
+        <p class="mt-1 text-sm font-semibold text-deep">
+          <%= @user.mfa_enabled? ? t("profiles.security.status.recovery_codes_count", count: @active_recovery_codes_count) : t("profiles.security.status.pending") %>
+        </p>
+      </div>
+    </div>
+  <% end %>
+
+  <%= render "shared/settings_panel",
+             title: t("profiles.security.identities.title"),
+             description: t("profiles.security.identities.description") do %>
+    <div class="space-y-4">
+      <div class="settings-info-tile flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("profiles.security.identities.password") %></p>
+          <p class="mt-1 text-sm font-semibold text-deep"><%= t("profiles.security.identities.password_status") %></p>
+          <p class="mt-2 text-sm leading-6 text-slate-600"><%= t("profiles.security.identities.password_description") %></p>
+        </div>
+
+        <span class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium uppercase tracking-wide text-emerald-700">
+          <%= t("profiles.security.identities.available") %>
+        </span>
+      </div>
+
+      <% if available_omniauth_providers.any? %>
+        <% available_omniauth_providers.each do |provider| %>
+          <% identity = identities_by_provider[provider.to_s] %>
+          <div class="settings-info-tile flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div class="space-y-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <p class="text-sm font-semibold text-deep"><%= omniauth_provider_label(provider) %></p>
+                <span class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium uppercase tracking-wide <%= identity.present? ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-slate-200 bg-slate-50 text-slate-500' %>">
+                  <%= identity.present? ? t("profiles.security.identities.linked") : t("profiles.security.identities.not_linked") %>
+                </span>
+              </div>
+
+              <% if identity.present? %>
+                <p class="text-sm leading-6 text-slate-600">
+                  <%= identity.email.presence || @user.email %>
+                  <span class="text-slate-400">·</span>
+                  <%= identity.email_verified? ? t("profiles.security.identities.email_verified") : t("profiles.security.identities.email_unverified") %>
+                </p>
+                <% if identity.last_authenticated_at.present? %>
+                  <p class="text-sm leading-6 text-slate-600"><%= t("profiles.security.identities.last_authenticated_at", at: l(identity.last_authenticated_at, format: :short)) %></p>
+                <% end %>
+              <% else %>
+                <p class="text-sm leading-6 text-slate-600"><%= t("profiles.security.identities.connect_description", provider: omniauth_provider_label(provider)) %></p>
+              <% end %>
+            </div>
+
+            <% unless identity.present? %>
+              <%= button_to t("profiles.security.identities.connect", provider: omniauth_provider_label(provider)),
+                            omniauth_authorize_path(:user, provider),
+                            method: :post,
+                            params: { origin: profile_security_path },
+                            form: { data: { turbo: false }, class: "w-full lg:w-auto" },
+                            class: "#{button_classes(:secondary)} w-full justify-center lg:w-auto" %>
+            <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <%= render "shared/empty_state", content: t("profiles.security.identities.unavailable") %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= render "shared/settings_panel",
+             title: t("profiles.security.passkeys.title"),
+             description: t("profiles.security.passkeys.description") do %>
+    <div class="space-y-4">
+      <%= render "users/mfa/passkey_panel",
+                 title: t("mfa.passkeys.register_title"),
+                 subtitle: t("mfa.passkeys.register_subtitle"),
+                 button_text: t("mfa.passkeys.register"),
+                 action_name: :register,
+                 show_label: true,
+                 options_url: registration_options_profile_security_passkeys_path,
+                 submit_url: profile_security_passkeys_path %>
+
+      <% if @passkeys.any? %>
+        <div class="space-y-3">
+          <% @passkeys.each do |passkey| %>
+            <% detail_parts = [] %>
+            <% detail_parts << (passkey.platform_authenticator? ? t("profiles.security.passkeys.platform_authenticator") : t("profiles.security.passkeys.cross_platform_authenticator")) %>
+            <% detail_parts << t("profiles.security.passkeys.created_at", at: l(passkey.created_at, format: :short)) %>
+            <% detail_parts << (passkey.last_used_at.present? ? t("profiles.security.passkeys.last_used_at", at: l(passkey.last_used_at, format: :short)) : t("profiles.security.passkeys.never_used")) %>
+            <div class="settings-info-tile flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+              <div class="space-y-1">
+                <p class="text-sm font-semibold text-deep"><%= passkey.label %></p>
+                <p class="text-sm leading-6 text-slate-600"><%= detail_parts.join(" · ") %></p>
+              </div>
+
+              <%= button_to t("profiles.security.passkeys.remove"),
+                            profile_security_passkey_path(passkey),
+                            method: :delete,
+                            class: "#{button_classes(:danger)} w-full justify-center md:w-auto",
+                            data: {
+                              turbo_confirm: t("profiles.security.passkeys.remove_confirm"),
+                              turbo_submits_with: t("shared.removing")
+                            } %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <%= render "shared/empty_state", content: t("profiles.security.passkeys.empty") %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= render "shared/settings_panel",
+             title: t("profiles.security.totp.title"),
+             description: t("profiles.security.totp.description") do %>
+    <div class="space-y-4">
+      <div class="settings-info-tile">
+        <p class="text-sm font-semibold text-deep">
+          <%= @user.totp_enabled? ? t("profiles.security.totp.enabled_status") : t("profiles.security.totp.disabled_status") %>
+        </p>
+        <% if @user.totp_last_verified_at.present? %>
+          <p class="mt-1 text-sm leading-6 text-slate-600"><%= t("profiles.security.totp.last_verified_at", at: l(@user.totp_last_verified_at, format: :short)) %></p>
+        <% end %>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <% if @user.totp_enabled? %>
+          <%= button_to t("profiles.security.totp.disable"),
+                        profile_security_totp_enrollment_path,
+                        method: :delete,
+                        class: "#{button_classes(:danger)} w-full justify-center lg:w-auto",
+                        data: {
+                          turbo_confirm: t("profiles.security.totp.disable_confirm"),
+                          turbo_submits_with: t("shared.removing")
+                        } %>
+        <% else %>
+          <%= link_to t("profiles.security.totp.setup"),
+                      new_profile_security_totp_enrollment_path,
+                      class: "#{button_classes(:primary)} w-full justify-center lg:w-auto" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%= render "shared/settings_panel",
+             title: t("profiles.security.recovery_codes.title"),
+             description: t("profiles.security.recovery_codes.description") do %>
+    <% if @user.mfa_enabled? %>
+      <div class="space-y-4">
+        <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <%= t("profiles.security.recovery_codes.warning") %>
+        </div>
+
+        <div class="settings-info-tile">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("profiles.security.status.recovery_codes") %></p>
+          <p class="mt-1 text-sm font-semibold text-deep"><%= t("profiles.security.recovery_codes.available", count: @active_recovery_codes_count) %></p>
+          <p class="mt-2 text-sm leading-6 text-slate-600"><%= t("profiles.security.recovery_codes.review_hint") %></p>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <%= button_to t("profiles.security.recovery_codes.regenerate"),
+                        regenerate_profile_security_recovery_codes_path,
+                        method: :post,
+                        class: "#{button_classes(:secondary)} w-full justify-center lg:w-auto",
+                        data: {
+                          turbo_confirm: t("profiles.security.recovery_codes.regenerate_confirm"),
+                          turbo_submits_with: t("shared.submitting")
+                        } %>
+        </div>
+      </div>
+    <% else %>
+      <%= render "shared/empty_state", content: t("profiles.security.recovery_codes.unavailable") %>
+    <% end %>
+  <% end %>
+</div>

@@ -1,5 +1,5 @@
 <div class="space-y-4">
-  <%= render "application/shared/page_header",
+  <%= render "shared/page_header",
              title:   t("platform.billing.index.title"),
              subtitle: t("platform.billing.index.subtitle") %>
 
@@ -44,7 +44,7 @@
               <td class="px-4 py-2 text-slate-700"><%= sub.billing_plan.name %></td>
               <td class="px-4 py-2 text-slate-700"><%= sub.payment_method&.humanize || "—" %></td>
               <td class="px-4 py-2">
-                <%= render "application/shared/status_badge",
+                <%= render "shared/status_badge",
                            status: sub.status,
                            label:  sub.status.humanize %>
               </td>
@@ -99,7 +99,7 @@
               </td>
               <td class="px-4 py-2 text-slate-700"><%= payment.payment_method&.humanize || "—" %></td>
               <td class="px-4 py-2">
-                <%= render "application/shared/status_badge",
+                <%= render "shared/status_badge",
                            status: payment.status,
                            label:  payment.status.humanize %>
               </td>

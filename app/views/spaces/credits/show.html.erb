@@ -7,7 +7,7 @@
   <%= render "shared/settings_sidebar" %>
 <% end %>
 <div class="space-y-6">
-  <%= render "application/shared/settings_intro",
+  <%= render "shared/settings_intro",
              eyebrow: t("settings.sidebar.billing_section"),
              title: t("billing.credits.show.title"),
              subtitle: t("billing.credits.show.subtitle"),
@@ -16,7 +16,7 @@
                (@subscription&.plan&.feature?(:whatsapp_included_quota) ? settings_intro_status(t("billing.credits.show.monthly_quota"), (@credit&.monthly_quota_remaining || 0).to_s, tone: :neutral) : nil)
              ] %>
 
-  <%= render "application/shared/settings_panel",
+  <%= render "shared/settings_panel",
              title: t("billing.credits.show.balance_title"),
              description: t("billing.credits.show.balance_hint") do %>
     <div class="grid gap-4 lg:grid-cols-2">
@@ -34,7 +34,7 @@
   <% end %>
 
   <% if @pending_purchases.any? %>
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("billing.credits.show.pending_purchases"),
                description: t("billing.credits.show.pending_purchases_hint") do %>
       <div class="space-y-3">
@@ -74,12 +74,12 @@
     <% end %>
   <% end %>
 
-  <%= render "application/shared/settings_panel",
+  <%= render "shared/settings_panel",
              title: t("billing.credits.show.purchase_title"),
              description: t("billing.credits.show.purchase_hint") do %>
     <div class="grid gap-4 xl:grid-cols-3">
       <% @bundles.each do |bundle| %>
-        <%= render "application/shared/card",
+        <%= render "shared/card",
                    extra_class: "h-full rounded-card p-4 text-center" do %>
           <div class="flex h-full flex-col">
             <p class="text-3xl font-bold text-deep"><%= bundle.amount %></p>
@@ -95,7 +95,7 @@
   <% end %>
 
   <% if @events.any? %>
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("billing.credits.show.history_title"),
                description: t("billing.credits.show.history_hint") do %>
       <div class="space-y-3">
@@ -108,6 +108,6 @@
       </div>
     <% end %>
   <% else %>
-    <%= render "application/shared/empty_state", content: t("billing.credits.show.no_history") %>
+    <%= render "shared/empty_state", content: t("billing.credits.show.no_history") %>
   <% end %>
 </div>

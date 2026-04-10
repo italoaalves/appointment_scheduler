@@ -8,7 +8,7 @@
 <% end %>
 
 <div class="space-y-6">
-  <%= render "application/shared/settings_intro",
+  <%= render "shared/settings_intro",
              eyebrow: t("settings.sidebar.communication"),
              title: t("spaces.whatsapp_settings.title"),
              subtitle: (@phone_number&.active? ? t("spaces.whatsapp_settings.connected_description") : t("spaces.whatsapp_settings.disconnected_description")),
@@ -18,7 +18,7 @@
              ] %>
 
   <% if @phone_number&.active? %>
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("spaces.whatsapp_settings.connection_title"),
                description: t("spaces.whatsapp_settings.connected_description") do %>
       <div class="grid gap-4 lg:grid-cols-2">
@@ -33,7 +33,7 @@
         <div class="settings-info-tile">
           <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("spaces.whatsapp_settings.status") %></p>
           <div class="mt-1">
-            <%= render "application/shared/status_badge",
+            <%= render "shared/status_badge",
                        status: @phone_number.status,
                        label: @phone_number.status.humanize %>
           </div>
@@ -47,7 +47,7 @@
       </div>
     <% end %>
 
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("spaces.whatsapp_settings.disconnect_button"),
                description: t("spaces.whatsapp_settings.disconnect_hint") do %>
       <%= button_to disconnect_settings_whatsapp_path,
@@ -58,7 +58,7 @@
       <% end %>
     <% end %>
   <% else %>
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("spaces.whatsapp_settings.connection_title"),
                description: t("spaces.whatsapp_settings.disconnected_description") do %>
       <div data-controller="whatsapp-signup"
@@ -80,7 +80,7 @@
                  data-whatsapp-signup-target="verifiedName" value="">
         <% end %>
 
-        <%= render "application/shared/settings_action_bar", hint: t("spaces.whatsapp_settings.connect_hint") do %>
+        <%= render "shared/settings_action_bar", hint: t("spaces.whatsapp_settings.connect_hint") do %>
           <button type="button"
                   class="<%= "#{button_classes(:primary)} w-full justify-center lg:w-auto" %>"
                   data-action="click->whatsapp-signup#launch">

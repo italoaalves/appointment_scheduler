@@ -2,80 +2,109 @@
   { label: t("breadcrumbs.dashboard"), path: root_path },
   { label: t("breadcrumbs.profile") }
 ] } %>
+<% content_for(:settings_sidebar) do %>
+  <%= render "shared/account_settings_sidebar" %>
+<% end %>
+
+<% phone_locked = !current_user.super_admin? && current_user.space&.subscription&.trialing? %>
+
 <div class="space-y-6">
-  <%= render "application/shared/page_header", title: t("profiles.edit.title"), subtitle: t("profiles.edit.subtitle") %>
+  <%= render "shared/settings_intro",
+             eyebrow: t("account.sidebar.eyebrow"),
+             title: t("profiles.edit.title"),
+             subtitle: t("profiles.edit.subtitle"),
+             statuses: [
+               settings_intro_status(User.human_attribute_name(:email), @user.email, tone: :neutral),
+               settings_intro_status(t("profiles.security.title"), account_security_summary(@user), tone: (@user.mfa_enabled? ? :success : :warning))
+             ] %>
 
-  <%= render layout: "application/shared/card" do %>
-    <%= form_with model: @user, url: profile_path, method: :patch, class: "space-y-4" do |form| %>
-      <%= render "application/shared/error_messages", resource: @user %>
+  <%= form_with model: @user, url: profile_path, method: :patch, class: "space-y-6" do |form| %>
+    <%= render "shared/error_messages", resource: @user %>
 
-      <div>
-        <%= form.label :name, class: form_label_classes %>
-        <%= form.text_field :name, class: form_input_classes %>
-      </div>
-
-      <% phone_locked = !current_user.super_admin? && current_user.space&.subscription&.trialing? %>
-      <div>
-        <%= form.label :phone_number, t("profiles.edit.phone_label"), class: form_label_classes %>
-        <%= form.telephone_field :phone_number,
-              disabled: phone_locked,
-              class: form_input_classes + (phone_locked ? " bg-slate-100 cursor-not-allowed" : "") %>
-        <% if phone_locked %>
-          <p class="mt-1 text-xs text-slate-500"><%= t("profiles.edit.phone_locked_during_trial") %></p>
-        <% end %>
-      </div>
-
-      <div class="border-t border-slate-200 pt-4">
-        <p class="text-sm font-medium text-slate-700 mb-2"><%= t("profiles.edit.password_section") %></p>
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div>
-            <%= form.label :current_password, t("profiles.edit.current_password_label"), class: form_label_classes %>
-            <%= form.password_field :current_password, class: form_input_classes("max-w-none"), autocomplete: "current-password" %>
-          </div>
-          <div></div>
-          <div>
-            <%= form.label :password, t("profiles.edit.password_label"), class: form_label_classes %>
-            <%= form.password_field :password, class: form_input_classes("max-w-none"), autocomplete: "new-password" %>
-          </div>
-          <div>
-            <%= form.label :password_confirmation, t("profiles.edit.password_confirmation_label"), class: form_label_classes %>
-            <%= form.password_field :password_confirmation, class: form_input_classes("max-w-none"), autocomplete: "new-password" %>
-          </div>
+    <%= render "shared/settings_panel",
+               title: t("profiles.edit.identity_title"),
+               description: t("profiles.edit.identity_description") do %>
+      <div class="grid gap-4 lg:grid-cols-2">
+        <div>
+          <%= form.label :name, class: form_label_classes %>
+          <%= form.text_field :name, class: form_input_classes %>
         </div>
-        <p class="mt-1 text-xs text-slate-500"><%= t("profiles.edit.password_hint") %></p>
+
+        <div>
+          <%= label_tag :user_email, User.human_attribute_name(:email), class: form_label_classes %>
+          <%= email_field_tag :user_email,
+                              @user.email,
+                              class: form_input_classes("bg-slate-50 text-slate-500"),
+                              readonly: true,
+                              disabled: true %>
+          <p class="mt-1.5 text-xs text-slate-500"><%= t("profiles.edit.email_hint") %></p>
+        </div>
       </div>
 
-      <div class="flex flex-wrap gap-3 pt-2">
-        <%= form.submit t("profiles.edit.submit"), class: button_classes(:primary), data: { turbo_submits_with: t("shared.submitting") } %>
-        <%= link_to t("profiles.edit.back"), root_path, class: button_classes(:secondary) %>
+      <div class="grid gap-4 lg:grid-cols-2">
+        <div>
+          <%= form.label :phone_number, t("profiles.edit.phone_label"), class: form_label_classes %>
+          <%= form.telephone_field :phone_number,
+                                   disabled: phone_locked,
+                                   class: form_input_classes(phone_locked ? "bg-slate-100 cursor-not-allowed" : nil) %>
+          <% if phone_locked %>
+            <p class="mt-1.5 text-xs text-slate-500"><%= t("profiles.edit.phone_locked_during_trial") %></p>
+          <% end %>
+        </div>
+
+        <%= render "shared/settings_link_card",
+                   path: profile_security_path,
+                   title: t("profiles.security.title"),
+                   description: t("profiles.edit.security_card_description"),
+                   summary: account_security_summary(@user),
+                   badge: linked_identity_summary(@user) %>
       </div>
+    <% end %>
+
+    <%= render "shared/settings_panel",
+               title: t("profiles.edit.password_section"),
+               description: t("profiles.edit.password_hint") do %>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <%= form.label :current_password, t("profiles.edit.current_password_label"), class: form_label_classes %>
+          <%= form.password_field :current_password, class: form_input_classes("max-w-none"), autocomplete: "current-password" %>
+        </div>
+        <div></div>
+        <div>
+          <%= form.label :password, t("profiles.edit.password_label"), class: form_label_classes %>
+          <%= form.password_field :password, class: form_input_classes("max-w-none"), autocomplete: "new-password" %>
+        </div>
+        <div>
+          <%= form.label :password_confirmation, t("profiles.edit.password_confirmation_label"), class: form_label_classes %>
+          <%= form.password_field :password_confirmation, class: form_input_classes("max-w-none"), autocomplete: "new-password" %>
+        </div>
+      </div>
+    <% end %>
+
+    <%= render "shared/settings_action_bar" do %>
+      <%= form.submit t("profiles.edit.submit"),
+                      class: "#{button_classes(:primary)} w-full justify-center lg:w-auto",
+                      data: { turbo_submits_with: t("shared.submitting") } %>
     <% end %>
   <% end %>
 
-  <%= render layout: "application/shared/card" do %>
-    <div class="space-y-5">
-      <div>
-        <h2 class="text-base font-semibold text-deep"><%= t("profiles.edit.export_title") %></h2>
-        <p class="mt-1 text-sm text-slate-600"><%= t("profiles.edit.export_body") %></p>
-      </div>
-
-      <div class="flex flex-wrap gap-3">
-        <%= button_to t("profiles.edit.export_action"),
-              request_data_export_profile_path,
-              method: :post,
-              class: button_classes(:secondary),
-              data: { turbo_confirm: t("profiles.edit.export_confirm"), turbo_submits_with: t("shared.submitting") } %>
-      </div>
-    </div>
+  <%= render "shared/settings_panel",
+             title: t("profiles.edit.export_title"),
+             description: t("profiles.edit.export_body") do %>
+    <%= button_to t("profiles.edit.export_action"),
+                  request_data_export_profile_path,
+                  method: :post,
+                  class: "#{button_classes(:secondary)} w-full justify-center lg:w-auto",
+                  data: {
+                    turbo_confirm: t("profiles.edit.export_confirm"),
+                    turbo_submits_with: t("shared.submitting")
+                  } %>
   <% end %>
 
-  <%= render layout: "application/shared/card" do %>
+  <%= render "shared/settings_panel",
+             title: t("profiles.edit.deletion_title"),
+             description: t("profiles.edit.deletion_body") do %>
     <div class="space-y-5">
-      <div>
-        <h2 class="text-base font-semibold text-rose-700"><%= t("profiles.edit.deletion_title") %></h2>
-        <p class="mt-1 text-sm text-slate-600"><%= t("profiles.edit.deletion_body") %></p>
-      </div>
-
       <% if @active_deletion_request %>
         <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           <p class="font-medium"><%= t("profiles.edit.deletion_pending_title") %></p>
@@ -83,16 +112,22 @@
         </div>
 
         <%= button_to t("profiles.edit.cancel_deletion_action"),
-              cancel_deletion_request_profile_path,
-              method: :delete,
-              class: button_classes(:secondary),
-              data: { turbo_confirm: t("profiles.edit.cancel_deletion_confirm"), turbo_submits_with: t("shared.removing") } %>
+                      cancel_deletion_request_profile_path,
+                      method: :delete,
+                      class: "#{button_classes(:secondary)} w-full justify-center lg:w-auto",
+                      data: {
+                        turbo_confirm: t("profiles.edit.cancel_deletion_confirm"),
+                        turbo_submits_with: t("shared.removing")
+                      } %>
       <% else %>
         <%= button_to t("profiles.edit.request_deletion_action"),
-              request_deletion_profile_path,
-              method: :post,
-              class: button_classes(:danger),
-              data: { turbo_confirm: t("profiles.edit.request_deletion_confirm"), turbo_submits_with: t("shared.deleting") } %>
+                      request_deletion_profile_path,
+                      method: :post,
+                      class: "#{button_classes(:danger)} w-full justify-center lg:w-auto",
+                      data: {
+                        turbo_confirm: t("profiles.edit.request_deletion_confirm"),
+                        turbo_submits_with: t("shared.deleting")
+                      } %>
       <% end %>
     </div>
   <% end %>

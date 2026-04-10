@@ -3,7 +3,7 @@
              url: bundle.persisted? ? platform_credit_bundle_path(bundle) : platform_credit_bundles_path,
              method: bundle.persisted? ? :patch : :post,
              class: "space-y-4" do |f| %>
-  <%= render "application/shared/error_messages", resource: bundle %>
+  <%= render "shared/error_messages", resource: bundle %>
 
   <div>
     <%= f.label :name, t("platform.credit_bundles.form.name"), class: form_label_classes %>

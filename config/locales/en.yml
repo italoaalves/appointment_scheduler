@@ -140,10 +140,31 @@ en:
           no_show: "No-show"
           finished: "Finished"
 
+  account:
+    sidebar:
+      label: "Account navigation"
+      eyebrow: "Account"
+      subtitle: "Keep your personal details, preferences, and sign-in controls in one place."
+      section: "Personal"
+      profile: "Profile"
+      preferences: "Preferences"
+      security: "Security"
+      descriptions:
+        profile: "Your identity, phone number, password, and account lifecycle."
+        preferences: "Language and personal workspace defaults."
+        security: "SSO, MFA, passkeys, and recovery options."
+
   profiles:
     edit:
       title: "Profile"
       subtitle: "Update your name, contact information, and password."
+      security_action: "Security"
+      identity_title: "Identity"
+      identity_description: "Manage the details tied to your personal account."
+      email_hint: "Your email address is managed through your sign-in methods."
+      security_card_description: "Review passkeys, MFA, linked providers, and recovery access."
+      security_enabled: "MFA enabled"
+      security_review: "Review sign-in methods"
       phone_label: "Phone"
       phone_locked_during_trial: "Phone number cannot be changed during the trial period."
       password_section: "Change password"
@@ -175,6 +196,91 @@ en:
     cancel_deletion_request:
       notice: "Deletion request canceled."
       not_found: "No pending deletion request was found."
+    security:
+      title: "Security"
+      subtitle: "Manage MFA, passkeys, and recovery options for your account."
+      back: "Back to profile"
+      status:
+        title: "Security status"
+        description: "Choose how this account proves it is really you before granting access."
+        mfa: "MFA"
+        policy: "Policy"
+        linked_accounts: "Linked accounts"
+        recovery_codes: "Recovery codes"
+        active_methods: "Active methods"
+        enabled: "Enabled"
+        disabled: "Not enabled"
+        required: "Required"
+        optional: "Optional"
+        pending: "Available after setup"
+        none: "No factors configured yet."
+        none_linked: "No linked providers"
+        authenticator_app: "Authenticator app"
+        passkeys_count:
+          one: "1 passkey"
+          other: "%{count} passkeys"
+        linked_accounts_count:
+          one: "1 provider linked"
+          other: "%{count} providers linked"
+        recovery_codes_count:
+          one: "1 active code"
+          other: "%{count} active codes"
+      identities:
+        title: "Sign-in methods"
+        description: "See which sign-in methods are available for this account and connect supported providers."
+        password: "Password"
+        password_status: "Email and password"
+        password_description: "Use your account email and password whenever you need a familiar fallback."
+        available: "Available"
+        linked: "Linked"
+        not_linked: "Not linked"
+        email_verified: "Verified email"
+        email_unverified: "Email not verified"
+        last_authenticated_at: "Last used %{at}"
+        connect: "Connect %{provider}"
+        connect_description: "Link %{provider} so you can use it the next time you sign in."
+        unavailable: "Social sign-in providers are not enabled in this environment."
+      passkeys:
+        title: "Passkeys"
+        description: "Add passkeys for Face ID, Touch ID, Windows Hello, or hardware security keys."
+        created: "Passkey added."
+        deleted: "Passkey removed."
+        empty: "No passkeys have been added yet."
+        platform_authenticator: "Built-in device authenticator"
+        cross_platform_authenticator: "Security key or cross-device passkey"
+        created_at: "Added %{at}"
+        last_used_at: "Last used %{at}"
+        never_used: "Not used yet"
+        remove: "Remove passkey"
+        remove_confirm: "Remove this passkey from your account?"
+      totp:
+        title: "Authenticator app"
+        description: "Use an authenticator app as a fallback factor when a passkey is not available."
+        enabled: "Authenticator app enabled."
+        disabled: "Authenticator app disabled."
+        enabled_status: "Authenticator app is enabled."
+        disabled_status: "Authenticator app is not enabled yet."
+        setup: "Set up authenticator app"
+        disable: "Turn off authenticator app"
+        disable_confirm: "Turn off the authenticator app for this account?"
+        last_verified_at: "Last verified %{at}"
+      recovery_codes:
+        title: "Recovery codes"
+        description: "Single-use backup codes help you recover access if you lose your main MFA device."
+        warning: "Generating new recovery codes will immediately invalidate the previous set."
+        available:
+          one: "You currently have 1 active recovery code."
+          other: "You currently have %{count} active recovery codes."
+        unavailable: "Recovery codes become available after you enable MFA."
+        review_hint: "Generate a new set any time you need to replace codes that were saved elsewhere."
+        regenerate: "Regenerate recovery codes"
+        regenerate_confirm: "Generate a new recovery-code set? Your current codes will stop working."
+        acknowledged: "Recovery codes saved."
+        missing: "There are no recovery codes ready to display right now."
+      errors:
+        last_factor_required: "Super admins must keep at least one MFA factor enabled."
+        not_enabled: "That MFA factor is not enabled for this account."
+        not_found: "We could not find that passkey."
 
   data_exports:
     package_mailer:
@@ -188,6 +294,8 @@ en:
     edit:
       title: "Preferences"
       subtitle: "Customize your experience."
+      language_title: "Language"
+      language_description: "Choose the language you want to use throughout your account."
       locale_label: "Language"
       submit: "Save"
       back: "Back"

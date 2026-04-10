@@ -1,9 +1,9 @@
 <div class="space-y-6">
-  <%= render "application/shared/page_header", title: t("platform.spaces.edit.title"), subtitle: t("platform.spaces.edit.subtitle") %>
+  <%= render "shared/page_header", title: t("platform.spaces.edit.title"), subtitle: t("platform.spaces.edit.subtitle") %>
 
-  <%= render layout: "application/shared/card" do %>
+  <%= render layout: "shared/card" do %>
     <%= form_with model: [:platform, @space], class: "space-y-4" do |form| %>
-      <%= render "application/shared/error_messages", resource: @space %>
+      <%= render "shared/error_messages", resource: @space %>
 
       <div>
         <%= form.label :name, t("platform.spaces.edit.name_label"), class: form_label_classes %>

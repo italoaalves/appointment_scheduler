@@ -9,6 +9,9 @@
   <%= link_to edit_preferences_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:bg-slate-100/80 hover:text-deep transition-colors" do %>
     <%= t("layout.nav.preferences") %>
   <% end %>
+  <%= link_to profile_security_path, class: "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:bg-slate-100/80 hover:text-deep transition-colors" do %>
+    <%= t("profiles.security.title") %>
+  <% end %>
   <div class="h-px mx-1 my-1 bg-deep/6"></div>
   <%= button_to t("layout.nav.logout"),
                 destroy_user_session_path,

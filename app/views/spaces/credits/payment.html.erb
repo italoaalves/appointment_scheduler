@@ -13,12 +13,12 @@
      data-purchase-status-interval-value="5000"
      data-success-url="<%= settings_credits_path(notice: t("billing.credits.purchase_completed")) %>"
      data-failure-url="<%= settings_credits_path(alert: t("billing.credits.purchase_failed")) %>">
-  <%= render "application/shared/settings_intro",
+  <%= render "shared/settings_intro",
              eyebrow: t("settings.sidebar.billing_section"),
              title: t("billing.credits.waiting_payment"),
              subtitle: t("billing.credits.purchase_initiated") %>
 
-  <%= render "application/shared/settings_panel",
+  <%= render "shared/settings_panel",
              title: t("billing.credits.waiting_payment"),
              description: t("billing.credits.purchase_initiated") do %>
     <div class="space-y-5 text-center">

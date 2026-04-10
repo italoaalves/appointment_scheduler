@@ -5,9 +5,9 @@
   { label: t("breadcrumbs.edit") }
 ] } %>
 <div class="space-y-6">
-  <%= render "application/shared/page_header", title: t("space.users.edit.title"), subtitle: t("space.users.edit.subtitle") %>
+  <%= render "shared/page_header", title: t("space.users.edit.title"), subtitle: t("space.users.edit.subtitle") %>
 
-  <%= render layout: "application/shared/card" do %>
+  <%= render layout: "shared/card" do %>
     <%= form_with model: @user, class: "space-y-4" do |form| %>
       <%= render "permission_fields", form: form %>
 

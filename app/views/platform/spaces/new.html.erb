@@ -1,10 +1,10 @@
 <div class="space-y-6">
-  <%= render "application/shared/page_header", title: t("platform.spaces.new.title"), subtitle: t("platform.spaces.new.subtitle") %>
+  <%= render "shared/page_header", title: t("platform.spaces.new.title"), subtitle: t("platform.spaces.new.subtitle") %>
 
-  <%= render layout: "application/shared/card" do %>
+  <%= render layout: "shared/card" do %>
     <%= form_with model: [:platform, @space], url: platform_spaces_path, class: "space-y-4" do |form| %>
-      <%= render "application/shared/error_messages", resource: @space %>
-      <%= render "application/shared/error_messages", resource: @manager if defined?(@manager) && @manager&.errors&.any? %>
+      <%= render "shared/error_messages", resource: @space %>
+      <%= render "shared/error_messages", resource: @manager if defined?(@manager) && @manager&.errors&.any? %>
 
       <div>
         <%= form.label :name, t("platform.spaces.new.name_label"), class: form_label_classes %>

@@ -24,7 +24,7 @@
           end
           date_subtitle = date ? "#{date.day} #{abbr_months[date.month]} #{date.year}" : nil
         %>
-        <%= render "application/shared/sticky_section", title: date_title, subtitle: date_subtitle %>
+        <%= render "shared/sticky_section", title: date_title, subtitle: date_subtitle %>
 
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <% appts.each do |appointment| %>
@@ -34,12 +34,12 @@
       </div>
     <% end %>
 
-    <%= render "application/shared/feed_frame",
+    <%= render "shared/feed_frame",
                collection: appointments,
                frame_prefix: "appointments-page",
                next_page_path: appointments_path(page: appointments.next_page, status: params[:status], date_from: params[:date_from], date_to: params[:date_to]),
                skeleton_partial: "skeleton_loaders" %>
   </div>
 <% else %>
-  <%= render "application/shared/empty_state", content: t("space.appointments.index.empty") %>
+  <%= render "shared/empty_state", content: t("space.appointments.index.empty") %>
 <% end %>

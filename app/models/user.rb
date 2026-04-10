@@ -90,6 +90,10 @@ class User < ApplicationRecord
     user_passkeys.exists?
   end
 
+  def totp_enabled?
+    totp_secret.present? && totp_enabled_at.present?
+  end
+
   def totp_provisioning_uri(secret: totp_secret)
     return if secret.blank?
 

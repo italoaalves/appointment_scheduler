@@ -4,13 +4,13 @@
   { label: t("breadcrumbs.new") }
 ] } %>
 <div class="space-y-6">
-  <%= render "application/shared/page_header",
+  <%= render "shared/page_header",
              title: t("space.customers.new.title"),
              subtitle: t("space.customers.new.subtitle") %>
 
-  <%= render layout: "application/shared/card" do %>
+  <%= render layout: "shared/card" do %>
     <%= form_with model: @customer, class: "space-y-4" do |form| %>
-      <%= render "application/shared/error_messages", resource: @customer %>
+      <%= render "shared/error_messages", resource: @customer %>
 
       <div>
         <%= form.label :name, t("space.customers.new.name_label"), class: form_label_classes %>

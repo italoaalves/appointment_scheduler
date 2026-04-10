@@ -12,7 +12,7 @@
      data-controller="checkout-wizard"
      data-checkout-wizard-prices-value="<%= @plans.to_h { |p| [p.slug, p.price_cents] }.to_json %>">
 
-  <%= render "application/shared/settings_intro",
+  <%= render "shared/settings_intro",
              eyebrow: t("settings.sidebar.billing_section"),
              title: t("billing.checkout.title"),
              subtitle: t("billing.checkout.subtitle") %>
@@ -21,7 +21,7 @@
     <input type="hidden" name="plan_id" data-checkout-wizard-target="planInput" />
 
     <div data-checkout-wizard-target="step1">
-      <%= render "application/shared/settings_panel",
+      <%= render "shared/settings_panel",
                  title: t("billing.checkout.plan_selection_title"),
                  description: t("billing.checkout.plan_selection_hint") do %>
         <div class="grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
@@ -29,7 +29,7 @@
             <% is_current = @current_plan&.id == plan.id %>
             <% border_classes = plan.highlighted? ? "border-deep/20" : "border-slate-200" %>
 
-            <%= render "application/shared/card",
+            <%= render "shared/card",
                        extra_class: "h-full rounded-card border-2 p-5 #{border_classes}" do %>
               <div class="flex h-full flex-col">
                 <div class="mb-3 flex min-h-[1.5rem] flex-wrap gap-1.5">
@@ -86,7 +86,7 @@
 
     <div data-checkout-wizard-target="step2" class="hidden space-y-4">
       <div data-checkout-wizard-target="paidSection" class="hidden">
-        <%= render "application/shared/settings_panel",
+        <%= render "shared/settings_panel",
                    title: t("billing.checkout.cpf_cnpj_label"),
                    description: t("billing.checkout.cpf_cnpj_description") do %>
           <div class="space-y-2">
@@ -101,7 +101,7 @@
       </div>
 
       <div data-checkout-wizard-target="paidSection" class="hidden">
-        <%= render "application/shared/settings_panel",
+        <%= render "shared/settings_panel",
                    title: t("billing.checkout.payment_method"),
                    description: t("billing.checkout.payment_method_hint") do %>
           <div class="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
@@ -117,7 +117,7 @@
         <% end %>
       </div>
 
-      <%= render "application/shared/settings_action_bar", hint: t("billing.checkout.submit_hint") do %>
+      <%= render "shared/settings_action_bar", hint: t("billing.checkout.submit_hint") do %>
         <button type="button"
                 data-action="checkout-wizard#back"
                 class="<%= "#{button_classes(:secondary)} w-full justify-center lg:w-auto" %>">
