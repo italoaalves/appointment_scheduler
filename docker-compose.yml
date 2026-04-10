@@ -129,6 +129,8 @@ services:
       GF_AUTH_ANONYMOUS_ENABLED: "true"
       GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
       GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GRAFANA_ALERT_EMAILS: "alerts@example.test"
+      GRAFANA_ALERT_CRITICAL_EMAILS: "alerts-critical@example.test"
     depends_on:
       - loki
       - tempo
