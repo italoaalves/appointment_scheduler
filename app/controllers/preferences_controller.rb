@@ -11,7 +11,6 @@ class PreferencesController < ApplicationController
     @user_preference = current_user.user_preference || current_user.build_user_preference
 
     if @user_preference.update(preference_params)
-      session[:locale] = @user_preference.locale
       redirect_to edit_preferences_path
     else
       render :edit, status: :unprocessable_entity
