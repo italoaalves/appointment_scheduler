@@ -502,6 +502,16 @@ pt-BR:
         socials: "Redes sociais"
         instagram_label: "Instagram"
         facebook_label: "Facebook"
+        banner_title: "Banner"
+        banner_description: "Salve uma imagem horizontal para a marcação futura da página de agendamento, sem publicá-la agora."
+        banner_label: "Banner do espaço"
+        banner_hint: "Envie uma imagem horizontal em JPG, PNG ou WebP de até 8 MB. Vamos guardar o arquivo até definirmos o melhor ponto de uso."
+        banner_empty: "O banner da sua página de agendamento ficará guardado aqui até decidirmos onde ele deve entrar."
+        banner_remove: "Remover banner"
+        banner_remove_confirm: "Deseja remover o banner atual do espaço?"
+        banner_removed: "Banner do espaço removido."
+        banner_remove_failed: "Não foi possível remover o banner do espaço agora."
+        banner_alt: "Prévia do banner de %{name}"
         scheduling: "Agendamento"
         slot_duration_label: "Duração do horário"
         slot_duration_notice: "Esta alteração afeta apenas consultas futuras. As existentes mantêm sua duração."
@@ -537,4 +547,3 @@ pt-BR:
         back_to_space: "Voltar para configurações do espaço"
       update:
         notice: "Políticas atualizadas."
-

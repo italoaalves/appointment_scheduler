@@ -11,10 +11,10 @@ module Spaces
     end
 
     def update
-      if @space.update(space_params)
-        redirect_to edit_settings_space_path
+      if Spaces::UpdateSettings.call(space: @space, attributes: space_params, banner_upload: banner_upload_param)
+        redirect_to edit_settings_space_path, notice: t("space.settings.update.notice"), status: :see_other
       else
-        render :edit
+        render :edit, status: :unprocessable_entity
       end
     end
 
@@ -36,6 +36,10 @@ module Spaces
         :instagram_url,
         :facebook_url
       )
+    end
+
+    def banner_upload_param
+      params.dig(:space, :banner_upload)
     end
   end
 end

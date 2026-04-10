@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_10_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_10_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -383,6 +383,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_10_120000) do
     t.index ["owner_id"], name: "index_spaces_on_owner_id"
   end
 
+  create_table "stored_files", force: :cascade do |t|
+    t.bigint "attachable_id", null: false
+    t.string "attachable_type", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.string "content_type", null: false
+    t.datetime "created_at", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.string "original_filename", null: false
+    t.string "scope", null: false
+    t.bigint "space_id"
+    t.string "storage_adapter", null: false
+    t.string "storage_path", null: false
+    t.datetime "updated_at", null: false
+    t.index ["attachable_type", "attachable_id", "scope"], name: "idx_on_attachable_type_attachable_id_scope_5b12b85fa5", unique: true
+    t.index ["attachable_type", "attachable_id"], name: "index_stored_files_on_attachable"
+    t.index ["scope"], name: "index_stored_files_on_scope"
+    t.index ["space_id", "scope"], name: "index_stored_files_on_space_id_and_scope"
+    t.index ["space_id"], name: "index_stored_files_on_space_id"
+  end
+
   create_table "subscriptions", force: :cascade do |t|
     t.string "asaas_customer_id"
     t.string "asaas_subscription_id"
@@ -577,6 +598,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_10_120000) do
   add_foreign_key "space_memberships", "spaces"
   add_foreign_key "space_memberships", "users"
   add_foreign_key "spaces", "users", column: "owner_id"
+  add_foreign_key "stored_files", "spaces"
   add_foreign_key "subscriptions", "billing_plans"
   add_foreign_key "subscriptions", "billing_plans", column: "pending_billing_plan_id"
   add_foreign_key "subscriptions", "spaces"

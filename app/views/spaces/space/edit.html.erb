@@ -74,6 +74,42 @@
     <% end %>
 
     <%= render "shared/settings_panel",
+               title: t("space.settings.edit.banner_title"),
+               description: t("space.settings.edit.banner_description") do %>
+      <div class="space-y-4">
+        <div class="overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
+          <% if @space.banner_file.present? %>
+            <%= image_tag settings_space_banner_path,
+                          alt: t("space.settings.edit.banner_alt", name: @space.name),
+                          class: "h-40 w-full object-cover" %>
+          <% else %>
+            <div class="flex h-40 w-full items-center justify-center px-6 text-center text-sm text-slate-500">
+              <%= t("space.settings.edit.banner_empty") %>
+            </div>
+          <% end %>
+        </div>
+
+        <div>
+          <%= form.label :banner_upload, t("space.settings.edit.banner_label"), class: form_label_classes %>
+          <%= form.file_field :banner_upload,
+                              accept: "image/png,image/jpeg,image/webp",
+                              class: "mt-2 block w-full text-sm text-slate-600 file:mr-3 file:rounded-md file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-slate-800" %>
+          <p class="mt-1.5 text-xs text-slate-500"><%= t("space.settings.edit.banner_hint") %></p>
+        </div>
+
+        <% if @space.banner_file.present? %>
+          <%= link_to t("space.settings.edit.banner_remove"),
+                      settings_space_banner_path,
+                      class: "#{button_classes(:secondary)} w-full justify-center sm:w-auto",
+                      data: {
+                        turbo_method: :delete,
+                        turbo_confirm: t("space.settings.edit.banner_remove_confirm")
+                      } %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= render "shared/settings_panel",
                title: t("space.settings.edit.booking_success_message_label"),
                description: t("space.settings.edit.booking_success_message_hint") do %>
       <div>

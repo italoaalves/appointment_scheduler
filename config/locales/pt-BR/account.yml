@@ -20,6 +20,13 @@ pt-BR:
       security_action: "Segurança"
       identity_title: "Identificação"
       identity_description: "Gerencie os dados vinculados à sua conta pessoal."
+      profile_picture_label: "Foto de perfil"
+      profile_picture_hint: "Envie uma imagem pensada para recorte quadrado. JPG, PNG e WebP de até 5 MB."
+      profile_picture_remove: "Remover foto"
+      profile_picture_remove_confirm: "Deseja remover sua foto de perfil atual?"
+      profile_picture_removed: "Foto de perfil removida."
+      profile_picture_remove_failed: "Não foi possível remover sua foto de perfil agora."
+      profile_picture_alt: "Foto de perfil de %{name}"
       email_hint: "Seu endereço de e-mail é gerenciado pelos métodos de acesso da conta."
       security_card_description: "Revise passkeys, MFA, provedores vinculados e recuperação de acesso."
       security_enabled: "MFA ativado"
@@ -304,4 +311,3 @@ pt-BR:
       plan_change_hint: "Você pode alterar seu plano a qualquer momento em Configurações > Cobrança."
       go_to_dashboard: "Ir para o Painel"
       completed_notice: "Seu espaço está pronto! Agora você pode compartilhar seu link de agendamento."
-

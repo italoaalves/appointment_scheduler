@@ -11,7 +11,7 @@ class ProfilesController < ApplicationController
   def update
     if update_profile
       bypass_sign_in(@user, scope: :user) if password_changed?
-      redirect_to edit_profile_path
+      redirect_to edit_profile_path, notice: t("profiles.update.notice"), status: :see_other
     else
       set_active_deletion_request
       render :edit, status: :unprocessable_entity
@@ -73,11 +73,12 @@ class ProfilesController < ApplicationController
   end
 
   def update_profile
-    if password_params?
-      @user.update_with_password(profile_params_with_password)
-    else
-      @user.update(profile_params)
-    end
+    Profiles::UpdateSettings.call(
+      user: @user,
+      attributes: profile_params,
+      password_attributes: (password_params? ? profile_params_with_password : nil),
+      profile_picture_upload: profile_picture_upload_param
+    )
   end
 
   def password_params?
@@ -96,6 +97,10 @@ class ProfilesController < ApplicationController
   def profile_params_with_password
     p = params.require(:user).permit(:name, :phone_number, :current_password, :password, :password_confirmation)
     strip_phone_if_trialing(p)
+  end
+
+  def profile_picture_upload_param
+    params.dig(:user, :profile_picture_upload)
   end
 
   # Defense-in-depth: strip phone_number from params when the user is on trial

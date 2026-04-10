@@ -1,9 +1,13 @@
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
+require "base64"
+require "fileutils"
 require "minitest/mock"
 require "omniauth"
 require "ostruct"
+require "rack/test"
+require "tempfile"
 require "webauthn"
 require "webauthn/fake_client"
 
@@ -36,6 +40,45 @@ module WebAuthnTestHelpers
   end
 end
 
+module UploadTestHelpers
+  TINY_PNG_DATA = Base64.decode64("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4////fwAJ+wP9KobjigAAAABJRU5ErkJggg==")
+
+  def image_upload(filename: "image.png", content_type: "image/png", data: TINY_PNG_DATA)
+    build_uploaded_file(filename:, content_type:, data:)
+  end
+
+  def text_upload(filename: "notes.txt", content_type: "text/plain", data: "not an image")
+    build_uploaded_file(filename:, content_type:, data:)
+  end
+
+  def cleanup_uploaded_file_fixtures!
+    Array(@uploaded_file_tempfiles).each do |tempfile|
+      tempfile.close!
+    rescue Errno::ENOENT
+      nil
+    end
+
+    @uploaded_file_tempfiles = []
+    FileUtils.rm_rf(Rails.root.join("tmp/stored_files"))
+  end
+
+  private
+
+  def build_uploaded_file(filename:, content_type:, data:)
+    basename = File.basename(filename, File.extname(filename))
+    extension = File.extname(filename)
+    tempfile = Tempfile.new([ basename, extension ])
+    tempfile.binmode
+    tempfile.write(data)
+    tempfile.rewind
+
+    @uploaded_file_tempfiles ||= []
+    @uploaded_file_tempfiles << tempfile
+
+    Rack::Test::UploadedFile.new(tempfile.path, content_type, true, original_filename: filename)
+  end
+end
+
 module ActiveSupport
   class TestCase
     # Default to serial execution because PostgreSQL fixture reloads are not
@@ -49,6 +92,11 @@ module ActiveSupport
     # Add more helper methods to be used by all tests here...
     include OmniAuthTestHelpers
     include WebAuthnTestHelpers
+    include UploadTestHelpers
+
+    teardown do
+      cleanup_uploaded_file_fixtures!
+    end
   end
 end
 

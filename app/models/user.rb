@@ -7,6 +7,12 @@ class User < ApplicationRecord
   has_one :space, through: :space_membership
 
   has_one :user_preference, dependent: :destroy
+  has_many :stored_files, as: :attachable, dependent: :destroy, inverse_of: :attachable
+  has_one :profile_picture_file,
+          -> { where(scope: StoredFile::PROFILE_PICTURE_SCOPE) },
+          as: :attachable,
+          class_name: "StoredFile",
+          inverse_of: :attachable
   has_many :account_deletion_requests, dependent: :destroy
   has_many :user_identities, dependent: :destroy
   has_many :user_passkeys, dependent: :destroy
