@@ -15,28 +15,27 @@
   <%# Navbar %>
   <nav class="relative z-10 flex items-center justify-between px-6 md:px-12 py-6 max-w-6xl mx-auto w-full">
     <div class="flex items-center gap-3">
-      <%= image_tag "anela-bgless.png", alt: "Anella", class: "h-8 w-auto" %>
+      <%= image_tag app_wordmark_asset, alt: app_name, class: "h-8 w-auto" %>
     </div>
     <div class="flex items-center gap-4">
-      <%= link_to "Sign In", new_user_session_path, class: "text-sm font-medium text-deep hover:text-electric transition-colors" %>
-      <%= link_to "Start Free Trial", new_user_registration_path, class: "btn-primary btn-sm" %>
+      <%= link_to t("landing.nav.sign_in"), new_user_session_path, class: "text-sm font-medium text-deep hover:text-electric transition-colors" %>
+      <%= link_to t("landing.nav.start_trial"), new_user_registration_path, class: "btn-primary btn-sm" %>
     </div>
   </nav>
 
   <%# Hero content %>
   <div class="relative z-10 flex-1 flex items-center justify-center px-6 py-16">
     <div class="text-center max-w-4xl mx-auto">
-      <span class="badge badge-cerulean mb-6 inline-flex">14-day free trial · No credit card required</span>
+      <span class="badge badge-cerulean mb-6 inline-flex"><%= t("landing.hero.badge") %></span>
       <h1 class="font-display text-5xl md:text-7xl font-extrabold text-deep leading-tight tracking-tight">
-        Continuous connection,<br class="hidden md:block"> automated flow.
+        <%= t("landing.hero.title_line_1") %><br class="hidden md:block"> <%= t("landing.hero.title_line_2") %>
       </h1>
       <p class="mt-6 text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-        Manage appointments, engage clients on WhatsApp, and automate billing —
-        all in one platform built for Brazilian service businesses.
+        <%= t("landing.hero.body") %>
       </p>
       <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-        <%= link_to "Start Your 14-Day Trial", new_user_registration_path, class: "btn-primary text-lg px-8 py-4" %>
-        <%= link_to "Sign In", new_user_session_path, class: "btn-secondary text-lg px-8 py-4" %>
+        <%= link_to t("landing.hero.primary_cta"), new_user_registration_path, class: "btn-primary text-lg px-8 py-4" %>
+        <%= link_to t("landing.hero.secondary_cta"), new_user_session_path, class: "btn-secondary text-lg px-8 py-4" %>
       </div>
     </div>
   </div>
@@ -45,9 +44,9 @@
 <%# Plans Section %>
 <section class="py-24 px-6" id="plans" style="background: linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%);">
   <div class="max-w-5xl mx-auto text-center">
-    <h2 class="section-heading">Simple, transparent pricing</h2>
-    <p class="section-subheading mx-auto">No hidden fees. Start free, upgrade when you're ready.</p>
-    <p class="mt-2 text-sm text-slate-500">14-day trial includes all Pro features — no credit card required.</p>
+    <h2 class="section-heading"><%= t("landing.pricing.title") %></h2>
+    <p class="section-subheading mx-auto"><%= t("landing.pricing.subtitle") %></p>
+    <p class="mt-2 text-sm text-slate-500"><%= t("landing.pricing.trial_note") %></p>
 
     <div class="mt-16 grid grid-cols-1 md:grid-cols-<%= @plans.size %> gap-8 justify-items-center">
       <% @plans.each do |plan| %>
@@ -56,17 +55,17 @@
              style="<%= plan.trial_default? ? 'box-shadow: 0 0 40px rgba(0,210,255,0.12), 0 6px 24px rgba(15,23,42,0.10), 0 0 0 1px rgba(0,210,255,0.3);' : '' %>">
 
           <% if plan.trial_default? %>
-            <span class="badge badge-cerulean absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap">Recommended</span>
+            <span class="badge badge-cerulean absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap"><%= t("landing.pricing.recommended") %></span>
           <% end %>
 
           <h3 class="font-display text-2xl font-bold text-deep"><%= plan.name %></h3>
 
           <p class="mt-4">
             <% if plan.free? %>
-              <span class="font-mono text-4xl font-medium text-deep">Free</span>
+              <span class="font-mono text-4xl font-medium text-deep"><%= t("landing.pricing.free") %></span>
             <% else %>
               <span class="font-mono text-4xl font-medium text-deep">R$&nbsp;<%= plan.price_cents / 100 %></span>
-              <span class="text-slate-500">/mês</span>
+              <span class="text-slate-500">/<%= t("landing.pricing.month") %></span>
             <% end %>
           </p>
 
@@ -76,8 +75,8 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
               </svg>
               <span>
-                <span class="font-mono font-medium"><%= plan.max_team_members.nil? ? "Unlimited" : plan.max_team_members %></span>
-                team members
+                <span class="font-mono font-medium"><%= plan.max_team_members.nil? ? t("landing.pricing.unlimited_team_members") : plan.max_team_members %></span>
+                <%= t("landing.pricing.team_members", count: plan.max_team_members || 2) unless plan.max_team_members.nil? %>
               </span>
             </li>
             <li class="flex items-start gap-2">
@@ -85,8 +84,8 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
               </svg>
               <span>
-                <span class="font-mono font-medium"><%= plan.max_customers.nil? ? "Unlimited" : plan.max_customers %></span>
-                customers
+                <span class="font-mono font-medium"><%= plan.max_customers.nil? ? t("landing.pricing.unlimited_customers") : plan.max_customers %></span>
+                <%= t("landing.pricing.customers", count: plan.max_customers || 2) unless plan.max_customers.nil? %>
               </span>
             </li>
             <% if plan.feature?("whatsapp_included_quota") %>
@@ -94,7 +93,7 @@
                 <svg class="w-5 h-5 text-[#00D2FF] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
-                <span>WhatsApp message quota included</span>
+                <span><%= t("landing.pricing.whatsapp_quota") %></span>
               </li>
             <% end %>
             <% if plan.feature?("personalized_booking_page") %>
@@ -102,7 +101,7 @@
                 <svg class="w-5 h-5 text-[#00D2FF] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
-                <span>Personalized booking page</span>
+                <span><%= t("landing.pricing.personalized_booking_page") %></span>
               </li>
             <% end %>
             <% if plan.feature?("priority_support") %>
@@ -110,13 +109,13 @@
                 <svg class="w-5 h-5 text-[#00D2FF] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
-                <span>Priority support</span>
+                <span><%= t("landing.pricing.priority_support") %></span>
               </li>
             <% end %>
           </ul>
 
           <div class="mt-auto pt-8">
-            <%= link_to "Get Started", new_user_registration_path,
+            <%= link_to t("landing.pricing.get_started"), new_user_registration_path,
                         class: "btn-primary w-full #{plan.trial_default? ? '' : 'bg-slate-800 hover:brightness-110'}" %>
           </div>
         </div>
@@ -128,8 +127,8 @@
 <%# Features Section %>
 <section class="py-24 px-6 bg-white" id="features">
   <div class="max-w-5xl mx-auto text-center">
-    <h2 class="section-heading">Built for how you work</h2>
-    <p class="section-subheading mx-auto">Everything you need to run your practice.</p>
+    <h2 class="section-heading"><%= t("landing.features.title") %></h2>
+    <p class="section-subheading mx-auto"><%= t("landing.features.subtitle") %></p>
 
     <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
       <div class="card">
@@ -139,8 +138,8 @@
               d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
           </svg>
         </div>
-        <h3 class="font-display text-xl font-bold text-deep">WhatsApp Native</h3>
-        <p class="mt-2 text-slate-600">Direct Meta Cloud API integration. No third-party middlemen. Messages arrive instantly and billing is transparent.</p>
+        <h3 class="font-display text-xl font-bold text-deep"><%= t("landing.features.whatsapp.title") %></h3>
+        <p class="mt-2 text-slate-600"><%= t("landing.features.whatsapp.body") %></p>
       </div>
 
       <div class="card">
@@ -150,8 +149,8 @@
               d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
           </svg>
         </div>
-        <h3 class="font-display text-xl font-bold text-deep">Tenant Isolation</h3>
-        <p class="mt-2 text-slate-600">Your data is yours. Complete workspace separation with enterprise-grade security. No cross-tenant data leaks — by design.</p>
+        <h3 class="font-display text-xl font-bold text-deep"><%= t("landing.features.isolation.title") %></h3>
+        <p class="mt-2 text-slate-600"><%= t("landing.features.isolation.body") %></p>
       </div>
 
       <div class="card">
@@ -161,8 +160,8 @@
               d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
           </svg>
         </div>
-        <h3 class="font-display text-xl font-bold text-deep">Automatic Billing</h3>
-        <p class="mt-2 text-slate-600">PIX and credit card via Asaas. Invoices, receipts, and payment reminders — all handled automatically.</p>
+        <h3 class="font-display text-xl font-bold text-deep"><%= t("landing.features.billing.title") %></h3>
+        <p class="mt-2 text-slate-600"><%= t("landing.features.billing.body") %></p>
       </div>
     </div>
   </div>
@@ -171,11 +170,11 @@
 <%# Footer %>
 <footer class="py-12 px-6 border-t border-slate-200">
   <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-    <%= image_tag "anela-bgless.png", alt: "Anella", class: "h-7 w-auto opacity-70" %>
-    <p class="text-sm text-slate-500">&copy; <%= Date.current.year %> Anella. All rights reserved.</p>
+    <%= image_tag app_wordmark_asset, alt: app_name, class: "h-7 w-auto opacity-70" %>
+    <p class="text-sm text-slate-500">&copy; <%= Date.current.year %> <%= app_name %>. <%= t("landing.footer.rights") %></p>
     <div class="flex gap-6 text-sm">
-      <%= link_to "Sign In", new_user_session_path, class: "text-slate-500 hover:text-deep transition-colors" %>
-      <%= link_to "Start Free Trial", new_user_registration_path, class: "text-slate-500 hover:text-deep transition-colors" %>
+      <%= link_to t("landing.nav.sign_in"), new_user_session_path, class: "text-slate-500 hover:text-deep transition-colors" %>
+      <%= link_to t("landing.nav.start_trial"), new_user_registration_path, class: "text-slate-500 hover:text-deep transition-colors" %>
     </div>
   </div>
 </footer>

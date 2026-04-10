@@ -103,7 +103,7 @@ class User < ApplicationRecord
   def totp_provisioning_uri(secret: totp_secret)
     return if secret.blank?
 
-    ROTP::TOTP.new(secret, issuer: "Anella").provisioning_uri(email)
+    ROTP::TOTP.new(secret, issuer: AppBrand.authenticator_name).provisioning_uri(email)
   end
 
   def ensure_webauthn_id!

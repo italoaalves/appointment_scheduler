@@ -221,7 +221,7 @@ pt-BR:
       sections:
         intro:
           title: "Introdução"
-          body: "Esta política de privacidade descreve como o Agendador de Consultas (\"nós\", \"nosso\", \"a plataforma\") coleta, utiliza e protege os dados pessoais de seus usuários e seus clientes."
+          body: "Esta política de privacidade descreve como a %{app_name} (\"nós\", \"nosso\", \"a plataforma\") coleta, utiliza e protege os dados pessoais de seus usuários e seus clientes."
         data_collected:
           title: "Dados que Coletamos"
           items:
@@ -264,4 +264,3 @@ pt-BR:
     terms_of_service:
       title: "Termos de Uso"
       last_updated: "Última atualização: %{date}"
-

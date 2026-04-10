@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "uri"
+require_relative "../app_brand"
 
 module Security
   class WebauthnConfig
@@ -22,7 +23,7 @@ module Security
         webauthn_config: Rails.application.config.x.webauthn,
         app_config: Rails.application.config,
         env: ENV,
-        default_rp_name: I18n.t("layout.app_name")
+        default_rp_name: AppBrand.authenticator_name(app_config:, credentials:)
       )
         webauthn_credentials = credentials.dig(:webauthn) || {}
 

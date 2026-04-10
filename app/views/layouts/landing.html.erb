@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
-    <title><%= t("landing.meta.title") %></title>
+    <title><%= t("landing.meta.title", app_name: app_name) %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="description" content="<%= t("landing.meta.description") %>">
     <%= csrf_meta_tags %>

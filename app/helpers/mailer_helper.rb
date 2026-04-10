@@ -48,7 +48,7 @@ module MailerHelper
   end
 
   def email_signature_name
-    content_for?(:email_signature_name) ? content_for(:email_signature_name) : t("layout.app_name")
+    content_for?(:email_signature_name) ? content_for(:email_signature_name) : AppBrand.name
   end
 
   def email_cta_label
@@ -121,16 +121,16 @@ module MailerHelper
     when "devise/mailer"
       "Security"
     else
-      t("layout.app_name")
+      AppBrand.name
     end
   end
 
   def default_email_footer_reason
     case [ current_mailer_name, current_mailer_action ]
     when [ "booking_confirmation_mailer", "customer_confirmation" ]
-      t("booking.confirmation_email.footer", business_name: @space.name, app_name: t("layout.app_name"))
+      t("booking.confirmation_email.footer", business_name: @space.name, app_name: AppBrand.name)
     when [ "messaging/customer_message_mailer", "customer_message" ]
-      "You received this email because a business contacted you through #{t('layout.app_name')}."
+      "You received this email because a business contacted you through #{AppBrand.name}."
     when [ "devise/mailer", "confirmation_instructions" ]
       "You received this email because an account was created with this address."
     when [ "devise/mailer", "reset_password_instructions" ]
@@ -142,7 +142,7 @@ module MailerHelper
     when [ "devise/mailer", "password_change" ]
       "You received this email because your account password changed."
     else
-      "This is an automated transactional email from #{t('layout.app_name')}."
+      "This is an automated transactional email from #{AppBrand.name}."
     end
   end
 

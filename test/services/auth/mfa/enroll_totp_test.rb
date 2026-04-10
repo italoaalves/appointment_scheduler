@@ -8,7 +8,7 @@ module Auth
       test "enables totp and generates recovery codes for the first factor" do
         user = users(:manager_two)
         secret = ROTP::Base32.random
-        code = ROTP::TOTP.new(secret, issuer: "Anella").now
+        code = ROTP::TOTP.new(secret, issuer: AppBrand.authenticator_name).now
 
         result = EnrollTotp.call(user:, secret:, code:)
 
@@ -33,7 +33,7 @@ module Auth
         Auth::Mfa::GenerateRecoveryCodes.call(user:)
         original_digests = user.user_recovery_codes.pluck(:code_digest).sort
         secret = ROTP::Base32.random
-        code = ROTP::TOTP.new(secret, issuer: "Anella").now
+        code = ROTP::TOTP.new(secret, issuer: AppBrand.authenticator_name).now
 
         result = EnrollTotp.call(user:, secret:, code:)
 

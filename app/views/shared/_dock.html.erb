@@ -90,7 +90,7 @@
       <%= link_to root_path,
                   class: "flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl hover:bg-slate-100/60 transition-colors #{nav_group_active?(:dashboard) ? 'text-electric' : 'text-slate-400'}",
                   aria: { label: "Home" } do %>
-        <%= image_tag "anella-logo.png", class: "w-6 h-6 sm:w-10 sm:h-10 rounded-md sm:rounded-xl object-contain", alt: "Anella" %>
+        <%= image_tag app_logo_asset, class: "w-6 h-6 sm:w-10 sm:h-10 rounded-md sm:rounded-xl object-contain", alt: app_name %>
         <span class="text-[10px] font-medium sm:hidden">Home</span>
       <% end %>
 

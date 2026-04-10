@@ -71,7 +71,7 @@ class ProfileSecurityTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     secret = css_select("p.font-mono").first.text.strip
-    code = ROTP::TOTP.new(secret, issuer: "Anella").now
+    code = ROTP::TOTP.new(secret, issuer: AppBrand.authenticator_name).now
 
     post profile_security_totp_enrollment_path, params: { code: code }
 

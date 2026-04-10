@@ -8,12 +8,12 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
 
   test "GET / unauthenticated renders landing layout" do
     get root_path
-    assert_select "h1", text: /Continuous connection/
+    assert_select "h1", text: /#{Regexp.escape(I18n.t("landing.hero.title_line_1"))}/
   end
 
   test "GET / unauthenticated includes trial CTA" do
     get root_path
-    assert_select "a", text: /14-Day Trial/
+    assert_select "a", text: /#{Regexp.escape(I18n.t("landing.hero.primary_cta"))}/
   end
 
   test "GET / unauthenticated shows plans from DB" do

@@ -14,7 +14,7 @@ module Auth
           mfa_enabled_at: Time.current
         )
 
-        code = ROTP::TOTP.new(user.totp_secret, issuer: "Anella").now
+        code = ROTP::TOTP.new(user.totp_secret, issuer: AppBrand.authenticator_name).now
 
         result = VerifyTotp.call(user: user, code: code)
         assert result.success?
