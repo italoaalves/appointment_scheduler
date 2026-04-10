@@ -4,4 +4,4 @@
       plan_name:  @new_plan.name,
       price:      number_to_currency(@new_plan.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".")) %>
 
-<%= t("layout.app_name") %>
+<%= AppBrand.name %>

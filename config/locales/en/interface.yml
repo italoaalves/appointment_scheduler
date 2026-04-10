@@ -61,7 +61,7 @@ en:
         disconnected: "Not connected"
 
   layout:
-    app_name: "Appointment Scheduler"
+    app_name: "Anella"
     nav:
       my_appointments: "My appointments"
       request_appointment: "Request appointment"

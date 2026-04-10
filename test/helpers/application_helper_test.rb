@@ -80,4 +80,10 @@ class ApplicationHelperTest < ActionView::TestCase
 
     assert_equal first_call, unread_notifications_count
   end
+
+  test "app_name helper reads from shared brand settings" do
+    assert_equal AppBrand.name, app_name
+    assert_equal AppBrand.logo_asset, app_logo_asset
+    assert_equal AppBrand.wordmark_asset, app_wordmark_asset
+  end
 end

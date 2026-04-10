@@ -1,4 +1,32 @@
 module ApplicationHelper
+  def app_name
+    AppBrand.name
+  end
+
+  def legal_product_name
+    AppBrand.legal_product_name
+  end
+
+  def app_logo_asset
+    AppBrand.logo_asset
+  end
+
+  def app_wordmark_asset
+    AppBrand.wordmark_asset
+  end
+
+  def authenticator_name
+    AppBrand.authenticator_name
+  end
+
+  def company_name
+    AppBrand.company_name
+  end
+
+  def support_email
+    AppBrand.support_email
+  end
+
   def unread_notifications_count
     return 0 unless user_signed_in?
 

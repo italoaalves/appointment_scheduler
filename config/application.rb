@@ -23,6 +23,21 @@ module AppointmentScheduler
     config.i18n.default_locale = :'pt-BR'
     config.i18n.load_path += Dir[Rails.root.join("config/locales/**/*.yml")]
 
+    app_credentials = Rails.application.credentials.dig(:app) || {}
+    config.x.app.name = ENV["APP_NAME"].presence || app_credentials[:name].presence || "Anella"
+    config.x.app.legal_product_name = ENV["APP_LEGAL_PRODUCT_NAME"].presence || app_credentials[:legal_product_name].presence || config.x.app.name
+    config.x.app.authenticator_name = ENV["APP_AUTHENTICATOR_NAME"].presence || app_credentials[:authenticator_name].presence || config.x.app.name
+    config.x.app.company_name = ENV["APP_COMPANY_NAME"].presence || app_credentials[:company_name].presence || "Elo Consultoria em Software LTDA"
+    config.x.app.support_email = ENV["APP_SUPPORT_EMAIL"].presence || app_credentials[:support_email].presence
+    config.x.app.logo_asset = ENV["APP_LOGO_ASSET"].presence || app_credentials[:logo_asset].presence || "anella-logo.png"
+    config.x.app.wordmark_asset = ENV["APP_WORDMARK_ASSET"].presence || app_credentials[:wordmark_asset].presence || "anela-bgless.png"
+    config.x.app.base_url = ENV["APP_BASE_URL"].presence || app_credentials[:base_url].presence
+    config.x.app.base_urls = if ENV["APP_BASE_URLS"].present?
+      ENV["APP_BASE_URLS"].split(",").map(&:strip).reject(&:blank?)
+    else
+      Array(app_credentials[:base_urls]).presence
+    end
+
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.

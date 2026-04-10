@@ -43,7 +43,7 @@ module Auth
       private
 
       def totp
-        @totp ||= ROTP::TOTP.new(@user.totp_secret, issuer: "Anella")
+        @totp ||= ROTP::TOTP.new(@user.totp_secret, issuer: AppBrand.authenticator_name)
       end
 
       def verification_options

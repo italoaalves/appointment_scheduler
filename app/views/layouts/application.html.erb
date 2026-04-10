@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
-    <title><%= content_for(:title) || t("layout.app_name") %></title>
+    <title><%= content_for(:title) || app_name %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -47,7 +47,7 @@
           <div class="mx-auto max-w-8xl px-4 sm:px-6 lg:px-8">
             <div class="flex h-14 items-center justify-between">
               <div class="flex items-center gap-4">
-                <%= link_to t("layout.app_name"), platform_root_path, class: "font-display font-bold text-sm text-white tracking-tight" %>
+                <%= link_to app_name, platform_root_path, class: "font-display font-bold text-sm text-white tracking-tight" %>
                 <div class="hidden md:flex items-center gap-3 text-sm">
                   <%= link_to t("layout.nav.tenants"), platform_spaces_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>
                   <%= link_to t("layout.nav.platform_users"), platform_users_path, class: "text-slate-200 hover:text-white px-2 py-1 rounded-md hover:bg-slate-800 transition" %>

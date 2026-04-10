@@ -61,7 +61,7 @@ pt-BR:
         disconnected: "Não conectado"
 
   layout:
-    app_name: "Agendador de Consultas"
+    app_name: "Anella"
     nav:
       my_appointments: "Minhas consultas"
       request_appointment: "Agendar consulta"

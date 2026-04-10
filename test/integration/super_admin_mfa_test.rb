@@ -113,6 +113,6 @@ class SuperAdminMfaTest < ActionDispatch::IntegrationTest
   end
 
   def current_totp_for(user)
-    ROTP::TOTP.new(user.totp_secret, issuer: "Anella").now
+    ROTP::TOTP.new(user.totp_secret, issuer: AppBrand.authenticator_name).now
   end
 end

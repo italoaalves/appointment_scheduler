@@ -11,4 +11,4 @@
 <%= @space.booking_success_message %>
 <% end %>
 
-<%= t("booking.confirmation_email.footer", business_name: @space.name, app_name: t("layout.app_name")) %>
+<%= t("booking.confirmation_email.footer", business_name: @space.name, app_name: AppBrand.name) %>

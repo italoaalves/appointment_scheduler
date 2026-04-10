@@ -1,7 +1,7 @@
 en:
   landing:
     meta:
-      title: "Anella - Continuous connection, automated flow"
+      title: "%{app_name} - Continuous connection, automated flow"
       description: "Manage appointments, engage clients on WhatsApp, and automate billing in one platform built for Brazilian service businesses."
     nav:
       sign_in: "Sign In"

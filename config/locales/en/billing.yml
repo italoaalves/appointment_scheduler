@@ -221,7 +221,7 @@ en:
       sections:
         intro:
           title: "Introduction"
-          body: "This privacy policy describes how Agendador de Consultas (\"we\", \"our\", \"the platform\") collects, uses, and protects the personal data of its users and their customers."
+          body: "This privacy policy describes how %{app_name} (\"we\", \"our\", \"the platform\") collects, uses, and protects the personal data of its users and their customers."
         data_collected:
           title: "Data We Collect"
           items:
@@ -264,4 +264,3 @@ en:
     terms_of_service:
       title: "Terms of Service"
       last_updated: "Last updated: %{date}"
-

@@ -1,7 +1,7 @@
 pt-BR:
   landing:
     meta:
-      title: "Anella - Conexão contínua, fluxo automatizado"
+      title: "%{app_name} - Conexão contínua, fluxo automatizado"
       description: "Gerencie agendamentos, fale com clientes pelo WhatsApp e automatize cobranças em uma plataforma feita para negócios de serviços no Brasil."
     nav:
       sign_in: "Entrar"
