@@ -1,15 +1,37 @@
-<p><%= t("billing.payment_mailer.reminder.greeting", space_name: @space.name) %></p>
+<%
+  amount = number_to_currency(@amount, unit: "R$", separator: ",", delimiter: ".")
+  due_date = @due_date&.strftime("%d/%m/%Y") || "-"
+  callout_title =
+    case @reminder_type.to_s
+    when "overdue" then "Payment overdue"
+    when "due_today" then "Due today"
+    else "Payment due"
+    end
+  tone =
+    case @reminder_type.to_s
+    when "overdue" then "danger"
+    when "due_today" then "warning"
+    else "info"
+    end
+%>
+<% content_for :email_preheader, t("billing.payment_mailer.reminder.body_#{@reminder_type}_#{@payment_method}", amount: amount, due_date: due_date) %>
+<% content_for :email_eyebrow, "Billing" %>
+<% content_for :email_title, message.subject %>
+<% content_for :email_intro, "Payment details are below so you can complete this without hunting through the dashboard." %>
+<% content_for(:email_cta_label, t("billing.payment_mailer.reminder.pay_now")) if @invoice_url.present? %>
+<% content_for(:email_cta_url, @invoice_url) if @invoice_url.present? %>
 
-<p><%= t("billing.payment_mailer.reminder.body_#{@reminder_type}_#{@payment_method}",
-         amount:   number_to_currency(@amount, unit: "R$", separator: ",", delimiter: "."),
-         due_date: @due_date&.strftime("%d/%m/%Y") || "-") %></p>
+<p style="margin: 0 0 16px;"><%= email_greeting(@space.name) %></p>
 
-<% if @invoice_url.present? %>
-  <p>
-    <a href="<%= @invoice_url %>"><%= t("billing.payment_mailer.reminder.pay_now") %></a>
-  </p>
-<% end %>
+<%= render "shared/mailer/callout",
+           title: callout_title,
+           tone: tone,
+           content: t("billing.payment_mailer.reminder.body_#{@reminder_type}_#{@payment_method}",
+                      amount: amount,
+                      due_date: due_date) %>
 
-<p style="margin-top: 1.5em; font-size: 12px; color: #666;">
-  <%= t("layout.app_name") %>
-</p>
+<%= render "shared/mailer/metadata", rows: [
+  { label: "Amount", value: amount },
+  { label: "Due date", value: due_date },
+  { label: "Payment method", value: t("billing.payment_methods.#{@payment_method}") }
+] %>

@@ -1,18 +1,20 @@
-<p><%= t("booking.confirmation_email.greeting", business_name: @space.name) %></p>
+<% content_for :email_preheader, t("booking.confirmation_email.intro") %>
+<% content_for :email_eyebrow, "Booking" %>
+<% content_for :email_title, t("booking.confirmation_email.greeting", business_name: @space.name) %>
+<% content_for :email_intro, "We’ve recorded your request and shared the details below so everything is easy to verify." %>
 
-<p><%= t("booking.confirmation_email.intro") %></p>
+<p style="margin: 0 0 16px;"><%= t("booking.confirmation_email.intro") %></p>
 
-<table style="margin: 1em 0; border-collapse: collapse;">
-  <tr><td style="padding: 0.25em 1em 0.25em 0; color: #666; font-size: 12px;"><%= t("booking.thank_you.date") %>:</td><td><%= @date_str %></td></tr>
-  <tr><td style="padding: 0.25em 1em 0.25em 0; color: #666; font-size: 12px;"><%= t("booking.thank_you.time") %>:</td><td><%= @time_str %></td></tr>
-  <tr><td style="padding: 0.25em 1em 0.25em 0; color: #666; font-size: 12px;"><%= t("booking.thank_you.duration") %>:</td><td><%= t("booking.thank_you.duration_minutes", count: @duration) %></td></tr>
-  <tr><td style="padding: 0.25em 1em 0.25em 0; color: #666; font-size: 12px;"><%= t("booking.thank_you.status") %>:</td><td><%= t("booking.confirmation_email.status_message") %></td></tr>
-</table>
+<%= render "shared/mailer/metadata", rows: [
+  { label: t("booking.thank_you.date"), value: @date_str },
+  { label: t("booking.thank_you.time"), value: @time_str },
+  { label: t("booking.thank_you.duration"), value: t("booking.thank_you.duration_minutes", count: @duration) },
+  { label: t("booking.thank_you.status"), value: t("booking.confirmation_email.status_message") }
+] %>
 
 <% if @space.booking_success_message.present? %>
-  <p><%= @space.booking_success_message %></p>
+  <%= render "shared/mailer/callout",
+             title: "Note from #{@space.name}",
+             tone: "info",
+             content: simple_format(@space.booking_success_message, {}, wrapper_tag: "div") %>
 <% end %>
-
-<p style="margin-top: 1.5em; font-size: 12px; color: #666;">
-  <%= t("booking.confirmation_email.footer", business_name: @space.name, app_name: t("layout.app_name")) %>
-</p>

@@ -1,1 +1,12 @@
-<%= simple_format(@body) %>
+<% content_for :email_preheader, @body.to_s.tr("\n", " ").truncate(120) %>
+<% content_for :email_eyebrow, "Conversation" %>
+<% content_for :email_title, message.subject.presence || "New message" %>
+<% content_for :email_intro, "A business sent you a message through #{t('layout.app_name')}." %>
+<% if message.reply_to.present? %>
+  <% content_for :email_footer_support, "Reply directly to this email to continue the conversation." %>
+<% end %>
+
+<%= render "shared/mailer/callout",
+           title: "Message",
+           tone: "info",
+           content: simple_format(@body, {}, wrapper_tag: "div") %>

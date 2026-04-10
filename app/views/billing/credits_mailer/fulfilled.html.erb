@@ -1,5 +1,16 @@
-<p><%= t("billing.credits_mailer.fulfilled.body", amount: @amount) %></p>
+<% content_for :email_preheader, t("billing.credits_mailer.fulfilled.body", amount: @amount) %>
+<% content_for :email_eyebrow, "Billing" %>
+<% content_for :email_title, message.subject %>
+<% content_for :email_intro, "Your purchase went through and the credits are now available on the account." %>
+<% content_for :email_cta_label, "Open credits" %>
+<% content_for :email_cta_url, settings_credits_url %>
 
-<p style="margin-top: 1.5em; font-size: 12px; color: #666;">
-  <%= t("layout.app_name") %>
-</p>
+<%= render "shared/mailer/callout",
+           title: "Credits added",
+           tone: "success",
+           content: t("billing.credits_mailer.fulfilled.body", amount: @amount) %>
+
+<%= render "shared/mailer/metadata", rows: [
+  { label: "Credits", value: @amount.to_s },
+  { label: "Workspace", value: @space.name }
+] %>
