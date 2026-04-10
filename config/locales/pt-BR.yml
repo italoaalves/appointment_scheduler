@@ -111,10 +111,31 @@ pt-BR:
           no_show: "Faltou"
           finished: "Finalizada"
 
+  account:
+    sidebar:
+      label: "Navegação da conta"
+      eyebrow: "Conta"
+      subtitle: "Mantenha seus dados pessoais, preferências e controles de acesso no mesmo lugar."
+      section: "Pessoal"
+      profile: "Perfil"
+      preferences: "Preferências"
+      security: "Segurança"
+      descriptions:
+        profile: "Sua identificação, telefone, senha e ciclo de vida da conta."
+        preferences: "Idioma e preferências pessoais do espaço de trabalho."
+        security: "SSO, MFA, passkeys e opções de recuperação."
+
   profiles:
     edit:
       title: "Perfil"
       subtitle: "Atualize seu nome, informações de contato e senha."
+      security_action: "Segurança"
+      identity_title: "Identificação"
+      identity_description: "Gerencie os dados vinculados à sua conta pessoal."
+      email_hint: "Seu endereço de e-mail é gerenciado pelos métodos de acesso da conta."
+      security_card_description: "Revise passkeys, MFA, provedores vinculados e recuperação de acesso."
+      security_enabled: "MFA ativado"
+      security_review: "Revise seus acessos"
       phone_label: "Telefone"
       phone_locked_during_trial: "O número de telefone não pode ser alterado durante o período de teste."
       password_section: "Alterar senha"
@@ -146,6 +167,91 @@ pt-BR:
     cancel_deletion_request:
       notice: "Solicitação de exclusão cancelada."
       not_found: "Nenhuma solicitação de exclusão pendente foi encontrada."
+    security:
+      title: "Segurança"
+      subtitle: "Gerencie MFA, passkeys e opções de recuperação da sua conta."
+      back: "Voltar ao perfil"
+      status:
+        title: "Status de segurança"
+        description: "Escolha como esta conta comprova que é realmente você antes de liberar o acesso."
+        mfa: "MFA"
+        policy: "Política"
+        linked_accounts: "Contas vinculadas"
+        recovery_codes: "Códigos de recuperação"
+        active_methods: "Métodos ativos"
+        enabled: "Ativado"
+        disabled: "Não ativado"
+        required: "Obrigatório"
+        optional: "Opcional"
+        pending: "Disponível após a configuração"
+        none: "Nenhum fator configurado ainda."
+        none_linked: "Nenhum provedor vinculado"
+        authenticator_app: "App autenticador"
+        passkeys_count:
+          one: "1 passkey"
+          other: "%{count} passkeys"
+        linked_accounts_count:
+          one: "1 provedor vinculado"
+          other: "%{count} provedores vinculados"
+        recovery_codes_count:
+          one: "1 código ativo"
+          other: "%{count} códigos ativos"
+      identities:
+        title: "Métodos de acesso"
+        description: "Veja quais métodos de acesso estão disponíveis para esta conta e conecte provedores compatíveis."
+        password: "Senha"
+        password_status: "E-mail e senha"
+        password_description: "Use o e-mail da conta e sua senha sempre que precisar de um fallback mais familiar."
+        available: "Disponível"
+        linked: "Vinculado"
+        not_linked: "Não vinculado"
+        email_verified: "E-mail verificado"
+        email_unverified: "E-mail não verificado"
+        last_authenticated_at: "Último uso em %{at}"
+        connect: "Conectar %{provider}"
+        connect_description: "Vincule %{provider} para usar esse provedor no próximo login."
+        unavailable: "Os provedores de login social não estão habilitados neste ambiente."
+      passkeys:
+        title: "Passkeys"
+        description: "Adicione passkeys para Face ID, Touch ID, Windows Hello ou chaves físicas."
+        created: "Passkey adicionada."
+        deleted: "Passkey removida."
+        empty: "Nenhuma passkey foi adicionada ainda."
+        platform_authenticator: "Autenticador integrado do dispositivo"
+        cross_platform_authenticator: "Chave física ou passkey entre dispositivos"
+        created_at: "Adicionada em %{at}"
+        last_used_at: "Último uso em %{at}"
+        never_used: "Ainda não utilizada"
+        remove: "Remover passkey"
+        remove_confirm: "Deseja remover esta passkey da sua conta?"
+      totp:
+        title: "App autenticador"
+        description: "Use um app autenticador como fator de backup quando uma passkey não estiver disponível."
+        enabled: "App autenticador ativado."
+        disabled: "App autenticador desativado."
+        enabled_status: "O app autenticador está ativo."
+        disabled_status: "O app autenticador ainda não está ativo."
+        setup: "Configurar app autenticador"
+        disable: "Desativar app autenticador"
+        disable_confirm: "Deseja desativar o app autenticador desta conta?"
+        last_verified_at: "Última verificação em %{at}"
+      recovery_codes:
+        title: "Códigos de recuperação"
+        description: "Códigos únicos de backup ajudam você a recuperar o acesso se perder o dispositivo principal de MFA."
+        warning: "Gerar novos códigos de recuperação invalida imediatamente o conjunto anterior."
+        available:
+          one: "Você tem 1 código de recuperação ativo."
+          other: "Você tem %{count} códigos de recuperação ativos."
+        unavailable: "Os códigos de recuperação ficam disponíveis depois que você ativa o MFA."
+        review_hint: "Gere um novo conjunto sempre que precisar substituir códigos salvos em outro lugar."
+        regenerate: "Gerar novos códigos de recuperação"
+        regenerate_confirm: "Gerar um novo conjunto de códigos de recuperação? Os códigos atuais deixarão de funcionar."
+        acknowledged: "Códigos de recuperação salvos."
+        missing: "Não há códigos de recuperação prontos para exibir agora."
+      errors:
+        last_factor_required: "Super admins precisam manter pelo menos um fator de MFA ativo."
+        not_enabled: "Esse fator de MFA não está ativo para esta conta."
+        not_found: "Não foi possível encontrar essa passkey."
 
   data_exports:
     package_mailer:
@@ -159,11 +265,84 @@ pt-BR:
     edit:
       title: "Preferências"
       subtitle: "Personalize sua experiência."
+      language_title: "Idioma"
+      language_description: "Escolha o idioma usado em toda a sua conta."
       locale_label: "Idioma"
       submit: "Salvar"
       back: "Voltar"
     update:
       notice: "Preferências atualizadas."
+
+  social_registrations:
+    new:
+      title: "Conclua seu cadastro com %{provider}"
+      subtitle: "Só precisamos de mais alguns dados obrigatórios antes de criar sua conta."
+      name: "Nome completo"
+      email: "Email"
+      phone_number: "Número de telefone"
+      submit: "Concluir cadastro"
+      submit_loading: "Criando conta…"
+      back_to_sign_in: "Voltar para o login"
+    create:
+      notice: "Conta %{provider} conectada com sucesso."
+    linked_account_notice: "%{provider} agora está conectado à sua conta."
+    session_expired: "Sua sessão de cadastro social expirou. Tente novamente."
+    errors:
+      email_required: "Não foi possível concluir o login porque o provedor não compartilhou um endereço de e-mail."
+      identity_conflict: "Essa conta social já está vinculada a outro usuário."
+      provider_already_linked: "Esse provedor já está conectado à sua conta."
+      invalid_auth: "Não foi possível ler a resposta do provedor. Tente novamente."
+
+  mfa:
+    challenge:
+      title: "Confirme que é você"
+      subtitle: "O acesso de super admin exige um segundo fator antes de abrir a plataforma."
+      passkey_divider: "ou use um código do autenticador"
+      otp_label: "Código do autenticador"
+      recovery_divider: "ou use um código de recuperação"
+      recovery_code_label: "Código de recuperação"
+      submit: "Verificar código"
+      recovery_submit: "Usar código de recuperação"
+      submit_loading: "Verificando…"
+      expired: "Sua sessão de MFA expirou. Faça login novamente."
+      errors:
+        invalid_code: "Esse código não foi reconhecido. Tente novamente."
+        replayed_code: "Esse código do autenticador já foi usado. Aguarde um novo e tente novamente."
+        blank_code: "Informe um código do autenticador ou um código de recuperação para continuar."
+        authentication_failed: "Não foi possível verificar essa passkey. Tente novamente."
+    totp_enrollment:
+      title: "Configure seu autenticador"
+      subtitle: "Escaneie este QR code no seu app autenticador e informe o código atual de 6 dígitos."
+      alternative_divider: "ou configure um app autenticador"
+      secret_label: "Chave para configuração manual"
+      code_label: "Código do autenticador"
+      submit: "Ativar MFA"
+      submit_loading: "Ativando…"
+      errors:
+        invalid_code: "Esse código do autenticador não foi reconhecido. Tente novamente."
+    passkeys:
+      register_title: "Prefere uma passkey?"
+      register_subtitle: "Use Face ID, Touch ID, Windows Hello ou uma chave física. Passkeys são o método recomendado de MFA."
+      authenticate_title: "Use sua passkey"
+      authenticate_subtitle: "Aprove a solicitação neste dispositivo para continuar com o acesso de super admin."
+      label: "Nome do dispositivo"
+      label_placeholder: "MacBook Pro"
+      register: "Adicionar passkey"
+      register_loading: "Aguardando passkey…"
+      authenticate: "Continuar com passkey"
+      authenticate_loading: "Aguardando passkey…"
+      errors:
+        generic: "Não foi possível concluir essa operação com passkey. Tente novamente."
+        unsupported_browser: "Este navegador não oferece suporte a passkeys."
+        label_blank: "Dê um nome a esta passkey antes de continuar."
+        registration_failed: "Não foi possível registrar essa passkey. Tente novamente."
+        passkeys_unavailable: "Ainda não há passkeys disponíveis para esta conta."
+    recovery_codes:
+      title: "Salve seus códigos de recuperação"
+      subtitle: "Esses códigos de uso único permitem recuperar o acesso à plataforma se você perder o autenticador."
+      warning: "Guarde esses códigos em um local seguro. Eles serão exibidos apenas uma vez."
+      submit: "Já salvei esses códigos"
+      submit_loading: "Continuando…"
 
   shared:
     submitting: "Salvando…"

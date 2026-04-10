@@ -1,0 +1,26 @@
+<div class="min-h-screen flex items-center justify-center">
+  <div class="max-w-xl w-full card-solid p-8 space-y-6">
+    <div class="text-center">
+      <h2 class="font-display text-2xl font-extrabold text-deep tracking-tight">
+        <%= t("mfa.recovery_codes.title") %>
+      </h2>
+      <p class="mt-2 text-sm text-slate-600"><%= t("mfa.recovery_codes.subtitle") %></p>
+    </div>
+
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+      <%= t("mfa.recovery_codes.warning") %>
+    </div>
+
+    <div class="grid gap-3 sm:grid-cols-2">
+      <% @recovery_codes.each do |code| %>
+        <div class="rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 font-mono text-sm text-deep">
+          <%= code %>
+        </div>
+      <% end %>
+    </div>
+
+    <%= form_with url: user_mfa_recovery_codes_path do |form| %>
+      <%= form.submit t("mfa.recovery_codes.submit"), class: "#{button_classes(:primary)} w-full", data: { turbo_submits_with: t("mfa.recovery_codes.submit_loading") } %>
+    <% end %>
+  </div>
+</div>

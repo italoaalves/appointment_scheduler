@@ -19,9 +19,9 @@
         <% end %>
       <% end %>
     <% end %>
-    <%= render "application/shared/page_header", title: t("space.users.index.title"), actions: page_actions %>
+    <%= render "shared/page_header", title: t("space.users.index.title"), actions: page_actions %>
 
-    <%= render "application/shared/search_bar",
+    <%= render "shared/search_bar",
                url: users_path,
                query: params[:query],
                placeholder: t("space.users.index.filters.search_placeholder"),

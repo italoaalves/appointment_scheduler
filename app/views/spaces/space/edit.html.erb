@@ -8,7 +8,7 @@
 <% end %>
 
 <div class="space-y-6">
-  <%= render "application/shared/settings_intro",
+  <%= render "shared/settings_intro",
              eyebrow: t("settings.sidebar.business"),
              title: t("space.settings.edit.title"),
              subtitle: t("space.settings.edit.subtitle"),
@@ -18,9 +18,9 @@
              ] %>
 
   <%= form_with model: @space, url: settings_space_path, method: :patch, class: "space-y-6" do |form| %>
-    <%= render "application/shared/error_messages", resource: @space %>
+    <%= render "shared/error_messages", resource: @space %>
 
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("space.settings.edit.basic_info"),
                description: t("settings.sidebar.descriptions.space") do %>
       <div class="grid gap-4 lg:grid-cols-2">
@@ -37,7 +37,7 @@
       </div>
     <% end %>
 
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("space.settings.edit.contact"),
                description: t("space.settings.edit.subtitle") do %>
       <div class="grid gap-4 lg:grid-cols-2">
@@ -73,7 +73,7 @@
       </div>
     <% end %>
 
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("space.settings.edit.booking_success_message_label"),
                description: t("space.settings.edit.booking_success_message_hint") do %>
       <div>
@@ -85,11 +85,11 @@
       </div>
     <% end %>
 
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("space.settings.edit.scheduling"),
                description: t("settings.sidebar.subtitle") do %>
       <div class="grid gap-4">
-        <%= render "application/shared/settings_link_card",
+        <%= render "shared/settings_link_card",
                    path: edit_settings_space_availability_path,
                    title: t("space.settings.edit.availability_title"),
                    description: t("space.settings.edit.availability_link_hint"),
@@ -97,14 +97,14 @@
                    badge: @space.timezone.presence %>
 
         <% if current_user.can?(:manage_policies, space: @space) %>
-          <%= render "application/shared/settings_link_card",
+          <%= render "shared/settings_link_card",
                      path: edit_settings_space_policies_path,
                      title: t("space.settings.edit.policies_title"),
                      description: t("space.settings.edit.policies_link_hint"),
                      summary: settings_policy_summary(@space) %>
         <% end %>
 
-        <%= render "application/shared/settings_link_card",
+        <%= render "shared/settings_link_card",
                    path: settings_whatsapp_path,
                    title: t("settings.sidebar.whatsapp"),
                    description: t("settings.sidebar.descriptions.whatsapp"),
@@ -113,7 +113,7 @@
       </div>
     <% end %>
 
-    <%= render "application/shared/settings_action_bar", hint: t("space.settings.edit.submit") do %>
+    <%= render "shared/settings_action_bar", hint: t("space.settings.edit.submit") do %>
         <%= form.submit t("space.settings.edit.submit"),
                         class: "#{button_classes(:primary)} w-full justify-center lg:w-auto",
                         data: { turbo_submits_with: t("shared.submitting") } %>

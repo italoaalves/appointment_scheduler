@@ -65,8 +65,14 @@ group :test do
   gem "minitest", "~> 5.27"
 end
 
-gem "devise", "~> 5.0"
+gem "devise", "~> 5.0.3"
 gem "kaminari", "~> 1.2"
+gem "omniauth-apple"
+gem "omniauth-google-oauth2"
+gem "omniauth-rails_csrf_protection"
+gem "rotp"
+gem "rqrcode"
+gem "webauthn"
 
 gem "tailwindcss-rails", "~> 4.4"
 

@@ -31,6 +31,12 @@ pt-BR:
     omniauth_callbacks:
       failure: "Não foi possível autenticá-lo como %{kind} porque %{reason}."
       success: "Autenticado com sucesso com uma conta de %{kind}."
+    shared:
+      social:
+        google: "Continuar com Google"
+        apple: "Continuar com Apple"
+        divider_sign_in: "ou continue com e-mail"
+        divider_sign_up: "ou crie sua conta com e-mail"
     passwords:
       submit_loading: "Enviando…"
       change_loading: "Alterando…"

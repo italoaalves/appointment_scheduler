@@ -17,9 +17,9 @@
         <span class="text-sm text-slate-500"><%= t("billing.limits.customers_exceeded") %></span>
       <% end %>
     <% end %>
-    <%= render "application/shared/page_header", title: t("space.customers.index.title"), actions: page_actions %>
+    <%= render "shared/page_header", title: t("space.customers.index.title"), actions: page_actions %>
 
-    <%= render "application/shared/search_bar",
+    <%= render "shared/search_bar",
                url: customers_path,
                query: params[:query],
                placeholder: t("space.customers.index.filters.search_placeholder"),

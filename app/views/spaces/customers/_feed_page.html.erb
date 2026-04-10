@@ -2,7 +2,7 @@
   <div class="space-y-8">
     <% grouped_customers.each do |letter, group| %>
       <div>
-        <%= render "application/shared/sticky_section", title: letter %>
+        <%= render "shared/sticky_section", title: letter %>
 
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <% group.each do |customer| %>
@@ -12,12 +12,12 @@
       </div>
     <% end %>
 
-    <%= render "application/shared/feed_frame",
+    <%= render "shared/feed_frame",
                collection: customers,
                frame_prefix: "customers-page",
                next_page_path: customers_path(page: customers.next_page, query: params[:query]),
                skeleton_partial: "skeleton_loaders" %>
   </div>
 <% else %>
-  <%= render "application/shared/empty_state", content: t("space.customers.index.empty") %>
+  <%= render "shared/empty_state", content: t("space.customers.index.empty") %>
 <% end %>

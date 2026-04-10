@@ -3,7 +3,7 @@
              url: plan.persisted? ? platform_plan_path(plan) : platform_plans_path,
              method: plan.persisted? ? :patch : :post,
              class: "space-y-6" do |f| %>
-  <%= render "application/shared/error_messages", resource: plan %>
+  <%= render "shared/error_messages", resource: plan %>
 
   <%# ── Identity ──────────────────────────────────────────────────────── %>
   <fieldset class="space-y-4">

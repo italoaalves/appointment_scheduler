@@ -139,6 +139,41 @@ module UiHelper
     ]
   end
 
+  def account_sidebar_link(label, path, section, variant: :desktop)
+    active = account_section_active?(section)
+    if variant == :mobile
+      classes = active ? "block shrink-0 rounded-2xl border border-electric/30 bg-electric/10 px-4 py-2.5 text-sm font-medium text-electric shadow-sm shadow-electric/10" : "block shrink-0 rounded-2xl border border-white/50 bg-white/65 px-4 py-2.5 text-sm text-slate-600 transition hover:border-electric/15 hover:bg-white/80 hover:text-deep"
+    else
+      classes = active ? "block rounded-card border border-electric/20 bg-electric/10 px-4 py-3 text-electric shadow-sm shadow-electric/10 ring-1 ring-electric/10" : "block rounded-card border border-transparent px-4 py-3 text-slate-600 transition hover:border-white/60 hover:bg-white/70 hover:text-deep"
+    end
+
+    content_tag(:li, class: variant == :mobile ? "shrink-0" : nil) do
+      link_to path, class: classes, aria: (active ? { current: "page" } : {}) do
+        content_tag(:div, class: "flex items-center justify-between gap-3") do
+          concat(content_tag(:div, class: "min-w-0") do
+            concat content_tag(:p, label, class: "text-sm font-semibold leading-5")
+            if variant != :mobile
+              description = t("account.sidebar.descriptions.#{section}")
+              concat content_tag(:p, description, class: "mt-1 text-xs leading-5 text-slate-500")
+            end
+          end)
+
+          next if variant == :mobile
+
+          concat content_tag(:span, "›", class: "text-base leading-none #{active ? 'text-electric' : 'text-slate-300'}", aria: { hidden: true })
+        end
+      end
+    end
+  end
+
+  def account_navigation_items
+    [
+      [ t("account.sidebar.profile"), edit_profile_path, :profile ],
+      [ t("account.sidebar.preferences"), edit_preferences_path, :preferences ],
+      [ t("account.sidebar.security"), profile_security_path, :security ]
+    ]
+  end
+
   def settings_section_active?(section)
     case section.to_sym
     when :space
@@ -155,6 +190,19 @@ module UiHelper
       controller_path == "spaces/credits"
     when :inbox
       controller_path == "spaces/inbox"
+    else
+      false
+    end
+  end
+
+  def account_section_active?(section)
+    case section.to_sym
+    when :profile
+      controller_path == "profiles" && action_name == "edit"
+    when :preferences
+      controller_path == "preferences"
+    when :security
+      controller_path == "profiles/security" || controller_path.start_with?("profiles/security/")
     else
       false
     end
@@ -212,5 +260,33 @@ module UiHelper
       value: value,
       tone: tone
     }
+  end
+
+  def available_omniauth_providers
+    User.omniauth_providers.select { |provider| Devise.omniauth_configs.key?(provider) }
+  end
+
+  def omniauth_provider_label(provider)
+    case provider.to_s
+    when "apple" then "Apple"
+    else "Google"
+    end
+  end
+
+  def linked_identity_summary(user)
+    labels = user.user_identities.order(:provider).map { |identity| omniauth_provider_label(identity.provider) }.uniq
+    return t("profiles.security.status.none_linked") if labels.blank?
+
+    labels.join(" · ")
+  end
+
+  def account_security_summary(user)
+    user.mfa_enabled? ? t("profiles.edit.security_enabled") : t("profiles.edit.security_review")
+  end
+
+  def profile_locale_label(user_preference)
+    locale = user_preference&.locale.presence || I18n.locale.to_s
+    label_key = locale == "pt-BR" ? :pt : locale
+    t("layout.nav.language.#{label_key}")
   end
 end

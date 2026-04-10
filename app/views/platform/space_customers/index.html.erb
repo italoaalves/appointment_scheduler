@@ -3,7 +3,7 @@
     <%= link_to t("platform.space_customers.index.appointments"), platform_space_appointments_path(@space), class: button_classes(:secondary) %>
     <%= link_to t("platform.space_appointments.index.back_to_space"), platform_space_path(@space), class: button_classes(:secondary) %>
   <% end %>
-  <%= render "application/shared/page_header", title: t("platform.space_customers.index.title", space: @space.name), actions: page_actions %>
+  <%= render "shared/page_header", title: t("platform.space_customers.index.title", space: @space.name), actions: page_actions %>
 
   <% if @customers.any? %>
     <div class="card-glass overflow-hidden p-0">
@@ -36,6 +36,6 @@
     </div>
     <%= paginate @customers %>
   <% else %>
-    <%= render "application/shared/empty_state", content: t("platform.customers.index.empty") %>
+    <%= render "shared/empty_state", content: t("platform.customers.index.empty") %>
   <% end %>
 </div>

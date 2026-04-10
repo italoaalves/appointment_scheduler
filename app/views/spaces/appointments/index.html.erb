@@ -26,7 +26,7 @@
     <% page_actions = capture do %>
       <%= link_to t("space.appointments.index.new_button"), new_appointment_path, class: button_classes(:primary) %>
     <% end %>
-    <%= render "application/shared/page_header", title: t("space.appointments.index.title"), actions: page_actions %>
+    <%= render "shared/page_header", title: t("space.appointments.index.title"), actions: page_actions %>
 
     <%= form_with url: appointments_path,
                   method: :get,

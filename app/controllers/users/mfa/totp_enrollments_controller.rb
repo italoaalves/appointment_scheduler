@@ -1,0 +1,56 @@
+# frozen_string_literal: true
+
+module Users
+  module Mfa
+    class TotpEnrollmentsController < ApplicationController
+      before_action :set_pending_enrollment
+
+      def new
+        @provisioning_secret = Auth::PendingMfaSession.pending_totp_secret(session:) || generate_pending_secret!
+        @provisioning_uri = @mfa_user.totp_provisioning_uri(secret: @provisioning_secret)
+        @qr_code_svg = RQRCode::QRCode.new(@provisioning_uri).as_svg(module_size: 4, standalone: true)
+      end
+
+      def create
+        @provisioning_secret = Auth::PendingMfaSession.pending_totp_secret(session:) || generate_pending_secret!
+        result = Auth::Mfa::EnrollTotp.call(user: @mfa_user, secret: @provisioning_secret, code: params[:code])
+
+        unless result.success?
+          @provisioning_uri = @mfa_user.totp_provisioning_uri(secret: @provisioning_secret)
+          @qr_code_svg = RQRCode::QRCode.new(@provisioning_uri).as_svg(module_size: 4, standalone: true)
+          flash.now[:alert] = t("mfa.totp_enrollment.errors.#{result.error}")
+          return render :new, status: :unprocessable_entity
+        end
+
+        Auth::PendingMfaSession.store_recovery_codes(session:, codes: result.recovery_codes) if result.recovery_codes.present?
+        Auth::PendingMfaSession.clear_pending_totp_secret(session:)
+
+        AuditLogs::EventLogger.call(
+          event_type: "auth.mfa_totp_enabled",
+          actor: @mfa_user,
+          subject: @mfa_user,
+          request: request,
+          metadata: audit_context_metadata
+        )
+
+        redirect_to user_mfa_recovery_codes_path
+      end
+
+      private
+
+      def set_pending_enrollment
+        @pending_mfa = Auth::PendingMfaSession.fetch(session:)
+        @mfa_user = Auth::PendingMfaSession.pending_user(session:)
+        return if @pending_mfa.present? && @mfa_user.present?
+
+        redirect_to new_user_session_path, alert: t("mfa.challenge.expired")
+      end
+
+      def generate_pending_secret!
+        secret = ROTP::Base32.random
+        Auth::PendingMfaSession.store_pending_totp_secret(session:, secret:)
+        secret
+      end
+    end
+  end
+end

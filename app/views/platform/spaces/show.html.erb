@@ -64,7 +64,7 @@
         <div>
           <dt class="text-xs text-slate-500"><%= t("platform.spaces.show.subscription.status") %></dt>
           <dd>
-            <%= render "application/shared/status_badge",
+            <%= render "shared/status_badge",
                        status: sub.status,
                        label:  sub.status.humanize %>
           </dd>

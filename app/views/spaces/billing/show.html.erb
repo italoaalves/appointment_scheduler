@@ -7,7 +7,7 @@
   <%= render "shared/settings_sidebar" %>
 <% end %>
 <div class="space-y-6">
-  <%= render "application/shared/settings_intro",
+  <%= render "shared/settings_intro",
              eyebrow: t("settings.sidebar.billing_section"),
              title: t("billing.show.title"),
              subtitle: t("billing.show.subtitle"),
@@ -17,13 +17,13 @@
              ] : []) %>
 
   <% if @subscription.nil? %>
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("billing.show.current_plan"),
                description: t("billing.show.no_subscription") do %>
       <p class="text-sm text-slate-600"><%= t("billing.show.no_subscription") %></p>
     <% end %>
   <% else %>
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("billing.show.current_plan"),
                description: t("billing.show.subscription_overview") do %>
       <div class="space-y-5">
@@ -39,7 +39,7 @@
             <% end %>
           </div>
 
-          <%= render "application/shared/status_badge",
+          <%= render "shared/status_badge",
                      status: @subscription.status,
                      label: @subscription.status.humanize %>
         </div>
@@ -116,7 +116,7 @@
     <% end %>
 
     <% if @current_plan %>
-      <%= render "application/shared/settings_panel",
+      <%= render "shared/settings_panel",
                  title: t("billing.show.plan_limits"),
                  description: t("billing.show.plan_limits_hint") do %>
         <dl class="grid gap-4 xl:grid-cols-3">
@@ -146,7 +146,7 @@
     <% end %>
 
     <% if @payments.any? %>
-      <%= render "application/shared/settings_panel",
+      <%= render "shared/settings_panel",
                  title: t("billing.show.payment_history"),
                  description: t("billing.show.payment_history_hint") do %>
         <div class="space-y-3">
@@ -161,7 +161,7 @@
                 </p>
               </div>
 
-              <%= render "application/shared/status_badge",
+              <%= render "shared/status_badge",
                          status: payment.status,
                          label: payment.status.humanize %>
             </div>

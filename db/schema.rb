@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_08_143000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_09_130100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -392,6 +392,38 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_08_143000) do
     t.index ["status", "trial_ends_at"], name: "index_subscriptions_on_status_and_trial_ends_at"
   end
 
+  create_table "user_identities", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.boolean "email_verified", default: false, null: false
+    t.datetime "last_authenticated_at"
+    t.jsonb "metadata", default: {}, null: false
+    t.string "provider", null: false
+    t.string "uid", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["provider", "uid"], name: "index_user_identities_on_provider_and_uid", unique: true
+    t.index ["user_id", "provider"], name: "index_user_identities_on_user_id_and_provider", unique: true
+    t.index ["user_id"], name: "index_user_identities_on_user_id"
+  end
+
+  create_table "user_passkeys", force: :cascade do |t|
+    t.boolean "backup_eligible"
+    t.boolean "backup_state"
+    t.datetime "created_at", null: false
+    t.string "external_id", null: false
+    t.string "label", null: false
+    t.datetime "last_used_at"
+    t.boolean "platform_authenticator", default: false, null: false
+    t.text "public_key", null: false
+    t.bigint "sign_count", default: 0, null: false
+    t.jsonb "transports", default: [], null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["external_id"], name: "index_user_passkeys_on_external_id", unique: true
+    t.index ["user_id"], name: "index_user_passkeys_on_user_id"
+  end
+
   create_table "user_permissions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "permission", null: false
@@ -410,6 +442,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_08_143000) do
     t.index ["user_id"], name: "index_user_preferences_on_user_id", unique: true
   end
 
+  create_table "user_recovery_codes", force: :cascade do |t|
+    t.string "code_digest", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "used_at"
+    t.bigint "user_id", null: false
+    t.index ["user_id", "used_at"], name: "index_user_recovery_codes_on_user_id_and_used_at"
+    t.index ["user_id"], name: "index_user_recovery_codes_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "confirmation_sent_at"
     t.string "confirmation_token"
@@ -418,6 +460,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_08_143000) do
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
+    t.datetime "last_mfa_at"
+    t.datetime "mfa_enabled_at"
     t.string "name"
     t.string "phone_number"
     t.datetime "privacy_policy_accepted_at"
@@ -429,12 +473,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_08_143000) do
     t.integer "system_role"
     t.datetime "terms_of_service_accepted_at"
     t.string "terms_of_service_version"
+    t.integer "totp_consumed_timestep"
+    t.datetime "totp_enabled_at"
+    t.datetime "totp_last_verified_at"
+    t.string "totp_secret"
     t.string "unconfirmed_email"
     t.datetime "updated_at", null: false
+    t.string "webauthn_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["phone_number"], name: "index_users_on_phone_number", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["webauthn_id"], name: "index_users_on_webauthn_id", unique: true
   end
 
   create_table "whatsapp_conversations", force: :cascade do |t|
@@ -517,8 +567,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_08_143000) do
   add_foreign_key "subscriptions", "billing_plans"
   add_foreign_key "subscriptions", "billing_plans", column: "pending_billing_plan_id"
   add_foreign_key "subscriptions", "spaces"
+  add_foreign_key "user_identities", "users"
+  add_foreign_key "user_passkeys", "users"
   add_foreign_key "user_permissions", "users"
   add_foreign_key "user_preferences", "users"
+  add_foreign_key "user_recovery_codes", "users"
   add_foreign_key "whatsapp_conversations", "customers"
   add_foreign_key "whatsapp_conversations", "spaces"
   add_foreign_key "whatsapp_messages", "users", column: "sent_by_id"

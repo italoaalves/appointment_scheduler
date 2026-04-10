@@ -28,6 +28,30 @@ class Rack::Attack
     end
   end
 
+  throttle("mfa/challenge/ip", limit: 10, period: 1.minute) do |req|
+    if req.path == "/users/mfa/challenge" && req.post?
+      req.ip
+    end
+  end
+
+  throttle("mfa/totp_enrollment/ip", limit: 10, period: 1.minute) do |req|
+    if req.path == "/users/mfa/totp_enrollment" && req.post?
+      req.ip
+    end
+  end
+
+  throttle("mfa/passkeys/register/ip", limit: 10, period: 1.minute) do |req|
+    if req.path == "/users/mfa/passkeys" && req.post?
+      req.ip
+    end
+  end
+
+  throttle("mfa/passkeys/authenticate/ip", limit: 10, period: 1.minute) do |req|
+    if req.path == "/users/mfa/passkeys/authenticate" && req.post?
+      req.ip
+    end
+  end
+
   self.throttled_responder = ->(req) {
     retry_after = (req.env["rack.attack.match_data"] || {})[:period]
     [

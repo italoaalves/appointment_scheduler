@@ -15,7 +15,7 @@
 
   <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
     <%= form_with model: @personalized_link, url: personalized_scheduling_link_path, class: "space-y-4" do |form| %>
-      <%= render "application/shared/error_messages", resource: @personalized_link %>
+      <%= render "shared/error_messages", resource: @personalized_link %>
       <div>
         <%= form.label :slug, t("space.personalized_scheduling_links.new.slug_label"), class: "block text-sm font-medium text-slate-700" %>
         <p class="mt-0.5 text-xs text-slate-500">

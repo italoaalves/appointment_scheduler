@@ -3,7 +3,7 @@
     <%= link_to t("platform.users.index.new_button"), new_platform_user_path(space_id: params[:space_id].presence), class: button_classes(:primary) %>
     <%= link_to t("platform.users.index.all_spaces"), platform_spaces_path, class: button_classes(:secondary) %>
   <% end %>
-  <%= render "application/shared/page_header", title: t("platform.users.index.title"), actions: page_actions %>
+  <%= render "shared/page_header", title: t("platform.users.index.title"), actions: page_actions %>
 
   <% if @space_filter %>
     <p class="text-sm text-slate-600">
@@ -66,6 +66,6 @@
     </div>
     <%= paginate @users, params: { space_id: params[:space_id] } %>
   <% else %>
-    <%= render "application/shared/empty_state", content: t("platform.users.index.empty") %>
+    <%= render "shared/empty_state", content: t("platform.users.index.empty") %>
   <% end %>
 </div>

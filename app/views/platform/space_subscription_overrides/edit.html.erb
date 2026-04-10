@@ -3,13 +3,13 @@
 <% end %>
 
 <div class="space-y-4">
-  <%= render "application/shared/page_header",
+  <%= render "shared/page_header",
              title:   t("platform.subscription_overrides.title"),
              subtitle: t("platform.subscription_overrides.subtitle", name: @space.name),
              actions: override_actions %>
 
   <%# Current subscription status %>
-  <%= render "application/shared/card" do %>
+  <%= render "shared/card" do %>
     <h2 class="mb-3 text-sm font-semibold text-slate-800"><%= t("platform.subscription_overrides.current_subscription") %></h2>
     <% if @subscription %>
       <dl class="grid gap-2 text-sm sm:grid-cols-3">
@@ -20,7 +20,7 @@
         <div>
           <dt class="text-xs text-slate-500"><%= t("platform.spaces.show.subscription.status") %></dt>
           <dd>
-            <%= render "application/shared/status_badge",
+            <%= render "shared/status_badge",
                        status: @subscription.status,
                        label:  @subscription.status.humanize %>
           </dd>
@@ -41,7 +41,7 @@
   <% end %>
 
   <%# Reactivate subscription %>
-  <%= render "application/shared/card" do %>
+  <%= render "shared/card" do %>
     <h2 class="mb-3 text-sm font-semibold text-slate-800"><%= t("platform.subscription_overrides.reactivate_subscription") %></h2>
     <p class="mb-3 text-xs text-slate-500"><%= t("platform.subscription_overrides.reactivate_description") %></p>
     <%= form_with url: platform_space_subscription_override_path(@space), method: :patch, class: "space-y-3", data: { turbo_confirm: t("platform.subscription_overrides.confirm_reactivate") } do |f| %>
@@ -59,7 +59,7 @@
   <% end %>
 
   <%# Extend trial %>
-  <%= render "application/shared/card" do %>
+  <%= render "shared/card" do %>
     <h2 class="mb-3 text-sm font-semibold text-slate-800"><%= t("platform.subscription_overrides.extend_trial") %></h2>
     <%= form_with url: platform_space_subscription_override_path(@space), method: :patch, class: "flex items-end gap-3", data: { turbo_confirm: t("platform.subscription_overrides.confirm_extend") } do |f| %>
       <%= hidden_field_tag :override_action, "extend_trial" %>
@@ -72,7 +72,7 @@
   <% end %>
 
   <%# Change plan %>
-  <%= render "application/shared/card" do %>
+  <%= render "shared/card" do %>
     <h2 class="mb-3 text-sm font-semibold text-slate-800"><%= t("platform.subscription_overrides.change_plan") %></h2>
     <%= form_with url: platform_space_subscription_override_path(@space), method: :patch, class: "flex items-end gap-3", data: { turbo_confirm: t("platform.subscription_overrides.confirm_change") } do |f| %>
       <%= hidden_field_tag :override_action, "change_plan" %>
@@ -85,7 +85,7 @@
   <% end %>
 
   <%# Grant credits %>
-  <%= render "application/shared/card" do %>
+  <%= render "shared/card" do %>
     <h2 class="mb-3 text-sm font-semibold text-slate-800"><%= t("platform.subscription_overrides.grant_credits") %></h2>
     <%= form_with url: platform_space_subscription_override_path(@space), method: :patch, class: "flex items-end gap-3", data: { turbo_confirm: t("platform.subscription_overrides.confirm_grant") } do |f| %>
       <%= hidden_field_tag :override_action, "grant_credits" %>

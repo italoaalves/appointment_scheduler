@@ -1,0 +1,29 @@
+<nav aria-label="<%= t("account.sidebar.label") %>" data-role="settings-sidebar" class="settings-sidebar-rail sticky-filter space-y-4 min-w-0">
+  <div class="settings-sidebar-mobile md:hidden">
+    <div class="glass-frosty overflow-x-auto rounded-[1.6rem] border border-white/60 px-2 py-2 shadow-sm" style="-webkit-overflow-scrolling: touch">
+      <ul class="flex min-w-max gap-2">
+        <% account_navigation_items.each do |label, path, section| %>
+          <%= account_sidebar_link label, path, section, variant: :mobile %>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+  <div class="settings-sidebar-desktop hidden md:block md:w-full">
+    <div data-role="settings-sidebar-card" class="glass-frosty rounded-[1.75rem] border border-white/60 p-3 shadow-sm md:max-h-[calc(100vh-2rem)] md:overflow-y-auto">
+      <div class="mb-3 px-3 pt-2">
+        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500"><%= t("account.sidebar.eyebrow") %></p>
+        <p class="mt-2 text-sm leading-6 text-slate-600"><%= t("account.sidebar.subtitle") %></p>
+      </div>
+
+      <section class="space-y-2">
+        <h2 class="px-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400"><%= t("account.sidebar.section") %></h2>
+        <ul class="space-y-1">
+          <% account_navigation_items.each do |label, path, section| %>
+            <%= account_sidebar_link label, path, section %>
+          <% end %>
+        </ul>
+      </section>
+    </div>
+  </div>
+</nav>

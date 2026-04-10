@@ -2,25 +2,38 @@
   { label: t("breadcrumbs.dashboard"), path: root_path },
   { label: t("breadcrumbs.preferences") }
 ] } %>
+<% content_for(:settings_sidebar) do %>
+  <%= render "shared/account_settings_sidebar" %>
+<% end %>
+
 <div class="space-y-6">
-  <%= render "application/shared/page_header", title: t("preferences.edit.title"), subtitle: t("preferences.edit.subtitle") %>
+  <%= render "shared/settings_intro",
+             eyebrow: t("account.sidebar.eyebrow"),
+             title: t("preferences.edit.title"),
+             subtitle: t("preferences.edit.subtitle"),
+             statuses: [
+               settings_intro_status(t("preferences.edit.locale_label"), profile_locale_label(@user_preference), tone: :accent)
+             ] %>
 
-  <%= render layout: "application/shared/card" do %>
-    <%= form_with model: @user_preference, url: preferences_path, method: :patch, class: "space-y-4" do |form| %>
-      <%= render "application/shared/error_messages", resource: @user_preference %>
+  <%= form_with model: @user_preference, url: preferences_path, method: :patch, class: "space-y-6" do |form| %>
+    <%= render "shared/error_messages", resource: @user_preference %>
 
-      <div>
+    <%= render "shared/settings_panel",
+               title: t("preferences.edit.language_title"),
+               description: t("preferences.edit.language_description") do %>
+      <div class="max-w-xl">
         <%= form.label :locale, t("preferences.edit.locale_label"), class: form_label_classes %>
         <%= form.select :locale,
-                        I18n.available_locales.map { |l| [ t("layout.nav.language.#{l == :'pt-BR' ? :pt : l}"), l.to_s ] },
+                        I18n.available_locales.map { |locale| [ t("layout.nav.language.#{locale == :'pt-BR' ? :pt : locale}"), locale.to_s ] },
                         {},
                         class: form_input_classes %>
       </div>
+    <% end %>
 
-      <div class="flex flex-wrap gap-3 pt-2">
-        <%= form.submit t("preferences.edit.submit"), class: button_classes(:primary), data: { turbo_submits_with: t("shared.submitting") } %>
-        <%= link_to t("preferences.edit.back"), root_path, class: button_classes(:secondary) %>
-      </div>
+    <%= render "shared/settings_action_bar" do %>
+      <%= form.submit t("preferences.edit.submit"),
+                      class: "#{button_classes(:primary)} w-full justify-center lg:w-auto",
+                      data: { turbo_submits_with: t("shared.submitting") } %>
     <% end %>
   <% end %>
 </div>

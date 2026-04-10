@@ -90,7 +90,7 @@
         <p class="font-display font-bold text-deep text-xl leading-none">
           <%= appointment.scheduled_at ? appointment.scheduled_at.in_time_zone(tz).strftime("%-I:%M %p") : "—" %>
         </p>
-        <%= render "application/shared/status_badge", status: appointment.status %>
+        <%= render "shared/status_badge", status: appointment.status %>
       </div>
 
       <%# Customer name %>

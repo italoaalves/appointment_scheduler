@@ -8,7 +8,7 @@
 <% end %>
 
 <div class="space-y-6">
-  <%= render "application/shared/settings_intro",
+  <%= render "shared/settings_intro",
              eyebrow: t("settings.sidebar.business"),
              title: t("space.availability.edit.title"),
              subtitle: t("space.availability.edit.subtitle"),
@@ -18,15 +18,15 @@
              ] %>
 
   <%= form_with model: @space, url: settings_space_availability_path, method: :patch, class: "space-y-6" do |form| %>
-    <%= render "application/shared/error_messages", resource: @space %>
+    <%= render "shared/error_messages", resource: @space %>
 
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("space.availability.edit.normal_hours_title"),
                description: t("space.availability.edit.hours_hint") do %>
       <%= render "spaces/space/availability_schedule_fields", form: form %>
     <% end %>
 
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("space.availability.edit.scheduling_title"),
                description: t("space.availability.edit.scheduling_hint") do %>
       <div class="space-y-4">
@@ -69,7 +69,7 @@
       </div>
     <% end %>
 
-    <%= render "application/shared/settings_action_bar", hint: settings_availability_summary(@space) do %>
+    <%= render "shared/settings_action_bar", hint: settings_availability_summary(@space) do %>
         <%= form.submit t("space.availability.edit.submit"),
                         class: "#{button_classes(:primary)} w-full justify-center lg:w-auto",
                         data: { turbo_submits_with: t("shared.submitting") } %>

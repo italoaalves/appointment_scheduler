@@ -9,7 +9,7 @@
 <% end %>
 
 <div class="space-y-6">
-  <%= render "application/shared/settings_intro",
+  <%= render "shared/settings_intro",
              eyebrow: t("settings.sidebar.billing_section"),
              title: t("billing.credits.checkout.title"),
              subtitle: t("billing.credits.checkout.subtitle"),
@@ -17,7 +17,7 @@
                settings_intro_status(t("billing.credits.show.credits"), @bundle.amount.to_s, tone: :accent)
              ] %>
 
-  <%= render "application/shared/settings_panel",
+  <%= render "shared/settings_panel",
              title: t("billing.credits.checkout.summary"),
              description: t("billing.credits.checkout.summary_hint") do %>
     <div class="grid gap-4 lg:grid-cols-2">
@@ -37,7 +37,7 @@
   <%= form_with url: settings_credits_path, method: :post, class: "space-y-6" do |f| %>
     <%= hidden_field_tag :bundle_id, @bundle.id %>
 
-    <%= render "application/shared/settings_panel",
+    <%= render "shared/settings_panel",
                title: t("billing.credits.checkout.payment_method"),
                description: t("billing.credits.checkout.payment_method_hint") do %>
       <div class="grid gap-3 xl:grid-cols-3">
@@ -56,7 +56,7 @@
       </div>
     <% end %>
 
-    <%= render "application/shared/settings_action_bar", hint: t("billing.credits.checkout.submit_hint") do %>
+    <%= render "shared/settings_action_bar", hint: t("billing.credits.checkout.submit_hint") do %>
       <%= link_to t("billing.credits.checkout.back"),
                   settings_credits_path,
                   class: "#{button_classes(:secondary)} w-full justify-center lg:w-auto" %>
