@@ -152,6 +152,10 @@ Rails.application.routes.draw do
 
     resources :billing, only: [ :index ], controller: "billing"
     resources :audit_logs, only: [ :index ]
+    get "backups", to: "backups#show", as: :backups
+    patch "backups/enable", to: "backups#enable", as: :enable_backups
+    patch "backups/disable", to: "backups#disable", as: :disable_backups
+    post "backups/run_now", to: "backups#run_now", as: :run_now_backups
     resources :plans, except: :destroy
     resources :credit_bundles, except: :destroy
     resources :integrations, only: :index do

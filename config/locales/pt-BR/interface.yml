@@ -91,6 +91,7 @@ pt-BR:
       platform_plans: "Planos"
       platform_credit_bundles: "Pacotes"
       platform_integrations: "Integrações"
+      platform_backups: "Backups"
       language:
         en: "EN"
         pt: "PT"
@@ -145,4 +146,3 @@ pt-BR:
       new_request_title: "Novo pedido"
       new_request_body: "Solicite uma nova consulta no horário desejado."
       new_request_cta: "Agendar consulta"
-
