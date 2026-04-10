@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require Rails.root.join("lib/observability/filtered_params")
+require Rails.root.join("lib/observability/runtime_context")
 
 Rails.application.configure do
   config.lograge.enabled = true
@@ -32,10 +33,10 @@ Rails.application.configure do
   end
 
   config.lograge.custom_options = lambda do |event|
-    {
+    Observability::RuntimeContext.log_payload.merge(
       params: Observability::FilteredParams.call(event.payload[:params]),
       exception: event.payload[:exception]&.first
-    }.compact
+    ).compact
   end
 
   # Silence health checks
