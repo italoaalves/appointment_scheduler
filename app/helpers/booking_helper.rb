@@ -33,7 +33,7 @@ module BookingHelper
     return nil if space.blank?
 
     space.business_hours.presence || begin
-      windows = space.availability_schedule&.availability_windows&.where.not(opens_at: nil, closes_at: nil)&.order(:weekday)
+      windows = space.availability_schedule&.availability_windows&.where&.not(opens_at: nil, closes_at: nil)&.order(:weekday)
       BusinessHoursFormatter.format(Array(windows))
     end
   end
