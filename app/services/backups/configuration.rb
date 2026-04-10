@@ -2,13 +2,18 @@
 
 module Backups
   class Configuration
-    REQUIRED_KEYS = %i[
+    REMOTE_STORAGE_KEYS = %i[
       r2_bucket
       r2_access_key_id
       r2_secret_access_key
       r2_endpoint
+    ].freeze
+
+    ENCRYPTION_KEYS = %i[
       age_recipient
     ].freeze
+
+    REQUIRED_KEYS = (REMOTE_STORAGE_KEYS + ENCRYPTION_KEYS).freeze
 
     attr_reader :settings
 
@@ -37,6 +42,7 @@ module Backups
           ),
           file_basename: env["BACKUP_FILE_BASENAME"].presence || backup_credentials[:file_basename].presence || "appointment_scheduler",
           pg_dump_bin: env["BACKUP_PG_DUMP_BIN"].presence || backup_credentials[:pg_dump_bin].presence || "pg_dump",
+          pg_restore_bin: env["BACKUP_PG_RESTORE_BIN"].presence || backup_credentials[:pg_restore_bin].presence || "pg_restore",
           age_bin: env["BACKUP_AGE_BIN"].presence || backup_credentials[:age_bin].presence || "age",
           aws_cli_bin: env["BACKUP_AWS_CLI_BIN"].presence || backup_credentials[:aws_cli_bin].presence || "aws"
         }
@@ -65,6 +71,14 @@ module Backups
 
     def missing_keys
       REQUIRED_KEYS.select { |key| settings[key].blank? }
+    end
+
+    def ready_for_remote_storage?
+      missing_remote_storage_keys.empty?
+    end
+
+    def missing_remote_storage_keys
+      REMOTE_STORAGE_KEYS.select { |key| settings[key].blank? }
     end
 
     def aws_environment
@@ -101,6 +115,10 @@ module Backups
 
     def age_bin
       settings[:age_bin]
+    end
+
+    def pg_restore_bin
+      settings[:pg_restore_bin]
     end
 
     def aws_cli_bin
