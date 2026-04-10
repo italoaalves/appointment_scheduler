@@ -59,6 +59,54 @@ class ProfilesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "+5511999990201", @active_user.reload.phone_number
   end
 
+  test "user can upload a profile picture from settings" do
+    sign_in @active_user
+
+    patch profile_path, params: {
+      user: {
+        name: @active_user.name,
+        profile_picture_upload: image_upload(filename: "avatar.png")
+      }
+    }
+
+    assert_redirected_to edit_profile_path
+    assert @active_user.reload.profile_picture_file.present?
+
+    get profile_picture_path
+
+    assert_response :success
+    assert_equal "image/png", response.media_type
+  end
+
+  test "user can remove an uploaded profile picture" do
+    sign_in @active_user
+    patch profile_path, params: {
+      user: {
+        profile_picture_upload: image_upload(filename: "avatar.png")
+      }
+    }
+
+    assert @active_user.reload.profile_picture_file.present?
+
+    delete profile_picture_path
+
+    assert_redirected_to edit_profile_path
+    assert_nil @active_user.reload.profile_picture_file
+  end
+
+  test "profile update rejects invalid picture uploads" do
+    sign_in @active_user
+
+    patch profile_path, params: {
+      user: {
+        profile_picture_upload: text_upload
+      }
+    }
+
+    assert_response :unprocessable_entity
+    assert_nil @active_user.reload.profile_picture_file
+  end
+
   # --- Profile page shows read-only field for trialing users ---
 
   test "profile edit shows phone field as disabled for trialing user" do

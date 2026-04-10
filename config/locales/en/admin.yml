@@ -478,6 +478,16 @@ en:
         socials: "Social media"
         instagram_label: "Instagram"
         facebook_label: "Facebook"
+        banner_title: "Banner"
+        banner_description: "Save a wide image for future booking-page branding without publishing it yet."
+        banner_label: "Space banner"
+        banner_hint: "Upload a wide JPG, PNG, or WebP image up to 8 MB. We'll keep it stored until the booking-page placement is ready."
+        banner_empty: "Your booking banner will stay here until you're ready to choose where it belongs."
+        banner_remove: "Remove banner"
+        banner_remove_confirm: "Remove the current space banner?"
+        banner_removed: "Space banner removed."
+        banner_remove_failed: "We couldn't remove the space banner right now."
+        banner_alt: "%{name} banner preview"
         scheduling: "Scheduling"
         slot_duration_label: "Slot duration"
         slot_duration_notice: "Changing this will only affect future appointments. Existing appointments keep their duration."
@@ -513,4 +523,3 @@ en:
         back_to_space: "Back to space settings"
       update:
         notice: "Policies updated."
-

@@ -1,0 +1,10 @@
+en:
+  stored_files:
+    scopes:
+      profile_picture: "profile picture"
+      space_banner: "space banner"
+    errors:
+      invalid_content_type: "%{label} must be a JPG, PNG, or WebP image."
+      too_large: "%{label} must be smaller than %{max_size}."
+      upload_failed: "We couldn't save your %{label} right now."
+      remove_failed: "We couldn't remove your %{label} right now."

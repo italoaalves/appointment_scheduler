@@ -8,6 +8,12 @@ class Space < ApplicationRecord
   belongs_to :owner, class_name: "User", optional: true
   has_many :space_memberships, dependent: :destroy
   has_many :users, through: :space_memberships
+  has_many :stored_files, as: :attachable, dependent: :destroy, inverse_of: :attachable
+  has_one :banner_file,
+          -> { where(scope: StoredFile::SPACE_BANNER_SCOPE) },
+          as: :attachable,
+          class_name: "StoredFile",
+          inverse_of: :attachable
 
   BUSINESS_TYPES = %w[clinic barbershop salon consultancy law_office fitness therapy other].freeze
 

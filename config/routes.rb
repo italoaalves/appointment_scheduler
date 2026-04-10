@@ -33,6 +33,7 @@ Rails.application.routes.draw do
     post :request_data_export
     post :request_deletion
     delete :cancel_deletion_request
+    resource :picture, only: [ :show, :destroy ], controller: "profiles/pictures"
   end
   scope "profile", module: "profiles", as: "profile" do
     get "security", to: "security#show"
@@ -116,6 +117,7 @@ Rails.application.routes.draw do
 
   scope path: "settings", module: "spaces", as: "settings" do
     resource :space, only: [ :edit, :update ], controller: "space" do
+      resource :banner, only: [ :show, :destroy ], controller: "space/banners"
       resource :availability, only: [ :edit, :update ], controller: "space/availabilities"
       resource :policies, only: [ :edit, :update ], controller: "space/policies"
     end

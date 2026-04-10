@@ -20,6 +20,13 @@ en:
       security_action: "Security"
       identity_title: "Identity"
       identity_description: "Manage the details tied to your personal account."
+      profile_picture_label: "Profile picture"
+      profile_picture_hint: "Upload a square-friendly image for your account. JPG, PNG, and WebP up to 5 MB."
+      profile_picture_remove: "Remove picture"
+      profile_picture_remove_confirm: "Remove your current profile picture?"
+      profile_picture_removed: "Profile picture removed."
+      profile_picture_remove_failed: "We couldn't remove your profile picture right now."
+      profile_picture_alt: "%{name} profile picture"
       email_hint: "Your email address is managed through your sign-in methods."
       security_card_description: "Review passkeys, MFA, linked providers, and recovery access."
       security_enabled: "MFA enabled"
@@ -304,4 +311,3 @@ en:
       plan_change_hint: "You can change your plan anytime in Settings > Billing."
       go_to_dashboard: "Go to Dashboard"
       completed_notice: "Your space is ready! You can now share your booking link."
-
