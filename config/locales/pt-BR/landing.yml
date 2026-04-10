@@ -1,0 +1,52 @@
+pt-BR:
+  landing:
+    meta:
+      title: "Anella - Conexão contínua, fluxo automatizado"
+      description: "Gerencie agendamentos, fale com clientes pelo WhatsApp e automatize cobranças em uma plataforma feita para negócios de serviços no Brasil."
+    nav:
+      sign_in: "Entrar"
+      start_trial: "Começar teste grátis"
+    hero:
+      badge: "Teste grátis de 14 dias. Não precisa de cartão"
+      title_line_1: "Conexão contínua,"
+      title_line_2: "fluxo automatizado."
+      body: "Gerencie agendamentos, fale com clientes pelo WhatsApp e automatize cobranças em uma plataforma feita para negócios de serviços no Brasil."
+      primary_cta: "Comece seu teste de 14 dias"
+      secondary_cta: "Entrar"
+    pricing:
+      title: "Preços simples e transparentes"
+      subtitle: "Sem taxas escondidas. Comece grátis e mude de plano quando estiver pronto."
+      trial_note: "O teste de 14 dias inclui todos os recursos Pro. Não precisa de cartão."
+      recommended: "Recomendado"
+      free: "Grátis"
+      month: "mês"
+      unlimited_team_members: "Membros da equipe ilimitados"
+      unlimited_customers: "Clientes ilimitados"
+      team_members:
+        one: "membro da equipe"
+        other: "membros da equipe"
+      customers:
+        one: "cliente"
+        other: "clientes"
+      whatsapp_quota: "Cota de mensagens WhatsApp incluída"
+      personalized_booking_page: "Página de agendamento personalizada"
+      priority_support: "Suporte prioritário"
+      get_started: "Começar agora"
+      plan_names:
+        essential: "Essencial"
+        pro: "Pro"
+        enterprise: "Empresarial"
+    features:
+      title: "Feito para sua rotina"
+      subtitle: "Tudo que você precisa para tocar sua agenda."
+      whatsapp:
+        title: "WhatsApp nativo"
+        body: "Integração direta com a Meta Cloud API. Sem intermediários. As mensagens chegam na hora e a cobrança é transparente."
+      isolation:
+        title: "Isolamento por espaço"
+        body: "Seus dados são seus. Separação completa dos espaços com segurança de nível empresarial. Sem vazamento entre contas por design."
+      billing:
+        title: "Cobrança automática"
+        body: "PIX e cartão de crédito via Asaas. Faturas, recibos e lembretes de pagamento são enviados automaticamente."
+    footer:
+      rights: "Todos os direitos reservados."

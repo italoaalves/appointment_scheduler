@@ -1,0 +1,72 @@
+pt-BR:
+  notifications:
+    appointment_booked:
+      subject: "Nova solicitação de consulta de %{customer_name}"
+      body: "%{customer_name} solicitou uma consulta em %{date} às %{time}."
+    appointment_confirmed:
+      subject: "Sua consulta foi confirmada"
+      body: "Sua consulta em %{date} às %{time} foi confirmada."
+    appointment_cancelled:
+      subject: "Sua consulta foi cancelada"
+      body: "Sua consulta em %{date} às %{time} foi cancelada."
+    appointment_rescheduled:
+      subject: "Sua consulta foi reagendada"
+      body: "Sua consulta foi remarcada para %{date} às %{time}."
+    in_app:
+      appointment_booked:
+        title: "Nova solicitação de consulta"
+        body: "%{customer_name} solicitou uma consulta em %{date} às %{time}"
+      appointment_confirmed:
+        title: "Consulta confirmada"
+        body: "Sua consulta com %{business_name} em %{date} às %{time} foi confirmada"
+      appointment_cancelled:
+        title: "Consulta cancelada"
+        body: "Sua consulta com %{business_name} em %{date} às %{time} foi cancelada"
+      appointment_rescheduled:
+        title: "Consulta reagendada"
+        body: "Sua consulta com %{business_name} foi remarcada para %{date} às %{time}"
+      trial_ending:
+        title: "Período de teste acabando"
+        body: "Seu teste Pro termina em %{days} dias. Assine para manter todos os recursos."
+      subscription_expired:
+        title: "Assinatura expirada"
+        body: "Sua assinatura expirou. Renove para continuar aceitando agendamentos."
+      credits_low:
+        title: "Créditos WhatsApp baixos"
+        body: "Você tem %{count} créditos WhatsApp restantes. Compre mais para continuar enviando mensagens."
+      credits_fulfilled:
+        title: "%{amount} créditos adicionados!"
+        body: "Sua compra de %{amount} créditos WhatsApp foi confirmada e adicionada à sua conta."
+      credits_failed:
+        title: "Compra de %{amount} créditos falhou"
+        body: "Sua compra de %{amount} créditos WhatsApp não pôde ser processada. Por favor, tente novamente."
+      plan_change_payment:
+        title: "Pagamento necessário para upgrade de plano"
+        body: "Você fez upgrade para o %{plan_name}. Conclua o pagamento via %{payment_method} para manter sua assinatura ativa."
+      payment_reminder_created:
+        title: "Pagamento gerado"
+        body: "Uma cobrança de %{amount} via %{payment_method} foi gerada, com vencimento em %{due_date}. Pague para manter sua assinatura ativa."
+      payment_reminder_approaching:
+        title: "Pagamento vence em 3 dias"
+        body: "Seu pagamento de %{amount} via %{payment_method} vence em %{due_date}. Pague antes do prazo."
+      payment_reminder_due_today:
+        title: "Pagamento vence hoje"
+        body: "Seu pagamento de %{amount} via %{payment_method} vence hoje. Pague agora para evitar interrupção."
+      payment_reminder_overdue:
+        title: "Pagamento em atraso"
+        body: "Seu pagamento de %{amount} via %{payment_method} venceu em %{due_date}. Pague imediatamente."
+      whatsapp_message:
+        title: "Nova mensagem WhatsApp"
+        body: "Nova mensagem de %{name}"
+      whatsapp_quality:
+        title: "Alerta de Qualidade WhatsApp"
+        body_flagged: "Seu número WhatsApp %{number} foi sinalizado por problemas de qualidade. Revise suas práticas de mensagens para evitar restrições."
+        body_restricted: "Seu número WhatsApp %{number} foi restringido por problemas de qualidade. O envio de mensagens pode ser limitado."
+      dropdown:
+        title: "Notificações"
+        mark_all_read: "Marcar tudo como lido"
+        view_all: "Ver tudo"
+        empty: "Sem notificações"
+        time_ago: "há %{time}"
+        dismiss: "Dispensar notificação"
+

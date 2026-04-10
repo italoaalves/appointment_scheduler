@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="<%= I18n.locale %>">
   <head>
-    <title>Anella — Continuous connection, automated flow</title>
+    <title><%= t("landing.meta.title") %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="Manage appointments, engage clients on WhatsApp, and automate billing — all in one platform built for Brazilian service businesses.">
+    <meta name="description" content="<%= t("landing.meta.description") %>">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 

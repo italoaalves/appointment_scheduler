@@ -1,0 +1,62 @@
+en:
+  date:
+    day_names: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    month_names: [~, "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    abbr_month_names: [~, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+  activerecord:
+    errors:
+      models:
+        availability_window:
+          attributes:
+            closes_at:
+              must_be_after_opens_at: "must be after opening time"
+        appointment:
+          attributes:
+            base:
+              slot_already_booked: "Another appointment is already confirmed for this time slot"
+        personalized_scheduling_link:
+          attributes:
+            slug:
+              change_limit_reached: "cannot be changed: 3-change limit reached"
+              change_too_soon: "cannot be changed yet: wait 14 days since last change"
+    errors:
+      models:
+        user:
+          attributes:
+            phone_number:
+              cannot_be_verified: "could not be verified. Please check and try again."
+              locked_during_trial: "cannot be changed during the trial period."
+    attributes:
+      user:
+        system_role:
+          super_admin: "Super admin"
+      appointment:
+        status:
+          pending: "Pending"
+          confirmed: "Confirmed"
+          cancelled: "Cancelled"
+          rescheduled: "Rescheduled"
+          no_show: "No-show"
+          finished: "Finished"
+
+  shared:
+    submitting: "Saving…"
+    deleting: "Deleting…"
+    removing: "Removing…"
+    error_modal:
+      title: "Could not complete"
+      dismiss: "Got it"
+    confirm_modal:
+      title: "Are you sure?"
+      confirm: "Confirm"
+      cancel: "Cancel"
+    email_confirmation_banner:
+      message: "Please confirm your email address. Check your inbox or"
+      resend_link: "resend confirmation email"
+    booking_share:
+      copy_link: "Copy Link"
+      copied: "Copied!"
+      share_whatsapp: "Share on WhatsApp"
+      whatsapp_message: "Book your appointment with %{name}: %{url}"
+

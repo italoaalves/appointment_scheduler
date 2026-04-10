@@ -56,8 +56,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_locale
-    locale = locale_from_user_or_session
-    I18n.locale = locale if locale.present?
+    I18n.locale = locale_from_user_or_browser
   end
 
   def render_not_found
@@ -74,17 +73,52 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def locale_from_user_or_session
-    if user_signed_in? && current_user.user_preference&.locale.present?
-      loc = current_user.user_preference.locale
-      return loc if I18n.available_locales.map(&:to_s).include?(loc.to_s)
+  def locale_from_user_or_browser
+    if user_signed_in?
+      return current_user_preferred_locale || I18n.default_locale.to_s
     end
 
-    session_locale = session[:locale]
-    if session_locale.present? && I18n.available_locales.map(&:to_s).include?(session_locale.to_s)
-      return session_locale
-    end
+    locale_from_accept_language || I18n.default_locale.to_s
+  end
 
-    I18n.default_locale.to_s
+  def current_user_preferred_locale
+    locale = current_user.user_preference&.locale
+    locale.to_s if available_locale?(locale)
+  end
+
+  def locale_from_accept_language
+    accepted_languages = request.get_header("HTTP_ACCEPT_LANGUAGE").to_s
+
+    accepted_languages.split(",").filter_map.with_index do |entry, index|
+      language_tag, *parameters = entry.strip.split(";")
+      locale = locale_for_language_tag(language_tag)
+      next unless locale
+
+      quality = parameters
+        .map(&:strip)
+        .find { |parameter| parameter.start_with?("q=") }
+        &.split("=", 2)
+        &.last
+        &.to_f || 1.0
+      next if quality <= 0
+
+      [ locale, quality, -index ]
+    end.max_by { |_locale, quality, order| [ quality, order ] }&.first
+  end
+
+  def locale_for_language_tag(language_tag)
+    normalized_tag = language_tag.to_s.strip.tr("_", "-").downcase
+    return if normalized_tag.blank? || normalized_tag == "*"
+
+    available_locales.find { |locale| locale.downcase == normalized_tag } ||
+      available_locales.find { |locale| locale.split("-").first.downcase == normalized_tag.split("-").first }
+  end
+
+  def available_locale?(locale)
+    available_locales.include?(locale.to_s)
+  end
+
+  def available_locales
+    I18n.available_locales.map(&:to_s)
   end
 end
