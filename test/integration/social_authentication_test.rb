@@ -17,6 +17,14 @@ class SocialAuthenticationTest < ActionDispatch::IntegrationTest
     assert_select "form[action='#{user_apple_omniauth_authorize_path}'][method='post']"
   end
 
+  test "forgot password page shows social provider buttons" do
+    get new_user_password_path
+
+    assert_response :success
+    assert_select "form[action='#{user_google_oauth2_omniauth_authorize_path}'][method='post']"
+    assert_select "form[action='#{user_apple_omniauth_authorize_path}'][method='post']"
+  end
+
   test "new google signup goes through finish signup and onboarding" do
     OmniAuth.config.mock_auth[:google_oauth2] = omniauth_hash(
       provider: :google_oauth2,

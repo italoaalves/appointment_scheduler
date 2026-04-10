@@ -4,7 +4,7 @@
     <% providers.each do |provider| %>
       <% label_key = provider.to_s == "apple" ? "apple" : "google" %>
       <%= button_to t("devise.shared.social.#{label_key}"),
-                    omniauth_authorize_path(resource_name, provider),
+                    omniauth_authorize_path_for(resource_name, provider),
                     method: :post,
                     form: { data: { turbo: false }, class: "w-full" },
                     class: "#{button_classes(:secondary)} w-full justify-center" %>

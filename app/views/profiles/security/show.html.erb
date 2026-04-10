@@ -97,7 +97,7 @@
 
             <% unless identity.present? %>
               <%= button_to t("profiles.security.identities.connect", provider: omniauth_provider_label(provider)),
-                            omniauth_authorize_path(:user, provider),
+                            omniauth_authorize_path_for(:user, provider),
                             method: :post,
                             params: { origin: profile_security_path },
                             form: { data: { turbo: false }, class: "w-full lg:w-auto" },

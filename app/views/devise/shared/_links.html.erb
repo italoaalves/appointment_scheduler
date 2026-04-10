@@ -38,11 +38,12 @@
   </p>
 <% end %>
 
-<%- if devise_mapping.omniauthable? %>
-  <%- resource_class.omniauth_providers.each do |provider| %>
+<% providers = resource_class.omniauth_providers.select { |provider| Devise.omniauth_configs.key?(provider) } %>
+<%- if providers.any? %>
+  <%- providers.each do |provider| %>
     <p>
       <%= button_to t("devise.shared.links.omniauth", provider: OmniAuth::Utils.camelize(provider)),
-                    omniauth_authorize_path(resource_name, provider),
+                    omniauth_authorize_path_for(resource_name, provider),
                     class: "#{button_classes(:secondary)} w-full justify-center",
                     data: { turbo: false } %>
     </p>

@@ -266,6 +266,11 @@ module UiHelper
     User.omniauth_providers.select { |provider| Devise.omniauth_configs.key?(provider) }
   end
 
+  def omniauth_authorize_path_for(resource_or_scope, provider)
+    scope = Devise::Mapping.find_scope!(resource_or_scope)
+    public_send("#{scope}_#{provider}_omniauth_authorize_path")
+  end
+
   def omniauth_provider_label(provider)
     case provider.to_s
     when "apple" then "Apple"
