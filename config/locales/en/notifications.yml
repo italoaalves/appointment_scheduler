@@ -1,0 +1,72 @@
+en:
+  notifications:
+    appointment_booked:
+      subject: "New appointment request from %{customer_name}"
+      body: "%{customer_name} has requested an appointment on %{date} at %{time}."
+    appointment_confirmed:
+      subject: "Your appointment has been confirmed"
+      body: "Your appointment on %{date} at %{time} has been confirmed."
+    appointment_cancelled:
+      subject: "Your appointment has been cancelled"
+      body: "Your appointment on %{date} at %{time} has been cancelled."
+    appointment_rescheduled:
+      subject: "Your appointment has been rescheduled"
+      body: "Your appointment has been moved to %{date} at %{time}."
+    in_app:
+      appointment_booked:
+        title: "New appointment request"
+        body: "%{customer_name} requested an appointment on %{date} at %{time}"
+      appointment_confirmed:
+        title: "Appointment confirmed"
+        body: "Your appointment with %{business_name} on %{date} at %{time} has been confirmed"
+      appointment_cancelled:
+        title: "Appointment cancelled"
+        body: "Your appointment with %{business_name} on %{date} at %{time} has been cancelled"
+      appointment_rescheduled:
+        title: "Appointment rescheduled"
+        body: "Your appointment with %{business_name} has been rescheduled to %{date} at %{time}"
+      trial_ending:
+        title: "Trial ending soon"
+        body: "Your Pro trial ends in %{days} days. Subscribe to keep all features."
+      subscription_expired:
+        title: "Subscription expired"
+        body: "Your subscription has expired. Renew to continue accepting bookings."
+      credits_low:
+        title: "Low WhatsApp credits"
+        body: "You have %{count} WhatsApp credits remaining. Purchase more to keep sending messages."
+      credits_fulfilled:
+        title: "%{amount} credits added!"
+        body: "Your purchase of %{amount} WhatsApp credits has been confirmed and added to your account."
+      credits_failed:
+        title: "Credit purchase of %{amount} failed"
+        body: "Your purchase of %{amount} WhatsApp credits could not be processed. Please try again."
+      plan_change_payment:
+        title: "Payment required for plan upgrade"
+        body: "You've upgraded to %{plan_name}. Please complete your %{payment_method} payment to keep your subscription active."
+      payment_reminder_created:
+        title: "Payment required"
+        body: "A %{payment_method} charge of %{amount} has been generated, due on %{due_date}. Please pay to keep your subscription active."
+      payment_reminder_approaching:
+        title: "Payment due in 3 days"
+        body: "Your %{payment_method} payment of %{amount} is due on %{due_date}. Please pay before the deadline."
+      payment_reminder_due_today:
+        title: "Payment due today"
+        body: "Your %{payment_method} payment of %{amount} is due today. Pay now to avoid interruption."
+      payment_reminder_overdue:
+        title: "Payment overdue"
+        body: "Your %{payment_method} payment of %{amount} was due on %{due_date}. Please pay immediately."
+      whatsapp_message:
+        title: "New WhatsApp message"
+        body: "New message from %{name}"
+      whatsapp_quality:
+        title: "WhatsApp Quality Alert"
+        body_flagged: "Your WhatsApp number %{number} has been flagged for quality issues. Review your messaging practices to avoid restrictions."
+        body_restricted: "Your WhatsApp number %{number} has been restricted due to quality issues. Message sending may be limited."
+      dropdown:
+        title: "Notifications"
+        mark_all_read: "Mark all as read"
+        view_all: "View all"
+        empty: "No notifications"
+        time_ago: "%{time} ago"
+        dismiss: "Dismiss notification"
+

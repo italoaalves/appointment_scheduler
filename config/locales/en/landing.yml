@@ -1,0 +1,52 @@
+en:
+  landing:
+    meta:
+      title: "Anella - Continuous connection, automated flow"
+      description: "Manage appointments, engage clients on WhatsApp, and automate billing in one platform built for Brazilian service businesses."
+    nav:
+      sign_in: "Sign In"
+      start_trial: "Start Free Trial"
+    hero:
+      badge: "14-day free trial. No credit card required"
+      title_line_1: "Continuous connection,"
+      title_line_2: "automated flow."
+      body: "Manage appointments, engage clients on WhatsApp, and automate billing in one platform built for Brazilian service businesses."
+      primary_cta: "Start Your 14-Day Trial"
+      secondary_cta: "Sign In"
+    pricing:
+      title: "Simple, transparent pricing"
+      subtitle: "No hidden fees. Start free, upgrade when you're ready."
+      trial_note: "14-day trial includes all Pro features. No credit card required."
+      recommended: "Recommended"
+      free: "Free"
+      month: "month"
+      unlimited_team_members: "Unlimited team members"
+      unlimited_customers: "Unlimited customers"
+      team_members:
+        one: "team member"
+        other: "team members"
+      customers:
+        one: "customer"
+        other: "customers"
+      whatsapp_quota: "WhatsApp message quota included"
+      personalized_booking_page: "Personalized booking page"
+      priority_support: "Priority support"
+      get_started: "Get Started"
+      plan_names:
+        essential: "Essential"
+        pro: "Pro"
+        enterprise: "Enterprise"
+    features:
+      title: "Built for how you work"
+      subtitle: "Everything you need to run your practice."
+      whatsapp:
+        title: "WhatsApp Native"
+        body: "Direct Meta Cloud API integration. No third-party middlemen. Messages arrive instantly and billing is transparent."
+      isolation:
+        title: "Tenant Isolation"
+        body: "Your data is yours. Complete workspace separation with enterprise-grade security. No cross-tenant data leaks by design."
+      billing:
+        title: "Automatic Billing"
+        body: "PIX and credit card via Asaas. Invoices, receipts, and payment reminders are handled automatically."
+    footer:
+      rights: "All rights reserved."

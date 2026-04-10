@@ -18,6 +18,7 @@ module AppointmentScheduler
     # Internationalization
     config.i18n.available_locales = [ :en, :'pt-BR' ]
     config.i18n.default_locale = :'pt-BR'
+    config.i18n.load_path += Dir[Rails.root.join("config/locales/**/*.yml")]
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
