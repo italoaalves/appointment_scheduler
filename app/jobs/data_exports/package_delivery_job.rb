@@ -2,7 +2,7 @@
 
 module DataExports
   class PackageDeliveryJob < ApplicationJob
-    discard_on ActiveRecord::RecordNotFound
+    discard_on ActiveRecord::RecordNotFound, report: true
 
     def perform(user_id)
       user = User.find(user_id)

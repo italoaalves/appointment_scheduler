@@ -3,7 +3,7 @@
 module Billing
   class ApplyDowngradeJob < ApplicationJob
     queue_as :default
-    retry_on Billing::AsaasClient::ApiError, wait: :polynomially_longer, attempts: 5
+    retry_on Billing::AsaasClient::ApiError, wait: :polynomially_longer, attempts: 5, report: true
 
     def perform(client: Billing::AsaasClient.new)
       Billing::Subscription

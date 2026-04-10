@@ -3,7 +3,7 @@
 module Whatsapp
   class ProcessWebhookJob < ApplicationJob
     queue_as :default
-    discard_on JSON::ParserError
+    discard_on JSON::ParserError, report: true
 
     def perform(payload:)
       data = JSON.parse(payload)
