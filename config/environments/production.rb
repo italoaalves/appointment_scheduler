@@ -58,9 +58,7 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = {
-    host: Rails.application.credentials.dig(:mailer, :host) || "example.com"
-  }
+  config.action_mailer.default_url_options = MailerConfiguration.default_url_options(force_ssl: config.force_ssl)
 
   resend_api_key = Rails.application.credentials.dig(:resend, :api_key).presence ||
     Rails.application.credentials.dig(:email, :api_key).presence

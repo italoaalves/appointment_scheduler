@@ -2,6 +2,7 @@ require_relative "boot"
 
 require "rails/all"
 require_relative "../lib/action_mailer/delivery_methods/resend_api"
+require_relative "../lib/mailer_configuration"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
