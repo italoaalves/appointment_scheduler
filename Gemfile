@@ -82,7 +82,7 @@ gem "rack-attack", "~> 6.8"
 
 # Observability
 gem "lograge", "~> 0.14"
-gem "opentelemetry-sdk", "~> 1.6"
+gem "opentelemetry-sdk", "~> 1.11"
 gem "opentelemetry-exporter-otlp", "~> 0.29"
 gem "opentelemetry-instrumentation-rails", "~> 0.36"
 gem "opentelemetry-instrumentation-pg", "~> 0.30"
