@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_09_130100) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_10_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -106,6 +106,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_130100) do
     t.integer "weekday", null: false
     t.index ["availability_schedule_id", "weekday"], name: "index_availability_windows_on_schedule_weekday"
     t.index ["availability_schedule_id"], name: "index_availability_windows_on_availability_schedule_id"
+  end
+
+  create_table "backup_settings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.boolean "enabled", default: true, null: false
+    t.text "last_error"
+    t.datetime "last_failure_at"
+    t.string "last_remote_key"
+    t.datetime "last_run_finished_at"
+    t.datetime "last_run_started_at"
+    t.string "last_status"
+    t.datetime "last_success_at"
+    t.datetime "updated_at", null: false
   end
 
   create_table "billing_events", force: :cascade do |t|

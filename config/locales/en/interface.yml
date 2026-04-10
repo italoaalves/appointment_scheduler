@@ -91,6 +91,7 @@ en:
       platform_plans: "Plans"
       platform_credit_bundles: "Bundles"
       platform_integrations: "Integrations"
+      platform_backups: "Backups"
       language:
         en: "EN"
         pt: "PT"
@@ -145,4 +146,3 @@ en:
       new_request_title: "New request"
       new_request_body: "Request a new appointment at your preferred time."
       new_request_cta: "Request appointment"
-

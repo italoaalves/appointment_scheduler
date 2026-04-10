@@ -1,0 +1,110 @@
+<% enabled = @backup_setting.enabled? %>
+<% configuration_ready = @backup_configuration.ready? %>
+
+<div class="space-y-6">
+  <%= render "shared/page_header",
+             title: t("platform.backups.show.title"),
+             subtitle: t("platform.backups.show.subtitle") %>
+
+  <div class="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+    <div class="card-glass p-5">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="space-y-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold <%= enabled ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' %>">
+              <%= enabled ? t("platform.backups.show.status_enabled") : t("platform.backups.show.status_disabled") %>
+            </span>
+            <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold <%= configuration_ready ? 'bg-sky-50 text-sky-700' : 'bg-rose-50 text-rose-700' %>">
+              <%= configuration_ready ? t("platform.backups.show.configuration_ready") : t("platform.backups.show.configuration_missing") %>
+            </span>
+          </div>
+          <h2 class="text-sm font-semibold text-slate-900"><%= t("platform.backups.show.schedule_title") %></h2>
+          <p class="text-sm text-slate-600"><%= t("platform.backups.show.schedule_body") %></p>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <% if enabled %>
+            <%= button_to t("platform.backups.show.disable_button"),
+                          platform_disable_backups_path,
+                          method: :patch,
+                          class: button_classes(:danger),
+                          data: { turbo_confirm: t("platform.backups.show.disable_confirm") } %>
+          <% else %>
+            <%= button_to t("platform.backups.show.enable_button"),
+                          platform_enable_backups_path,
+                          method: :patch,
+                          class: button_classes(:primary) %>
+          <% end %>
+          <%= button_to t("platform.backups.show.run_now_button"),
+                        platform_run_now_backups_path,
+                        method: :post,
+                        class: button_classes(:secondary) %>
+        </div>
+      </div>
+
+      <dl class="mt-6 grid gap-4 sm:grid-cols-2">
+        <div class="rounded-md border border-slate-200 bg-white/80 p-4">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.backups.show.last_success") %></dt>
+          <dd class="mt-2 text-sm font-medium text-slate-900"><%= @backup_setting.last_success_at ? l(@backup_setting.last_success_at, format: :long) : t("platform.backups.show.never") %></dd>
+        </div>
+        <div class="rounded-md border border-slate-200 bg-white/80 p-4">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.backups.show.last_failure") %></dt>
+          <dd class="mt-2 text-sm font-medium text-slate-900"><%= @backup_setting.last_failure_at ? l(@backup_setting.last_failure_at, format: :long) : t("platform.backups.show.none") %></dd>
+        </div>
+        <div class="rounded-md border border-slate-200 bg-white/80 p-4">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.backups.show.last_status") %></dt>
+          <dd class="mt-2 text-sm font-medium text-slate-900"><%= @backup_setting.last_status.present? ? t("platform.backups.show.statuses.#{@backup_setting.last_status}") : t("platform.backups.show.never") %></dd>
+        </div>
+        <div class="rounded-md border border-slate-200 bg-white/80 p-4">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("platform.backups.show.last_object_key") %></dt>
+          <dd class="mt-2 break-all font-mono text-xs text-slate-700"><%= @backup_setting.last_remote_key.presence || t("platform.backups.show.none") %></dd>
+        </div>
+      </dl>
+
+      <% if @backup_setting.last_error.present? %>
+        <div class="mt-4 rounded-md border border-rose-200 bg-rose-50 px-4 py-3">
+          <p class="text-xs font-semibold uppercase tracking-wide text-rose-700"><%= t("platform.backups.show.last_error") %></p>
+          <p class="mt-2 text-sm text-rose-800"><%= @backup_setting.last_error %></p>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="space-y-4">
+      <div class="card-glass p-5">
+        <h2 class="text-sm font-semibold text-slate-900"><%= t("platform.backups.show.destination_title") %></h2>
+        <dl class="mt-4 space-y-3 text-sm text-slate-600">
+          <div class="flex items-start justify-between gap-3">
+            <dt><%= t("platform.backups.show.bucket") %></dt>
+            <dd class="text-right font-medium text-slate-900"><%= @backup_configuration.r2_bucket.presence || t("platform.backups.show.not_configured") %></dd>
+          </div>
+          <div class="flex items-start justify-between gap-3">
+            <dt><%= t("platform.backups.show.endpoint") %></dt>
+            <dd class="text-right font-medium text-slate-900 break-all"><%= @backup_configuration.r2_endpoint.presence || t("platform.backups.show.not_configured") %></dd>
+          </div>
+          <div class="flex items-start justify-between gap-3">
+            <dt><%= t("platform.backups.show.prefix") %></dt>
+            <dd class="text-right font-medium text-slate-900"><%= @backup_configuration.object_prefix %></dd>
+          </div>
+          <div class="flex items-start justify-between gap-3">
+            <dt><%= t("platform.backups.show.local_retention") %></dt>
+            <dd class="text-right font-medium text-slate-900"><%= t("platform.backups.show.local_retention_value", count: @backup_configuration.local_retention_count) %></dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="card-glass p-5">
+        <h2 class="text-sm font-semibold text-slate-900"><%= t("platform.backups.show.configuration_title") %></h2>
+        <% if configuration_ready %>
+          <p class="mt-2 text-sm text-slate-600"><%= t("platform.backups.show.configuration_ok") %></p>
+        <% else %>
+          <p class="mt-2 text-sm text-slate-600"><%= t("platform.backups.show.configuration_help") %></p>
+          <ul class="mt-3 list-disc space-y-2 pl-5 text-sm text-rose-700">
+            <% @backup_configuration.missing_keys.each do |key| %>
+              <li><%= t("platform.backups.show.key_labels.#{key}") %></li>
+            <% end %>
+          </ul>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

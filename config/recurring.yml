@@ -59,6 +59,14 @@ development:
 
 staging:
   <<: *default
+  backups_nightly_database:
+    class: Backups::NightlyDatabaseBackupJob
+    queue: default
+    schedule: at 2:30am every day
 
 production:
   <<: *default
+  backups_nightly_database:
+    class: Backups::NightlyDatabaseBackupJob
+    queue: default
+    schedule: at 2:30am every day
