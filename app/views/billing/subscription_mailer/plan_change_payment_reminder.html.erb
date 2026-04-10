@@ -1,9 +1,20 @@
-<p><%= t("billing.subscription_mailer.plan_change_payment_reminder.greeting", space_name: @space.name) %></p>
+<% price = number_to_currency(@new_plan.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %>
+<% content_for :email_preheader, t("billing.subscription_mailer.plan_change_payment_reminder.body_#{@payment_method}", plan_name: @new_plan.name, price: price) %>
+<% content_for :email_eyebrow, "Billing" %>
+<% content_for :email_title, message.subject %>
+<% content_for :email_intro, "Your plan change is almost done. Finish the payment tied to this upgrade to activate the new plan." %>
 
-<p><%= t("billing.subscription_mailer.plan_change_payment_reminder.body_#{@payment_method}",
-         plan_name:  @new_plan.name,
-         price:      number_to_currency(@new_plan.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".")) %></p>
+<p style="margin: 0 0 16px;"><%= email_greeting(@space.name) %></p>
 
-<p style="margin-top: 1.5em; font-size: 12px; color: #666;">
-  <%= t("layout.app_name") %>
-</p>
+<%= render "shared/mailer/callout",
+           title: "Action required",
+           tone: "warning",
+           content: t("billing.subscription_mailer.plan_change_payment_reminder.body_#{@payment_method}",
+                      plan_name: @new_plan.name,
+                      price: price) %>
+
+<%= render "shared/mailer/metadata", rows: [
+  { label: "New plan", value: @new_plan.name },
+  { label: "Price", value: price },
+  { label: "Payment method", value: t("billing.payment_methods.#{@payment_method}") }
+] %>

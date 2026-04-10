@@ -1,13 +1,20 @@
-<h2>Chargeback Alert</h2>
+<% amount = number_to_currency(@payment.amount_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %>
+<% content_for :email_preheader, "A chargeback event was received for #{@space.name}." %>
+<% content_for :email_eyebrow, "Billing" %>
+<% content_for :email_title, "Chargeback alert" %>
+<% content_for :email_intro, "An operational review is needed for this payment event." %>
 
-<p>A chargeback event was received for <strong><%= @space.name %></strong>.</p>
+<%= render "shared/mailer/callout",
+           title: "Action required",
+           tone: "danger",
+           content: "A chargeback event was received for #{@space.name}." %>
 
-<table>
-  <tr><td>Event</td><td><%= @event_name %></td></tr>
-  <tr><td>Reason</td><td><%= @reason %></td></tr>
-  <tr><td>Payment ID</td><td><%= @payment.asaas_payment_id %></td></tr>
-  <tr><td>Amount</td><td>R$ <%= "%.2f" % (@payment.amount_cents / 100.0) %></td></tr>
-  <tr><td>Space</td><td><%= @space.name %> (ID: <%= @space.id %>)</td></tr>
-</table>
+<%= render "shared/mailer/metadata", rows: [
+  { label: "Event", value: @event_name },
+  { label: "Reason", value: @reason.presence || "Not provided" },
+  { label: "Payment ID", value: @payment.asaas_payment_id },
+  { label: "Amount", value: amount },
+  { label: "Space", value: "#{@space.name} (ID: #{@space.id})" }
+] %>
 
-<p>Review in the platform admin dashboard and take appropriate action.</p>
+<p style="margin: 20px 0 0;">Review in the platform admin dashboard and take the next billing action there.</p>

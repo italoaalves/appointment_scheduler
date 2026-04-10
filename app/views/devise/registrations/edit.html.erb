@@ -1,42 +1,76 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<div class="min-h-screen flex items-center justify-center py-10">
+  <div class="max-w-2xl w-full card-solid p-8 space-y-8">
+    <div class="text-center">
+      <h2 class="font-display text-2xl font-extrabold text-deep tracking-tight">
+        <%= t("devise.registrations.edit.title") %>
+      </h2>
+      <p class="mt-2 text-sm text-slate-600">
+        <%= t("devise.registrations.edit.subtitle") %>
+      </p>
+    </div>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "shared/error_messages", resource: resource %>
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "space-y-6" }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
-  </div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="sm:col-span-2">
+          <%= f.label :email, t("devise.registrations.email"), class: form_label_classes %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: form_input_classes %>
+        </div>
 
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
-  <% end %>
+        <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+          <div class="sm:col-span-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            <p class="font-medium"><%= t("devise.registrations.edit.pending_reconfirmation_title") %></p>
+            <p class="mt-1"><%= t("devise.registrations.edit.pending_reconfirmation_body", email: resource.unconfirmed_email) %></p>
+          </div>
+        <% end %>
 
-  <div class="field">
-    <p><%= f.label :password %> <i>(leave blank if you don't want to change it)</i></p>
-    <p><%= f.password_field :password, autocomplete: "new-password" %></p>
-    <% if @minimum_password_length %>
-      <p><em><%= @minimum_password_length %> characters minimum</em></p>
+        <div class="sm:col-span-2">
+          <%= f.label :password, t("devise.registrations.password"), class: form_label_classes %>
+          <p class="mb-1.5 text-xs text-slate-500"><%= t("devise.registrations.edit.password_hint") %></p>
+          <%= f.password_field :password, autocomplete: "new-password", class: form_input_classes %>
+          <% if @minimum_password_length %>
+            <p class="mt-1.5 text-xs text-slate-500"><%= t("devise.registrations.edit.minimum_length", count: @minimum_password_length) %></p>
+          <% end %>
+        </div>
+
+        <div>
+          <%= f.label :password_confirmation, t("devise.registrations.password_confirmation"), class: form_label_classes %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: form_input_classes %>
+        </div>
+
+        <div>
+          <%= f.label :current_password, t("devise.registrations.edit.current_password"), class: form_label_classes %>
+          <p class="mb-1.5 text-xs text-slate-500"><%= t("devise.registrations.edit.current_password_hint") %></p>
+          <%= f.password_field :current_password, autocomplete: "current-password", class: form_input_classes %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.submit t("devise.registrations.edit.submit"),
+                     class: "#{button_classes(:primary)} w-full justify-center sm:w-auto",
+                     data: { turbo_submits_with: t("devise.registrations.update_loading") } %>
+      </div>
     <% end %>
+
+    <div class="rounded-2xl border border-red-200 bg-red-50/70 p-5">
+      <h3 class="text-base font-semibold text-deep"><%= t("devise.registrations.edit.cancel_title") %></h3>
+      <p class="mt-1 text-sm text-slate-600"><%= t("devise.registrations.edit.cancel_body") %></p>
+      <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <%= button_to t("devise.registrations.edit.cancel_action"),
+                      registration_path(resource_name),
+                      data: {
+                        confirm: t("devise.registrations.edit.cancel_confirm"),
+                        turbo_confirm: t("devise.registrations.edit.cancel_confirm"),
+                        turbo_submits_with: t("devise.registrations.cancel_loading")
+                      },
+                      method: :delete,
+                      class: "#{button_classes(:danger)} w-full justify-center sm:w-auto" %>
+
+        <%= link_to t("devise.registrations.edit.back"),
+                    request.referer.presence || root_path,
+                    class: "text-sm font-medium text-slate-900 hover:underline" %>
+      </div>
+    </div>
   </div>
-
-  <div class="field">
-    <p><%= f.label :password_confirmation %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
-
-  <div class="field">
-    <p><%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i></p>
-    <p><%= f.password_field :current_password, autocomplete: "current-password" %></p>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Update", data: { turbo_submits_with: t("devise.registrations.update_loading") } %>
-  </div>
-<% end %>
-
-<h3>Cancel my account</h3>
-
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?", turbo_submits_with: t("devise.registrations.cancel_loading") }, method: :delete %></div>
-
-<%= link_to "Back", :back %>
+</div>

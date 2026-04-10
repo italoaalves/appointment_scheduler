@@ -1,0 +1,11 @@
+Chargeback alert
+
+A chargeback event was received for <%= @space.name %>.
+
+Event: <%= @event_name %>
+Reason: <%= @reason.presence || "Not provided" %>
+Payment ID: <%= @payment.asaas_payment_id %>
+Amount: <%= number_to_currency(@payment.amount_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %>
+Space: <%= @space.name %> (ID: <%= @space.id %>)
+
+Review in the platform admin dashboard and take the next billing action there.

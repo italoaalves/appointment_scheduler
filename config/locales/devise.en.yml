@@ -4,6 +4,11 @@ en:
   devise:
     confirmations:
       submit_loading: "Sending…"
+      new:
+        title: "Resend confirmation instructions"
+        subtitle: "We'll send another confirmation email so you can finish setting up your account."
+        email: "Email"
+        submit: "Resend confirmation instructions"
       confirmed: "Your email address has been successfully confirmed."
       send_instructions: "You will receive an email with instructions for how to confirm your email address in a few minutes."
       send_paranoid_instructions: "If your email address exists in our database, you will receive an email with instructions for how to confirm your email address in a few minutes."
@@ -32,6 +37,13 @@ en:
       failure: "Could not authenticate you from %{kind} because \"%{reason}\"."
       success: "Successfully authenticated from %{kind} account."
     shared:
+      links:
+        sign_in: "Log in"
+        sign_up: "Sign up"
+        forgot_password: "Forgot your password?"
+        confirmation: "Didn't receive confirmation instructions?"
+        unlock: "Didn't receive unlock instructions?"
+        omniauth: "Sign in with %{provider}"
       social:
         google: "Continue with Google"
         apple: "Continue with Apple"
@@ -40,6 +52,18 @@ en:
     passwords:
       submit_loading: "Sending…"
       change_loading: "Changing…"
+      new:
+        title: "Forgot your password?"
+        subtitle: "Enter the email you use to sign in and we'll send a reset link."
+        email: "Email"
+        submit: "Send reset instructions"
+      edit:
+        title: "Set a new password"
+        subtitle: "Choose a new password to get back into your account."
+        password: "New password"
+        password_confirmation: "Confirm new password"
+        minimum_length: "%{count} characters minimum"
+        submit: "Change my password"
       no_token: "You can't access this page without coming from a password reset email. If you do come from a password reset email, please make sure you used the full URL provided."
       send_instructions: "You will receive an email with instructions on how to reset your password in a few minutes."
       send_paranoid_instructions: "If your email address exists in our database, you will receive a password recovery link at your email address in a few minutes."
@@ -60,6 +84,21 @@ en:
       phone_number: "Phone number"
       password: "Password"
       password_confirmation: "Password Confirmation"
+      edit:
+        title: "Update your account"
+        subtitle: "Keep your sign-in details current and confirm changes with your password."
+        pending_reconfirmation_title: "Email change pending"
+        pending_reconfirmation_body: "We're waiting for confirmation from %{email}."
+        password_hint: "Leave this blank if you don't want to change it."
+        minimum_length: "%{count} characters minimum"
+        current_password: "Current password"
+        current_password_hint: "We need your current password to save these changes."
+        submit: "Update account"
+        cancel_title: "Cancel account"
+        cancel_body: "This permanently removes your access and account data."
+        cancel_action: "Cancel my account"
+        cancel_confirm: "Are you sure?"
+        back: "Back"
       sign_up_button: "Sign Up"
       submit_loading: "Creating account…"
       update_loading: "Updating…"
@@ -85,6 +124,11 @@ en:
       forgot_password_link: "Forgot your password?"
     unlocks:
       submit_loading: "Sending…"
+      new:
+        title: "Resend unlock instructions"
+        subtitle: "Enter your email and we'll send a fresh unlock link."
+        email: "Email"
+        submit: "Resend unlock instructions"
       send_instructions: "You will receive an email with instructions for how to unlock your account in a few minutes."
       send_paranoid_instructions: "If your account exists, you will receive an email with instructions for how to unlock it in a few minutes."
       unlocked: "Your account has been unlocked successfully. Please sign in to continue."

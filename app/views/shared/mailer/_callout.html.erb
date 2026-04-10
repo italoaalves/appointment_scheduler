@@ -1,0 +1,22 @@
+<%
+  tone_styles = {
+    "info" => { background: email_theme[:callout_background], border: email_theme[:callout_border] },
+    "success" => { background: email_theme[:success_background], border: email_theme[:success_border] },
+    "warning" => { background: email_theme[:warning_background], border: email_theme[:warning_border] },
+    "danger" => { background: email_theme[:danger_background], border: email_theme[:danger_border] }
+  }
+  tone_style = tone_styles.fetch(tone.to_s, tone_styles["info"])
+%>
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
+       style="margin: 20px 0 0; border-collapse: separate; background: <%= tone_style[:background] %>; border: 1px solid <%= tone_style[:border] %>; border-radius: 12px;">
+  <tr>
+    <td style="padding: 16px 18px; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 15px; line-height: 24px; color: <%= email_theme[:text] %>;">
+      <% if title.present? %>
+        <div style="margin: 0 0 6px; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: <%= email_theme[:subtle] %>;">
+          <%= title %>
+        </div>
+      <% end %>
+      <%= content %>
+    </td>
+  </tr>
+</table>

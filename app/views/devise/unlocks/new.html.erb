@@ -1,16 +1,30 @@
-<h2>Resend unlock instructions</h2>
+<div class="min-h-screen flex items-center justify-center">
+  <div class="max-w-md w-full card-solid p-8">
+    <h2 class="font-display text-2xl font-extrabold text-deep tracking-tight text-center mb-2">
+      <%= t("devise.unlocks.new.title") %>
+    </h2>
 
-<%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "shared/error_messages", resource: resource %>
+    <p class="mb-6 text-center text-sm text-slate-600">
+      <%= t("devise.unlocks.new.subtitle") %>
+    </p>
 
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
+    <%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <div class="mb-6">
+        <%= f.label :email, t("devise.unlocks.new.email"), class: form_label_classes %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: form_input_classes %>
+      </div>
+
+      <div>
+        <%= f.submit t("devise.unlocks.new.submit"),
+                     class: "#{button_classes(:primary)} w-full",
+                     data: { turbo_submits_with: t("devise.unlocks.submit_loading") } %>
+      </div>
+    <% end %>
+
+    <div class="mt-6 flex flex-col items-center gap-2 text-center text-sm text-slate-600">
+      <%= render "devise/shared/links" %>
+    </div>
   </div>
-
-  <div class="actions">
-    <%= f.submit "Resend unlock instructions", data: { turbo_submits_with: t("devise.unlocks.submit_loading") } %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>

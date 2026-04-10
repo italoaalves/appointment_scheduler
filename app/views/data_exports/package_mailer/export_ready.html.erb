@@ -1,5 +1,14 @@
-<p><%= t("data_exports.package_mailer.export_ready.greeting", name: @user.name.presence || @user.email) %></p>
+<% name = @user.name.presence || @user.email %>
+<% content_for :email_preheader, t("data_exports.package_mailer.export_ready.body") %>
+<% content_for :email_eyebrow, "Account" %>
+<% content_for :email_title, "Your data export is ready" %>
+<% content_for :email_intro, "The export package is attached to this email." %>
 
-<p><%= t("data_exports.package_mailer.export_ready.body") %></p>
+<p style="margin: 0 0 16px;"><%= t("data_exports.package_mailer.export_ready.greeting", name: name) %></p>
 
-<p><%= t("data_exports.package_mailer.export_ready.footer") %></p>
+<%= render "shared/mailer/callout",
+           title: "Attachment included",
+           tone: "info",
+           content: t("data_exports.package_mailer.export_ready.body") %>
+
+<p style="margin: 20px 0 0;"><%= t("data_exports.package_mailer.export_ready.footer") %></p>

@@ -2,12 +2,113 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-      /* Email styles need to be inline */
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #F8FAFC;
+      }
+
+      table {
+        border-spacing: 0;
+      }
+
+      img {
+        border: 0;
+        line-height: 100%;
+        vertical-align: middle;
+      }
+
+      a {
+        color: #007AFF;
+      }
+
+      .email-preheader {
+        display: none !important;
+        visibility: hidden;
+        opacity: 0;
+        color: transparent;
+        height: 0;
+        width: 0;
+        overflow: hidden;
+        mso-hide: all;
+      }
+
+      @media screen and (max-width: 600px) {
+        .email-shell {
+          width: 100% !important;
+        }
+
+        .email-shell-padding {
+          padding: 16px !important;
+        }
+
+        .email-card-padding {
+          padding: 20px !important;
+        }
+      }
     </style>
   </head>
 
-  <body>
-    <%= yield %>
+  <body style="margin: 0; padding: 0; background-color: <%= email_theme[:background] %>;">
+    <div class="email-preheader"><%= email_preheader %></div>
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: <%= email_theme[:background] %>;">
+      <tr>
+        <td class="email-shell-padding" align="center" style="padding: 24px;">
+          <table role="presentation" class="email-shell" width="600" cellspacing="0" cellpadding="0" border="0" style="width: 100%; max-width: 600px;">
+            <tr>
+              <td style="padding-bottom: 12px;">
+                <div style="height: 4px; border-radius: 999px; background: <%= email_theme[:accent] %>;"></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="email-card-padding" style="background: <%= email_theme[:surface] %>; border: 1px solid <%= email_theme[:border] %>; border-radius: 14px; padding: 24px;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                  <tr>
+                    <td style="padding-bottom: 24px;">
+                      <div style="margin: 0 0 10px; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: <%= email_theme[:subtle] %>;">
+                        <%= email_eyebrow %>
+                      </div>
+                      <div style="font-family: 'Plus Jakarta Sans', Inter, Arial, Helvetica, sans-serif; font-size: 28px; line-height: 34px; font-weight: 700; color: <%= email_theme[:text] %>;">
+                        <%= email_title %>
+                      </div>
+                      <% if email_intro.present? %>
+                        <p style="margin: 12px 0 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 16px; line-height: 26px; color: <%= email_theme[:muted] %>;">
+                          <%= email_intro %>
+                        </p>
+                      <% end %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 16px; line-height: 26px; color: <%= email_theme[:text] %>;">
+                      <%= yield %>
+                    </td>
+                  </tr>
+                  <% if email_cta_label.present? && email_cta_url.present? %>
+                    <tr>
+                      <td style="padding-top: 24px;">
+                        <%= render "shared/mailer/button", label: email_cta_label, url: email_cta_url %>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding-top: 12px; font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace; font-size: 12px; line-height: 18px; color: <%= email_theme[:subtle] %>; word-break: break-all;">
+                        <%= email_cta_url %>
+                      </td>
+                    </tr>
+                  <% end %>
+                  <tr>
+                    <td>
+                      <%= render "shared/mailer/footer" %>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>
