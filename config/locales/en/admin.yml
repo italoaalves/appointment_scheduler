@@ -488,6 +488,7 @@ en:
         banner_removed: "Space banner removed."
         banner_remove_failed: "We couldn't remove the space banner right now."
         banner_alt: "%{name} banner preview"
+        banner_selected: "%{filename} selected. Save your changes to upload it."
         scheduling: "Scheduling"
         slot_duration_label: "Slot duration"
         slot_duration_notice: "Changing this will only affect future appointments. Existing appointments keep their duration."

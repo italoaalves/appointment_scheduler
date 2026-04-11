@@ -27,6 +27,7 @@ pt-BR:
       profile_picture_removed: "Foto de perfil removida."
       profile_picture_remove_failed: "Não foi possível remover sua foto de perfil agora."
       profile_picture_alt: "Foto de perfil de %{name}"
+      profile_picture_selected: "%{filename} selecionada. Salve as alterações para enviar."
       email_hint: "Seu endereço de e-mail é gerenciado pelos métodos de acesso da conta."
       security_card_description: "Revise passkeys, MFA, provedores vinculados e recuperação de acesso."
       security_enabled: "MFA ativado"

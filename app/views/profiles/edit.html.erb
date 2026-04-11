@@ -24,18 +24,23 @@
     <%= render "shared/settings_panel",
                title: t("profiles.edit.identity_title"),
                description: t("profiles.edit.identity_description") do %>
-      <div class="settings-info-tile mb-4">
+      <div class="settings-info-tile mb-4"
+           data-controller="image-upload-preview"
+           data-image-upload-preview-selected-message-value="<%= t("profiles.edit.profile_picture_selected", filename: "%{filename}") %>">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
           <div class="h-20 w-20 overflow-hidden rounded-full border border-slate-200 bg-slate-100">
-            <% if @user.profile_picture_file.present? %>
-              <%= image_tag profile_picture_path,
-                            alt: t("profiles.edit.profile_picture_alt", name: @user.name.presence || @user.email),
-                            class: "h-full w-full object-cover" %>
-            <% else %>
-              <div class="flex h-full w-full items-center justify-center text-slate-400">
-                <%= render "shared/icons/user_circle", class: "h-10 w-10" %>
-              </div>
-            <% end %>
+            <%= tag.img src: (@user.profile_picture_file.present? ? profile_picture_path : nil),
+                        alt: t("profiles.edit.profile_picture_alt", name: @user.name.presence || @user.email),
+                        class: "h-full w-full object-cover #{@user.profile_picture_file.present? ? "" : "hidden"}",
+                        data: {
+                          role: "profile-picture-preview-image",
+                          image_upload_preview_target: "previewImage"
+                        } %>
+            <div class="flex h-full w-full items-center justify-center text-slate-400 <%= @user.profile_picture_file.present? ? "hidden" : "" %>"
+                 data-role="profile-picture-placeholder"
+                 data-image-upload-preview-target="placeholder">
+              <%= render "shared/icons/user_circle", class: "h-10 w-10" %>
+            </div>
           </div>
 
           <div class="min-w-0 flex-1 space-y-3">
@@ -43,8 +48,16 @@
               <%= form.label :profile_picture_upload, t("profiles.edit.profile_picture_label"), class: form_label_classes %>
               <%= form.file_field :profile_picture_upload,
                                   accept: "image/png,image/jpeg,image/webp",
-                                  class: "mt-2 block w-full text-sm text-slate-600 file:mr-3 file:rounded-md file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-slate-800" %>
+                                  class: "mt-2 block w-full text-sm text-slate-600 file:mr-3 file:rounded-md file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-slate-800",
+                                  data: {
+                                    action: "change->image-upload-preview#update",
+                                    image_upload_preview_target: "input"
+                                  } %>
               <p class="mt-1.5 text-xs text-slate-500"><%= t("profiles.edit.profile_picture_hint") %></p>
+              <p class="mt-1.5 min-h-5 text-xs font-medium text-slate-600"
+                 data-role="profile-picture-selection-feedback"
+                 data-image-upload-preview-target="status"
+                 aria-live="polite"></p>
             </div>
 
             <% if @user.profile_picture_file.present? %>

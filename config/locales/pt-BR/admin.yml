@@ -512,6 +512,7 @@ pt-BR:
         banner_removed: "Banner do espaço removido."
         banner_remove_failed: "Não foi possível remover o banner do espaço agora."
         banner_alt: "Prévia do banner de %{name}"
+        banner_selected: "%{filename} selecionado. Salve as alterações para enviar."
         scheduling: "Agendamento"
         slot_duration_label: "Duração do horário"
         slot_duration_notice: "Esta alteração afeta apenas consultas futuras. As existentes mantêm sua duração."
