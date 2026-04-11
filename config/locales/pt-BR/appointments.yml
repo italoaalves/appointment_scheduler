@@ -111,6 +111,7 @@ pt-BR:
       title: "Obrigado!"
       title_new: "Consulta solicitada!"
       subtitle: "Sua solicitação foi recebida. O estabelecimento confirmará os detalhes em breve."
+      invalid_access: "Envie uma solicitação de consulta antes de acessar a página de confirmação."
       confirmation_title: "Recebemos sua solicitação"
       confirmation_body: "Guarde estes detalhes enquanto o estabelecimento revisa o horário que você escolheu."
       summary_subtitle: "Tudo o que você selecionou fica reunido aqui para consulta rápida."
@@ -156,4 +157,3 @@ pt-BR:
       shell_title: "Link de agendamento"
       shell_subtitle: "Mesmo quando algo precisa de atenção, queremos manter esta página clara e bem cuidada."
       back_home: "Voltar para o início"
-

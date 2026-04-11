@@ -101,6 +101,7 @@ class BookingControllerTest < ActionDispatch::IntegrationTest
       }
     end
     assert_response :redirect
+    assert_match %r{/book/#{Regexp.escape(@link.token)}/thank-you\?confirmation=}, response.location
   end
 
   test "create stores customer locale from accept-language" do
@@ -211,13 +212,39 @@ class BookingControllerTest < ActionDispatch::IntegrationTest
     assert_not_nil @single_use.used_at
   end
 
-  test "thank_you page renders for valid token" do
+  test "thank_you page redirects back to booking without confirmation token" do
     get thank_you_book_url(token: @link.token)
+
+    assert_redirected_to book_url(token: @link.token)
+    assert_equal I18n.t("booking.thank_you.invalid_access"), flash[:alert]
+  end
+
+  test "thank_you page redirects back to booking with invalid confirmation token" do
+    get thank_you_book_url(token: @link.token, confirmation: "invalid")
+
+    assert_redirected_to book_url(token: @link.token)
+    assert_equal I18n.t("booking.thank_you.invalid_access"), flash[:alert]
+  end
+
+  test "thank_you page renders with valid confirmation token" do
+    appointment = appointments(:one)
+    confirmation = Booking::ConfirmationToken.generate(
+      appointment: appointment,
+      booking_context: BookingContext::TokenBookingContext.new(@link)
+    )
+
+    get thank_you_book_url(token: @link.token, confirmation: confirmation)
     assert_response :success
   end
 
   test "thank_you page reuses the public booking shell and summary card" do
-    get thank_you_book_url(token: @link.token)
+    appointment = appointments(:one)
+    confirmation = Booking::ConfirmationToken.generate(
+      appointment: appointment,
+      booking_context: BookingContext::TokenBookingContext.new(@link)
+    )
+
+    get thank_you_book_url(token: @link.token, confirmation: confirmation)
 
     assert_response :success
     assert_select "body.booking-shell"
@@ -225,6 +252,26 @@ class BookingControllerTest < ActionDispatch::IntegrationTest
     assert_select "[data-role='booking-hero']"
     assert_select "[data-role='booking-summary-card']"
     assert_select "[data-role='booking-confirmation-card']"
+  end
+
+  test "create redirect lands on thank_you page with valid confirmation token" do
+    scheduled = 3.days.from_now.change(hour: 15, min: 0, sec: 0)
+
+    post "/book/#{@link.token}", params: {
+      customer_name: "Redirect Test",
+      customer_email: "redirect@example.com",
+      customer_phone: "+5511999999996",
+      whatsapp_opt_in: "0",
+      scheduled_at: scheduled.strftime("%Y-%m-%d %H:%M")
+    }
+
+    assert_response :redirect
+
+    follow_redirect!
+
+    assert_response :success
+    assert_select "[data-role='booking-confirmation-card']"
+    assert_select "[data-role='booking-summary-card']"
   end
 
   # ── Subscription restriction ──────────────────────────────────────────────

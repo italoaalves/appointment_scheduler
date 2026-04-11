@@ -111,6 +111,7 @@ en:
       title: "Thank you!"
       title_new: "Appointment Requested!"
       subtitle: "Your request is in. The business will confirm the details shortly."
+      invalid_access: "Please submit an appointment request before viewing the confirmation page."
       confirmation_title: "We've received your request"
       confirmation_body: "Keep these details handy while the business reviews your preferred time."
       summary_subtitle: "Everything you selected is gathered here for quick reference."
@@ -156,4 +157,3 @@ en:
       shell_title: "Booking link"
       shell_subtitle: "We still want this page to feel clear and cared for, even when something needs attention."
       back_home: "Back to home"
-

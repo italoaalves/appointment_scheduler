@@ -130,10 +130,15 @@
         </nav>
       <% elsif tenant_staff? %>
         <% if unread_notifications_count > 0 %>
-          <div class="lg:hidden fixed top-4 right-4 z-50" data-controller="dropdown" data-action="click@window->dropdown#close">
+          <div class="lg:hidden fixed right-3 z-50"
+               data-controller="dropdown"
+               data-action="click@window->dropdown#close"
+               data-role="mobile-notification-shell"
+               style="bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px) + 0.75rem);">
             <button type="button"
                     class="relative flex items-center justify-center w-10 h-10 rounded-full bg-white/80 backdrop-blur shadow-sm border border-slate-200/60 text-slate-500 cursor-pointer"
                     data-action="dropdown#toggle"
+                    data-role="mobile-notification-trigger"
                     aria-label="<%= t('notifications.in_app.dropdown.title') %>">
               <%= render "shared/icons/bell", class: "h-5 w-5" %>
               <span class="absolute top-1 right-1 flex h-2 w-2">
@@ -141,7 +146,10 @@
                 <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
               </span>
             </button>
-            <div data-dropdown-target="menu" class="hidden absolute right-0 top-full mt-2 z-50 min-w-[280px]">
+            <div data-dropdown-target="menu"
+                 data-role="mobile-notification-menu"
+                 class="hidden absolute right-0 z-50"
+                 style="bottom: calc(100% + 0.5rem);">
               <%= render "shared/notification_dropdown" %>
             </div>
           </div>
