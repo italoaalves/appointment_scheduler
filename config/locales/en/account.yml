@@ -27,6 +27,7 @@ en:
       profile_picture_removed: "Profile picture removed."
       profile_picture_remove_failed: "We couldn't remove your profile picture right now."
       profile_picture_alt: "%{name} profile picture"
+      profile_picture_selected: "%{filename} selected. Save your changes to upload it."
       email_hint: "Your email address is managed through your sign-in methods."
       security_card_description: "Review passkeys, MFA, linked providers, and recovery access."
       security_enabled: "MFA enabled"

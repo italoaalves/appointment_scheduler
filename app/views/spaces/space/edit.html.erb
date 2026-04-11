@@ -76,25 +76,38 @@
     <%= render "shared/settings_panel",
                title: t("space.settings.edit.banner_title"),
                description: t("space.settings.edit.banner_description") do %>
-      <div class="space-y-4">
+      <div class="space-y-4"
+           data-controller="image-upload-preview"
+           data-image-upload-preview-selected-message-value="<%= t("space.settings.edit.banner_selected", filename: "%{filename}") %>">
         <div class="overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
-          <% if @space.banner_file.present? %>
-            <%= image_tag settings_space_banner_path,
-                          alt: t("space.settings.edit.banner_alt", name: @space.name),
-                          class: "h-40 w-full object-cover" %>
-          <% else %>
-            <div class="flex h-40 w-full items-center justify-center px-6 text-center text-sm text-slate-500">
-              <%= t("space.settings.edit.banner_empty") %>
-            </div>
-          <% end %>
+          <%= tag.img src: (@space.banner_file.present? ? settings_space_banner_path : nil),
+                      alt: t("space.settings.edit.banner_alt", name: @space.name),
+                      class: "h-40 w-full object-cover #{@space.banner_file.present? ? "" : "hidden"}",
+                      data: {
+                        role: "space-banner-preview-image",
+                        image_upload_preview_target: "previewImage"
+                      } %>
+          <div class="flex h-40 w-full items-center justify-center px-6 text-center text-sm text-slate-500 <%= @space.banner_file.present? ? "hidden" : "" %>"
+               data-role="space-banner-placeholder"
+               data-image-upload-preview-target="placeholder">
+            <%= t("space.settings.edit.banner_empty") %>
+          </div>
         </div>
 
         <div>
           <%= form.label :banner_upload, t("space.settings.edit.banner_label"), class: form_label_classes %>
           <%= form.file_field :banner_upload,
                               accept: "image/png,image/jpeg,image/webp",
-                              class: "mt-2 block w-full text-sm text-slate-600 file:mr-3 file:rounded-md file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-slate-800" %>
+                              class: "mt-2 block w-full text-sm text-slate-600 file:mr-3 file:rounded-md file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-slate-800",
+                              data: {
+                                action: "change->image-upload-preview#update",
+                                image_upload_preview_target: "input"
+                              } %>
           <p class="mt-1.5 text-xs text-slate-500"><%= t("space.settings.edit.banner_hint") %></p>
+          <p class="mt-1.5 min-h-5 text-xs font-medium text-slate-600"
+             data-role="space-banner-selection-feedback"
+             data-image-upload-preview-target="status"
+             aria-live="polite"></p>
         </div>
 
         <% if @space.banner_file.present? %>
