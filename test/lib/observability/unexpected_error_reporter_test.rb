@@ -45,6 +45,14 @@ module Observability
       assert_equal "dev", context[:service_version]
     end
 
+    test "decorate context tolerates nil context" do
+      context = UnexpectedErrorReporter.decorate_context(nil)
+
+      assert_equal Rails.env, context[:deployment_environment]
+      assert_equal "appointment-scheduler", context[:service_name]
+      assert_equal "dev", context[:service_version]
+    end
+
     test "incident payload contains a stable fingerprint and trimmed backtrace" do
       error = RuntimeError.new("boom")
       error.set_backtrace([

@@ -38,7 +38,8 @@ module Observability
     end
 
     def decorate_context(context)
-      RuntimeContext.log_payload.merge(Observability::FilteredParams.filter(context || {}))
+      filtered_context = Observability::FilteredParams.filter(context || {}) || {}
+      RuntimeContext.log_payload.merge(filtered_context)
     end
 
     def incident_payload(error, handled:, severity:, source:, context:)

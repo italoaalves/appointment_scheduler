@@ -121,7 +121,7 @@ services:
     image: grafana/grafana:11.5.2
     volumes:
       - ./observability/grafana/provisioning:/etc/grafana/provisioning
-      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./observability/grafana/dashboards:/etc/grafana/dashboards
       - grafana_data:/var/lib/grafana
     ports:
       - "3001:3000"
