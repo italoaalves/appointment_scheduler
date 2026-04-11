@@ -112,6 +112,36 @@
   <% end %>
 
   <%= render "shared/settings_panel",
+             title: t("profiles.security.password.title"),
+             description: t("profiles.security.password.description") do %>
+    <%= form_with model: @user, url: profile_security_password_path, method: :patch, class: "space-y-4" do |form| %>
+      <%= render "shared/error_messages", resource: @user %>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <%= form.label :current_password, t("profiles.security.password.current_password_label"), class: form_label_classes %>
+          <%= form.password_field :current_password, class: form_input_classes("max-w-none"), autocomplete: "current-password" %>
+        </div>
+        <div></div>
+        <div>
+          <%= form.label :password, t("profiles.security.password.password_label"), class: form_label_classes %>
+          <%= form.password_field :password, class: form_input_classes("max-w-none"), autocomplete: "new-password" %>
+        </div>
+        <div>
+          <%= form.label :password_confirmation, t("profiles.security.password.password_confirmation_label"), class: form_label_classes %>
+          <%= form.password_field :password_confirmation, class: form_input_classes("max-w-none"), autocomplete: "new-password" %>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <%= form.submit t("profiles.security.password.submit"),
+                        class: "#{button_classes(:primary)} w-full justify-center lg:w-auto",
+                        data: { turbo_submits_with: t("shared.submitting") } %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <%= render "shared/settings_panel",
              title: t("profiles.security.passkeys.title"),
              description: t("profiles.security.passkeys.description") do %>
     <div class="space-y-4">

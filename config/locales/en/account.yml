@@ -9,14 +9,14 @@ en:
       preferences: "Preferences"
       security: "Security"
       descriptions:
-        profile: "Your identity, phone number, password, and account lifecycle."
+        profile: "Your identity, phone number, and account lifecycle."
         preferences: "Language and personal workspace defaults."
-        security: "SSO, MFA, passkeys, and recovery options."
+        security: "Password, SSO, MFA, passkeys, and recovery options."
 
   profiles:
     edit:
       title: "Profile"
-      subtitle: "Update your name, contact information, and password."
+      subtitle: "Update your name and contact information."
       security_action: "Security"
       identity_title: "Identity"
       identity_description: "Manage the details tied to your personal account."
@@ -28,16 +28,11 @@ en:
       profile_picture_remove_failed: "We couldn't remove your profile picture right now."
       profile_picture_alt: "%{name} profile picture"
       email_hint: "Your email address is managed through your sign-in methods."
-      security_card_description: "Review passkeys, MFA, linked providers, and recovery access."
+      security_card_description: "Review password, passkeys, MFA, linked providers, and recovery access."
       security_enabled: "MFA enabled"
       security_review: "Review sign-in methods"
       phone_label: "Phone"
       phone_locked_during_trial: "Phone number cannot be changed during the trial period."
-      password_section: "Change password"
-      current_password_label: "Current password"
-      password_label: "New password"
-      password_confirmation_label: "Confirm new password"
-      password_hint: "Leave blank to keep your current password."
       submit: "Save"
       back: "Back"
       export_title: "Export your data"
@@ -64,8 +59,16 @@ en:
       not_found: "No pending deletion request was found."
     security:
       title: "Security"
-      subtitle: "Manage MFA, passkeys, and recovery options for your account."
+      subtitle: "Manage password, MFA, passkeys, and recovery options for your account."
       back: "Back to profile"
+      password:
+        title: "Change password"
+        description: "Use your current password to choose a new sign-in password for this account."
+        current_password_label: "Current password"
+        password_label: "New password"
+        password_confirmation_label: "Confirm new password"
+        submit: "Save password"
+        updated: "Password updated."
       status:
         title: "Security status"
         description: "Choose how this account proves it is really you before granting access."
