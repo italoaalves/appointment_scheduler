@@ -110,26 +110,6 @@
       </div>
     <% end %>
 
-    <%= render "shared/settings_panel",
-               title: t("profiles.edit.password_section"),
-               description: t("profiles.edit.password_hint") do %>
-      <div class="grid gap-4 sm:grid-cols-2">
-        <div>
-          <%= form.label :current_password, t("profiles.edit.current_password_label"), class: form_label_classes %>
-          <%= form.password_field :current_password, class: form_input_classes("max-w-none"), autocomplete: "current-password" %>
-        </div>
-        <div></div>
-        <div>
-          <%= form.label :password, t("profiles.edit.password_label"), class: form_label_classes %>
-          <%= form.password_field :password, class: form_input_classes("max-w-none"), autocomplete: "new-password" %>
-        </div>
-        <div>
-          <%= form.label :password_confirmation, t("profiles.edit.password_confirmation_label"), class: form_label_classes %>
-          <%= form.password_field :password_confirmation, class: form_input_classes("max-w-none"), autocomplete: "new-password" %>
-        </div>
-      </div>
-    <% end %>
-
     <%= render "shared/settings_action_bar" do %>
       <%= form.submit t("profiles.edit.submit"),
                       class: "#{button_classes(:primary)} w-full justify-center lg:w-auto",

@@ -39,6 +39,7 @@ Rails.application.routes.draw do
     get "security", to: "security#show"
 
     scope module: "security", path: "security", as: "security" do
+      resource :password, only: :update
       resource :totp_enrollment, only: [ :new, :create, :destroy ]
       resources :passkeys, only: [ :create, :destroy ] do
         collection do

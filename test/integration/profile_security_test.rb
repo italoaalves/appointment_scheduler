@@ -58,6 +58,9 @@ class ProfileSecurityTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{edit_profile_path}']", text: I18n.t("account.sidebar.profile"), minimum: 1
     assert_select "a[href='#{edit_preferences_path}']", text: I18n.t("account.sidebar.preferences"), minimum: 1
     assert_select "a[href='#{profile_security_path}']", text: I18n.t("account.sidebar.security"), minimum: 1
+    assert_select "form[action='#{profile_security_password_path}']"
+    assert_select "input[name='user[current_password]']"
+    assert_select "input[name='user[password]']"
     assert_select "p", text: "Google"
     assert_select "span", text: I18n.t("profiles.security.identities.linked"), minimum: 1
     assert_select "form[action='#{user_apple_omniauth_authorize_path}'][method='post']"

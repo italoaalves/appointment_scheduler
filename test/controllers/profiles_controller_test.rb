@@ -125,6 +125,16 @@ class ProfilesControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[name='user[phone_number]']:not([disabled])"
   end
 
+  test "profile edit no longer shows password fields" do
+    sign_in @active_user
+
+    get edit_profile_path
+
+    assert_response :success
+    assert_select "input[name='user[current_password]']", count: 0
+    assert_select "input[name='user[password]']", count: 0
+  end
+
   test "request data export enqueues package delivery job for current user" do
     sign_in @trialing_user
 
