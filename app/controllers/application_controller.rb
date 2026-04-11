@@ -5,9 +5,9 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
-  rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
-  rescue_from ActionController::ParameterMissing, with: :render_bad_request
   rescue_from StandardError, with: :render_internal_server_error
+  rescue_from ActionController::ParameterMissing, with: :render_bad_request
+  rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
 
   before_action :set_locale
   around_action :with_error_context
