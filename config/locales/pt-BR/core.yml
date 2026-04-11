@@ -60,3 +60,9 @@ pt-BR:
       share_whatsapp: "Compartilhar no WhatsApp"
       whatsapp_message: "Agende sua consulta com %{name}: %{url}"
 
+  errors:
+    internal_server_error:
+      title: "Algo deu errado"
+      heading: "Algo deu errado"
+      message: "Encontramos uma falha temporária. Tente novamente em instantes."
+      reference: "Referência de suporte: %{request_id}"

@@ -4,7 +4,7 @@ module Notifications
   class SendNotificationJob < ApplicationJob
     queue_as :default
 
-    discard_on(ActiveRecord::RecordNotFound) { |job, err| Rails.logger.warn("[Notifications] appointment not found id=#{job.arguments.first&.dig(:appointment_id)}") }
+    discard_on(ActiveRecord::RecordNotFound, report: true) { |job, err| Rails.logger.warn("[Notifications] appointment not found id=#{job.arguments.first&.dig(:appointment_id)}") }
 
     def perform(event:, appointment_id:)
       appointment = Appointment.find(appointment_id)

@@ -5,10 +5,12 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
-  rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
+  rescue_from StandardError, with: :render_internal_server_error
   rescue_from ActionController::ParameterMissing, with: :render_bad_request
+  rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
 
   before_action :set_locale
+  around_action :with_error_context
 
   helper UiHelper
   helper_method :current_tenant, :tenant_staff?, :current_subscription, :subscription_restricted?
@@ -73,6 +75,31 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def render_internal_server_error(exception)
+    Observability::UnexpectedErrorReporter.report(
+      exception,
+      handled: false,
+      source: "application.controller",
+      context: Observability::UnexpectedErrorReporter.controller_context(self)
+    )
+
+    respond_to do |format|
+      format.html do
+        render "errors/internal_server_error",
+          status: :internal_server_error,
+          layout: false,
+          locals: { request_id: request.request_id }
+      end
+      format.json do
+        render json: {
+          error: t("errors.internal_server_error.message"),
+          request_id: request.request_id
+        }, status: :internal_server_error
+      end
+      format.any { head :internal_server_error }
+    end
+  end
+
   def locale_from_user_or_browser
     if user_signed_in?
       return current_user_preferred_locale || I18n.default_locale.to_s
@@ -120,5 +147,9 @@ class ApplicationController < ActionController::Base
 
   def available_locales
     I18n.available_locales.map(&:to_s)
+  end
+
+  def with_error_context(&block)
+    Rails.error.set_context(**Observability::UnexpectedErrorReporter.controller_context(self), &block)
   end
 end

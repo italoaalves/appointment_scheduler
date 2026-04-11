@@ -4,7 +4,7 @@ module Billing
   class PlanChangePaymentReminderJob < ApplicationJob
     queue_as :default
 
-    discard_on ActiveRecord::RecordNotFound
+    discard_on ActiveRecord::RecordNotFound, report: true
 
     def perform(subscription_id, new_plan_id)
       subscription = Billing::Subscription.find(subscription_id)

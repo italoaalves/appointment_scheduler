@@ -118,7 +118,7 @@ module Billing
 
       ActiveRecord::Base.transaction do
         lock_key = Zlib.crc32("credit_fulfill:#{@space.id}")
-        ActiveRecord::Base.connection.exec_query(
+        ApplicationRecord.execute_void_query(
           "SELECT pg_advisory_xact_lock($1)", "AdvisoryLock", [ lock_key ]
         )
 
@@ -152,7 +152,7 @@ module Billing
 
       ActiveRecord::Base.transaction do
         lock_key = Zlib.crc32("message_credits:#{@space.id}")
-        ActiveRecord::Base.connection.exec_query(
+        ApplicationRecord.execute_void_query(
           "SELECT pg_advisory_xact_lock($1)", "AdvisoryLock", [ lock_key ]
         )
 

@@ -23,16 +23,16 @@ default: &default
 development:
   <<: *default
   database: appointment_scheduler_development
-  host:     <%= ENV["DB_HOST"] %>
-  username: <%= ENV["DB_USER"] %>
-  password: <%= ENV["DB_PASSWORD"] %>
+  host:     <%= ENV.fetch("DB_HOST", "localhost") %>
+  username: <%= ENV.fetch("DB_USER", nil) %>
+  password: <%= ENV.fetch("DB_PASSWORD", nil) %>
 
 test:
   <<: *default
   database: appointment_scheduler_test
-  host:     <%= ENV["DB_HOST"] %>
-  username: <%= ENV["DB_USER"] %>
-  password: <%= ENV["DB_PASSWORD"] %>
+  host:     <%= ENV.fetch("DB_HOST", "localhost") %>
+  username: <%= ENV.fetch("DB_USER", nil) %>
+  password: <%= ENV.fetch("DB_PASSWORD", nil) %>
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -76,10 +76,10 @@ production:
 staging:
   primary: &primary_staging
     <<: *default
-    host:     <%= Rails.application.credentials.dig(:postgres, :hostname) %>
-    username: <%= Rails.application.credentials.dig(:postgres, :user) %>
-    password: <%= Rails.application.credentials.dig(:postgres, :password) %>
-    port:     <%= Rails.application.credentials.dig(:postgres, :port) %>
+    host:     <%= ENV["DB_HOST"].presence || Rails.application.credentials.dig(:postgres, :hostname) %>
+    username: <%= ENV["DB_USER"].presence || Rails.application.credentials.dig(:postgres, :user) %>
+    password: <%= ENV["APPOINTMENT_SCHEDULER_DATABASE_PASSWORD"].presence || ENV["DB_PASSWORD"].presence || Rails.application.credentials.dig(:postgres, :password) %>
+    port:     <%= ENV["DB_PORT"].presence || Rails.application.credentials.dig(:postgres, :port) %>
     database: appointment_scheduler_staging
   cache:
     <<: *primary_staging

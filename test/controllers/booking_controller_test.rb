@@ -267,4 +267,49 @@ class BookingControllerTest < ActionDispatch::IntegrationTest
     assert_select ".booking-page"
     assert_select "[data-role='booking-state-card']"
   end
+
+  test "unexpected html errors render a safe fallback and report context" do
+    with_swapped_action(BookingController, :show, proc { raise RuntimeError, "boom" }) do
+      report = assert_error_reported(RuntimeError) do
+        get book_url(token: @link.token)
+      end
+
+      assert_response :internal_server_error
+      assert_match I18n.t("errors.internal_server_error.message"), response.body
+      assert_match(/#{Regexp.escape(report.context["request_id"])}/, response.body)
+      assert_equal "application.controller", report.source
+      assert_equal false, report.handled?
+      assert_equal "[FILTERED]", report.context["params"]["token"]
+      assert_equal "booking", report.context["controller"]
+      assert_equal "show", report.context["action"]
+    end
+  end
+
+  test "unexpected json errors render a safe fallback and report filtered params" do
+    with_swapped_action(BookingController, :slots, proc { raise RuntimeError, "customer maria failed" }) do
+      report = assert_error_reported(RuntimeError) do
+        get book_slots_url(token: @link.token), params: { customer_email: "maria@example.com" }, as: :json
+      end
+
+      assert_response :internal_server_error
+      assert_equal "application/json", response.media_type
+      body = JSON.parse(response.body)
+
+      assert_equal I18n.t("errors.internal_server_error.message"), body["error"]
+      assert_equal report.context["request_id"], body["request_id"]
+      assert_equal "[FILTERED]", report.context["params"]["customer_email"]
+      assert_equal "json", report.context["format"]
+    end
+  end
+
+  private
+
+  def with_swapped_action(controller_class, action_name, replacement)
+    original_method = controller_class.instance_method(action_name)
+
+    controller_class.define_method(action_name, &replacement)
+    yield
+  ensure
+    controller_class.define_method(action_name, original_method)
+  end
 end

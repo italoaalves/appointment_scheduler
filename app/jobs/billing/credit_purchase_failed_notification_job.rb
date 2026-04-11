@@ -4,7 +4,7 @@ module Billing
   class CreditPurchaseFailedNotificationJob < ApplicationJob
     queue_as :default
 
-    discard_on ActiveRecord::RecordNotFound
+    discard_on ActiveRecord::RecordNotFound, report: true
 
     def perform(credit_purchase_id)
       purchase  = Billing::CreditPurchase.find(credit_purchase_id)

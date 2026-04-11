@@ -60,3 +60,9 @@ en:
       share_whatsapp: "Share on WhatsApp"
       whatsapp_message: "Book your appointment with %{name}: %{url}"
 
+  errors:
+    internal_server_error:
+      title: "Something went wrong"
+      heading: "Something went wrong"
+      message: "We hit a temporary problem. Please try again in a moment."
+      reference: "Support reference: %{request_id}"

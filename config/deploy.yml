@@ -18,10 +18,20 @@ registry:
 env:
   secret:
     - RAILS_MASTER_KEY
+    - APPOINTMENT_SCHEDULER_DATABASE_PASSWORD:POSTGRES_PASSWORD
   clear:
+    ALLOWED_HOSTS: staging.anella.app
+    APP_BASE_URL: https://staging.anella.app
+    APP_VERSION: <%= `git rev-parse --short HEAD`.strip %>
+    DB_HOST: appointment_scheduler-db
+    DB_PORT: 5432
+    DB_USER: appointment_scheduler
+    OTEL_DEPLOYMENT_ENVIRONMENT: staging
+    OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+    OTEL_SERVICE_NAME: appointment-scheduler
     SOLID_QUEUE_IN_PUMA: true
     RAILS_ENV: staging
-    RAILS_LOG_LEVEL: debug
+    RAILS_LOG_LEVEL: info
 
 aliases:
   console: app exec --interactive --reuse "bin/rails console"
@@ -53,3 +63,92 @@ accessories:
         - POSTGRES_PASSWORD
     directories:
       - postgres_data:/var/lib/postgresql/data
+  otel-collector:
+    service: otel-collector
+    image: otel/opentelemetry-collector-contrib:0.119.0
+    host: 129.121.50.44
+    files:
+      - observability/otel-collector/config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    cmd: "--config=/etc/otelcol-contrib/config.yaml"
+  tempo:
+    service: tempo
+    image: grafana/tempo:2.7.2
+    host: 129.121.50.44
+    files:
+      - observability/tempo/tempo.yaml:/etc/tempo/config.yaml:ro
+    directories:
+      - tempo_data:/var/tempo
+    cmd: "-config.file=/etc/tempo/config.yaml"
+  loki:
+    service: loki
+    image: grafana/loki:3.4.3
+    host: 129.121.50.44
+    directories:
+      - loki_data:/loki
+  alloy:
+    service: alloy
+    image: grafana/alloy:v1.8.3
+    host: 129.121.50.44
+    files:
+      - observability/alloy/config.alloy:/etc/alloy/config.alloy:ro
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    cmd: "run /etc/alloy/config.alloy"
+  prometheus:
+    service: prometheus
+    image: prom/prometheus:v3.2.1
+    host: 129.121.50.44
+    port: "127.0.0.1:9090:9090"
+    files:
+      - observability/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
+    directories:
+      - prometheus_data:/prometheus
+    cmd: "--config.file=/etc/prometheus/prometheus.yml --web.enable-remote-write-receiver"
+  node-exporter:
+    service: node-exporter
+    image: prom/node-exporter:v1.8.2
+    host: 129.121.50.44
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    cmd: "--path.procfs=/host/proc --path.rootfs=/rootfs --path.sysfs=/host/sys --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+  cadvisor:
+    service: cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    host: 129.121.50.44
+    options:
+      privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /dev/disk:/dev/disk:ro
+  postgres-exporter:
+    service: postgres-exporter
+    image: quay.io/prometheuscommunity/postgres-exporter:v0.16.0
+    host: 129.121.50.44
+    env:
+      clear:
+        DATA_SOURCE_URI: appointment_scheduler-db:5432/appointment_scheduler_staging?sslmode=disable
+        DATA_SOURCE_USER: appointment_scheduler
+      secret:
+        - DATA_SOURCE_PASS:POSTGRES_PASSWORD
+  grafana:
+    service: grafana
+    image: grafana/grafana:11.5.2
+    host: 129.121.50.44
+    port: "127.0.0.1:3001:3000"
+    env:
+      clear:
+        GF_AUTH_ANONYMOUS_ENABLED: "true"
+        GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+        GF_AUTH_DISABLE_LOGIN_FORM: "true"
+        GRAFANA_ALERT_EMAILS: alerts@example.test
+        GRAFANA_ALERT_CRITICAL_EMAILS: alerts-critical@example.test
+    files:
+      - observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - observability/grafana/dashboards:/etc/grafana/dashboards:ro
+    directories:
+      - grafana_data:/var/lib/grafana

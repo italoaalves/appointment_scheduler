@@ -4,7 +4,7 @@ module Billing
   class PaymentReminderJob < ApplicationJob
     queue_as :default
 
-    discard_on ActiveRecord::RecordNotFound
+    discard_on ActiveRecord::RecordNotFound, report: true
 
     def perform(payment_id, reminder_type: "created")
       payment      = Billing::Payment.find(payment_id)
