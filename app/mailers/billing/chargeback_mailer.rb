@@ -9,10 +9,12 @@ module Billing
       @event_name = event_name
       @reason     = reason
 
-      mail(
-        to:      admin.email,
-        subject: "[ALERT] Chargeback — #{space.name} — #{event_name}"
-      )
+      with_mail_locale(recipient: admin, fallback_space: space) do
+        mail(
+          to:      admin.email,
+          subject: I18n.t("billing.chargeback_mailer.chargeback_alert.subject", space_name: space.name, event_name: event_name)
+        )
+      end
     end
   end
 end

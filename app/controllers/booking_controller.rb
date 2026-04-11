@@ -134,7 +134,8 @@ class BookingController < ApplicationController
       phone:   phone,
       address: bp[:customer_address].to_s.strip.presence,
       whatsapp_opt_in: bp[:whatsapp_opt_in],
-      consent_source: "booking_form"
+      consent_source: "booking_form",
+      locale: I18n.locale
     )
   rescue ArgumentError
     flash.now[:alert] = t("booking.email_or_phone_required")

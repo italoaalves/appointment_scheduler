@@ -1,11 +1,11 @@
 <%
   amount = number_to_currency(@amount, unit: "R$", separator: ",", delimiter: ".")
-  due_date = @due_date&.strftime("%d/%m/%Y") || "-"
+  due_date = @due_date ? I18n.l(@due_date, format: :long) : "-"
   callout_title =
     case @reminder_type.to_s
-    when "overdue" then "Payment overdue"
-    when "due_today" then "Due today"
-    else "Payment due"
+    when "overdue" then t("billing.payment_mailer.reminder.callout_titles.overdue")
+    when "due_today" then t("billing.payment_mailer.reminder.callout_titles.due_today")
+    else t("billing.payment_mailer.reminder.callout_titles.default")
     end
   tone =
     case @reminder_type.to_s
@@ -15,9 +15,9 @@
     end
 %>
 <% content_for :email_preheader, t("billing.payment_mailer.reminder.body_#{@reminder_type}_#{@payment_method}", amount: amount, due_date: due_date) %>
-<% content_for :email_eyebrow, "Billing" %>
+<% content_for :email_eyebrow, t("mailers.shared.eyebrows.billing") %>
 <% content_for :email_title, message.subject %>
-<% content_for :email_intro, "Payment details are below so you can complete this without hunting through the dashboard." %>
+<% content_for :email_intro, t("billing.payment_mailer.reminder.intro") %>
 <% content_for(:email_cta_label, t("billing.payment_mailer.reminder.pay_now")) if @invoice_url.present? %>
 <% content_for(:email_cta_url, @invoice_url) if @invoice_url.present? %>
 
@@ -31,7 +31,7 @@
                       due_date: due_date) %>
 
 <%= render "shared/mailer/metadata", rows: [
-  { label: "Amount", value: amount },
-  { label: "Due date", value: due_date },
-  { label: "Payment method", value: t("billing.payment_methods.#{@payment_method}") }
+  { label: t("billing.payment_mailer.reminder.metadata.amount"), value: amount },
+  { label: t("billing.payment_mailer.reminder.metadata.due_date"), value: due_date },
+  { label: t("billing.payment_mailer.reminder.metadata.payment_method"), value: t("billing.payment_methods.#{@payment_method}") }
 ] %>

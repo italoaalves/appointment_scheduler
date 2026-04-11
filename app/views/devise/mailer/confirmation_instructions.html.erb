@@ -1,10 +1,10 @@
 <% url = confirmation_url(@resource, confirmation_token: @token) %>
-<% content_for :email_preheader, "Confirm your email address to finish setting up your account." %>
-<% content_for :email_eyebrow, "Security" %>
-<% content_for :email_title, "Confirm your email" %>
-<% content_for :email_intro, "Use the secure link below to confirm #{@email}." %>
-<% content_for :email_cta_label, "Confirm my account" %>
+<% content_for :email_preheader, t("devise.mailer.email_content.confirmation_instructions.preheader") %>
+<% content_for :email_eyebrow, t("mailers.shared.eyebrows.security") %>
+<% content_for :email_title, t("devise.mailer.email_content.confirmation_instructions.title") %>
+<% content_for :email_intro, t("devise.mailer.email_content.confirmation_instructions.intro", email: @email) %>
+<% content_for :email_cta_label, t("devise.mailer.email_content.confirmation_instructions.cta") %>
 <% content_for :email_cta_url, url %>
 
-<p style="margin: 0 0 16px;">Welcome <%= @email %>.</p>
-<p style="margin: 0;">You can confirm your account email through the secure link in this message.</p>
+<p style="margin: 0 0 16px;"><%= t("devise.mailer.email_content.confirmation_instructions.greeting", email: @email) %></p>
+<p style="margin: 0;"><%= t("devise.mailer.email_content.confirmation_instructions.body") %></p>

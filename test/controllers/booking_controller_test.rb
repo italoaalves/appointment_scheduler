@@ -103,6 +103,23 @@ class BookingControllerTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
+  test "create stores customer locale from accept-language" do
+    scheduled = 3.days.from_now.change(hour: 10, min: 0, sec: 0)
+
+    post "/book/#{@link.token}",
+      params: {
+        customer_name: "English Customer",
+        customer_email: "english_customer@example.com",
+        customer_phone: "+5511999999977",
+        whatsapp_opt_in: "0",
+        scheduled_at: scheduled.strftime("%Y-%m-%d %H:%M")
+      },
+      headers: { "Accept-Language" => "en-US,en;q=0.9,pt-BR;q=0.8" }
+
+    assert_response :redirect
+    assert_equal "en", Customer.find_by!(email: "english_customer@example.com").locale
+  end
+
   test "create enqueues appointment_booked notification" do
     scheduled = 3.days.from_now.change(hour: 10, min: 0, sec: 0)
 

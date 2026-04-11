@@ -80,6 +80,10 @@ class User < ApplicationRecord
     PermissionService.can?(user: self, permission: permission, space: space)
   end
 
+  def preferred_locale
+    LocaleResolver.recipient(self)
+  end
+
   def mfa_enabled?
     mfa_enabled_at.present?
   end

@@ -3,15 +3,16 @@
 module Messaging
   module Channels
     class Email < Base
-      def deliver(to:, body:, subject: nil, reply_to: nil, **opts)
+      def deliver(to:, body:, subject: nil, reply_to: nil, locale: nil, **opts)
         address = resolve_email(to)
         raise Messaging::DeliveryError, "Email channel requires recipient with email" if address.blank?
 
         Messaging::CustomerMessageMailer.customer_message(
           to: address,
           body: body,
-          subject: subject.presence || "Message",
-          reply_to: reply_to
+          subject: subject.presence,
+          reply_to: reply_to,
+          locale: locale || LocaleResolver.recipient(to)
         ).deliver_now
 
         { success: true }

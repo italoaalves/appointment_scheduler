@@ -19,6 +19,11 @@ class Customer < ApplicationRecord
   validates :name, presence: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   validates :email, uniqueness: { scope: :space_id, allow_blank: true }
+  validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) }, allow_nil: true
+
+  def preferred_locale
+    LocaleResolver.recipient(self, fallback_space: space)
+  end
 
   def whatsapp_opted_in?
     return false if whatsapp_opted_in_at.blank?

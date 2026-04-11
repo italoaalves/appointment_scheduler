@@ -1,13 +1,13 @@
-<% content_for :email_preheader, "Your account email address was updated." %>
-<% content_for :email_eyebrow, "Security" %>
-<% content_for :email_title, "Email address updated" %>
-<% content_for :email_intro, "This is a confirmation for a change on your account." %>
+<% content_for :email_preheader, t("devise.mailer.email_content.email_changed.preheader") %>
+<% content_for :email_eyebrow, t("mailers.shared.eyebrows.security") %>
+<% content_for :email_title, t("devise.mailer.email_content.email_changed.title") %>
+<% content_for :email_intro, t("devise.mailer.email_content.email_changed.intro") %>
 
-<p style="margin: 0 0 16px;">Hello <%= @email %>.</p>
+<p style="margin: 0 0 16px;"><%= t("devise.mailer.email_content.email_changed.greeting", email: @email) %></p>
 
 <%= render "shared/mailer/callout",
-           title: "Account update",
+           title: t("devise.mailer.email_content.email_changed.callout_title"),
            tone: "info",
            content: (@resource.try(:unconfirmed_email?) ?
-             "We're contacting you to notify you that your email is being changed to #{@resource.unconfirmed_email}." :
-             "We're contacting you to notify you that your email has been changed to #{@resource.email}.") %>
+             t("devise.mailer.email_content.email_changed.pending_body", email: @resource.unconfirmed_email) :
+             t("devise.mailer.email_content.email_changed.updated_body", email: @resource.email)) %>

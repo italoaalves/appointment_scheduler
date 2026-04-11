@@ -156,6 +156,9 @@ en:
     package_mailer:
       export_ready:
         subject: "Your LGPD data export"
+        title: "Your data export is ready"
+        intro: "The export package is attached to this email."
+        callout_title: "Attachment included"
         greeting: "Hello, %{name}."
         body: "Your LGPD export is attached as a ZIP package containing CSV files."
         footer: "Keep this file somewhere safe. A future version may send a secure storage link instead of an attachment."

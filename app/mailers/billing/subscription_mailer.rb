@@ -9,13 +9,15 @@ module Billing
       @payment_method = subscription.payment_method
       recipient       = @space.owner
 
-      mail(
-        to:      recipient.email,
-        subject: I18n.t(
-          "billing.subscription_mailer.plan_change_payment_reminder.subject",
-          plan_name: new_plan.name
+      with_mail_locale(recipient:, fallback_space: @space) do
+        mail(
+          to:      recipient.email,
+          subject: I18n.t(
+            "billing.subscription_mailer.plan_change_payment_reminder.subject",
+            plan_name: new_plan.name
+          )
         )
-      )
+      end
     end
   end
 end

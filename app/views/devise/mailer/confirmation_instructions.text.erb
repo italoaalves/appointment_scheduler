@@ -1,6 +1,6 @@
-Welcome <%= @email %>.
+<%= t("devise.mailer.email_content.confirmation_instructions.greeting", email: @email) %>
 
-Confirm your account email through the link below:
+<%= t("devise.mailer.email_content.confirmation_instructions.body") %>
 <%= confirmation_url(@resource, confirmation_token: @token) %>
 
-You received this email because an account was created with this address.
+<%= t("devise.mailer.email_content.confirmation_instructions.footer_reason") %>

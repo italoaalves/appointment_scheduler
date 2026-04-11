@@ -105,40 +105,11 @@ class ApplicationController < ActionController::Base
       return current_user_preferred_locale || I18n.default_locale.to_s
     end
 
-    locale_from_accept_language || I18n.default_locale.to_s
+    LocaleResolver.from_accept_language(request.get_header("HTTP_ACCEPT_LANGUAGE")) || I18n.default_locale.to_s
   end
 
   def current_user_preferred_locale
-    locale = current_user.user_preference&.locale
-    locale.to_s if available_locale?(locale)
-  end
-
-  def locale_from_accept_language
-    accepted_languages = request.get_header("HTTP_ACCEPT_LANGUAGE").to_s
-
-    accepted_languages.split(",").filter_map.with_index do |entry, index|
-      language_tag, *parameters = entry.strip.split(";")
-      locale = locale_for_language_tag(language_tag)
-      next unless locale
-
-      quality = parameters
-        .map(&:strip)
-        .find { |parameter| parameter.start_with?("q=") }
-        &.split("=", 2)
-        &.last
-        &.to_f || 1.0
-      next if quality <= 0
-
-      [ locale, quality, -index ]
-    end.max_by { |_locale, quality, order| [ quality, order ] }&.first
-  end
-
-  def locale_for_language_tag(language_tag)
-    normalized_tag = language_tag.to_s.strip.tr("_", "-").downcase
-    return if normalized_tag.blank? || normalized_tag == "*"
-
-    available_locales.find { |locale| locale.downcase == normalized_tag } ||
-      available_locales.find { |locale| locale.split("-").first.downcase == normalized_tag.split("-").first }
+    LocaleResolver.normalize(current_user.user_preference&.locale)
   end
 
   def available_locale?(locale)

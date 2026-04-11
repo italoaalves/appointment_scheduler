@@ -1,11 +1,11 @@
-Chargeback alert
+<%= t("billing.chargeback_mailer.chargeback_alert.title") %>
 
-A chargeback event was received for <%= @space.name %>.
+<%= t("billing.chargeback_mailer.chargeback_alert.preheader", space_name: @space.name) %>
 
-Event: <%= @event_name %>
-Reason: <%= @reason.presence || "Not provided" %>
-Payment ID: <%= @payment.asaas_payment_id %>
-Amount: <%= number_to_currency(@payment.amount_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %>
-Space: <%= @space.name %> (ID: <%= @space.id %>)
+<%= t("billing.chargeback_mailer.chargeback_alert.metadata.event") %>: <%= @event_name %>
+<%= t("billing.chargeback_mailer.chargeback_alert.metadata.reason") %>: <%= @reason.presence || t("billing.chargeback_mailer.chargeback_alert.reason_not_provided") %>
+<%= t("billing.chargeback_mailer.chargeback_alert.metadata.payment_id") %>: <%= @payment.asaas_payment_id %>
+<%= t("billing.chargeback_mailer.chargeback_alert.metadata.amount") %>: <%= number_to_currency(@payment.amount_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %>
+<%= t("billing.chargeback_mailer.chargeback_alert.metadata.space") %>: <%= t("billing.chargeback_mailer.chargeback_alert.space_value", space_name: @space.name, space_id: @space.id) %>
 
-Review in the platform admin dashboard and take the next billing action there.
+<%= t("billing.chargeback_mailer.chargeback_alert.footer") %>

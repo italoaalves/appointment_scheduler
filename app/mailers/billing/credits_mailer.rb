@@ -8,10 +8,12 @@ module Billing
       @space           = credit_purchase.space
       recipient        = credit_purchase.actor || @space.owner
 
-      mail(
-        to:      recipient.email,
-        subject: I18n.t("billing.credits_mailer.fulfilled.subject", amount: @amount)
-      )
+      with_mail_locale(recipient:, fallback_space: @space) do
+        mail(
+          to:      recipient.email,
+          subject: I18n.t("billing.credits_mailer.fulfilled.subject", amount: @amount)
+        )
+      end
     end
 
     def failed(credit_purchase:)
@@ -20,10 +22,12 @@ module Billing
       @space           = credit_purchase.space
       recipient        = credit_purchase.actor || @space.owner
 
-      mail(
-        to:      recipient.email,
-        subject: I18n.t("billing.credits_mailer.failed.subject", amount: @amount)
-      )
+      with_mail_locale(recipient:, fallback_space: @space) do
+        mail(
+          to:      recipient.email,
+          subject: I18n.t("billing.credits_mailer.failed.subject", amount: @amount)
+        )
+      end
     end
   end
 end

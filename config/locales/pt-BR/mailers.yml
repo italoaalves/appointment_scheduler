@@ -1,0 +1,24 @@
+pt-BR:
+  mailers:
+    shared:
+      eyebrows:
+        booking: "Agendamento"
+        billing: "Cobrança"
+        conversation: "Conversa"
+        account: "Conta"
+        security: "Segurança"
+      footer_reason:
+        default: "Este é um e-mail transacional automático da %{app_name}."
+      footer_support:
+        reply_available: "Você pode responder diretamente a este e-mail se precisar de ajuda."
+        keep_for_records: "Guarde este e-mail para seus registros."
+
+  messaging:
+    customer_message_mailer:
+      customer_message:
+        subject: "Mensagem"
+        title: "Nova mensagem"
+        intro: "Um estabelecimento enviou uma mensagem para você via %{app_name}."
+        callout_title: "Mensagem"
+        footer_support: "Responda diretamente a este e-mail para continuar a conversa."
+        footer_reason: "Você recebeu este e-mail porque um estabelecimento entrou em contato com você via %{app_name}."
