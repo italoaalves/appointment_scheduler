@@ -9,19 +9,60 @@ pt-BR:
       plan_change_payment_reminder:
         subject: "Ação necessária: Conclua o pagamento do %{plan_name}"
         greeting: "Olá,"
+        intro: "A mudança do seu plano está quase concluída. Finalize o pagamento deste upgrade para ativar o novo plano."
+        callout_title: "Ação necessária"
         body_pix: "Você fez upgrade para o plano %{plan_name} (%{price}/mês). Uma cobrança PIX foi gerada — conclua o pagamento antes do vencimento para ativar seu novo plano."
         body_boleto: "Você fez upgrade para o plano %{plan_name} (%{price}/mês). Um boleto foi gerado — conclua o pagamento antes do vencimento para ativar seu novo plano."
+        metadata:
+          plan_name: "Novo plano"
+          price: "Preço"
+          payment_method: "Forma de pagamento"
     credits_mailer:
+      shared:
+        metadata:
+          amount: "Créditos"
+          space: "Espaço"
       fulfilled:
         subject: "Seus %{amount} créditos WhatsApp foram adicionados"
+        intro: "Sua compra foi concluída e os créditos já estão disponíveis na conta."
+        cta: "Abrir créditos"
+        callout_title: "Créditos adicionados"
         body: "Sua compra de %{amount} créditos WhatsApp foi confirmada e adicionada à sua conta."
       failed:
         subject: "Sua compra de créditos WhatsApp não pôde ser processada"
+        intro: "A compra não foi concluída, mas você pode tentar novamente pela página de créditos."
+        cta: "Revisar créditos"
+        callout_title: "Não foi possível processar o pagamento"
         body: "Sua compra de %{amount} créditos WhatsApp não pôde ser processada. Acesse a página de créditos para tentar novamente."
+    chargeback_mailer:
+      chargeback_alert:
+        subject: "[ALERTA] Chargeback - %{space_name} - %{event_name}"
+        title: "Alerta de chargeback"
+        preheader: "Recebemos um evento de chargeback para %{space_name}."
+        intro: "Esta ocorrência precisa de uma revisão operacional."
+        callout_title: "Ação necessária"
+        reason_not_provided: "Não informado"
+        footer: "Revise o caso no painel administrativo da plataforma e tome a próxima ação de cobrança por lá."
+        space_value: "%{space_name} (ID: %{space_id})"
+        metadata:
+          event: "Evento"
+          reason: "Motivo"
+          payment_id: "ID do pagamento"
+          amount: "Valor"
+          space: "Espaço"
     payment_mailer:
       reminder:
         greeting: "Olá,"
         pay_now: "Pagar agora"
+        intro: "Os dados do pagamento estão abaixo para você concluir isso sem precisar procurar no painel."
+        callout_titles:
+          default: "Pagamento pendente"
+          due_today: "Vence hoje"
+          overdue: "Pagamento em atraso"
+        metadata:
+          amount: "Valor"
+          due_date: "Vencimento"
+          payment_method: "Forma de pagamento"
         subjects:
           created: "Pagamento gerado: %{amount} com vencimento em %{due_date}"
           approaching: "Lembrete: Seu pagamento de %{amount} vence em 3 dias"

@@ -8,6 +8,7 @@ module Spaces
       ActionMailer::Base.deliveries.clear
       @space      = spaces(:one)
       @space.update!(owner_id: users(:manager).id) unless @space.owner_id.present?
+      @space.owner.create_user_preference!(locale: "pt-BR") unless @space.owner.user_preference
       @customer   = customers(:one)
       @appointment = appointments(:one)
       @appointment.update!(customer: @customer, scheduled_at: 2.days.from_now)
@@ -50,6 +51,35 @@ module Spaces
       mail = ActionMailer::Base.deliveries.first
       assert_equal [ @customer.email ], mail.to
       assert_equal I18n.t("notifications.appointment_confirmed.subject"), mail.subject
+    end
+
+    test "appointment_booked localizes owner and customer emails per recipient locale" do
+      @space.owner.user_preference.update!(locale: "pt-BR")
+      @customer.update!(locale: "en")
+
+      NotificationDispatcher.call(event: :appointment_booked, appointment: @appointment)
+
+      owner_mail = ActionMailer::Base.deliveries.find { |mail| mail.to.include?(@space.owner.email) }
+      customer_mail = ActionMailer::Base.deliveries.find { |mail| mail.to.include?(@customer.email) }
+      customer_subject = I18n.with_locale("en") do
+        tz = TimezoneResolver.zone(@space)
+        dt = @appointment.scheduled_at.in_time_zone(tz)
+        I18n.t("booking.confirmation_email.subject", business_name: @space.name, date: I18n.l(dt.to_date, format: :long))
+      end
+
+      assert_equal I18n.with_locale("pt-BR") { I18n.t("notifications.appointment_booked.subject", customer_name: @customer.name) }, owner_mail.subject
+      assert_equal customer_subject, customer_mail.subject
+    end
+
+    test "appointment_confirmed localizes customer email from stored customer locale" do
+      @appointment.update!(status: :confirmed)
+      @customer.update!(locale: "en")
+
+      NotificationDispatcher.call(event: :appointment_confirmed, appointment: @appointment)
+
+      mail = ActionMailer::Base.deliveries.first
+      assert_equal I18n.with_locale("en") { I18n.t("notifications.appointment_confirmed.subject") }, mail.subject
+      assert_includes mail.body.encoded, I18n.with_locale("en") { "Your appointment has been confirmed" }
     end
 
     test "appointment_cancelled sends email to customer" do

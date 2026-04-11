@@ -89,13 +89,15 @@ module Spaces
       end
       return if user.nil?
 
-      Notification.create!(
-        user:       user,
-        notifiable: @appointment,
-        event_type: @event.to_s,
-        title:      I18n.t("notifications.in_app.#{@event}.title"),
-        body:       I18n.t("notifications.in_app.#{@event}.body", **in_app_template_params)
-      )
+      I18n.with_locale(LocaleResolver.recipient(user, fallback_space: @space)) do
+        Notification.create!(
+          user:       user,
+          notifiable: @appointment,
+          event_type: @event.to_s,
+          title:      I18n.t("notifications.in_app.#{@event}.title"),
+          body:       I18n.t("notifications.in_app.#{@event}.body", **in_app_template_params)
+        )
+      end
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.error(
         "[Notifications] in_app_creation_failed event=#{@event} " \
@@ -113,14 +115,16 @@ module Spaces
     end
 
     def send_owner_notification(recipient, channel)
-      subject = build_subject(channel)
-      body    = build_body(channel)
+      locale = LocaleResolver.recipient(recipient, fallback_space: @space)
+      subject = I18n.with_locale(locale) { build_subject(channel) }
+      body    = I18n.with_locale(locale) { build_body(channel) }
 
       result = Messaging::DeliveryService.call(
         channel:  channel,
         to:       recipient,
         body:     body,
         subject:  channel == :email ? subject : nil,
+        locale:   channel == :email ? locale : nil,
         template: channel == :whatsapp ? build_whatsapp_template : nil
       )
 

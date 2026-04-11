@@ -1,10 +1,10 @@
 <% url = unlock_url(@resource, unlock_token: @token) %>
-<% content_for :email_preheader, "Use the secure link in this email to unlock your account." %>
-<% content_for :email_eyebrow, "Security" %>
-<% content_for :email_title, "Unlock your account" %>
-<% content_for :email_intro, "Your account was locked after multiple unsuccessful sign-in attempts." %>
-<% content_for :email_cta_label, "Unlock my account" %>
+<% content_for :email_preheader, t("devise.mailer.email_content.unlock_instructions.preheader") %>
+<% content_for :email_eyebrow, t("mailers.shared.eyebrows.security") %>
+<% content_for :email_title, t("devise.mailer.email_content.unlock_instructions.title") %>
+<% content_for :email_intro, t("devise.mailer.email_content.unlock_instructions.intro") %>
+<% content_for :email_cta_label, t("devise.mailer.email_content.unlock_instructions.cta") %>
 <% content_for :email_cta_url, url %>
 
-<p style="margin: 0 0 16px;">Hello <%= @resource.email %>.</p>
-<p style="margin: 0;">Use the secure link in this email to unlock your account and sign in again.</p>
+<p style="margin: 0 0 16px;"><%= t("devise.mailer.email_content.unlock_instructions.greeting", email: @resource.email) %></p>
+<p style="margin: 0;"><%= t("devise.mailer.email_content.unlock_instructions.body") %></p>

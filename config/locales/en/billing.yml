@@ -9,19 +9,60 @@ en:
       plan_change_payment_reminder:
         subject: "Action required: Complete your payment for %{plan_name}"
         greeting: "Hello,"
+        intro: "Your plan change is almost done. Finish the payment tied to this upgrade to activate the new plan."
+        callout_title: "Action required"
         body_pix: "You've upgraded to the %{plan_name} plan (%{price}/month). A PIX charge has been generated — please complete the payment before the due date to activate your new plan."
         body_boleto: "You've upgraded to the %{plan_name} plan (%{price}/month). A boleto has been generated — please complete the payment before the due date to activate your new plan."
+        metadata:
+          plan_name: "New plan"
+          price: "Price"
+          payment_method: "Payment method"
     credits_mailer:
+      shared:
+        metadata:
+          amount: "Credits"
+          space: "Workspace"
       fulfilled:
         subject: "Your %{amount} WhatsApp credits have been added"
+        intro: "Your purchase went through and the credits are now available on the account."
+        cta: "Open credits"
+        callout_title: "Credits added"
         body: "Your purchase of %{amount} WhatsApp credits has been confirmed and added to your account."
       failed:
         subject: "Your WhatsApp credit purchase could not be processed"
+        intro: "The purchase did not complete, but you can retry from the credits page."
+        cta: "Review credits"
+        callout_title: "Payment could not be processed"
         body: "Your purchase of %{amount} WhatsApp credits could not be processed. Please visit your credits page to try again."
+    chargeback_mailer:
+      chargeback_alert:
+        subject: "[ALERT] Chargeback - %{space_name} - %{event_name}"
+        title: "Chargeback alert"
+        preheader: "A chargeback event was received for %{space_name}."
+        intro: "An operational review is needed for this payment event."
+        callout_title: "Action required"
+        reason_not_provided: "Not provided"
+        footer: "Review in the platform admin dashboard and take the next billing action there."
+        space_value: "%{space_name} (ID: %{space_id})"
+        metadata:
+          event: "Event"
+          reason: "Reason"
+          payment_id: "Payment ID"
+          amount: "Amount"
+          space: "Space"
     payment_mailer:
       reminder:
         greeting: "Hello,"
         pay_now: "Pay now"
+        intro: "Payment details are below so you can complete this without hunting through the dashboard."
+        callout_titles:
+          default: "Payment due"
+          due_today: "Due today"
+          overdue: "Payment overdue"
+        metadata:
+          amount: "Amount"
+          due_date: "Due date"
+          payment_method: "Payment method"
         subjects:
           created: "Payment required: %{amount} due %{due_date}"
           approaching: "Reminder: Your %{amount} payment is due in 3 days"

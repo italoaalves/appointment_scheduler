@@ -1,0 +1,24 @@
+en:
+  mailers:
+    shared:
+      eyebrows:
+        booking: "Booking"
+        billing: "Billing"
+        conversation: "Conversation"
+        account: "Account"
+        security: "Security"
+      footer_reason:
+        default: "This is an automated transactional email from %{app_name}."
+      footer_support:
+        reply_available: "You can reply directly to this email if you need help."
+        keep_for_records: "Keep this email for your records."
+
+  messaging:
+    customer_message_mailer:
+      customer_message:
+        subject: "Message"
+        title: "New message"
+        intro: "A business sent you a message through %{app_name}."
+        callout_title: "Message"
+        footer_support: "Reply directly to this email to continue the conversation."
+        footer_reason: "You received this email because a business contacted you through %{app_name}."

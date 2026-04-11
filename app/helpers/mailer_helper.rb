@@ -94,15 +94,15 @@ module MailerHelper
     when [ "data_exports/package_mailer", "export_ready" ]
       t("data_exports.package_mailer.export_ready.body")
     when [ "devise/mailer", "confirmation_instructions" ]
-      "Confirm your email address to finish setting up your account."
+      t("devise.mailer.email_content.confirmation_instructions.preheader")
     when [ "devise/mailer", "reset_password_instructions" ]
-      "Use the secure link in this email to reset your password."
+      t("devise.mailer.email_content.reset_password_instructions.preheader")
     when [ "devise/mailer", "unlock_instructions" ]
-      "Use the secure link in this email to unlock your account."
+      t("devise.mailer.email_content.unlock_instructions.preheader")
     when [ "devise/mailer", "email_changed" ]
-      "Your account email address was updated."
+      t("devise.mailer.email_content.email_changed.preheader")
     when [ "devise/mailer", "password_change" ]
-      "Your account password was changed."
+      t("devise.mailer.email_content.password_change.preheader")
     else
       message.subject.to_s
     end
@@ -111,15 +111,15 @@ module MailerHelper
   def default_email_eyebrow
     case current_mailer_name
     when "booking_confirmation_mailer"
-      "Booking"
+      t("mailers.shared.eyebrows.booking")
     when "billing/payment_mailer", "billing/subscription_mailer", "billing/credits_mailer", "billing/chargeback_mailer"
-      "Billing"
+      t("mailers.shared.eyebrows.billing")
     when "messaging/customer_message_mailer"
-      "Conversation"
+      t("mailers.shared.eyebrows.conversation")
     when "data_exports/package_mailer"
-      "Account"
+      t("mailers.shared.eyebrows.account")
     when "devise/mailer"
-      "Security"
+      t("mailers.shared.eyebrows.security")
     else
       AppBrand.name
     end
@@ -130,35 +130,35 @@ module MailerHelper
     when [ "booking_confirmation_mailer", "customer_confirmation" ]
       t("booking.confirmation_email.footer", business_name: @space.name, app_name: AppBrand.name)
     when [ "messaging/customer_message_mailer", "customer_message" ]
-      "You received this email because a business contacted you through #{AppBrand.name}."
+      t("messaging.customer_message_mailer.customer_message.footer_reason", app_name: AppBrand.name)
     when [ "devise/mailer", "confirmation_instructions" ]
-      "You received this email because an account was created with this address."
+      t("devise.mailer.email_content.confirmation_instructions.footer_reason")
     when [ "devise/mailer", "reset_password_instructions" ]
-      "You received this email because a password reset was requested for your account."
+      t("devise.mailer.email_content.reset_password_instructions.footer_reason")
     when [ "devise/mailer", "unlock_instructions" ]
-      "You received this email because your account was locked after multiple unsuccessful sign-in attempts."
+      t("devise.mailer.email_content.unlock_instructions.footer_reason")
     when [ "devise/mailer", "email_changed" ]
-      "You received this email because your account email address changed."
+      t("devise.mailer.email_content.email_changed.footer_reason")
     when [ "devise/mailer", "password_change" ]
-      "You received this email because your account password changed."
+      t("devise.mailer.email_content.password_change.footer_reason")
     else
-      "This is an automated transactional email from #{AppBrand.name}."
+      t("mailers.shared.footer_reason.default", app_name: AppBrand.name)
     end
   end
 
   def default_email_footer_support
     reply_to = message.reply_to&.first
-    return "You can reply directly to this email if you need help." if reply_to.present?
+    return t("mailers.shared.footer_support.reply_available") if reply_to.present?
 
-    "Keep this email for your records."
+    t("mailers.shared.footer_support.keep_for_records")
   end
 
   def email_money(amount)
-    number_to_currency(amount, unit: "R$", separator: ",", delimiter: ".")
+    number_to_currency(amount, unit: "R$")
   end
 
   def email_date(date)
-    date&.strftime("%d/%m/%Y") || "-"
+    date ? I18n.l(date, format: :long) : "-"
   end
 
   def current_mailer_name

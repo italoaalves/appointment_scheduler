@@ -1,16 +1,16 @@
 <% content_for :email_preheader, t("billing.credits_mailer.failed.body", amount: @amount) %>
-<% content_for :email_eyebrow, "Billing" %>
+<% content_for :email_eyebrow, t("mailers.shared.eyebrows.billing") %>
 <% content_for :email_title, message.subject %>
-<% content_for :email_intro, "The purchase did not complete, but you can retry from the credits page." %>
-<% content_for :email_cta_label, "Review credits" %>
+<% content_for :email_intro, t("billing.credits_mailer.failed.intro") %>
+<% content_for :email_cta_label, t("billing.credits_mailer.failed.cta") %>
 <% content_for :email_cta_url, settings_credits_url %>
 
 <%= render "shared/mailer/callout",
-           title: "Payment could not be processed",
+           title: t("billing.credits_mailer.failed.callout_title"),
            tone: "danger",
            content: t("billing.credits_mailer.failed.body", amount: @amount) %>
 
 <%= render "shared/mailer/metadata", rows: [
-  { label: "Credits", value: @amount.to_s },
-  { label: "Workspace", value: @space.name }
+  { label: t("billing.credits_mailer.shared.metadata.amount"), value: @amount.to_s },
+  { label: t("billing.credits_mailer.shared.metadata.space"), value: @space.name }
 ] %>

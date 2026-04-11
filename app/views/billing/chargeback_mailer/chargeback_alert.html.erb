@@ -1,20 +1,20 @@
 <% amount = number_to_currency(@payment.amount_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %>
-<% content_for :email_preheader, "A chargeback event was received for #{@space.name}." %>
-<% content_for :email_eyebrow, "Billing" %>
-<% content_for :email_title, "Chargeback alert" %>
-<% content_for :email_intro, "An operational review is needed for this payment event." %>
+<% content_for :email_preheader, t("billing.chargeback_mailer.chargeback_alert.preheader", space_name: @space.name) %>
+<% content_for :email_eyebrow, t("mailers.shared.eyebrows.billing") %>
+<% content_for :email_title, t("billing.chargeback_mailer.chargeback_alert.title") %>
+<% content_for :email_intro, t("billing.chargeback_mailer.chargeback_alert.intro") %>
 
 <%= render "shared/mailer/callout",
-           title: "Action required",
+           title: t("billing.chargeback_mailer.chargeback_alert.callout_title"),
            tone: "danger",
-           content: "A chargeback event was received for #{@space.name}." %>
+           content: t("billing.chargeback_mailer.chargeback_alert.preheader", space_name: @space.name) %>
 
 <%= render "shared/mailer/metadata", rows: [
-  { label: "Event", value: @event_name },
-  { label: "Reason", value: @reason.presence || "Not provided" },
-  { label: "Payment ID", value: @payment.asaas_payment_id },
-  { label: "Amount", value: amount },
-  { label: "Space", value: "#{@space.name} (ID: #{@space.id})" }
+  { label: t("billing.chargeback_mailer.chargeback_alert.metadata.event"), value: @event_name },
+  { label: t("billing.chargeback_mailer.chargeback_alert.metadata.reason"), value: @reason.presence || t("billing.chargeback_mailer.chargeback_alert.reason_not_provided") },
+  { label: t("billing.chargeback_mailer.chargeback_alert.metadata.payment_id"), value: @payment.asaas_payment_id },
+  { label: t("billing.chargeback_mailer.chargeback_alert.metadata.amount"), value: amount },
+  { label: t("billing.chargeback_mailer.chargeback_alert.metadata.space"), value: t("billing.chargeback_mailer.chargeback_alert.space_value", space_name: @space.name, space_id: @space.id) }
 ] %>
 
-<p style="margin: 20px 0 0;">Review in the platform admin dashboard and take the next billing action there.</p>
+<p style="margin: 20px 0 0;"><%= t("billing.chargeback_mailer.chargeback_alert.footer") %></p>

@@ -13,14 +13,16 @@ module Billing
       @payment_method = payment.payment_method
       recipient       = @space.owner
 
-      mail(
-        to:      recipient.email,
-        subject: I18n.t(
-          "billing.payment_mailer.reminder.subjects.#{reminder_type}",
-          amount:   "R$#{format('%.2f', @amount)}",
-          due_date: @due_date&.strftime("%d/%m/%Y") || "-"
+      with_mail_locale(recipient:, fallback_space: @space) do
+        mail(
+          to:      recipient.email,
+          subject: I18n.t(
+            "billing.payment_mailer.reminder.subjects.#{reminder_type}",
+            amount:   ApplicationController.helpers.number_to_currency(@amount, unit: "R$"),
+            due_date: @due_date ? I18n.l(@due_date, format: :long) : "-"
+          )
         )
-      )
+      end
     end
   end
 end

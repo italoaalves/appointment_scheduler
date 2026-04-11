@@ -29,7 +29,8 @@ module Messaging
       end
 
       test "uses default subject when subject is blank" do
-        recipient = OpenStruct.new(email: "customer@example.com")
+        recipient = customers(:one)
+        recipient.update!(email: "customer@example.com", locale: "en")
         Email.new.deliver(to: recipient, body: "Hello!", subject: nil)
         assert_equal "Message", ActionMailer::Base.deliveries.first.subject
       end

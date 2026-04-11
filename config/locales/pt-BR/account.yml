@@ -9,14 +9,14 @@ pt-BR:
       preferences: "Preferências"
       security: "Segurança"
       descriptions:
-        profile: "Sua identificação, telefone, senha e ciclo de vida da conta."
+        profile: "Sua identificação, telefone e ciclo de vida da conta."
         preferences: "Idioma e preferências pessoais do espaço de trabalho."
-        security: "SSO, MFA, passkeys e opções de recuperação."
+        security: "Senha, SSO, MFA, passkeys e opções de recuperação."
 
   profiles:
     edit:
       title: "Perfil"
-      subtitle: "Atualize seu nome, informações de contato e senha."
+      subtitle: "Atualize seu nome e informações de contato."
       security_action: "Segurança"
       identity_title: "Identificação"
       identity_description: "Gerencie os dados vinculados à sua conta pessoal."
@@ -29,16 +29,11 @@ pt-BR:
       profile_picture_alt: "Foto de perfil de %{name}"
       profile_picture_selected: "%{filename} selecionada. Salve as alterações para enviar."
       email_hint: "Seu endereço de e-mail é gerenciado pelos métodos de acesso da conta."
-      security_card_description: "Revise passkeys, MFA, provedores vinculados e recuperação de acesso."
+      security_card_description: "Revise senha, passkeys, MFA, provedores vinculados e recuperação de acesso."
       security_enabled: "MFA ativado"
       security_review: "Revise seus acessos"
       phone_label: "Telefone"
       phone_locked_during_trial: "O número de telefone não pode ser alterado durante o período de teste."
-      password_section: "Alterar senha"
-      current_password_label: "Senha atual"
-      password_label: "Nova senha"
-      password_confirmation_label: "Confirmar nova senha"
-      password_hint: "Deixe em branco para manter sua senha atual."
       submit: "Salvar"
       back: "Voltar"
       export_title: "Exportar seus dados"
@@ -65,8 +60,16 @@ pt-BR:
       not_found: "Nenhuma solicitação de exclusão pendente foi encontrada."
     security:
       title: "Segurança"
-      subtitle: "Gerencie MFA, passkeys e opções de recuperação da sua conta."
+      subtitle: "Gerencie senha, MFA, passkeys e opções de recuperação da sua conta."
       back: "Voltar ao perfil"
+      password:
+        title: "Alterar senha"
+        description: "Use sua senha atual para definir uma nova senha de acesso para esta conta."
+        current_password_label: "Senha atual"
+        password_label: "Nova senha"
+        password_confirmation_label: "Confirmar nova senha"
+        submit: "Salvar senha"
+        updated: "Senha atualizada."
       status:
         title: "Status de segurança"
         description: "Escolha como esta conta comprova que é realmente você antes de liberar o acesso."
@@ -153,6 +156,9 @@ pt-BR:
     package_mailer:
       export_ready:
         subject: "Sua exportação de dados LGPD"
+        title: "Sua exportação de dados está pronta"
+        intro: "O pacote de exportação está anexado a este e-mail."
+        callout_title: "Anexo incluído"
         greeting: "Olá, %{name}."
         body: "Sua exportação LGPD está anexada em um pacote ZIP com arquivos CSV."
         footer: "Guarde esse arquivo em local seguro. Em uma versão futura, podemos enviar um link seguro de armazenamento em vez do anexo."

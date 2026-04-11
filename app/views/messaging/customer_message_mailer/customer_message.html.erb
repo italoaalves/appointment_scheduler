@@ -1,12 +1,12 @@
 <% content_for :email_preheader, @body.to_s.tr("\n", " ").truncate(120) %>
-<% content_for :email_eyebrow, "Conversation" %>
-<% content_for :email_title, message.subject.presence || "New message" %>
-<% content_for :email_intro, "A business sent you a message through #{AppBrand.name}." %>
+<% content_for :email_eyebrow, t("mailers.shared.eyebrows.conversation") %>
+<% content_for :email_title, message.subject.presence || t("messaging.customer_message_mailer.customer_message.title") %>
+<% content_for :email_intro, t("messaging.customer_message_mailer.customer_message.intro", app_name: AppBrand.name) %>
 <% if message.reply_to.present? %>
-  <% content_for :email_footer_support, "Reply directly to this email to continue the conversation." %>
+  <% content_for :email_footer_support, t("messaging.customer_message_mailer.customer_message.footer_support") %>
 <% end %>
 
 <%= render "shared/mailer/callout",
-           title: "Message",
+           title: t("messaging.customer_message_mailer.customer_message.callout_title"),
            tone: "info",
            content: simple_format(@body, {}, wrapper_tag: "div") %>
