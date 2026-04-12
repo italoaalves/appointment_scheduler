@@ -18,8 +18,11 @@ module BookingContext
       @scheduling_link.mark_used!
     end
 
-    def redirect_after_booking
-      Rails.application.routes.url_helpers.thank_you_book_path(token: @scheduling_link.token)
+    def redirect_after_booking(appointment:)
+      Rails.application.routes.url_helpers.thank_you_book_path(
+        token: @scheduling_link.token,
+        confirmation: Booking::ConfirmationToken.generate(appointment: appointment, booking_context: self)
+      )
     end
 
     def form_url
@@ -28,6 +31,10 @@ module BookingContext
 
     def slots_path
       "/book/#{@scheduling_link.token}/slots"
+    end
+
+    def confirmation_context
+      { type: "token", value: @scheduling_link.token }
     end
   end
 
@@ -48,8 +55,11 @@ module BookingContext
       # no-op
     end
 
-    def redirect_after_booking
-      Rails.application.routes.url_helpers.thank_you_book_by_slug_path(slug: @personalized_link.slug)
+    def redirect_after_booking(appointment:)
+      Rails.application.routes.url_helpers.thank_you_book_by_slug_path(
+        slug: @personalized_link.slug,
+        confirmation: Booking::ConfirmationToken.generate(appointment: appointment, booking_context: self)
+      )
     end
 
     def form_url
@@ -58,6 +68,10 @@ module BookingContext
 
     def slots_path
       "/book/s/#{@personalized_link.slug}/slots"
+    end
+
+    def confirmation_context
+      { type: "slug", value: @personalized_link.slug }
     end
   end
 end

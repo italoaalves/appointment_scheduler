@@ -27,7 +27,11 @@ class BookingController < ApplicationController
 
   def thank_you
     @space = @booking_context.space
-    @appointment = flash[:appointment_id].present? ? @space.appointments.find_by(id: flash[:appointment_id]) : nil
+    @appointment = Booking::ConfirmationToken.resolve(token: params[:confirmation], booking_context: @booking_context)
+
+    return if @appointment.present?
+
+    redirect_to @booking_context.form_url, alert: t("booking.thank_you.invalid_access")
   end
 
   def calendar_ics
@@ -70,8 +74,7 @@ class BookingController < ApplicationController
         event:         :appointment_booked,
         appointment_id: appointment.id
       )
-      flash[:appointment_id] = appointment.id
-      redirect_to @booking_context.redirect_after_booking
+      redirect_to @booking_context.redirect_after_booking(appointment: appointment)
     else
       flash.now[:alert] = appointment.errors.full_messages.to_sentence
       render :show, status: :unprocessable_entity
