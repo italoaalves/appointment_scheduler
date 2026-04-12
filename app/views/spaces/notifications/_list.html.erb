@@ -1,14 +1,15 @@
-<div class="divide-y divide-slate-100">
-  <% if notifications.any? %>
+<% if notifications.any? %>
+  <div class="p-2">
     <% notifications.each do |notification| %>
       <div id="<%= dom_id(notification) %>"
-           class="relative group px-4 py-3 hover:bg-slate-50 <%= notification.read? ? 'opacity-60' : '' %>">
-        <p class="text-sm font-medium text-slate-900 pr-6"><%= notification.title %></p>
-        <p class="text-xs text-slate-500 mt-0.5 line-clamp-2"><%= notification.body %></p>
-        <p class="text-xs text-slate-400 mt-1"><%= time_ago_in_words(notification.created_at) %></p>
+           class="relative group rounded-xl px-3 py-2.5 transition-colors hover:bg-slate-100/80 <%= notification.read? ? 'opacity-60' : '' %>">
+        <p class="pr-8 text-sm font-medium text-slate-900"><%= notification.title %></p>
+        <p class="mt-0.5 line-clamp-2 text-xs text-slate-500"><%= notification.body %></p>
+        <p class="mt-1.5 text-xs text-slate-400"><%= time_ago_in_words(notification.created_at) %></p>
         <%= button_to dismiss_notification_path(notification),
               method: :patch,
-              class: "absolute top-2 right-2 p-1 text-slate-400 hover:text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity",
+              form_class: "absolute right-1 top-1",
+              class: "rounded-md p-1 text-slate-400 opacity-0 transition hover:bg-white/70 hover:text-slate-600 group-hover:opacity-100 cursor-pointer",
               aria: { label: t("notifications.in_app.dropdown.dismiss") } do %>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="h-4 w-4">
             <path d="M5.28 4.22a.75.75 0 00-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 101.06 1.06L8 9.06l2.72 2.72a.75.75 0 101.06-1.06L9.06 8l2.72-2.72a.75.75 0 00-1.06-1.06L8 6.94 5.28 4.22z" />
@@ -16,17 +17,20 @@
         <% end %>
       </div>
     <% end %>
+
     <% if unread_count > 0 %>
-      <div class="px-4 py-2">
-        <%= button_to t("notifications.in_app.dropdown.mark_all_read"),
-              mark_all_as_read_notifications_path,
-              method: :patch,
-              class: "text-xs text-electric hover:text-electric/80 font-medium" %>
-      </div>
+      <div class="mx-3 my-1 h-px bg-deep/6"></div>
+      <%= button_to t("notifications.in_app.dropdown.mark_all_read"),
+            mark_all_as_read_notifications_path,
+            method: :patch,
+            form_class: "w-full pt-1",
+            class: "flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-electric transition-colors hover:bg-slate-100/80 cursor-pointer" %>
     <% end %>
-  <% else %>
-    <div class="px-4 py-6 text-center">
+  </div>
+<% else %>
+  <div class="p-2">
+    <div class="rounded-xl px-3 py-4 text-center">
       <p class="text-sm text-slate-500"><%= t("notifications.in_app.dropdown.empty") %></p>
     </div>
-  <% end %>
-</div>
+  </div>
+<% end %>
