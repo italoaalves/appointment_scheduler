@@ -130,11 +130,11 @@
         </nav>
       <% elsif tenant_staff? %>
         <% if unread_notifications_count > 0 %>
-          <div class="lg:hidden fixed right-3 z-50"
+          <div class="lg:hidden fixed right-3 z-30"
                data-controller="dropdown"
                data-action="click@window->dropdown#close"
                data-role="mobile-notification-shell"
-               style="bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px) + 0.75rem);">
+               style="bottom: calc(env(safe-area-inset-bottom, 0px) + 6.5rem + 5rem);">
             <button type="button"
                     class="relative flex items-center justify-center w-10 h-10 rounded-full bg-white/80 backdrop-blur shadow-sm border border-slate-200/60 text-slate-500 cursor-pointer"
                     data-action="dropdown#toggle"
@@ -148,7 +148,7 @@
             </button>
             <div data-dropdown-target="menu"
                  data-role="mobile-notification-menu"
-                 class="hidden absolute right-0 z-50"
+                 class="hidden absolute right-0 z-40"
                  style="bottom: calc(100% + 0.5rem);">
               <%= render "shared/notification_dropdown" %>
             </div>
