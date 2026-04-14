@@ -224,6 +224,16 @@
     animation: pulse-glow 2.5s ease-in-out infinite;
   }
 
+  /* Dashboard staggered entrance — one motion moment on first paint */
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .dashboard-region {
+    animation: fade-up 0.3s ease both;
+  }
+
   /* ═══════════════════════════════════════════════
      STICKY SYSTEM
      ═══════════════════════════════════════════════ */

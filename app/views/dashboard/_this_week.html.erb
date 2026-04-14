@@ -1,0 +1,20 @@
+<%# Locals: this_week (hash with :appointments_count, :new_customers, :minutes_booked) %>
+<% hours = number_with_precision(this_week[:minutes_booked] / 60.0, precision: 1, strip_insignificant_zeros: true) %>
+
+<div class="card-solid grow w-full">
+  <h2 class="text-xs font-semibold uppercase tracking-widest text-slate-500">
+    <%= t("dashboard.this_week.title") %>
+  </h2>
+
+  <% has_data = this_week[:appointments_count] > 0 || this_week[:new_customers] > 0 || this_week[:minutes_booked] > 0 %>
+  <% if has_data %>
+    <p class="mt-4 text-sm leading-relaxed text-slate-600">
+      <%= t("dashboard.this_week.summary_html",
+            appointments: tag.span(this_week[:appointments_count], class: "font-mono tabular-nums text-deep"),
+            customers:    tag.span(this_week[:new_customers],      class: "font-mono tabular-nums text-deep"),
+            minutes:      tag.span(hours,                          class: "font-mono tabular-nums text-deep")) %>
+    </p>
+  <% else %>
+    <p class="mt-4 text-sm text-slate-400"><%= t("dashboard.this_week.empty") %></p>
+  <% end %>
+</div>

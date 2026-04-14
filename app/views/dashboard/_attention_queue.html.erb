@@ -1,0 +1,33 @@
+<%# Locals: attention (hash with :pending_confirmations, :unread_conversations, :trial_ends_in_days, :setup_incomplete) %>
+<%# Renders a compact action queue; empty state celebrates calm. %>
+<% items = [] %>
+<% items << { label: t("dashboard.attention.pending_confirmations", count: attention[:pending_confirmations]), href: appointments_path, badge: attention[:pending_confirmations] } if attention[:pending_confirmations].to_i > 0 %>
+<% items << { label: t("dashboard.attention.unread_conversations",  count: attention[:unread_conversations]),  href: spaces_inbox_index_path, badge: attention[:unread_conversations]  } if attention[:unread_conversations].to_i  > 0 %>
+<% items << { label: t("dashboard.attention.trial_ends", days: attention[:trial_ends_in_days]), href: settings_billing_path, badge: nil } if attention[:trial_ends_in_days].present? && attention[:trial_ends_in_days] <= 7 %>
+<% items << { label: t("dashboard.attention.setup_incomplete"), href: onboarding_wizard_path, badge: nil } if attention[:setup_incomplete] %>
+
+<div class="card-solid grow w-full">
+  <h2 class="text-xs font-semibold uppercase tracking-widest text-slate-500">
+    <%= t("dashboard.attention.title") %>
+  </h2>
+
+  <% if items.any? %>
+    <ul class="mt-4 space-y-1">
+      <% items.each do |item| %>
+        <li>
+          <%= link_to item[:href],
+                      class: "group flex items-center justify-between gap-3 rounded-lg px-3 py-2 hover:bg-slate-50 transition-colors" do %>
+            <span class="text-sm text-slate-700 group-hover:text-deep"><%= item[:label] %></span>
+            <% if item[:badge] %>
+              <span class="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 font-mono tabular-nums text-xs font-medium text-amber-800">
+                <%= item[:badge] %>
+              </span>
+            <% end %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="mt-4 text-sm text-slate-400"><%= t("dashboard.attention.empty") %></p>
+  <% end %>
+</div>

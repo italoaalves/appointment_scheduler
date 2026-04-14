@@ -37,14 +37,6 @@ class DashboardController < ApplicationController
   def load_calendar_data
     return unless current_tenant
 
-    data = DashboardDataService.call(space: current_tenant)
-    @calendar_today = data[:calendar_today]
-    @calendar_week = data[:calendar_week]
-    @calendar_month = data[:calendar_month]
-    @stats_today = data[:stats_today]
-    @stats_week = data[:stats_week]
-    @stats_month = data[:stats_month]
-    @calendar_space = data[:calendar_space]
-    @pending_count = data[:pending_count]
+    @overview = DashboardOverviewService.call(space: current_tenant)
   end
 end

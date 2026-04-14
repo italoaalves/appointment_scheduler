@@ -1,0 +1,18 @@
+<%# Locals: blocks (array of {from:, to:, state:}), space %>
+<%# Horizontal bar of thin segments proportional to time blocks in the space's timezone. %>
+<% tz = TimezoneResolver.zone(space) %>
+
+<div class="relative mt-5 h-2 w-full overflow-hidden rounded-full bg-slate-100/80">
+  <% blocks.each do |block| %>
+    <%
+      from_local  = block[:from].in_time_zone(tz)
+      to_local    = block[:to].in_time_zone(tz)
+      start_pct   = (from_local.seconds_since_midnight  / 86400.0 * 100).clamp(0, 100)
+      end_pct     = (to_local.seconds_since_midnight    / 86400.0 * 100).clamp(0, 100)
+      width_pct   = [end_pct - start_pct, 0.5].max
+      color_class = block[:state].to_s == "confirmed" ? "bg-emerald-500/60" : "bg-amber-400/60"
+    %>
+    <div class="absolute top-0 h-full rounded-sm <%= color_class %>"
+         style="left: <%= start_pct.round(2) %>%; width: <%= width_pct.round(2) %>%"></div>
+  <% end %>
+</div>

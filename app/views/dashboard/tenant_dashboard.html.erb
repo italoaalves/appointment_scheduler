@@ -1,45 +1,78 @@
-<div class="space-y-6">
-  <%= render "shared/page_header",
-             title: t("dashboard.title"),
-             subtitle: t("dashboard.tenant_subtitle") %>
+<%# Mission Control Dashboard — hero · utility row · attention + calendar hub %>
+<% today_summary     = @overview[:today_summary] %>
+<% attention         = @overview[:attention] %>
+<% this_week         = @overview[:this_week] %>
+<% automation        = @overview[:automation] %>
+<% automation_active = automation[:automated_conversations].to_i > 0 %>
 
+<div class="space-y-6 md:space-y-8">
+  <%# Onboarding / welcome states %>
   <% if current_tenant.onboarding_complete? && current_tenant.personalized_scheduling_link.present? %>
     <% unless current_user.user_preference&.dismissed_welcome_card %>
-      <div class="mb-6">
-        <%= render "dashboard/welcome_card" %>
-      </div>
+      <%= render "dashboard/welcome_card" %>
     <% end %>
   <% else %>
-    <div class="mb-6">
-      <%= render "dashboard/setup_checklist", space: current_tenant %>
-    </div>
+    <%= render "dashboard/setup_checklist", space: current_tenant %>
   <% end %>
 
-  <div class="mb-6">
-    <%= render "calendar_overview",
-          periods_data: { today: @calendar_today, week: @calendar_week, month: @calendar_month },
-          periods_stats: { today: @stats_today, week: @stats_week, month: @stats_month },
-          calendar_space: @calendar_space %>
+  <%# Hero — full width %>
+  <div class="dashboard-region" style="animation-delay: 0ms">
+    <%= render "dashboard/today_hero",
+               today_summary: today_summary,
+               space: current_tenant,
+               current_user: current_user %>
   </div>
-  <div class="grid gap-6 sm:grid-cols-2">
-    <div class="card-solid">
-      <h2 class="text-sm font-medium text-slate-900"><%= t("dashboard.admin.appointments_title") %></h2>
-      <p class="mt-1 text-xs text-slate-600">
-        <%= t("dashboard.admin.appointments_body") %>
-      </p>
-      <div class="mt-3">
-        <%= link_to t("dashboard.admin.appointments_cta"), appointments_path, class: button_classes(:primary) %>
+
+  <%# Unified Dashboard Layout: Left/Right Column Split %>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+    
+    <%# ---------------- LEFT COLUMN (1/3 width) ---------------- %>
+    <div class="flex flex-col gap-6 md:gap-8 md:col-span-1">
+      
+      <%# 1. Quick Actions %>
+      <div class="dashboard-region flex flex-col" style="animation-delay: 50ms">
+        <%= render "dashboard/quick_actions", space: current_tenant %>
       </div>
+
+      <%# 2. Needs Attention %>
+      <div class="dashboard-region flex flex-col" style="animation-delay: 200ms">
+        <%= render "dashboard/attention_queue", attention: attention %>
+      </div>
+
     </div>
 
-    <div class="card-solid">
-      <h2 class="text-sm font-medium text-slate-900"><%= t("dashboard.admin.customers_title") %></h2>
-      <p class="mt-1 text-xs text-slate-600">
-        <%= t("dashboard.admin.customers_body") %>
-      </p>
-      <div class="mt-3">
-        <%= link_to t("dashboard.admin.customers_cta"), customers_path, class: button_classes(:muted) %>
+    <%# ---------------- RIGHT COLUMN (2/3 width) ---------------- %>
+    <div class="flex flex-col gap-6 md:gap-8 col-span-2">
+      
+      <%# Top Row of Right Column: This Week & Solved %>
+      <div class="grid grid-cols-1 <%= automation_active ? "sm:grid-cols-2" : "" %> gap-6 md:gap-8">
+        <div class="dashboard-region flex flex-col" style="animation-delay: 100ms">
+          <%= render "dashboard/this_week", this_week: this_week %>
+        </div>
+        
+        <% if automation_active %>
+          <div class="dashboard-region flex flex-col" style="animation-delay: 150ms">
+            <%= render "dashboard/handled_by_anella", automation: automation %>
+          </div>
+        <% end %>
       </div>
+
+      <%# Bottom Row of Right Column: Calendar Hub %>
+      <div class="dashboard-region flex flex-col" style="animation-delay: 250ms">
+        <%= render "dashboard/calendar_overview",
+                   periods_data: {
+                     today: @overview[:calendar_today],
+                     week:  @overview[:calendar_week],
+                     month: @overview[:calendar_month]
+                   },
+                   periods_stats: {
+                     today: @overview[:stats_today],
+                     week:  @overview[:stats_week],
+                     month: @overview[:stats_month]
+                   },
+                   calendar_space: @overview[:calendar_space] %>
+      </div>
+
     </div>
   </div>
 </div>

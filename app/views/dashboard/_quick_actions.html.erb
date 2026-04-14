@@ -1,0 +1,64 @@
+<%# Locals: space %>
+<% booking_url = space.personalized_scheduling_link.present? ? book_by_slug_url(slug: space.personalized_scheduling_link.slug) : nil %>
+
+<div class="card-solid grow w-full">
+  <h2 class="text-xs font-semibold uppercase tracking-widest text-slate-500">
+    <%= t("dashboard.quick_actions.title") %>
+  </h2>
+
+  <ul class="mt-4 space-y-1">
+    <li>
+      <%= link_to new_appointment_path,
+                  class: "group flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-slate-50 transition-colors" do %>
+        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-electric/10 text-electric">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+        </span>
+        <span class="text-sm text-slate-700 group-hover:text-deep"><%= t("dashboard.quick_actions.new_appointment") %></span>
+      <% end %>
+    </li>
+
+    <% if booking_url.present? %>
+      <li data-controller="clipboard">
+        <code data-clipboard-target="source" class="hidden"><%= booking_url %></code>
+        <button type="button"
+                data-action="click->clipboard#copy"
+                class="group flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-slate-50 transition-colors text-left w-full">
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-electric/10 text-electric">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+            </svg>
+          </span>
+          <span class="text-sm text-slate-700 group-hover:text-deep" data-clipboard-target="feedback">
+            <%= t("dashboard.quick_actions.copy_link") %>
+          </span>
+        </button>
+      </li>
+    <% end %>
+
+    <li>
+      <%= link_to spaces_inbox_index_path,
+                  class: "group flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-slate-50 transition-colors" do %>
+        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-electric/10 text-electric">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+          </svg>
+        </span>
+        <span class="text-sm text-slate-700 group-hover:text-deep"><%= t("dashboard.quick_actions.open_inbox") %></span>
+      <% end %>
+    </li>
+
+    <li>
+      <%= link_to new_customer_path,
+                  class: "group flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-slate-50 transition-colors" do %>
+        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-electric/10 text-electric">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+          </svg>
+        </span>
+        <span class="text-sm text-slate-700 group-hover:text-deep"><%= t("dashboard.quick_actions.new_customer") %></span>
+      <% end %>
+    </li>
+  </ul>
+</div>
