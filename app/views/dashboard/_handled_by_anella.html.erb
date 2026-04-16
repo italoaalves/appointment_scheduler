@@ -1,0 +1,36 @@
+<%# Locals: automation (hash with :automated_conversations) %>
+<%# Hidden when all counts are zero — caller guards this, but we exit early too. %>
+<% return if automation[:automated_conversations].to_i == 0 %>
+
+<div class="card-solid grow w-full">
+  <h2 class="text-xs font-semibold uppercase tracking-widest text-slate-500">
+    <%= t("dashboard.automation.title") %>
+  </h2>
+
+  <p class="mt-4 text-sm leading-relaxed text-slate-600">
+    <%= t("dashboard.automation.conversations_html",
+          count: tag.span(automation[:automated_conversations], class: "font-mono tabular-nums text-deep")) %>
+  </p>
+
+  <%#
+    TODO(anella-automation-receipts): expand this card when the following are instrumented.
+
+    1. Auto-confirmed appointments
+       - Requires AuditLog event_type "appointment.auto_confirmed" emitted from the
+         confirmation flow (wherever Anella flips a pending appointment without human action).
+       - Query: space.audit_logs.where(event_type: "appointment.auto_confirmed",
+                created_at: week_start..week_end).count
+
+    2. Reminders sent
+       - Requires either an AuditLog event_type "message.reminder_sent" or a dedicated
+         MessageDelivery model distinguishing reminders from other template sends.
+       - Today, message credits are deducted at send time but the purpose (reminder vs
+         booking confirmation vs manual broadcast) is not stored per send.
+
+    3. Inbox auto-replies
+       - Covered partially by automated_conversations; granular "N auto-replies sent"
+         would need per-message tracking.
+
+    Until these land, the card renders a single line and no placeholder numbers.
+  %>
+</div>

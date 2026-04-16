@@ -21,8 +21,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets (can layer on top of Tailwind) %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "flatpickr", "tailwind", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
@@ -181,7 +180,7 @@
         </div>
       </main>
     <% else %>
-      <main class="mx-auto px-4 py-8 pb-28 sm:pb-8 sm:pr-28 <%= content_for?(:wide_layout) ? 'max-w-6xl' : 'max-w-4xl' %>">
+      <main class="mx-auto px-4 py-8 pb-28 sm:pb-8 sm:pr-28 <%= content_for?(:wide_layout) ? 'max-w-8xl' : 'max-w-6xl' %>">
         <%= yield(:breadcrumbs) if content_for?(:breadcrumbs) %>
         <%= yield %>
       </main>

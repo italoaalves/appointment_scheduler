@@ -1,0 +1,32 @@
+pt-BR:
+  dashboard:
+    hero:
+      greeting: "Bom dia, %{name}"
+      greeting_afternoon: "Boa tarde, %{name}"
+      greeting_evening: "Boa noite, %{name}"
+      summary_html: "Seu dia tem %{total} consultas. %{confirmed} confirmadas, %{pending} aguardando."
+      empty: "Seu dia está tranquilo. Aproveite o silêncio."
+    next_up:
+      title: "Próximas"
+      empty: "Nenhuma consulta agendada para hoje."
+    attention:
+      title: "Atenção"
+      pending_confirmations: " %{count} confirmações pendentes"
+      unread_conversations: " %{count} respostas não lidas"
+      trial_ends: "O período de teste termina em %{days} dias"
+      setup_incomplete: "Conclua a configuração do seu espaço"
+      empty: "Tudo em dia."
+    this_week:
+      title: "Esta Semana"
+      summary_html: "%{appointments} consultas agendadas, %{customers} novos clientes, %{minutes} horas na agenda."
+      empty: "Um começo de semana tranquilo."
+    automation:
+      title: "Resolvido por Anella"
+      conversations_html: "Anella resolveu %{count} conversas sozinha esta semana."
+      empty: "Anella está a postos."
+    quick_actions:
+      title: "Ações Rápidas"
+      new_appointment: "Nova consulta"
+      copy_link: "Copiar link de agendamento"
+      open_inbox: "Abrir caixa de entrada"
+      new_customer: "Novo cliente"

@@ -4,6 +4,49 @@ module DashboardHelper
   # Time-of-day periods for Today tab (ordered chronologically)
   TODAY_PERIODS = %i[morning afternoon evening night].freeze
 
+  def greeting_for(time_of_day, user)
+    name = user&.name || "there"
+    case time_of_day
+    when :morning then t("dashboard.hero.greeting", name: name)
+    when :afternoon then t("dashboard.hero.greeting_afternoon", name: name)
+    when :evening then t("dashboard.hero.greeting_evening", name: name)
+    else t("dashboard.hero.greeting", name: name)
+    end
+  end
+
+  def relative_time_short(time, space)
+    return "—" unless time.present?
+
+    tz = TimezoneResolver.zone(space)
+    local_time = time.in_time_zone(tz)
+    diff = (local_time - Time.current.in_time_zone(tz)).to_i
+
+    return "now" if diff.abs < 300
+    return "just now" if diff.abs < 600
+
+    if diff > 0
+      if diff < 3600
+        "in #{diff / 60} min"
+      else
+        "in #{diff / 3600}h#{(diff % 3600) / 60}m"
+      end
+    else
+      "#{ (diff.abs / 60).to_i } min ago"
+    end
+  end
+
+  def day_shape_blocks(appointments, space)
+    return [] unless appointments.respond_to?(:each)
+
+    appointments.map do |a|
+      {
+        start_pct: (a.scheduled_at.to_i % 86400).to_f / 86400 * 100,
+        end_pct: ((a.scheduled_at + a.effective_duration_minutes.minutes).to_i % 86400).to_f / 86400 * 100,
+        state: a.status
+      }
+    end
+  end
+
   def calendar_today_grouped(appointments, space = nil)
     return {} unless appointments.respond_to?(:each)
 

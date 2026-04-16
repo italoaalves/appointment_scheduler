@@ -28,9 +28,10 @@ Rails.application.configure do
   # Change to :null_store to avoid any caching.
   config.cache_store = :memory_store
 
-  # Always resolve assets from the live source load path in development.
-  # A stale public/assets manifest can otherwise pin the browser to outdated JS/CSS.
+  # Keep any precompile manifest out of public/assets in development, but force
+  # Propshaft back onto the dynamic resolver by removing the dev manifest on boot.
   config.assets.manifest_path = Rails.root.join("tmp/development-assets-manifest.json")
+  config.assets.manifest_path.delete if config.assets.manifest_path.exist?
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local

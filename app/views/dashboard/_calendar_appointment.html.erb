@@ -1,44 +1,47 @@
 <% ongoing = appointment_ongoing?(appointment) %>
+<% status_tone = { pending: :warning, confirmed: :success, cancelled: :danger, no_show: :neutral, finished: :neutral, rescheduled: :accent }.fetch(appointment.status.to_sym, :neutral) %>
+<% status_pill_class = "status-pill status-pill-compact status-pill-#{status_tone}" %>
+
 <div id="<%= dom_id(appointment) %>"
-     class="flex items-center justify-between gap-2 py-3 -mx-2 px-2 rounded-lg transition-colors relative <%= ongoing ? 'bg-blue-50 border-l-4 border-l-blue-400' : '' %>">
+     class="calendar-appointment-row group <%= 'calendar-appointment-ongoing' if ongoing %>">
   <%= link_to appointment_path(appointment),
-              class: "min-w-0 flex-1 #{ongoing ? 'hover:bg-blue-100/50 -mx-2 px-2 py-1 rounded' : 'hover:bg-slate-50 -mx-2 px-2 py-1 rounded'}" do %>
-    <div class="flex items-center gap-2">
-      <p class="text-sm font-medium text-slate-900 truncate">
+              class: "min-w-0 flex-1 rounded-lg transition-colors" do %>
+    <div class="flex items-center gap-2.5">
+      <p class="text-sm font-medium text-slate-900 truncate group-hover:text-deep transition-colors">
         <%= appointment.customer&.name || "—" %>
       </p>
       <% if ongoing %>
-        <span class="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide bg-blue-200/80 text-blue-800">
+        <span class="shrink-0 rounded-full border border-electric/30 bg-electric/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-electric">
           <%= t("space.appointments.calendar.ongoing") %>
         </span>
       <% end %>
-      <span class="shrink-0">
-        <%= render "shared/status_badge", status: appointment.status %>
+      <span class="<%= status_pill_class %>">
+        <%= t("activerecord.attributes.appointment.status.#{appointment.status}") %>
       </span>
     </div>
-    <p class="text-xs text-slate-500 flex items-center gap-1.5">
+    <p class="mt-1 text-xs text-slate-500 flex items-center gap-1.5">
       <%= format_appointment_time(appointment.scheduled_at, space: appointment.space, format: :short) || t("appointments.index.time_to_be_scheduled") %>
       <% if appointment.scheduled_at.present? && (duration = appointment.effective_duration_minutes).present? %>
-        <span class="text-slate-400">·</span>
+        <span class="text-slate-300">·</span>
         <span class="text-[10px] uppercase tracking-wide text-slate-400">
           <%= duration >= 60 ? "#{number_with_precision(duration / 60.0, precision: 1, strip_insignificant_zeros: true)} hr" : "#{duration} min" %>
         </span>
       <% end %>
     </p>
   <% end %>
-  <div class="flex shrink-0 items-center gap-2">
+  <div class="flex shrink-0 items-center gap-1.5">
     <% if appointment.confirmed? && appointment.scheduled_in_past? %>
       <%= button_to t("space.appointments.calendar.mark_no_show"),
                     no_show_appointment_path(appointment),
                     method: :patch,
                     params: { source: "calendar" },
                     data: { turbo_confirm: t("space.appointments.index.no_show_confirm") },
-                    class: "inline-flex items-center rounded px-2 py-1 text-[11px] font-medium text-slate-600 hover:bg-slate-200/80 hover:text-slate-900" %>
+                    class: "inline-flex items-center rounded-lg px-2.5 py-1.5 text-[11px] font-medium text-slate-600 hover:bg-slate-200/80 hover:text-slate-900 transition-colors" %>
     <% end %>
     <% if appointment.confirmed? && appointment.scheduled_in_past? %>
       <%= link_to t("space.appointments.calendar.mark_finish"),
                   finish_form_appointment_path(appointment),
-                  class: "inline-flex items-center rounded px-2 py-1 text-[11px] font-medium text-emerald-700 hover:bg-emerald-100" %>
+                  class: "inline-flex items-center rounded-lg px-2.5 py-1.5 text-[11px] font-medium text-emerald-700 hover:bg-emerald-100 transition-colors" %>
     <% end %>
   </div>
 </div>

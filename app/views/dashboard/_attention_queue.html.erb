@@ -1,0 +1,41 @@
+<%# Locals: attention (hash with :pending_confirmations, :unread_conversations, :trial_ends_in_days, :setup_incomplete) %>
+<%# Renders a compact action queue; empty state celebrates calm. %>
+<% items = [] %>
+<% items << { label: t("dashboard.attention.pending_confirmations", count: attention[:pending_confirmations]), href: appointments_path, badge: attention[:pending_confirmations], tone: :warning } if attention[:pending_confirmations].to_i > 0 %>
+<% items << { label: t("dashboard.attention.unread_conversations",  count: attention[:unread_conversations]),  href: spaces_inbox_index_path, badge: attention[:unread_conversations], tone: :accent } if attention[:unread_conversations].to_i  > 0 %>
+<% items << { label: t("dashboard.attention.trial_ends", days: attention[:trial_ends_in_days]), href: settings_billing_path, badge: nil, tone: :warning } if attention[:trial_ends_in_days].present? && attention[:trial_ends_in_days] <= 7 %>
+<% items << { label: t("dashboard.attention.setup_incomplete"), href: onboarding_wizard_path, badge: nil, tone: :neutral } if attention[:setup_incomplete] %>
+
+<div class="dashboard-card grow w-full">
+  <h2 class="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+    <%= t("dashboard.attention.title") %>
+  </h2>
+
+  <% if items.any? %>
+    <ul class="mt-5 space-y-1.5">
+      <% items.each do |item| %>
+        <% pill_class = "status-pill status-pill-compact status-pill-#{item[:tone] || 'neutral'}" %>
+        <li>
+          <%= link_to item[:href],
+                      class: "dashboard-action-row group justify-between" do %>
+            <span class="dashboard-action-row-label text-sm font-medium text-slate-700"><%= item[:label] %></span>
+            <% if item[:badge] %>
+              <span class="<%= pill_class %>">
+                <%= item[:badge] %>
+              </span>
+            <% end %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <div class="mt-5 py-6 text-center">
+      <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-50 mb-3">
+        <svg class="h-5 w-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+      </div>
+      <p class="text-sm text-slate-500"><%= t("dashboard.attention.empty") %></p>
+    </div>
+  <% end %>
+</div>

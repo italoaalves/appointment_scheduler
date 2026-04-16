@@ -1,112 +1,133 @@
-<div class="card-solid flex max-h-[65vh] min-h-0 flex-col overflow-hidden p-0"
-     data-controller="calendar-tabs">
-  <div class="shrink-0 border-b border-slate-200">
-    <nav class="flex -mb-px">
+<div class="dashboard-card flex h-[65vh] min-h-[65vh] min-w-0 w-full shrink-0 flex-col overflow-hidden p-0"
+     data-controller="calendar-tabs"
+     data-calendar-tabs-storage-key-value="<%= dom_id(calendar_space, :active_dashboard_tab) %>">
+  <%# Tab navigation with electric accent %>
+  <div class="shrink-0 border-b border-slate-200/80 bg-slate-50/50 px-4">
+    <nav class="flex -mb-px gap-1">
       <button type="button"
               data-calendar-tabs-target="tab"
               data-action="click->calendar-tabs#switchTab"
               data-calendar-tabs-tab-param="today"
-              class="border-b-2 px-4 py-3 text-sm font-medium border-slate-900 text-slate-900">
+              class="calendar-tab calendar-tab-active">
         <%= t("admin.appointments.calendar.today") %>
       </button>
       <button type="button"
               data-calendar-tabs-target="tab"
               data-action="click->calendar-tabs#switchTab"
               data-calendar-tabs-tab-param="week"
-              class="border-b-2 px-4 py-3 text-sm font-medium border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700">
+              class="calendar-tab calendar-tab-inactive">
         <%= t("admin.appointments.calendar.week") %>
       </button>
       <button type="button"
               data-calendar-tabs-target="tab"
               data-action="click->calendar-tabs#switchTab"
               data-calendar-tabs-tab-param="month"
-              class="border-b-2 px-4 py-3 text-sm font-medium border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700">
+              class="calendar-tab calendar-tab-inactive">
         <%= t("admin.appointments.calendar.month") %>
       </button>
     </nav>
   </div>
 
-  <div class="relative min-h-0 flex-1 flex flex-col">
+  <%# Scrollable content area with animated panels %>
+  <div class="relative flex min-h-0 min-w-0 flex-1 flex-col">
     <div data-calendar-tabs-target="scrollArea"
-         class="min-h-0 flex-1 overflow-y-auto p-4">
+         class="min-h-0 min-w-0 flex-1 overflow-y-auto p-4">
       <% %i[today week month].each do |period| %>
         <% appointments = periods_data[period] %>
         <div data-calendar-tabs-target="panel"
              data-tab="<%= period %>"
-             <%= 'hidden' if period != :today %>
-             class="space-y-4">
-          <% if appointments.any? %>
-            <% case period %>
-            <% when :today %>
-              <% today_groups = calendar_today_grouped(appointments, calendar_space).select { |_, v| v.any? } %>
-              <% today_groups.each_with_index do |(period_key, group_appointments), idx| %>
-                <div class="<%= idx < today_groups.size - 1 ? 'pb-4 mb-4 border-b border-slate-200' : '' %>">
-                  <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    <%= t("admin.appointments.calendar.periods.#{period_key}") %>
-                  </p>
-                  <ul class="space-y-0">
-                    <% group_appointments.each do |appointment| %>
-                      <li>
-                        <%= render "dashboard/calendar_appointment", appointment: appointment %>
-                      </li>
-                    <% end %>
-                  </ul>
-                </div>
+             class="calendar-panel min-w-0 w-full <%= period == :today ? 'calendar-panel-visible' : 'calendar-panel-hidden' %>">
+          <div class="min-w-0 space-y-3">
+            <% if appointments.any? %>
+              <% case period %>
+              <% when :today %>
+                <% today_groups = calendar_today_grouped(appointments, calendar_space).select { |_, v| v.any? } %>
+                <% today_groups.each_with_index do |(period_key, group_appointments), idx| %>
+                  <div class="<%= idx < today_groups.size - 1 ? 'pb-4 mb-4 border-b border-slate-100' : '' %>">
+                    <p class="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                      <%= t("admin.appointments.calendar.periods.#{period_key}") %>
+                    </p>
+                    <ul class="space-y-2">
+                      <% group_appointments.each do |appointment| %>
+                        <li>
+                          <%= render "dashboard/calendar_appointment", appointment: appointment %>
+                        </li>
+                      <% end %>
+                    </ul>
+                  </div>
+                <% end %>
+              <% when :week, :month %>
+                <% grouped = period == :week ? calendar_week_grouped(appointments, calendar_space) : calendar_month_grouped(appointments, calendar_space) %>
+                <% today_in_space = Time.current.in_time_zone(TimezoneResolver.zone(calendar_space)).to_date %>
+                <% grouped.each_with_index do |(date, group_appointments), idx| %>
+                  <div class="<%= idx < grouped.size - 1 ? 'pb-4 mb-4 border-b border-slate-100' : '' %>">
+                    <p class="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] <%= date == today_in_space ? 'text-electric' : 'text-slate-500' %>">
+                      <%= date.strftime("%A, %b %d") %><% if date == today_in_space %><span class="ml-1.5 font-normal normal-case text-electric">(Today)</span><% end %>
+                    </p>
+                    <ul class="space-y-2">
+                      <% group_appointments.sort_by { |a| a.scheduled_at || Time.zone.at(0) }.each do |appointment| %>
+                        <li>
+                          <%= render "dashboard/calendar_appointment", appointment: appointment %>
+                        </li>
+                      <% end %>
+                    </ul>
+                  </div>
+                <% end %>
               <% end %>
-            <% when :week, :month %>
-              <% grouped = period == :week ? calendar_week_grouped(appointments, calendar_space) : calendar_month_grouped(appointments, calendar_space) %>
-              <% today_in_space = Time.current.in_time_zone(TimezoneResolver.zone(calendar_space)).to_date %>
-              <% grouped.each_with_index do |(date, group_appointments), idx| %>
-                <div class="<%= idx < grouped.size - 1 ? 'pb-4 mb-4 border-b border-slate-200' : '' %>">
-                  <p class="mb-2 text-xs font-semibold uppercase tracking-wide <%= date == today_in_space ? 'text-electric' : 'text-slate-500' %>">
-                    <%= date.strftime("%A, %b %d") %><% if date == today_in_space %><span class="ml-1 font-normal normal-case text-electric">(Today)</span><% end %>
-                  </p>
-                  <ul class="space-y-0">
-                    <% group_appointments.sort_by { |a| a.scheduled_at || Time.zone.at(0) }.each do |appointment| %>
-                      <li>
-                        <%= render "dashboard/calendar_appointment", appointment: appointment %>
-                      </li>
-                    <% end %>
-                  </ul>
+            <% else %>
+              <div class="py-8 text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-slate-100 mb-4">
+                  <svg class="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 3 18.75m18 0v-7.5a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 11.25m18 0v.25" />
+                  </svg>
                 </div>
-              <% end %>
+                <p class="text-sm font-medium text-slate-700">
+                  <%= t("dashboard.empty_calendar.message") %>
+                </p>
+                <% if current_tenant.personalized_scheduling_link.present? %>
+                  <% empty_booking_url = book_by_slug_url(slug: current_tenant.personalized_scheduling_link.slug) %>
+                  <div class="mt-4" data-controller="clipboard">
+                    <code data-clipboard-target="source" class="hidden"><%= empty_booking_url %></code>
+                    <span data-clipboard-target="feedback" class="hidden text-sm font-medium text-emerald-600"><%= t("onboarding.step3.copied") %></span>
+                    <button type="button"
+                            data-action="click->clipboard#copy"
+                            class="<%= button_classes(:primary, "btn-sm") %>">
+                      <%= t("dashboard.empty_calendar.copy_link") %>
+                    </button>
+                  </div>
+                <% end %>
+              </div>
             <% end %>
-          <% else %>
-            <div class="py-6 text-center">
-              <p class="text-sm text-slate-500">
-                <%= t("dashboard.empty_calendar.message") %>
-              </p>
-              <% if current_tenant.personalized_scheduling_link.present? %>
-                <% empty_booking_url = book_by_slug_url(slug: current_tenant.personalized_scheduling_link.slug) %>
-                <div class="mt-3" data-controller="clipboard">
-                  <code data-clipboard-target="source" class="hidden"><%= empty_booking_url %></code>
-                  <span data-clipboard-target="feedback" class="hidden text-sm font-medium text-emerald-600"><%= t("onboarding.step3.copied") %></span>
-                  <button type="button"
-                          data-action="click->clipboard#copy"
-                          class="<%= button_classes(:primary) %> mt-2">
-                    <%= t("dashboard.empty_calendar.copy_link") %>
-                  </button>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
+          </div>
         </div>
       <% end %>
     </div>
 
-
-    <footer class="shrink-0 border-t border-slate-100 bg-white px-4 py-3">
+    <%# Stats footer with pill badges %>
+    <footer class="shrink-0 border-t border-slate-100 bg-slate-50/60 px-4 py-3">
       <% %i[today week month].each do |period| %>
         <% stats = periods_stats[period] %>
         <div id="calendar_stats_<%= period %>"
              data-calendar-tabs-target="stats"
              data-tab="<%= period %>"
              <%= 'hidden' if period != :today %>
-             class="flex flex-wrap gap-4 text-xs text-slate-600">
-          <span><%= t("admin.appointments.calendar.stats.total") %>: <strong class="text-slate-900"><%= stats[:total] %></strong></span>
-          <span><%= t("admin.appointments.calendar.stats.empty_slots") %>: <strong class="text-slate-900"><%= stats[:empty_slots] %></strong></span>
-          <span><%= t("admin.appointments.calendar.stats.pending") %>: <strong class="text-amber-700"><%= stats[:pending] %></strong></span>
-          <span><%= t("admin.appointments.calendar.stats.confirmed") %>: <strong class="text-emerald-700"><%= stats[:confirmed] %></strong></span>
+             class="flex flex-wrap gap-2">
+          <span class="calendar-stats-pill calendar-stats-pill-total">
+            <%= t("admin.appointments.calendar.stats.total") %>
+            <span class="font-semibold"><%= stats[:total] %></span>
+          </span>
+          <span class="calendar-stats-pill calendar-stats-pill-empty">
+            <%= t("admin.appointments.calendar.stats.empty_slots") %>
+            <span class="font-semibold"><%= stats[:empty_slots] %></span>
+          </span>
+          <span class="calendar-stats-pill calendar-stats-pill-pending">
+            <%= t("admin.appointments.calendar.stats.pending") %>
+            <span class="font-semibold"><%= stats[:pending] %></span>
+          </span>
+          <span class="calendar-stats-pill calendar-stats-pill-confirmed">
+            <%= t("admin.appointments.calendar.stats.confirmed") %>
+            <span class="font-semibold"><%= stats[:confirmed] %></span>
+          </span>
         </div>
       <% end %>
     </footer>

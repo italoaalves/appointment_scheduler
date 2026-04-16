@@ -10,6 +10,9 @@ class Appointment < ApplicationRecord
 
   before_validation :set_duration_from_space, on: :create
   after_commit :broadcast_booking_slot_updates
+  after_commit :broadcast_dashboard_update, on: :create
+  after_commit :broadcast_dashboard_update_if_calendar_changed, on: :update
+  after_commit :broadcast_dashboard_update, on: :destroy
 
   validate :customer_belongs_to_space, if: :customer_id?
   validate :no_double_booking, if: :requires_slot_validation?
@@ -89,5 +92,17 @@ class Appointment < ApplicationRecord
 
   def broadcast_booking_slot_updates
     Booking::SlotUpdatesBroadcaster.broadcast_for(space)
+  end
+
+  def broadcast_dashboard_update
+    return unless space_id.present? && id.present?
+
+    DashboardCalendarBroadcaster.broadcast_for(space: space || Space.find_by(id: space_id))
+  end
+
+  def broadcast_dashboard_update_if_calendar_changed
+    return unless saved_change_to_status? || saved_change_to_scheduled_at?
+
+    broadcast_dashboard_update
   end
 end

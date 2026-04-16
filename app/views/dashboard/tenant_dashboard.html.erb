@@ -1,45 +1,41 @@
-<div class="space-y-6">
-  <%= render "shared/page_header",
-             title: t("dashboard.title"),
-             subtitle: t("dashboard.tenant_subtitle") %>
+<%# Mission Control Dashboard — hero · utility row · attention + calendar hub %>
+<% today_summary     = @overview[:today_summary] %>
+<% attention         = @overview[:attention] %>
 
+<%= turbo_stream_from [current_tenant, :dashboard_calendar] %>
+
+<div class="space-y-6 md:space-y-8">
+  <%# Onboarding / welcome states %>
   <% if current_tenant.onboarding_complete? && current_tenant.personalized_scheduling_link.present? %>
     <% unless current_user.user_preference&.dismissed_welcome_card %>
-      <div class="mb-6">
-        <%= render "dashboard/welcome_card" %>
-      </div>
+      <%= render "dashboard/welcome_card" %>
     <% end %>
   <% else %>
-    <div class="mb-6">
-      <%= render "dashboard/setup_checklist", space: current_tenant %>
-    </div>
+    <%= render "dashboard/setup_checklist", space: current_tenant %>
   <% end %>
 
-  <div class="mb-6">
-    <%= render "calendar_overview",
-          periods_data: { today: @calendar_today, week: @calendar_week, month: @calendar_month },
-          periods_stats: { today: @stats_today, week: @stats_week, month: @stats_month },
-          calendar_space: @calendar_space %>
+  <%# Hero — full width %>
+  <div class="dashboard-region" style="animation-delay: 0ms">
+    <%= render "dashboard/today_hero",
+               today_summary: today_summary,
+               space: current_tenant,
+               current_user: current_user %>
   </div>
-  <div class="grid gap-6 sm:grid-cols-2">
-    <div class="card-solid">
-      <h2 class="text-sm font-medium text-slate-900"><%= t("dashboard.admin.appointments_title") %></h2>
-      <p class="mt-1 text-xs text-slate-600">
-        <%= t("dashboard.admin.appointments_body") %>
-      </p>
-      <div class="mt-3">
-        <%= link_to t("dashboard.admin.appointments_cta"), appointments_path, class: button_classes(:primary) %>
+
+  <%# Two-column bento: left sidebar + calendar %>
+  <div class="grid min-w-0 gap-6 md:max-h-[65vh] md:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] md:gap-8">
+    <%# Left column — Quick Actions + Attention stacked %>
+    <div class="flex min-w-0 flex-col gap-6 md:gap-8">
+      <div class="dashboard-region flex flex-col" style="animation-delay: 50ms">
+        <%= render "dashboard/quick_actions", space: current_tenant %>
+      </div>
+
+      <div class="dashboard-region flex flex-col" style="animation-delay: 150ms">
+        <%= render "dashboard/attention_queue", attention: attention %>
       </div>
     </div>
 
-    <div class="card-solid">
-      <h2 class="text-sm font-medium text-slate-900"><%= t("dashboard.admin.customers_title") %></h2>
-      <p class="mt-1 text-xs text-slate-600">
-        <%= t("dashboard.admin.customers_body") %>
-      </p>
-      <div class="mt-3">
-        <%= link_to t("dashboard.admin.customers_cta"), customers_path, class: button_classes(:muted) %>
-      </div>
-    </div>
+    <%# Right column — Calendar %>
+    <%= render "dashboard/calendar_sync", space: current_tenant %>
   </div>
 </div>
