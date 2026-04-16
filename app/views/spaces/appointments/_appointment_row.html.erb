@@ -22,7 +22,10 @@
           <%= button_to t("space.appointments.index.no_show"), no_show_appointment_path(appointment), method: :patch, params: { source: "index" }, data: { turbo_confirm: t("space.appointments.index.no_show_confirm") }, class: button_classes(:table_muted) %>
         <% end %>
         <% if appointment.scheduled_in_past? %>
-          <%= link_to t("space.appointments.index.finish"), finish_form_appointment_path(appointment), class: button_classes(:table_success) %>
+          <%= link_to t("space.appointments.index.finish"),
+                      finish_form_appointment_path(appointment, source: "index"),
+                      class: button_classes(:table_success),
+                      data: { turbo_frame: "finish_modal" } %>
         <% end %>
       <% end %>
       <% if appointment.pending? || appointment.confirmed? %>

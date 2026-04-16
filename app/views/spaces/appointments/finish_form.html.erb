@@ -1,40 +1,57 @@
 <% tz = TimezoneResolver.zone(@appointment.space) %>
 <% default_finished_at = Time.current.in_time_zone(tz).strftime("%Y-%m-%dT%H:%M") %>
-<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
-  { label: t("breadcrumbs.dashboard"), path: root_path },
-  { label: t("breadcrumbs.appointments"), path: appointments_path },
-  { label: @appointment.customer&.name || "—", path: appointment_path(@appointment) },
-  { label: t("breadcrumbs.finish") }
-] } %>
-<div class="space-y-4">
-  <header>
-    <h1 class="text-2xl font-semibold tracking-tight text-slate-900">
-      <%= t("space.appointments.finish.title") %>
-    </h1>
-    <p class="mt-1 text-sm text-slate-600">
-      <%= t("space.appointments.finish.subtitle", customer: @appointment.customer&.name || "—") %>
-    </p>
-  </header>
 
-  <div class="panel-card">
-    <%= form_with url: finish_appointment_path(@appointment), method: :patch, class: "space-y-4" do |form| %>
+<turbo-frame id="finish_modal">
+  <div data-controller="form-modal"
+       data-action="keydown.esc@window->form-modal#close turbo:submit-end->form-modal#submitEnd"
+       class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="finish-modal-title">
+
+    <%# Backdrop %>
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"
+         data-action="click->form-modal#close"
+         aria-hidden="true"></div>
+
+    <%# Panel %>
+    <div data-form-modal-target="panel"
+         class="error-modal__panel relative z-10 w-full max-w-sm glass-frosty rounded-card p-6 space-y-4">
+
       <div>
-        <%= form.label :finished_at,
-                       t("space.appointments.finish.finished_at_label"),
-                       class: "block text-sm font-medium text-slate-700" %>
-        <%= form.datetime_local_field :finished_at,
-                                      value: default_finished_at,
-                                      class: "mt-1 block w-full max-w-sm rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+        <p id="finish-modal-title" class="font-display font-bold text-deep text-base">
+          <%= t("space.appointments.finish.title") %>
+        </p>
+        <p class="mt-1 text-sm text-slate-600">
+          <%= t("space.appointments.finish.subtitle", customer: @appointment.customer&.name || "—") %>
+        </p>
       </div>
 
-      <div class="flex flex-wrap gap-3">
-        <%= form.submit t("space.appointments.finish.submit"),
-                        class: button_classes(:success),
-                        data: { turbo_submits_with: t("shared.submitting") } %>
-        <%= link_to t("space.appointments.finish.cancel"),
-                    appointment_path(@appointment),
-                    class: button_classes(:secondary) %>
-      </div>
-    <% end %>
+      <%= form_with url: finish_appointment_path(@appointment),
+                    method: :patch,
+                    class: "space-y-4" do |form| %>
+        <input type="hidden" name="source" value="<%= params[:source] %>">
+
+        <div>
+          <%= form.label :finished_at,
+                         t("space.appointments.finish.finished_at_label"),
+                         class: "block text-sm font-medium text-slate-700" %>
+          <%= form.datetime_local_field :finished_at,
+                                        value: default_finished_at,
+                                        class: "mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <%= form.submit t("space.appointments.finish.submit"),
+                          class: button_classes(:success),
+                          data: { turbo_submits_with: t("shared.submitting") } %>
+          <button type="button"
+                  class="<%= button_classes(:secondary) %>"
+                  data-action="form-modal#close">
+            <%= t("space.appointments.finish.cancel") %>
+          </button>
+        </div>
+      <% end %>
+    </div>
   </div>
-</div>
+</turbo-frame>

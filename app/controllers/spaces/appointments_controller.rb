@@ -166,7 +166,7 @@ module Spaces
             @appointment.reload
             render turbo_stream: build_success_streams(notice: notice)
           end
-          format.html { redirect_to success_redirect.presence || appointments_path, notice: notice }
+          format.html { redirect_to success_redirect.presence || (params[:source] == "show" ? appointment_path(@appointment) : appointments_path), notice: notice }
         end
       else
         error_message = resolve_error_message(result, cannot_before_key, policy_blocked_key, cancelled_locked_key)
@@ -196,6 +196,23 @@ module Spaces
           dom_id(@appointment),
           partial: "dashboard/calendar_appointment",
           locals: { appointment: @appointment }
+        )
+      elsif source == "show"
+        streams << turbo_stream.replace(
+          "appointment_show_status",
+          partial: "spaces/appointments/show_status",
+          locals: { appointment: @appointment, animated: true }
+        )
+        streams << turbo_stream.replace(
+          "appointment_show_actions",
+          partial: "spaces/appointments/show_actions",
+          locals: { appointment: @appointment, animated: true }
+        )
+      elsif source == "customer_show"
+        streams << turbo_stream.replace(
+          dom_id(@appointment),
+          partial: "spaces/customers/customer_appointment",
+          locals: { appointment: @appointment, animated: true }
         )
       end
 

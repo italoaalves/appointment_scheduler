@@ -32,9 +32,9 @@
       <% end %>
     <% end %>
     <% if appointment.confirmed? && appointment.scheduled_in_past? %>
-      <%= link_to finish_form_appointment_path(appointment),
+      <%= link_to finish_form_appointment_path(appointment, source: "index"),
             class: "flex flex-col items-center gap-0.5 p-3 can-hover:p-2 rounded-lg text-emerald-500 hover:bg-emerald-100 hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-400",
-            data: { turbo_frame: "_top", swipe_action: "" },
+            data: { turbo_frame: "finish_modal", swipe_action: "" },
             aria: { label: t("space.appointments.index.finish") } do %>
         <svg class="w-5 h-5 can-hover:w-4 can-hover:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>

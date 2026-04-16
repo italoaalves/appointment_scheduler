@@ -66,23 +66,7 @@
 
     <% if @appointments.any? %>
       <ul class="space-y-2">
-        <% @appointments.each do |appointment| %>
-          <li class="card p-3 text-sm">
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <p class="text-slate-900">
-                  <%= format_appointment_time(appointment.scheduled_at, space: appointment.space, format: :long) || "—" %>
-                </p>
-                <p class="mt-0.5 text-xs text-slate-500">
-                  <%= t("space.customers.show.status_prefix") %> <%= t("activerecord.attributes.appointment.status.#{appointment.status}") %>
-                </p>
-              </div>
-              <%= link_to t("space.appointments.index.view"),
-                          appointment_path(appointment),
-                          class: button_classes(:table_link) %>
-            </div>
-          </li>
-        <% end %>
+        <%= render partial: "customer_appointment", collection: @appointments, as: :appointment %>
       </ul>
       <%= paginate @appointments %>
     <% else %>
