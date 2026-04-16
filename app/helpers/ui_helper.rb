@@ -88,29 +88,14 @@ module UiHelper
   end
 
   def settings_sidebar_link(label, path, section, variant: :desktop)
-    active = settings_section_active?(section)
-    if variant == :mobile
-      classes = active ? "block shrink-0 rounded-2xl border border-electric/30 bg-electric/10 px-4 py-2.5 text-sm font-medium text-electric shadow-sm shadow-electric/10" : "block shrink-0 rounded-2xl border border-white/50 bg-white/65 px-4 py-2.5 text-sm text-slate-600 transition hover:border-electric/15 hover:bg-white/80 hover:text-deep"
-    else
-      classes = active ? "block rounded-card border border-electric/20 bg-electric/10 px-4 py-3 text-electric shadow-sm shadow-electric/10 ring-1 ring-electric/10" : "block rounded-card border border-transparent px-4 py-3 text-slate-600 transition hover:border-white/60 hover:bg-white/70 hover:text-deep"
-    end
-    content_tag(:li, class: variant == :mobile ? "shrink-0" : nil) do
-      link_to path, class: classes, aria: (active ? { current: "page" } : {}) do
-        content_tag(:div, class: "flex items-center justify-between gap-3") do
-          concat(content_tag(:div, class: "min-w-0") do
-            concat content_tag(:p, label, class: "text-sm font-semibold leading-5")
-            if variant != :mobile
-              description = t("settings.sidebar.descriptions.#{section}")
-              concat content_tag(:p, description, class: "mt-1 text-xs leading-5 text-slate-500")
-            end
-          end)
-
-          next if variant == :mobile
-
-          concat content_tag(:span, "›", class: "text-base leading-none #{active ? 'text-electric' : 'text-slate-300'}", aria: { hidden: true })
-        end
-      end
-    end
+    build_sidebar_link(
+      label,
+      path,
+      section,
+      active: settings_section_active?(section),
+      variant: variant,
+      description_scope: "settings.sidebar.descriptions"
+    )
   end
 
   def settings_navigation_groups
@@ -140,30 +125,14 @@ module UiHelper
   end
 
   def account_sidebar_link(label, path, section, variant: :desktop)
-    active = account_section_active?(section)
-    if variant == :mobile
-      classes = active ? "block shrink-0 rounded-2xl border border-electric/30 bg-electric/10 px-4 py-2.5 text-sm font-medium text-electric shadow-sm shadow-electric/10" : "block shrink-0 rounded-2xl border border-white/50 bg-white/65 px-4 py-2.5 text-sm text-slate-600 transition hover:border-electric/15 hover:bg-white/80 hover:text-deep"
-    else
-      classes = active ? "block rounded-card border border-electric/20 bg-electric/10 px-4 py-3 text-electric shadow-sm shadow-electric/10 ring-1 ring-electric/10" : "block rounded-card border border-transparent px-4 py-3 text-slate-600 transition hover:border-white/60 hover:bg-white/70 hover:text-deep"
-    end
-
-    content_tag(:li, class: variant == :mobile ? "shrink-0" : nil) do
-      link_to path, class: classes, aria: (active ? { current: "page" } : {}) do
-        content_tag(:div, class: "flex items-center justify-between gap-3") do
-          concat(content_tag(:div, class: "min-w-0") do
-            concat content_tag(:p, label, class: "text-sm font-semibold leading-5")
-            if variant != :mobile
-              description = t("account.sidebar.descriptions.#{section}")
-              concat content_tag(:p, description, class: "mt-1 text-xs leading-5 text-slate-500")
-            end
-          end)
-
-          next if variant == :mobile
-
-          concat content_tag(:span, "›", class: "text-base leading-none #{active ? 'text-electric' : 'text-slate-300'}", aria: { hidden: true })
-        end
-      end
-    end
+    build_sidebar_link(
+      label,
+      path,
+      section,
+      active: account_section_active?(section),
+      variant: variant,
+      description_scope: "account.sidebar.descriptions"
+    )
   end
 
   def account_navigation_items
@@ -214,18 +183,16 @@ module UiHelper
 
   def status_badge_classes(status)
     case status.to_s
-    when "pending"     then "bg-amber-100 text-amber-800"
-    when "confirmed"   then "bg-emerald-100 text-emerald-800"
-    when "no_show", "finished" then "bg-slate-100 text-slate-700"
-    when "cancelled"   then "bg-red-100 text-red-800"
-    when "rescheduled" then "bg-blue-100 text-blue-800"
-    when "trialing"    then "bg-blue-100 text-blue-700"
-    when "active"     then "bg-emerald-100 text-emerald-700"
-    when "past_due"    then "bg-amber-100 text-amber-700"
-    when "canceled", "expired" then "bg-red-100 text-red-700"
-    when "received", "overdue" then "bg-amber-100 text-amber-700"
-    when "refunded", "failed" then "bg-slate-100 text-slate-600"
-    else "bg-slate-100 text-slate-700"
+    when "pending" then "badge-amber"
+    when "confirmed" then "badge-emerald"
+    when "no_show", "finished" then "badge-slate"
+    when "cancelled" then "badge-red"
+    when "rescheduled", "trialing" then "badge-blue"
+    when "active" then "badge-emerald"
+    when "past_due", "received", "overdue" then "badge-amber"
+    when "canceled", "expired" then "badge-red"
+    when "refunded", "failed" then "badge-slate"
+    else "badge-slate"
     end
   end
 
@@ -293,5 +260,35 @@ module UiHelper
     locale = user_preference&.locale.presence || I18n.locale.to_s
     label_key = locale == "pt-BR" ? :pt : locale
     t("layout.nav.language.#{label_key}")
+  end
+
+  private
+
+  def build_sidebar_link(label, path, section, active:, variant:, description_scope:)
+    content_tag(:li, class: variant == :mobile ? "shrink-0" : nil) do
+      link_to path, class: sidebar_link_classes(active, variant), aria: (active ? { current: "page" } : {}) do
+        content_tag(:div, class: "flex items-center justify-between gap-3") do
+          concat(content_tag(:div, class: "min-w-0") do
+            concat content_tag(:p, label, class: "text-sm font-semibold leading-5")
+            if variant != :mobile
+              description = t("#{description_scope}.#{section}")
+              concat content_tag(:p, description, class: "mt-1 text-xs leading-5 text-slate-500")
+            end
+          end)
+
+          next if variant == :mobile
+
+          concat content_tag(:span, "›", class: "text-base leading-none #{active ? 'text-electric' : 'text-slate-300'}", aria: { hidden: true })
+        end
+      end
+    end
+  end
+
+  def sidebar_link_classes(active, variant)
+    if variant == :mobile
+      active ? "block shrink-0 rounded-2xl border border-electric/30 bg-electric/10 px-4 py-2.5 text-sm font-medium text-electric shadow-sm shadow-electric/10" : "block shrink-0 rounded-2xl border border-white/50 bg-white/65 px-4 py-2.5 text-sm text-slate-600 transition hover:border-electric/15 hover:bg-white/80 hover:text-deep"
+    else
+      active ? "block rounded-card border border-electric/20 bg-electric/10 px-4 py-3 text-electric shadow-sm shadow-electric/10 ring-1 ring-electric/10" : "block rounded-card border border-transparent px-4 py-3 text-slate-600 transition hover:border-white/60 hover:bg-white/70 hover:text-deep"
+    end
   end
 end

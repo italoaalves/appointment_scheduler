@@ -15,27 +15,27 @@
     </div>
   </header>
 
-  <div class="card p-4">
-    <dl class="space-y-3 text-sm">
-      <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("space.customers.show.name") %></dt>
-        <dd class="text-slate-900"><%= @customer.name %></dd>
+  <div class="panel-card-compact">
+    <dl class="detail-list">
+      <div class="detail-list__row">
+        <dt class="detail-list__term"><%= t("space.customers.show.name") %></dt>
+        <dd class="detail-list__value"><%= @customer.name %></dd>
       </div>
-      <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("space.customers.show.phone") %></dt>
-        <dd class="text-slate-900"><%= @customer.phone.presence || "—" %></dd>
+      <div class="detail-list__row">
+        <dt class="detail-list__term"><%= t("space.customers.show.phone") %></dt>
+        <dd class="detail-list__value"><%= @customer.phone.presence || "—" %></dd>
       </div>
-      <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("space.customers.show.email") %></dt>
-        <dd class="text-slate-900"><%= @customer.email.presence || "—" %></dd>
+      <div class="detail-list__row">
+        <dt class="detail-list__term"><%= t("space.customers.show.email") %></dt>
+        <dd class="detail-list__value"><%= @customer.email.presence || "—" %></dd>
       </div>
-      <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("space.customers.show.address") %></dt>
-        <dd class="text-slate-900"><%= @customer.address.presence || "—" %></dd>
+      <div class="detail-list__row">
+        <dt class="detail-list__term"><%= t("space.customers.show.address") %></dt>
+        <dd class="detail-list__value"><%= @customer.address.presence || "—" %></dd>
       </div>
-      <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("space.customers.show.whatsapp_consent") %></dt>
-        <dd class="text-right text-slate-900">
+      <div class="detail-list__row">
+        <dt class="detail-list__term"><%= t("space.customers.show.whatsapp_consent") %></dt>
+        <dd class="detail-list__value text-right">
           <% if @customer.whatsapp_opted_in? %>
             <%= t("space.customers.show.whatsapp_consent_granted", date: l(@customer.whatsapp_opted_in_at, format: :short)) %>
           <% elsif @customer.whatsapp_opted_out_at.present? %>

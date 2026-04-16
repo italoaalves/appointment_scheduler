@@ -22,11 +22,11 @@
              description: t("billing.credits.checkout.summary_hint") do %>
     <div class="grid gap-4 lg:grid-cols-2">
       <div class="settings-info-tile">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("billing.credits.show.credits") %></p>
+        <p class="meta-label"><%= t("billing.credits.show.credits") %></p>
         <p class="mt-1 text-3xl font-bold text-deep"><%= @bundle.amount %></p>
       </div>
       <div class="settings-info-tile">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("billing.show.payment_amount") %></p>
+        <p class="meta-label"><%= t("billing.show.payment_amount") %></p>
         <p class="mt-1 text-2xl font-bold text-deep">
           <%= number_to_currency(@bundle.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %>
         </p>

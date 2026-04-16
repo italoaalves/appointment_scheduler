@@ -15,7 +15,7 @@
   <% end %>
 
   <%# Hero — full width %>
-  <div class="dashboard-region" style="animation-delay: 0ms">
+  <div class="dashboard-region dashboard-region--0">
     <%= render "dashboard/today_hero",
                today_summary: today_summary,
                space: current_tenant,
@@ -26,11 +26,11 @@
   <div class="grid min-w-0 gap-6 md:max-h-[65vh] md:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] md:gap-8">
     <%# Left column — Quick Actions + Attention stacked %>
     <div class="flex min-w-0 flex-col gap-6 md:gap-8">
-      <div class="dashboard-region flex flex-col" style="animation-delay: 50ms">
+      <div class="dashboard-region dashboard-region--50 flex flex-col">
         <%= render "dashboard/quick_actions", space: current_tenant %>
       </div>
 
-      <div class="dashboard-region flex flex-col" style="animation-delay: 150ms">
+      <div class="dashboard-region dashboard-region--150 flex flex-col">
         <%= render "dashboard/attention_queue", attention: attention %>
       </div>
     </div>

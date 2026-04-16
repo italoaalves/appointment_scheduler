@@ -16,7 +16,7 @@
     </div>
 
     <div class="rounded-[1.25rem] border border-slate-200/80 bg-slate-50/80 p-4">
-      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"><%= t("booking.summary.business") %></p>
+      <p class="meta-label-strong"><%= t("booking.summary.business") %></p>
       <p class="mt-1 text-base font-semibold text-deep"><%= space.name %></p>
       <% if booking_business_type_label(space).present? %>
         <p class="mt-1 text-sm leading-6 text-slate-600"><%= booking_business_type_label(space) %></p>
@@ -27,7 +27,7 @@
       <div class="booking-summary-stage">
         <div data-booking-target="summaryPlaceholder"
              class="booking-summary-placeholder booking-summary-placeholder-visible">
-          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"><%= t("booking.summary.placeholder_title") %></p>
+          <p class="meta-label-strong"><%= t("booking.summary.placeholder_title") %></p>
           <p class="mt-2 text-sm leading-6 text-slate-600"><%= t("booking.summary.placeholder") %></p>
         </div>
 
@@ -102,7 +102,7 @@
     <% end %>
 
     <div class="booking-summary-callout">
-      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"><%= t("booking.summary.next_steps_title") %></p>
+      <p class="meta-label-strong"><%= t("booking.summary.next_steps_title") %></p>
       <p class="mt-2 text-sm leading-6 text-slate-600"><%= t("booking.summary.next_steps_body") %></p>
     </div>
   </section>

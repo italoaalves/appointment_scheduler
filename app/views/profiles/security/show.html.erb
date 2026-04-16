@@ -30,22 +30,22 @@
              description: t("profiles.security.status.description") do %>
     <div class="grid gap-4 lg:grid-cols-4">
       <div class="settings-info-tile">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("profiles.security.status.mfa") %></p>
+        <p class="meta-label"><%= t("profiles.security.status.mfa") %></p>
         <p class="mt-1 text-sm font-semibold text-deep"><%= @user.mfa_enabled? ? t("profiles.security.status.enabled") : t("profiles.security.status.disabled") %></p>
       </div>
 
       <div class="settings-info-tile">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("profiles.security.status.policy") %></p>
+        <p class="meta-label"><%= t("profiles.security.status.policy") %></p>
         <p class="mt-1 text-sm font-semibold text-deep"><%= @user.super_admin? ? t("profiles.security.status.required") : t("profiles.security.status.optional") %></p>
       </div>
 
       <div class="settings-info-tile">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("profiles.security.status.active_methods") %></p>
+        <p class="meta-label"><%= t("profiles.security.status.active_methods") %></p>
         <p class="mt-1 text-sm font-semibold text-deep"><%= active_methods.presence&.join(" · ") || t("profiles.security.status.none") %></p>
       </div>
 
       <div class="settings-info-tile">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("profiles.security.status.recovery_codes") %></p>
+        <p class="meta-label"><%= t("profiles.security.status.recovery_codes") %></p>
         <p class="mt-1 text-sm font-semibold text-deep">
           <%= @user.mfa_enabled? ? t("profiles.security.status.recovery_codes_count", count: @active_recovery_codes_count) : t("profiles.security.status.pending") %>
         </p>
@@ -59,7 +59,7 @@
     <div class="space-y-4">
       <div class="settings-info-tile flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("profiles.security.identities.password") %></p>
+          <p class="meta-label"><%= t("profiles.security.identities.password") %></p>
           <p class="mt-1 text-sm font-semibold text-deep"><%= t("profiles.security.identities.password_status") %></p>
           <p class="mt-2 text-sm leading-6 text-slate-600"><%= t("profiles.security.identities.password_description") %></p>
         </div>
@@ -226,7 +226,7 @@
         </div>
 
         <div class="settings-info-tile">
-          <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("profiles.security.status.recovery_codes") %></p>
+          <p class="meta-label"><%= t("profiles.security.status.recovery_codes") %></p>
           <p class="mt-1 text-sm font-semibold text-deep"><%= t("profiles.security.recovery_codes.available", count: @active_recovery_codes_count) %></p>
           <p class="mt-2 text-sm leading-6 text-slate-600"><%= t("profiles.security.recovery_codes.review_hint") %></p>
         </div>

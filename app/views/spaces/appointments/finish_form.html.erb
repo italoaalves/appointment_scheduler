@@ -16,7 +16,7 @@
     </p>
   </header>
 
-  <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+  <div class="panel-card">
     <%= form_with url: finish_appointment_path(@appointment), method: :patch, class: "space-y-4" do |form| %>
       <div>
         <%= form.label :finished_at,
