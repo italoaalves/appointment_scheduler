@@ -13,7 +13,7 @@
             before_date: params[:date_from].presence || Date.current.iso8601,
             page: 1,
             status: params[:status] %>
-      <div id="appointments-feed-list" class="space-y-8" style="overflow-anchor: auto;">
+      <div id="appointments-feed-list" class="overflow-anchor-auto space-y-8">
         <%= render "feed_page", grouped_appointments: @grouped_appointments, appointments: @appointments %>
       </div>
     <% else %>
@@ -71,7 +71,7 @@
             before_date: params[:date_from].presence || Date.current.iso8601,
             page: 1,
             status: params[:status] %>
-      <div id="appointments-feed-list" class="space-y-8" style="overflow-anchor: auto;">
+      <div id="appointments-feed-list" class="overflow-anchor-auto space-y-8">
         <%= render "feed_page", grouped_appointments: @grouped_appointments, appointments: @appointments %>
       </div>
     </turbo-frame>

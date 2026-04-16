@@ -10,8 +10,7 @@
        data-action="click->nav#closeAll"></div>
 
   <%# Appointments sheet — mobile only %>
-  <div class="sm:hidden fixed bottom-24 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
-       style="padding-bottom: env(safe-area-inset-bottom);"
+  <div class="dock__sheet sm:hidden fixed bottom-24 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
        data-nav-target="sheet"
        data-nav-group="appointments"
        data-action="click->nav#closeSheetAfterNavigation submit->nav#closeSheetAfterNavigation">
@@ -27,8 +26,7 @@
 
   <%# Space sheet — mobile only, managers only %>
   <% if current_user.can?(:manage_space) %>
-    <div class="sm:hidden fixed bottom-24 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
-         style="padding-bottom: env(safe-area-inset-bottom);"
+    <div class="dock__sheet sm:hidden fixed bottom-24 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
          data-nav-target="sheet"
          data-nav-group="space"
          data-action="click->nav#closeSheetAfterNavigation submit->nav#closeSheetAfterNavigation">
@@ -44,8 +42,7 @@
   <% end %>
 
   <%# Profile sheet — mobile only %>
-  <div class="sm:hidden fixed bottom-24 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
-       style="padding-bottom: env(safe-area-inset-bottom);"
+  <div class="dock__sheet sm:hidden fixed bottom-24 inset-x-0 z-40 hidden translate-y-full transition-transform duration-200 ease-out"
        data-nav-target="sheet"
        data-nav-group="profile"
        data-action="click->nav#closeSheetAfterNavigation submit->nav#closeSheetAfterNavigation">

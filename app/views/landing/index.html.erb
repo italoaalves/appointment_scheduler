@@ -1,14 +1,11 @@
 <%# Hero Section %>
-<section class="relative min-h-screen flex flex-col overflow-hidden"
-         style="background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);">
+<section class="landing-hero">
 
   <%# Orbit background decorative blobs %>
   <div class="absolute inset-0 pointer-events-none overflow-hidden" data-controller="orbit">
-    <div class="absolute w-[700px] h-[700px] rounded-full opacity-20"
-         style="background: radial-gradient(circle, #00D2FF 0%, transparent 70%); filter: blur(100px); top: -300px; right: -150px;"
+    <div class="landing-hero__orb landing-hero__orb--primary"
          data-orbit-target="circle"></div>
-    <div class="absolute w-[500px] h-[500px] rounded-full opacity-15"
-         style="background: radial-gradient(circle, #00D2FF 0%, transparent 70%); filter: blur(100px); bottom: -200px; left: -100px;"
+    <div class="landing-hero__orb landing-hero__orb--secondary"
          data-orbit-target="circle"></div>
   </div>
 
@@ -42,7 +39,7 @@
 </section>
 
 <%# Plans Section %>
-<section class="py-24 px-6" id="plans" style="background: linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%);">
+<section class="landing-plans" id="plans">
   <div class="max-w-5xl mx-auto text-center">
     <h2 class="section-heading"><%= t("landing.pricing.title") %></h2>
     <p class="section-subheading mx-auto"><%= t("landing.pricing.subtitle") %></p>
@@ -50,9 +47,7 @@
 
     <div class="mt-16 grid grid-cols-1 md:grid-cols-<%= @plans.size %> gap-8 justify-items-center">
       <% @plans.each do |plan| %>
-        <div class="card relative flex flex-col w-full max-w-sm
-                    <%= plan.trial_default? ? 'ring-1 ring-[#00D2FF]' : '' %>"
-             style="<%= plan.trial_default? ? 'box-shadow: 0 0 40px rgba(0,210,255,0.12), 0 6px 24px rgba(15,23,42,0.10), 0 0 0 1px rgba(0,210,255,0.3);' : '' %>">
+        <div class="landing-plan-card card <%= 'landing-plan-card--recommended' if plan.trial_default? %>">
 
           <% if plan.trial_default? %>
             <span class="badge badge-cerulean absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap"><%= t("landing.pricing.recommended") %></span>
@@ -71,7 +66,7 @@
 
           <ul class="mt-8 space-y-3 text-left text-slate-700 w-full">
             <li class="flex items-start gap-2">
-              <svg class="w-5 h-5 text-[#00D2FF] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="landing-check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
               </svg>
               <span>
@@ -80,7 +75,7 @@
               </span>
             </li>
             <li class="flex items-start gap-2">
-              <svg class="w-5 h-5 text-[#00D2FF] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="landing-check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
               </svg>
               <span>
@@ -90,7 +85,7 @@
             </li>
             <% if plan.feature?("whatsapp_included_quota") %>
               <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-[#00D2FF] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="landing-check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
                 <span><%= t("landing.pricing.whatsapp_quota") %></span>
@@ -98,7 +93,7 @@
             <% end %>
             <% if plan.feature?("personalized_booking_page") %>
               <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-[#00D2FF] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="landing-check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
                 <span><%= t("landing.pricing.personalized_booking_page") %></span>
@@ -106,7 +101,7 @@
             <% end %>
             <% if plan.feature?("priority_support") %>
               <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-[#00D2FF] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="landing-check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
                 <span><%= t("landing.pricing.priority_support") %></span>
@@ -131,9 +126,9 @@
     <p class="section-subheading mx-auto"><%= t("landing.features.subtitle") %></p>
 
     <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-      <div class="card">
-        <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-4" style="background: rgba(0,210,255,0.1);">
-          <svg class="w-6 h-6" fill="none" stroke="#00D2FF" viewBox="0 0 24 24">
+      <div class="landing-feature-card card">
+        <div class="landing-feature-card__icon">
+          <svg class="h-6 w-6 text-cerulean" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
               d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
           </svg>
@@ -142,9 +137,9 @@
         <p class="mt-2 text-slate-600"><%= t("landing.features.whatsapp.body") %></p>
       </div>
 
-      <div class="card">
-        <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-4" style="background: rgba(0,210,255,0.1);">
-          <svg class="w-6 h-6" fill="none" stroke="#00D2FF" viewBox="0 0 24 24">
+      <div class="landing-feature-card card">
+        <div class="landing-feature-card__icon">
+          <svg class="h-6 w-6 text-cerulean" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
               d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
           </svg>
@@ -153,9 +148,9 @@
         <p class="mt-2 text-slate-600"><%= t("landing.features.isolation.body") %></p>
       </div>
 
-      <div class="card">
-        <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-4" style="background: rgba(0,210,255,0.1);">
-          <svg class="w-6 h-6" fill="none" stroke="#00D2FF" viewBox="0 0 24 24">
+      <div class="landing-feature-card card">
+        <div class="landing-feature-card__icon">
+          <svg class="h-6 w-6 text-cerulean" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
               d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
           </svg>

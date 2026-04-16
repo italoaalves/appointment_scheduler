@@ -14,7 +14,7 @@
   <% weekday_abbr = [ t("space.settings.edit.weekday_sun"), t("space.settings.edit.weekday_mon"), t("space.settings.edit.weekday_tue"), t("space.settings.edit.weekday_wed"), t("space.settings.edit.weekday_thu"), t("space.settings.edit.weekday_fri"), t("space.settings.edit.weekday_sat") ] %>
   <div class="space-y-6" data-controller="availability-hours" data-availability-hours-weekday-abbr-value='<%= raw weekday_abbr.to_json %>' data-availability-hours-every-day-value="<%= t("space.settings.edit.availability_preset_every_day") %>">
     <div class="settings-info-tile">
-      <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("space.availability.edit.business_hours_preview_label") %></p>
+      <p class="meta-label"><%= t("space.availability.edit.business_hours_preview_label") %></p>
       <p class="mt-1 text-sm font-medium text-slate-800" data-availability-hours-target="preview"><%= form.object.business_hours.presence || "—" %></p>
     </div>
 
@@ -50,7 +50,7 @@
 
         <div class="space-y-3">
           <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"><%= t("space.availability.edit.day_selection_label") %></p>
+            <p class="meta-label-strong"><%= t("space.availability.edit.day_selection_label") %></p>
             <div class="mt-2 flex flex-wrap gap-2">
               <% weekdays.each do |wday, label| %>
                 <label class="settings-choice-chip">
@@ -66,7 +66,7 @@
           </div>
 
           <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"><%= t("space.availability.edit.quick_presets_title") %></p>
+            <p class="meta-label-strong"><%= t("space.availability.edit.quick_presets_title") %></p>
             <div class="mt-2 flex flex-wrap gap-2">
               <button type="button"
                       data-availability-hours-preset="1,2,3,4,5"

@@ -21,12 +21,12 @@
              description: t("billing.credits.show.balance_hint") do %>
     <div class="grid gap-4 lg:grid-cols-2">
       <div class="settings-info-tile">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("billing.credits.show.purchased_balance") %></p>
+        <p class="meta-label"><%= t("billing.credits.show.purchased_balance") %></p>
         <p class="mt-1 text-2xl font-bold text-deep"><%= @credit&.balance || 0 %></p>
       </div>
       <% if @subscription&.plan&.feature?(:whatsapp_included_quota) %>
         <div class="settings-info-tile">
-          <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("billing.credits.show.monthly_quota") %></p>
+          <p class="meta-label"><%= t("billing.credits.show.monthly_quota") %></p>
           <p class="mt-1 text-2xl font-bold text-deep"><%= @credit&.monthly_quota_remaining || 0 %></p>
         </div>
       <% end %>

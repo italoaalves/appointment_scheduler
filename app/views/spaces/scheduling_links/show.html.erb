@@ -25,7 +25,7 @@
     </div>
   </header>
 
-  <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+  <div class="panel-card">
     <h2 class="text-sm font-semibold text-slate-800"><%= t("space.scheduling_links.show.booking_url") %></h2>
     <p class="mt-1 text-xs text-slate-600"><%= t("space.scheduling_links.show.copy_hint") %></p>
     <div class="mt-3 flex flex-wrap items-center gap-2">
@@ -45,20 +45,20 @@
     </div>
   </div>
 
-  <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-    <dl class="space-y-3 text-sm">
-      <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("space.scheduling_links.show.type") %></dt>
-        <dd class="text-slate-900"><%= @scheduling_link.link_type.humanize %></dd>
+  <div class="panel-card-compact">
+    <dl class="detail-list">
+      <div class="detail-list__row">
+        <dt class="detail-list__term"><%= t("space.scheduling_links.show.type") %></dt>
+        <dd class="detail-list__value"><%= @scheduling_link.link_type.humanize %></dd>
       </div>
       <% if @scheduling_link.single_use? %>
-        <div class="flex justify-between gap-4">
-          <dt class="font-medium text-slate-700"><%= t("space.scheduling_links.show.expires_at") %></dt>
-          <dd class="text-slate-900"><%= format_datetime_in_zone(@scheduling_link.expires_at, @scheduling_link.space&.timezone) || "—" %></dd>
+        <div class="detail-list__row">
+          <dt class="detail-list__term"><%= t("space.scheduling_links.show.expires_at") %></dt>
+          <dd class="detail-list__value"><%= format_datetime_in_zone(@scheduling_link.expires_at, @scheduling_link.space&.timezone) || "—" %></dd>
         </div>
-        <div class="flex justify-between gap-4">
-          <dt class="font-medium text-slate-700"><%= t("space.scheduling_links.show.used_at") %></dt>
-          <dd class="text-slate-900"><%= format_datetime_in_zone(@scheduling_link.used_at, @scheduling_link.space&.timezone) || t("space.scheduling_links.show.not_used") %></dd>
+        <div class="detail-list__row">
+          <dt class="detail-list__term"><%= t("space.scheduling_links.show.used_at") %></dt>
+          <dd class="detail-list__value"><%= format_datetime_in_zone(@scheduling_link.used_at, @scheduling_link.space&.timezone) || t("space.scheduling_links.show.not_used") %></dd>
         </div>
       <% end %>
     </dl>

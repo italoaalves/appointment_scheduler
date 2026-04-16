@@ -15,23 +15,23 @@
     </div>
   </header>
 
-  <div class="card-glass p-4">
-    <dl class="space-y-3 text-sm">
-      <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("platform.customers.show.name") %></dt>
-        <dd class="text-slate-900"><%= @customer.name %></dd>
+  <div class="card-glass card-compact">
+    <dl class="detail-list">
+      <div class="detail-list__row">
+        <dt class="detail-list__term"><%= t("platform.customers.show.name") %></dt>
+        <dd class="detail-list__value"><%= @customer.name %></dd>
       </div>
-      <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("platform.customers.show.phone") %></dt>
-        <dd class="text-slate-900"><%= @customer.phone.presence || "—" %></dd>
+      <div class="detail-list__row">
+        <dt class="detail-list__term"><%= t("platform.customers.show.phone") %></dt>
+        <dd class="detail-list__value"><%= @customer.phone.presence || "—" %></dd>
       </div>
-      <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("platform.customers.show.email") %></dt>
-        <dd class="text-slate-900"><%= @customer.email.presence || "—" %></dd>
+      <div class="detail-list__row">
+        <dt class="detail-list__term"><%= t("platform.customers.show.email") %></dt>
+        <dd class="detail-list__value"><%= @customer.email.presence || "—" %></dd>
       </div>
-      <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("platform.customers.show.address") %></dt>
-        <dd class="text-slate-900"><%= @customer.address.presence || "—" %></dd>
+      <div class="detail-list__row">
+        <dt class="detail-list__term"><%= t("platform.customers.show.address") %></dt>
+        <dd class="detail-list__value"><%= @customer.address.presence || "—" %></dd>
       </div>
     </dl>
   </div>

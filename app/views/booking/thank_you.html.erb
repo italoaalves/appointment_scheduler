@@ -45,7 +45,7 @@
           <% end %>
 
           <div class="booking-summary-callout">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"><%= t("booking.thank_you.message_title") %></p>
+            <p class="meta-label-strong"><%= t("booking.thank_you.message_title") %></p>
             <p class="mt-2 text-sm leading-6 text-slate-600">
               <%= @space.booking_success_message.presence || t("booking.thank_you.default_message") %>
             </p>

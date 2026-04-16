@@ -51,12 +51,12 @@
           <div class="grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
             <% if @subscription.trialing? && @subscription.trial_ends_at %>
               <div class="settings-info-tile">
-                <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("billing.show.subscription_status") %></p>
+                <p class="meta-label"><%= t("billing.show.subscription_status") %></p>
                 <p class="mt-1 text-sm font-semibold text-deep"><%= t("billing.show.trial_ends", date: l(@subscription.trial_ends_at.to_date, format: :long)) %></p>
               </div>
             <% elsif @subscription.current_period_start && @subscription.current_period_end %>
               <div class="settings-info-tile">
-                <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("billing.show.payment_date") %></p>
+                <p class="meta-label"><%= t("billing.show.payment_date") %></p>
                 <p class="mt-1 text-sm font-semibold text-deep">
                   <%= t("billing.show.billing_period",
                         from: l(@subscription.current_period_start.to_date, format: :long),
@@ -121,21 +121,21 @@
                  description: t("billing.show.plan_limits_hint") do %>
         <dl class="grid gap-4 xl:grid-cols-3">
           <div class="settings-info-tile">
-            <dt class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("billing.show.team_members") %></dt>
+            <dt class="meta-label"><%= t("billing.show.team_members") %></dt>
             <dd class="mt-1 text-xl font-bold text-deep">
               <%= current_tenant.space_memberships.count %> /
               <%= @current_plan.max_team_members.nil? ? "∞" : @current_plan.max_team_members %>
             </dd>
           </div>
           <div class="settings-info-tile">
-            <dt class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("billing.show.customers") %></dt>
+            <dt class="meta-label"><%= t("billing.show.customers") %></dt>
             <dd class="mt-1 text-xl font-bold text-deep">
               <%= current_tenant.customers.count %> /
               <%= @current_plan.max_customers.nil? ? "∞" : @current_plan.max_customers %>
             </dd>
           </div>
           <div class="settings-info-tile">
-            <dt class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("billing.show.scheduling_links") %></dt>
+            <dt class="meta-label"><%= t("billing.show.scheduling_links") %></dt>
             <dd class="mt-1 text-xl font-bold text-deep">
               <%= current_tenant.scheduling_links.count %> /
               <%= @current_plan.max_scheduling_links.nil? ? "∞" : @current_plan.max_scheduling_links %>

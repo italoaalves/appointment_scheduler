@@ -27,7 +27,7 @@
 
   <form data-plan-change-target="form"
         id="plan-change-form"
-        action="<%= settings_billing_path %>" method="post" style="display:none">
+        action="<%= settings_billing_path %>" method="post" class="hidden">
     <input type="hidden" name="_method" value="patch">
     <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
     <input type="hidden" name="billing_plan_id" data-plan-change-target="planIdInput">
@@ -116,7 +116,7 @@
                description: t("billing.edit.confirm_change_hint") do %>
       <div class="grid gap-4 xl:grid-cols-3 xl:items-center">
         <div class="settings-info-tile text-center">
-          <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("billing.edit.current_plan_label") %></p>
+          <p class="meta-label"><%= t("billing.edit.current_plan_label") %></p>
           <p class="mt-1 text-lg font-bold text-deep" data-plan-change-target="currentName">
             <%= @subscription&.billing_plan&.name %>
           </p>
@@ -128,7 +128,7 @@
         <div class="flex items-center justify-center text-2xl text-slate-300">→</div>
 
         <div class="settings-info-tile text-center">
-          <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("billing.edit.new_plan_label") %></p>
+          <p class="meta-label"><%= t("billing.edit.new_plan_label") %></p>
           <p class="mt-1 text-lg font-bold text-deep" data-plan-change-target="newName"></p>
           <p class="mt-1 text-sm text-slate-600" data-plan-change-target="newPrice"></p>
         </div>

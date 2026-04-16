@@ -23,15 +23,15 @@
                description: t("spaces.whatsapp_settings.connected_description") do %>
       <div class="grid gap-4 lg:grid-cols-2">
         <div class="settings-info-tile">
-          <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("spaces.whatsapp_settings.display_number") %></p>
+          <p class="meta-label"><%= t("spaces.whatsapp_settings.display_number") %></p>
           <p class="mt-1 text-sm font-semibold text-deep"><%= @phone_number.display_number %></p>
         </div>
         <div class="settings-info-tile">
-          <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("spaces.whatsapp_settings.verified_name") %></p>
+          <p class="meta-label"><%= t("spaces.whatsapp_settings.verified_name") %></p>
           <p class="mt-1 text-sm font-semibold text-deep"><%= @phone_number.verified_name %></p>
         </div>
         <div class="settings-info-tile">
-          <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("spaces.whatsapp_settings.status") %></p>
+          <p class="meta-label"><%= t("spaces.whatsapp_settings.status") %></p>
           <div class="mt-1">
             <%= render "shared/status_badge",
                        status: @phone_number.status,
@@ -40,7 +40,7 @@
         </div>
         <% if @phone_number.quality_rating.present? %>
           <div class="settings-info-tile">
-            <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= t("spaces.whatsapp_settings.quality_rating") %></p>
+            <p class="meta-label"><%= t("spaces.whatsapp_settings.quality_rating") %></p>
             <p class="mt-1 text-sm font-semibold text-deep"><%= @phone_number.quality_rating %></p>
           </div>
         <% end %>

@@ -24,32 +24,32 @@
     </div>
   </header>
 
-  <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-    <dl class="space-y-3 text-sm">
-      <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("platform.spaces.show.name") %></dt>
-        <dd class="text-slate-900"><%= @space.name %></dd>
+  <div class="panel-card-compact">
+    <dl class="detail-list">
+      <div class="detail-list__row">
+        <dt class="detail-list__term"><%= t("platform.spaces.show.name") %></dt>
+        <dd class="detail-list__value"><%= @space.name %></dd>
       </div>
-      <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("platform.spaces.show.timezone") %></dt>
-        <dd class="text-slate-900"><%= @space.timezone.presence || "—" %></dd>
+      <div class="detail-list__row">
+        <dt class="detail-list__term"><%= t("platform.spaces.show.timezone") %></dt>
+        <dd class="detail-list__value"><%= @space.timezone.presence || "—" %></dd>
       </div>
-      <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("platform.spaces.show.customers_count") %></dt>
-        <dd class="text-slate-900">
+      <div class="detail-list__row">
+        <dt class="detail-list__term"><%= t("platform.spaces.show.customers_count") %></dt>
+        <dd class="detail-list__value">
           <%= link_to @space.customers.count, platform_space_customers_path(@space), class: "text-slate-900 hover:underline" %>
         </dd>
       </div>
-      <div class="flex justify-between gap-4">
-        <dt class="font-medium text-slate-700"><%= t("platform.spaces.show.team_size") %></dt>
-        <dd class="text-slate-900"><%= @space.users.count %></dd>
+      <div class="detail-list__row">
+        <dt class="detail-list__term"><%= t("platform.spaces.show.team_size") %></dt>
+        <dd class="detail-list__value"><%= @space.users.count %></dd>
       </div>
     </dl>
   </div>
 
   <%# Subscription summary %>
   <% sub = @space.subscription %>
-  <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+  <div class="panel-card-compact">
     <div class="flex items-center justify-between">
       <h2 class="text-sm font-semibold text-slate-800"><%= t("platform.spaces.show.subscription.title") %></h2>
       <%= link_to t("platform.spaces.show.subscription.manage"), edit_platform_space_subscription_override_path(@space),
