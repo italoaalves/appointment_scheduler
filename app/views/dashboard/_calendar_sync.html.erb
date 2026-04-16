@@ -1,0 +1,18 @@
+<% overview = DashboardOverviewService.call(space: space) %>
+
+<div id="<%= dom_id(space, :dashboard_calendar) %>"
+     class="dashboard-region flex min-w-0 w-full flex-col"
+     style="animation-delay: 100ms">
+  <%= render "dashboard/calendar_overview",
+             periods_data: {
+               today: overview[:calendar_today],
+               week: overview[:calendar_week],
+               month: overview[:calendar_month]
+             },
+             periods_stats: {
+               today: overview[:stats_today],
+               week: overview[:stats_week],
+               month: overview[:stats_month]
+             },
+             calendar_space: overview[:calendar_space] %>
+</div>

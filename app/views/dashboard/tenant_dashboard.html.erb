@@ -1,9 +1,8 @@
 <%# Mission Control Dashboard — hero · utility row · attention + calendar hub %>
 <% today_summary     = @overview[:today_summary] %>
 <% attention         = @overview[:attention] %>
-<% this_week         = @overview[:this_week] %>
-<% automation        = @overview[:automation] %>
-<% automation_active = automation[:automated_conversations].to_i > 0 %>
+
+<%= turbo_stream_from [current_tenant, :dashboard_calendar] %>
 
 <div class="space-y-6 md:space-y-8">
   <%# Onboarding / welcome states %>
@@ -23,56 +22,20 @@
                current_user: current_user %>
   </div>
 
-  <%# Unified Dashboard Layout: Left/Right Column Split %>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-    
-    <%# ---------------- LEFT COLUMN (1/3 width) ---------------- %>
-    <div class="flex flex-col gap-6 md:gap-8 md:col-span-1">
-      
-      <%# 1. Quick Actions %>
+  <%# Two-column bento: left sidebar + calendar %>
+  <div class="grid min-w-0 gap-6 md:max-h-[65vh] md:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] md:gap-8">
+    <%# Left column — Quick Actions + Attention stacked %>
+    <div class="flex min-w-0 flex-col gap-6 md:gap-8">
       <div class="dashboard-region flex flex-col" style="animation-delay: 50ms">
         <%= render "dashboard/quick_actions", space: current_tenant %>
       </div>
 
-      <%# 2. Needs Attention %>
-      <div class="dashboard-region flex flex-col" style="animation-delay: 200ms">
+      <div class="dashboard-region flex flex-col" style="animation-delay: 150ms">
         <%= render "dashboard/attention_queue", attention: attention %>
       </div>
-
     </div>
 
-    <%# ---------------- RIGHT COLUMN (2/3 width) ---------------- %>
-    <div class="flex flex-col gap-6 md:gap-8 col-span-2">
-      
-      <%# Top Row of Right Column: This Week & Solved %>
-      <div class="grid grid-cols-1 <%= automation_active ? "sm:grid-cols-2" : "" %> gap-6 md:gap-8">
-        <div class="dashboard-region flex flex-col" style="animation-delay: 100ms">
-          <%= render "dashboard/this_week", this_week: this_week %>
-        </div>
-        
-        <% if automation_active %>
-          <div class="dashboard-region flex flex-col" style="animation-delay: 150ms">
-            <%= render "dashboard/handled_by_anella", automation: automation %>
-          </div>
-        <% end %>
-      </div>
-
-      <%# Bottom Row of Right Column: Calendar Hub %>
-      <div class="dashboard-region flex flex-col" style="animation-delay: 250ms">
-        <%= render "dashboard/calendar_overview",
-                   periods_data: {
-                     today: @overview[:calendar_today],
-                     week:  @overview[:calendar_week],
-                     month: @overview[:calendar_month]
-                   },
-                   periods_stats: {
-                     today: @overview[:stats_today],
-                     week:  @overview[:stats_week],
-                     month: @overview[:stats_month]
-                   },
-                   calendar_space: @overview[:calendar_space] %>
-      </div>
-
-    </div>
+    <%# Right column — Calendar %>
+    <%= render "dashboard/calendar_sync", space: current_tenant %>
   </div>
 </div>
