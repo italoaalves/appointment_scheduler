@@ -1246,17 +1246,15 @@ nav.pagination .gap {
 
 /* Calendar tabs */
 .calendar-tab {
-  @apply border-b-2 px-4 py-3 text-sm font-medium
-         transition-colors duration-200 ease-out;
+  @apply px-3 py-1.5 text-xs font-medium rounded-full transition-all whitespace-nowrap;
 }
 
 .calendar-tab-active {
-  @apply border-electric text-electric bg-electric/5;
+  @apply bg-white text-deep shadow-sm;
 }
 
 .calendar-tab-inactive {
-  @apply border-transparent text-slate-500
-         hover:border-slate-200 hover:text-slate-600;
+  @apply text-slate-500 hover:text-deep;
 }
 
 /* Calendar stats footer pills */
