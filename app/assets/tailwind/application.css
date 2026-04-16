@@ -1177,6 +1177,12 @@ nav.pagination .gap {
   100% { transform: translate(30px, -20px) scale(1.05); }
 }
 
+@keyframes action-feedback {
+  0%   { opacity: 0.6; scale: 0.94; }
+  60%  { opacity: 1; scale: 1.04; }
+  100% { opacity: 1; scale: 1; }
+}
+
 @keyframes card-shake {
   0%, 100% { translate: 0 0; }
   15%       { translate: -7px 0; }

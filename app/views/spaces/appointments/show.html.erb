@@ -13,7 +13,7 @@
         <%= t("space.appointments.show.subtitle") %>
       </p>
     </div>
-    <%= render "shared/status_badge", status: @appointment.status %>
+    <%= render "show_status", appointment: @appointment %>
   </header>
 
   <div class="panel-card-compact">
@@ -47,29 +47,5 @@
     </dl>
   </div>
 
-  <div class="flex flex-wrap items-center gap-3">
-    <% unless @appointment.cancelled? %>
-      <%= link_to t("space.appointments.show.edit_reschedule"), edit_appointment_path(@appointment), class: button_classes(:primary) unless @appointment.rescheduled_from.present? %>
-    <% end %>
-
-    <% if @appointment.pending? %>
-      <%= button_to t("space.appointments.index.confirm"), confirm_appointment_path(@appointment), method: :patch, class: button_classes(:success) %>
-    <% end %>
-
-    <% if @appointment.confirmed? %>
-      <% if @appointment.scheduled_in_past? %>
-        <%= button_to t("space.appointments.index.no_show"), no_show_appointment_path(@appointment), method: :patch, data: { turbo_confirm: t("space.appointments.index.no_show_confirm") }, class: button_classes(:neutral) %>
-      <% end %>
-      <% if @appointment.scheduled_in_past? %>
-        <%= link_to t("space.appointments.index.finish"), finish_form_appointment_path(@appointment), class: button_classes(:success) %>
-      <% end %>
-    <% end %>
-    <% if @appointment.pending? || @appointment.confirmed? %>
-      <%= button_to t("space.appointments.index.cancel"), cancel_appointment_path(@appointment), method: :patch, data: { turbo_confirm: t("space.appointments.index.cancel_confirm") }, class: button_classes(:cancel) %>
-    <% end %>
-
-    <% if current_user.can?(:destroy_appointments) %>
-      <%= button_to t("space.appointments.index.delete"), appointment_path(@appointment), method: :delete, data: { turbo_confirm: t("space.appointments.index.delete_confirm"), turbo_submits_with: t("shared.deleting") }, class: button_classes(:danger) %>
-    <% end %>
-  </div>
+  <%= render "show_actions", appointment: @appointment %>
 </div>

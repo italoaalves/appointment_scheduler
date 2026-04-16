@@ -40,8 +40,9 @@
     <% end %>
     <% if appointment.confirmed? && appointment.scheduled_in_past? %>
       <%= link_to t("space.appointments.calendar.mark_finish"),
-                  finish_form_appointment_path(appointment),
-                  class: "inline-flex items-center rounded-lg px-2.5 py-1.5 text-[11px] font-medium text-emerald-700 hover:bg-emerald-100 transition-colors" %>
+                  finish_form_appointment_path(appointment, source: "calendar"),
+                  class: "inline-flex items-center rounded-lg px-2.5 py-1.5 text-[11px] font-medium text-emerald-700 hover:bg-emerald-100 transition-colors",
+                  data: { turbo_frame: "finish_modal" } %>
     <% end %>
   </div>
 </div>
