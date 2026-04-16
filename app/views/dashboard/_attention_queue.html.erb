@@ -12,22 +12,31 @@
   </h2>
 
   <% if items.any? %>
-    <ul class="mt-5 space-y-1.5">
-      <% items.each do |item| %>
+    <div data-controller="carousel" data-carousel-interval-value="4000" class="mt-5">
+      <% items.each_with_index do |item, i| %>
         <% pill_class = "status-pill status-pill-compact status-pill-#{item[:tone] || 'neutral'}" %>
-        <li>
-          <%= link_to item[:href],
-                      class: "dashboard-action-row group justify-between" do %>
+        <div data-carousel-target="slide" class="<%= i == 0 ? '' : 'hidden' %>">
+          <%= link_to item[:href], class: "dashboard-action-row group justify-between" do %>
             <span class="dashboard-action-row-label text-sm font-medium text-slate-700"><%= item[:label] %></span>
             <% if item[:badge] %>
-              <span class="<%= pill_class %>">
-                <%= item[:badge] %>
-              </span>
+              <span class="<%= pill_class %>"><%= item[:badge] %></span>
             <% end %>
           <% end %>
-        </li>
+        </div>
       <% end %>
-    </ul>
+
+      <% if items.length > 1 %>
+        <div class="flex justify-center gap-1.5 mt-4">
+          <% items.each_with_index do |_, i| %>
+            <button data-carousel-target="dot"
+                    data-action="click->carousel#goTo"
+                    data-index="<%= i %>"
+                    class="w-1.5 h-1.5 rounded-full bg-slate-400 transition-opacity <%= i == 0 ? 'opacity-100' : 'opacity-30' %>">
+            </button>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   <% else %>
     <div class="mt-5 py-6 text-center">
       <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-50 mb-3">
