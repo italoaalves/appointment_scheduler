@@ -84,8 +84,8 @@
                 <p class="text-sm font-medium text-slate-700">
                   <%= t("dashboard.empty_calendar.message") %>
                 </p>
-                <% if current_tenant.personalized_scheduling_link.present? %>
-                  <% empty_booking_url = book_by_slug_url(slug: current_tenant.personalized_scheduling_link.slug) %>
+                <% if calendar_space.personalized_scheduling_link.present? %>
+                  <% empty_booking_url = book_by_slug_url(slug: calendar_space.personalized_scheduling_link.slug) %>
                   <div class="mt-4" data-controller="clipboard">
                     <code data-clipboard-target="source" class="hidden"><%= empty_booking_url %></code>
                     <span data-clipboard-target="feedback" class="hidden text-sm font-medium text-emerald-600"><%= t("onboarding.step3.copied") %></span>
