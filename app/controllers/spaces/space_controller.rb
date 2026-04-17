@@ -12,7 +12,7 @@ module Spaces
 
     def update
       if Spaces::UpdateSettings.call(space: @space, attributes: space_params, banner_upload: banner_upload_param)
-        redirect_to edit_settings_space_path, notice: t("space.settings.update.notice"), status: :see_other
+        redirect_to edit_settings_space_path, status: :see_other
       else
         render :edit, status: :unprocessable_entity
       end

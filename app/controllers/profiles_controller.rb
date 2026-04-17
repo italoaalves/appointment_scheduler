@@ -10,7 +10,7 @@ class ProfilesController < ApplicationController
 
   def update
     if update_profile
-      redirect_to edit_profile_path, notice: t("profiles.update.notice"), status: :see_other
+      redirect_to edit_profile_path, status: :see_other
     else
       set_active_deletion_request
       render :edit, status: :unprocessable_entity

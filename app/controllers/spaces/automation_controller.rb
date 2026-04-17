@@ -14,7 +14,7 @@ module Spaces
 
     def update
       if @space.update(automation_params)
-        redirect_to settings_automation_path, notice: t("automation.update.notice"), status: :see_other
+        redirect_to settings_automation_path, status: :see_other
       else
         render :show, status: :unprocessable_entity
       end
