@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class BookingConfirmationMailer < ApplicationMailer
-  def customer_confirmation(appointment:)
+  def customer_confirmation(appointment:, confirmation_token: nil)
     @appointment = appointment
     @space = appointment.space
     @customer = appointment.customer
+    @confirmation_url = confirmation_token.present? ? confirm_booking_url(confirmation: confirmation_token) : nil
 
     with_mail_locale(recipient: @customer, fallback_space: @space) do
       tz = TimezoneResolver.zone(@space)

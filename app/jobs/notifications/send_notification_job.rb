@@ -6,13 +6,17 @@ module Notifications
 
     discard_on(ActiveRecord::RecordNotFound, report: true) { |job, err| Rails.logger.warn("[Notifications] appointment not found id=#{job.arguments.first&.dig(:appointment_id)}") }
 
-    def perform(event:, appointment_id:)
+    def perform(event:, appointment_id:, confirmation_token: nil)
       appointment = Appointment.find(appointment_id)
       return if event.to_s == "appointment_booked" && appointment.space&.owner.blank?
       return if %w[appointment_confirmed appointment_cancelled appointment_rescheduled].include?(event.to_s) && appointment.customer_id.blank?
 
       Current.space = appointment.space
-      Spaces::NotificationDispatcher.call(event: event.to_sym, appointment: appointment)
+      Spaces::NotificationDispatcher.call(
+        event: event.to_sym,
+        appointment: appointment,
+        confirmation_token: confirmation_token
+      )
     ensure
       Current.reset
     end

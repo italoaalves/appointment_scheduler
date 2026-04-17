@@ -28,6 +28,26 @@ module Notifications
       assert_includes recipients, customers(:one).email
     end
 
+    test "appointment_booked customer email includes a public confirmation link" do
+      confirmation_token = Booking::ConfirmationToken.generate(
+        appointment: @appointment,
+        booking_context: BookingContext::TokenBookingContext.new(scheduling_links(:permanent_link))
+      )
+
+      SendNotificationJob.perform_now(
+        event: :appointment_booked,
+        appointment_id: @appointment.id,
+        confirmation_token: confirmation_token
+      )
+
+      customer_mail = ActionMailer::Base.deliveries.find do |mail|
+        mail.to == [ customers(:one).email ]
+      end
+
+      assert_not_nil customer_mail
+      assert_match %r{/booking/confirm\?confirmation=}, customer_mail.html_part.body.decoded
+    end
+
     test "performs appointment_confirmed and sends email" do
       SendNotificationJob.perform_now(event: :appointment_confirmed, appointment_id: @appointment.id)
 

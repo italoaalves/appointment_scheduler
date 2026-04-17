@@ -135,6 +135,7 @@ pt-BR:
       subject: "%{business_name} — Agendamento solicitado para %{date}"
       greeting: "Sua consulta com %{business_name} foi solicitada!"
       intro: "Sua consulta foi solicitada!"
+      cta: "Confirmar consulta"
       status_message: "Pendente de confirmação — avisaremos quando for confirmada."
       footer: "Esta é uma mensagem automática de %{business_name} via %{app_name}."
     invalid:

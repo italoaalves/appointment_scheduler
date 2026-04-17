@@ -7,6 +7,11 @@
 <%= t("booking.thank_you.duration") %>: <%= t("booking.thank_you.duration_minutes", count: @duration) %>
 <%= t("booking.thank_you.status") %>: <%= t("booking.confirmation_email.status_message") %>
 
+<% if @confirmation_url.present? %>
+<%= t("booking.confirmation_email.cta") %>: <%= @confirmation_url %>
+
+<% end %>
+
 <% if @space.booking_success_message.present? %>
 <%= @space.booking_success_message %>
 <% end %>

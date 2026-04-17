@@ -135,6 +135,7 @@ en:
       subject: "%{business_name} — Appointment requested for %{date}"
       greeting: "Your appointment with %{business_name} has been requested!"
       intro: "Your appointment has been requested!"
+      cta: "Confirm appointment"
       status_message: "Pending confirmation — we will notify you when confirmed."
       footer: "This is an automated message from %{business_name} via %{app_name}."
     invalid:

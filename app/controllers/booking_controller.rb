@@ -69,19 +69,62 @@ class BookingController < ApplicationController
     )
 
     if appointment.save
+      confirmation_token = Booking::ConfirmationToken.generate(
+        appointment: appointment,
+        booking_context: @booking_context
+      )
+
       @booking_context.mark_used!
       Notifications::SendNotificationJob.perform_later(
         event:         :appointment_booked,
-        appointment_id: appointment.id
+        appointment_id: appointment.id,
+        confirmation_token: confirmation_token
       )
-      redirect_to @booking_context.redirect_after_booking(appointment: appointment)
+      redirect_to @booking_context.redirect_after_booking(
+        appointment: appointment,
+        confirmation_token: confirmation_token
+      )
     else
       flash.now[:alert] = appointment.errors.full_messages.to_sentence
       render :show, status: :unprocessable_entity
     end
   end
 
+  def confirm
+    token = Booking::ConfirmationToken.verify!(params[:confirmation])
+    appointment = Appointment.find(token.appointment_id)
+
+    result = Scheduling::Commands::ConfirmAppointment.call(
+      space: appointment.space,
+      appointment_id: appointment.id,
+      actor: Scheduling::Commands::Base::SystemActor.new(label: "email:link"),
+      idempotency_key: "email_confirmation:#{token.jti}",
+      metadata: { via: "email_link" }
+    )
+
+    return redirect_to confirmation_redirect_url(token, params[:confirmation]) if result.ok?
+
+    render_invalid_confirmation
+  rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveRecord::RecordNotFound
+    render_invalid_confirmation
+  end
+
   private
+
+  def confirmation_redirect_url(token, confirmation)
+    case token.context_type
+    when "token"
+      thank_you_book_url(token: token.context_value, confirmation: confirmation)
+    when "slug"
+      thank_you_book_by_slug_url(slug: token.context_value, confirmation: confirmation)
+    else
+      raise ActiveRecord::RecordNotFound
+    end
+  end
+
+  def render_invalid_confirmation
+    render plain: t("booking.thank_you.invalid_access"), status: :unprocessable_entity
+  end
 
   def set_booking_context
     if params[:slug].present?

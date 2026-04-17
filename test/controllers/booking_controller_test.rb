@@ -254,6 +254,54 @@ class BookingControllerTest < ActionDispatch::IntegrationTest
     assert_select "[data-role='booking-confirmation-card']"
   end
 
+  test "email confirmation confirms the appointment through the scheduling command and writes an event once" do
+    appointment = appointments(:one)
+    appointment.update!(
+      status: :pending,
+      scheduled_at: 2.days.from_now,
+      confirmation_state: :awaiting_customer,
+      confirmation_decided_at: nil,
+      confirmation_decided_via: nil
+    )
+
+    confirmation = Booking::ConfirmationToken.generate(
+      appointment: appointment,
+      booking_context: BookingContext::TokenBookingContext.new(@link)
+    )
+
+    assert_difference -> { AppointmentEvent.where(actor_label: "email:link").count }, 1 do
+      get confirm_booking_url(confirmation: confirmation)
+    end
+
+    assert_redirected_to thank_you_book_url(token: @link.token, confirmation: confirmation)
+
+    appointment.reload
+    event = AppointmentEvent.order(:id).last
+
+    assert appointment.confirmed?
+    assert appointment.confirmation_confirmed_by_customer?
+    assert_equal "email_link", appointment.confirmation_decided_via
+    assert_equal "appointment.confirmed", event.event_type
+    assert_equal "System", event.actor_type
+    assert_equal "email:link", event.actor_label
+    assert_equal({ "via" => "email_link" }, event.metadata)
+
+    assert_no_difference -> { AppointmentEvent.where(actor_label: "email:link").count } do
+      get confirm_booking_url(confirmation: confirmation)
+    end
+
+    assert_redirected_to thank_you_book_url(token: @link.token, confirmation: confirmation)
+  end
+
+  test "email confirmation with an invalid token returns unprocessable_entity without writing an event" do
+    assert_no_difference "AppointmentEvent.count" do
+      get confirm_booking_url(confirmation: "invalid")
+    end
+
+    assert_response :unprocessable_entity
+    assert_includes response.body, I18n.t("booking.thank_you.invalid_access")
+  end
+
   test "create redirect lands on thank_you page with valid confirmation token" do
     scheduled = 3.days.from_now.change(hour: 15, min: 0, sec: 0)
 

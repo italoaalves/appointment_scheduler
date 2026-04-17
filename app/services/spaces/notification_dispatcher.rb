@@ -2,14 +2,15 @@
 
 module Spaces
   class NotificationDispatcher
-    def self.call(event:, appointment:)
-      new(event: event, appointment: appointment).call
+    def self.call(event:, appointment:, confirmation_token: nil)
+      new(event: event, appointment: appointment, confirmation_token: confirmation_token).call
     end
 
-    def initialize(event:, appointment:)
+    def initialize(event:, appointment:, confirmation_token: nil)
       @event       = event.to_sym
       @appointment = appointment
       @space       = appointment.space
+      @confirmation_token = confirmation_token
     end
 
     def call
@@ -106,7 +107,10 @@ module Spaces
     end
 
     def send_customer_confirmation(customer)
-      BookingConfirmationMailer.customer_confirmation(appointment: @appointment).deliver_now
+      BookingConfirmationMailer.customer_confirmation(
+        appointment: @appointment,
+        confirmation_token: @confirmation_token
+      ).deliver_now
     rescue => e
       Rails.logger.error(
         "[Notifications] customer_confirmation_failed appointment_id=#{@appointment.id} " \
