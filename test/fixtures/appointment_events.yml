@@ -1,0 +1,10 @@
+one:
+  space: one
+  appointment: one
+  actor_type: User
+  actor_id: <%= ActiveRecord::FixtureSet.identify(:manager) %>
+  actor_label: user:manager
+  event_type: appointment.confirmed
+  idempotency_key: appointment-one-confirmed
+  metadata: {}
+  created_at: <%= Time.current %>

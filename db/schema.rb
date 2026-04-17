@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_10_235500) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_17_121500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -35,6 +35,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_10_235500) do
     t.index ["status", "scheduled_for"], name: "index_account_deletion_requests_on_status_and_scheduled_for"
     t.index ["user_id"], name: "index_account_deletion_requests_on_pending_user_id", unique: true, where: "(status = 0)"
     t.index ["user_id"], name: "index_account_deletion_requests_on_user_id"
+  end
+
+  create_table "appointment_events", force: :cascade do |t|
+    t.bigint "actor_id"
+    t.string "actor_label"
+    t.string "actor_type", null: false
+    t.bigint "appointment_id", null: false
+    t.datetime "created_at", null: false
+    t.string "event_type", null: false
+    t.string "idempotency_key", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.bigint "space_id", null: false
+    t.index ["appointment_id"], name: "index_appointment_events_on_appointment_id"
+    t.index ["idempotency_key"], name: "index_appointment_events_on_idempotency_key", unique: true
+    t.index ["space_id", "appointment_id", "created_at"], name: "idx_appt_events_space_appointment_created_at"
+    t.index ["space_id"], name: "index_appointment_events_on_space_id"
   end
 
   create_table "appointments", force: :cascade do |t|
@@ -572,6 +588,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_10_235500) do
   end
 
   add_foreign_key "account_deletion_requests", "users"
+  add_foreign_key "appointment_events", "appointments"
+  add_foreign_key "appointment_events", "spaces"
   add_foreign_key "appointments", "customers"
   add_foreign_key "appointments", "spaces"
   add_foreign_key "audit_logs", "spaces"
