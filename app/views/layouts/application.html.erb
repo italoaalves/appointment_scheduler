@@ -128,11 +128,10 @@
         </nav>
       <% elsif tenant_staff? %>
         <% if unread_notifications_count > 0 %>
-          <div class="lg:hidden fixed right-3 z-30"
+          <div class="app-notifications__shell lg:hidden fixed right-3 z-30"
                data-controller="dropdown"
                data-action="click@window->dropdown#close"
-               data-role="mobile-notification-shell"
-               class="app-notifications__shell">
+               data-role="mobile-notification-shell">
             <button type="button"
                     class="relative flex items-center justify-center w-10 h-10 rounded-full bg-white/80 backdrop-blur shadow-sm border border-slate-200/60 text-slate-500 cursor-pointer"
                     data-action="dropdown#toggle"
@@ -165,11 +164,11 @@
     <turbo-frame id="finish_modal"></turbo-frame>
 
     <% if @use_inbox_layout %>
-      <div class="flex flex-1 min-h-0 min-w-0 w-full max-w-full overflow-x-clip overflow-y-hidden pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:mx-auto sm:max-w-[80rem] sm:pb-0 sm:pr-28">
+      <div class="mobile-dock-scroll-end flex flex-1 min-h-0 min-w-0 w-full max-w-full overflow-x-clip overflow-y-hidden sm:mx-auto sm:max-w-[80rem] sm:pb-0 sm:pr-28">
         <%= yield %>
       </div>
     <% elsif content_for?(:settings_sidebar) %>
-      <main class="mx-auto w-full max-w-7xl px-4 py-6 pb-[calc(8.5rem+env(safe-area-inset-bottom))] sm:py-8 sm:pb-8 sm:pr-28">
+      <main class="mobile-bottom-stack-scroll-end mx-auto w-full max-w-7xl px-4 pt-6 sm:py-8 sm:pb-8 sm:pr-28">
         <%= yield(:breadcrumbs) if content_for?(:breadcrumbs) %>
         <div data-role="settings-shell" class="settings-shell">
           <%= yield(:settings_sidebar) %>
@@ -179,7 +178,7 @@
         </div>
       </main>
     <% else %>
-      <main class="mx-auto px-4 py-8 pb-28 sm:pb-8 sm:pr-28 <%= content_for?(:wide_layout) ? 'max-w-8xl' : 'max-w-6xl' %>">
+      <main class="mobile-dock-scroll-end mx-auto px-4 pt-8 sm:pb-8 sm:pr-28 <%= content_for?(:wide_layout) ? 'max-w-8xl' : 'max-w-6xl' %>">
         <%= yield(:breadcrumbs) if content_for?(:breadcrumbs) %>
         <%= yield %>
       </main>

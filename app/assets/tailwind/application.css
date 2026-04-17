@@ -331,6 +331,14 @@
            has-[:checked]:border-electric/30 has-[:checked]:bg-electric/10 has-[:checked]:text-electric has-[:checked]:shadow-sm has-[:checked]:shadow-electric/10;
   }
 
+  .mobile-dock-scroll-end {
+    padding-bottom: calc(8.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .mobile-bottom-stack-scroll-end {
+    padding-bottom: calc(11.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
   .settings-choice-chip {
     @apply inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 transition
            hover:border-electric/20 hover:bg-electric/5
@@ -368,7 +376,7 @@
   }
 
   .settings-action-bar-floating {
-    bottom: calc(6.5rem + env(safe-area-inset-bottom) + 0.75rem);
+    bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px) + 0.75rem);
   }
 
   .app-notifications__shell {

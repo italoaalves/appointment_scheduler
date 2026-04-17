@@ -1,11 +1,28 @@
+<%
+  reveal_mode = local_assigns.fetch(:reveal_mode, :always).to_s
+  hidden_by_default = reveal_mode == "dirty"
+%>
+
 <div data-role="settings-action-bar"
-     class="settings-action-bar-floating fixed bottom-0 left-3 z-20 md:static md:px-0 md:pb-0">
+     data-controller="settings-action-bar"
+     data-settings-action-bar-reveal-mode-value="<%= reveal_mode %>"
+     data-settings-action-bar-success-message-value="<%= t("shared.action_bar.saved") %>"
+     data-settings-action-bar-error-message-value="<%= t("shared.action_bar.failed") %>"
+     class="settings-action-bar-floating fixed left-3 z-20 md:sticky md:bottom-4 md:left-auto md:px-0 md:pb-0 <%= "hidden" if hidden_by_default %>">
   <div data-role="settings-action-bar-panel"
-       class="max-w-[calc(100vw-9.5rem)] rounded-[1rem] border border-white/70 bg-white/90 px-3 py-2.5 shadow-lg shadow-slate-200/50 backdrop-blur md:mx-0 md:max-w-none md:rounded-[1.5rem] md:border md:border-white/60 md:bg-white/80 md:px-4 md:py-3 md:shadow-md">
-    <div class="flex flex-wrap items-center gap-2 md:flex-col md:items-stretch md:gap-3 lg:flex-row lg:items-center">
-      <% if local_assigns[:hint].present? %>
-        <p class="hidden text-sm text-slate-500 md:block"><%= hint %></p>
-      <% end %>
+       data-settings-action-bar-target="panel"
+       class="settings-action-bar-panel">
+    <div class="settings-action-bar-layout">
+      <div class="settings-action-bar-copy">
+        <% if local_assigns[:hint].present? %>
+          <p class="hidden text-sm text-slate-500 md:block"
+             data-settings-action-bar-target="hint"><%= hint %></p>
+        <% end %>
+        <p class="settings-action-bar-status hidden"
+           data-role="settings-action-bar-status"
+           data-settings-action-bar-target="status"
+           aria-live="polite"></p>
+      </div>
       <div class="settings-action-bar-buttons">
         <%= yield %>
       </div>

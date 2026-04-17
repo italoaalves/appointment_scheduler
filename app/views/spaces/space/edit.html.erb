@@ -162,7 +162,7 @@
       </div>
     <% end %>
 
-    <%= render "shared/settings_action_bar", hint: t("space.settings.edit.submit") do %>
+    <%= render "shared/settings_action_bar", hint: t("space.settings.edit.submit"), reveal_mode: :dirty do %>
         <%= form.submit t("space.settings.edit.submit"),
                         class: "#{button_classes(:primary)} w-full justify-center lg:w-auto",
                         data: { turbo_submits_with: t("shared.submitting") } %>

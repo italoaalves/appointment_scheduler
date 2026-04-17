@@ -50,7 +50,7 @@
       </div>
     <% end %>
 
-    <%= render "shared/settings_action_bar" do %>
+    <%= render "shared/settings_action_bar", reveal_mode: :dirty do %>
       <%= form.submit t("mfa.totp_enrollment.submit"),
                       class: "#{button_classes(:primary)} w-full justify-center lg:w-auto",
                       data: { turbo_submits_with: t("mfa.totp_enrollment.submit_loading") } %>

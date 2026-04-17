@@ -150,6 +150,7 @@ pt-BR:
         payment_method: "Forma de Pagamento"
         payment_method_hint: "Escolha como você quer pagar este pacote de créditos."
         confirm: "Confirmar Compra"
+        confirm_short: "Confirmar"
         processing: "Processando..."
         submit_hint: "As instruções de pagamento aparecerão na próxima tela."
         back: "Voltar"
@@ -173,6 +174,7 @@ pt-BR:
       cpf_cnpj_hint: "Obrigatório para emissão de cobranças"
       cpf_cnpj_required: "CPF ou CNPJ é obrigatório para planos pagos."
       cpf_cnpj_invalid: "CPF deve ter 11 dígitos ou CNPJ deve ter 14 dígitos."
+      confirm_short: "Confirmar"
       subscribe_button: "Assinar"
       submit_hint: "Você pode voltar e comparar os planos antes de confirmar."
       back: "Voltar"
@@ -241,6 +243,7 @@ pt-BR:
       manual_payment_warning: "Seu método de pagamento requer ação manual. Após confirmar, você receberá as instruções de pagamento por e-mail."
       payment_method_hint: "Escolha como esta mudança de plano deve ser cobrada."
       confirmation_hint: "Você ainda pode voltar e comparar os planos antes de confirmar."
+      confirm_short: "Confirmar"
       confirm_button: "Confirmar Mudança"
     limits:
       team_members_exceeded: "O limite de membros do seu plano foi atingido. Faça upgrade para adicionar mais."

@@ -44,6 +44,9 @@ pt-BR:
     submitting: "Salvando…"
     deleting: "Excluindo…"
     removing: "Removendo…"
+    action_bar:
+      saved: "Salvo"
+      failed: "Nao foi possivel salvar"
     error_modal:
       title: "Não foi possível concluir"
       dismiss: "Entendido"

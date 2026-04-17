@@ -106,6 +106,7 @@ en:
       cpf_cnpj_hint: "Required for payment processing"
       cpf_cnpj_required: "CPF or CNPJ is required for paid plans."
       cpf_cnpj_invalid: "CPF must have 11 digits or CNPJ must have 14 digits."
+      confirm_short: "Confirm"
       subscribe_button: "Subscribe"
       submit_hint: "You can go back and compare plans before confirming."
       back: "Back"
@@ -174,6 +175,7 @@ en:
       manual_payment_warning: "Your payment method requires manual action. After confirming, you'll receive payment instructions via email."
       payment_method_hint: "Choose how this plan change should be charged."
       confirmation_hint: "You can still go back and compare plans before confirming."
+      confirm_short: "Confirm"
       confirm_button: "Confirm Change"
     features:
       personalized_booking_page: "Personalized booking page"
@@ -239,6 +241,7 @@ en:
         payment_method: "Payment Method"
         payment_method_hint: "Choose how you want to pay for this credit bundle."
         confirm: "Confirm Purchase"
+        confirm_short: "Confirm"
         processing: "Processing..."
         submit_hint: "Payment instructions will appear on the next screen."
         back: "Back"

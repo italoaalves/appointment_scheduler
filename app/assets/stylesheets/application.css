@@ -18,7 +18,7 @@
 .settings-shell-content {
   width: 100%;
   min-width: 0;
-  padding-bottom: 3rem;
+  padding-bottom: 0;
 }
 
 .settings-intro-card {
@@ -81,7 +81,71 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-start;
   gap: 0.5rem;
+}
+
+.settings-action-bar-panel {
+  max-width: calc(100vw - 6rem);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.settings-action-bar-layout {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.settings-action-bar-copy {
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+.settings-action-bar-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.settings-action-bar-status[data-feedback-state="success"] {
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+}
+
+.settings-action-bar-status[data-feedback-state="error"] {
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+}
+
+.checkout-action-row {
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+.checkout-action-back {
+  width: 2.75rem;
+  flex: 0 0 2.75rem;
+  justify-content: center;
+  padding-inline: 0;
+}
+
+.settings-action-bar-buttons .checkout-action-confirm {
+  width: auto !important;
+  min-width: 0;
+  flex: 1 1 0%;
 }
 
 .settings-action-bar-buttons :where(.btn-primary) {
@@ -103,17 +167,20 @@
   }
 
   .settings-action-bar-buttons :where(.btn-primary, .btn-secondary, .btn-danger, .btn-success, .btn-cancel, .btn-muted, .btn-neutral) {
-    min-height: 2.5rem;
-    padding: 0.5rem 0.875rem;
+    min-height: 2.25rem;
+    padding: 0.4375rem 0.75rem;
     font-size: 0.875rem;
-  }
-
-  .settings-action-bar-buttons :where(.btn-primary) {
-    width: 100% !important;
-  }
-
-  .settings-action-bar-buttons :where(.btn-secondary, .btn-danger, .btn-success, .btn-cancel, .btn-muted, .btn-neutral) {
     width: auto !important;
+  }
+
+  .settings-action-bar-layout {
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  .settings-action-bar-copy {
+    width: 100%;
+    flex-basis: 100%;
   }
 
   .settings-action-bar-buttons form {
@@ -122,9 +189,57 @@
 }
 
 @media (min-width: 640px) {
+  .checkout-action-row {
+    width: auto;
+  }
+
+  .checkout-action-back {
+    width: auto;
+    flex: 0 0 auto;
+    padding-inline: 1.5rem;
+  }
+
+  .settings-action-bar-buttons .checkout-action-confirm {
+    flex: 0 0 auto;
+  }
+
   .inbox-list-panel {
     width: 20rem;
     max-width: 20rem;
     flex: 0 0 20rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .settings-action-bar-panel {
+    width: 100%;
+    max-width: none;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(15, 23, 42, 0.05);
+    border-radius: 1.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.50) inset,
+      0 4px 12px rgba(15, 23, 42, 0.03),
+      0 12px 40px rgba(15, 23, 42, 0.06);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    backdrop-filter: blur(16px) saturate(160%);
+  }
+
+  .settings-action-bar-layout {
+    align-items: center;
+    gap: 0.875rem;
+  }
+
+  .settings-action-bar-buttons {
+    order: 1;
+    flex: 0 0 auto;
+  }
+
+  .settings-action-bar-copy {
+    order: 2;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
   }
 }

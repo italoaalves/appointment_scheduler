@@ -44,6 +44,9 @@ en:
     submitting: "Saving…"
     deleting: "Deleting…"
     removing: "Removing…"
+    action_bar:
+      saved: "Saved"
+      failed: "Could not save"
     error_modal:
       title: "Could not complete"
       dismiss: "Got it"
