@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_17_123000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_17_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -401,12 +401,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_123000) do
 
   create_table "spaces", force: :cascade do |t|
     t.text "address"
+    t.boolean "appointment_automation_enabled", default: false, null: false
     t.text "booking_success_message"
     t.text "business_hours"
     t.jsonb "business_hours_schedule", default: {}
     t.string "business_type"
     t.integer "cancellation_min_hours_before"
     t.datetime "completed_onboarding_at"
+    t.integer "confirmation_lead_hours", default: [24, 2], null: false, array: true
+    t.time "confirmation_quiet_hours_end"
+    t.time "confirmation_quiet_hours_start"
     t.datetime "created_at", null: false
     t.string "email"
     t.string "facebook_url"
@@ -424,6 +428,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_123000) do
     t.integer "slot_duration_minutes", default: 30, null: false
     t.string "timezone"
     t.datetime "updated_at", null: false
+    t.index ["appointment_automation_enabled"], name: "index_spaces_on_appointment_automation_enabled", where: "(appointment_automation_enabled = true)"
     t.index ["owner_id"], name: "index_spaces_on_owner_id"
   end
 

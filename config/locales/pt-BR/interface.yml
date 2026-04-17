@@ -20,6 +20,7 @@ pt-BR:
     change_plan: "Trocar Plano"
     checkout: "Checkout"
     credits: "Créditos"
+    automation: "Automação"
     inbox: "Caixa de entrada"
     profile: "Perfil"
     preferences: "Preferências"
@@ -38,6 +39,7 @@ pt-BR:
       availability: "Disponibilidade"
       policies: "Políticas"
       whatsapp: "WhatsApp"
+      automation: "Automação"
       billing_section: "Cobrança"
       billing: "Cobrança"
       credits: "Créditos"
@@ -46,6 +48,7 @@ pt-BR:
         availability: "Horários de atendimento, fuso e duração dos slots."
         policies: "Cancelamento, reagendamento e janela de agendamento."
         whatsapp: "Status da conexão e ativação do canal."
+        automation: "Lembretes automáticos, antecedência e horas de silêncio."
         billing: "Plano atual, pagamentos e gestão da assinatura."
         credits: "Saldo, compra de pacotes e histórico de uso."
     shared:

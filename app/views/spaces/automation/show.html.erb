@@ -1,0 +1,71 @@
+<% content_for(:breadcrumbs) { render "shared/breadcrumbs", crumbs: [
+  { label: t("breadcrumbs.dashboard"), path: root_path },
+  { label: t("breadcrumbs.settings"), path: edit_settings_space_path },
+  { label: t("breadcrumbs.automation") }
+] } %>
+<% content_for(:settings_sidebar) do %>
+  <%= render "shared/settings_sidebar" %>
+<% end %>
+
+<div class="space-y-6">
+  <%= render "shared/settings_intro",
+             eyebrow: t("settings.sidebar.communication"),
+             title: t("automation.title"),
+             subtitle: t("automation.subtitle"),
+             statuses: [
+               settings_intro_status(t("automation.status"), (@space.appointment_automation_enabled? ? t("automation.enabled") : t("automation.disabled")), tone: (@space.appointment_automation_enabled? ? :success : :neutral)),
+               settings_intro_status(t("automation.whatsapp_channel"), settings_whatsapp_summary(@space), tone: (@space.whatsapp_phone_number&.active? ? :success : :warning))
+             ] %>
+
+  <%= turbo_frame_tag "automation_settings" do %>
+    <%= form_with model: @space, url: settings_automation_path, method: :patch, class: "space-y-6" do |form| %>
+      <%= render "shared/error_messages", resource: @space %>
+
+      <%= render "shared/settings_panel",
+                 title: t("automation.form.title"),
+                 description: t("automation.form.description") do %>
+        <div class="space-y-6">
+          <label class="settings-choice-card block">
+            <div class="flex items-start gap-3">
+              <%= form.check_box :appointment_automation_enabled,
+                                 class: "mt-1 h-4 w-4 rounded border-slate-300 text-electric focus:ring-electric" %>
+              <div class="space-y-1">
+                <span class="block text-sm font-semibold text-deep"><%= t("automation.form.enable_label") %></span>
+                <span class="block text-sm leading-6 text-slate-600"><%= t("automation.form.enable_hint") %></span>
+              </div>
+            </div>
+          </label>
+
+          <div>
+            <%= form.label :confirmation_lead_hours, t("automation.form.lead_hours_label"), class: form_label_classes %>
+            <%= form.select :confirmation_lead_hours,
+                            options_for_select(Spaces::AutomationController::LEAD_HOUR_OPTIONS.map { |hours| [t("automation.form.hours_option", count: hours), hours] }, @space.confirmation_lead_hours),
+                            {},
+                            multiple: true,
+                            size: Spaces::AutomationController::LEAD_HOUR_OPTIONS.size,
+                            class: form_input_classes("min-h-40") %>
+            <p class="mt-1.5 text-xs text-slate-500"><%= t("automation.form.lead_hours_hint") %></p>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <%= form.label :confirmation_quiet_hours_start, t("automation.form.quiet_hours_start_label"), class: form_label_classes %>
+              <%= form.time_field :confirmation_quiet_hours_start, class: form_input_classes %>
+            </div>
+            <div>
+              <%= form.label :confirmation_quiet_hours_end, t("automation.form.quiet_hours_end_label"), class: form_label_classes %>
+              <%= form.time_field :confirmation_quiet_hours_end, class: form_input_classes %>
+            </div>
+          </div>
+          <p class="text-xs text-slate-500"><%= t("automation.form.quiet_hours_hint") %></p>
+        </div>
+      <% end %>
+
+      <%= render "shared/settings_action_bar", hint: t("automation.form.submit"), reveal_mode: :dirty do %>
+        <%= form.submit t("automation.form.submit"),
+                        class: "#{button_classes(:primary)} w-full justify-center lg:w-auto",
+                        data: { turbo_submits_with: t("shared.submitting") } %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

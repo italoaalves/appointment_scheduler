@@ -111,7 +111,8 @@ module UiHelper
       {
         title: t("settings.sidebar.communication"),
         items: [
-          [ t("settings.sidebar.whatsapp"), settings_whatsapp_path, :whatsapp ]
+          [ t("settings.sidebar.whatsapp"), settings_whatsapp_path, :whatsapp ],
+          [ t("settings.sidebar.automation"), settings_automation_path, :automation ]
         ]
       },
       {
@@ -153,6 +154,8 @@ module UiHelper
       controller_path == "spaces/space/policies"
     when :whatsapp
       controller_path == "spaces/whatsapp_settings"
+    when :automation
+      controller_path == "spaces/automation"
     when :billing
       controller_path == "spaces/billing"
     when :credits

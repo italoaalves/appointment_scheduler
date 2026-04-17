@@ -1,0 +1,27 @@
+pt-BR:
+  automation:
+    title: "Automação"
+    subtitle: "Defina quando os lembretes automáticos podem sair e quanto tempo antes cada confirmação deve ser enviada."
+    status: "Status"
+    enabled: "Ativa"
+    disabled: "Desativada"
+    whatsapp_channel: "Canal do WhatsApp"
+    update:
+      notice: "Automação atualizada."
+    errors:
+      lead_hours_range: "deve ficar entre 1 e 168 horas"
+    form:
+      title: "Lembretes automáticos"
+      description: "Escolha quais lembretes serão enviados por espaço e silencie disparos fora do horário desejado."
+      enable_label: "Ativar automação de agendamentos"
+      enable_hint: "Os lembretes só serão enviados quando houver um número de WhatsApp conectado ao espaço."
+      lead_hours_label: "Antecedência dos lembretes"
+      lead_hours_hint: "Selecione uma ou mais opções. Vamos tentar cada lembrete antes do horário agendado."
+      quiet_hours_start_label: "Silêncio a partir de"
+      quiet_hours_end_label: "Silêncio até"
+      quiet_hours_hint: "Deixe ambos em branco para permitir envios em qualquer horário."
+      hours_option:
+        one: "%{count} hora antes"
+        other: "%{count} horas antes"
+      submit: "Salvar automação"
+      errors: "Revise os campos da automação."

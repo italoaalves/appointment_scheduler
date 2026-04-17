@@ -21,6 +21,9 @@ class Space < ApplicationRecord
   validates :business_type, inclusion: { in: BUSINESS_TYPES }, allow_nil: true
   validates :slot_duration_minutes, numericality: { only_integer: true, greater_than: 0 }
   validates :timezone, presence: true
+  validates :confirmation_lead_hours, presence: true
+  validate :confirmation_lead_hours_must_be_supported
+  validate :confirmation_quiet_hours_must_be_paired
   has_many :customers, dependent: :destroy
   has_many :appointments, dependent: :destroy
   has_many :scheduling_links, dependent: :destroy
@@ -74,4 +77,38 @@ class Space < ApplicationRecord
     "4" => { "open" => "09:00", "close" => "17:00" },
     "5" => { "open" => "09:00", "close" => "17:00" }
   }.freeze
+
+  def appointment_automation_active?
+    appointment_automation_enabled? && whatsapp_phone_number.present?
+  end
+
+  def within_quiet_hours?(time_in_space_tz)
+    return false if confirmation_quiet_hours_start.blank? || confirmation_quiet_hours_end.blank?
+
+    from = confirmation_quiet_hours_start.seconds_since_midnight
+    to = confirmation_quiet_hours_end.seconds_since_midnight
+    time_of_day = time_in_space_tz.seconds_since_midnight
+
+    if from < to
+      (from..to).cover?(time_of_day)
+    else
+      time_of_day >= from || time_of_day <= to
+    end
+  end
+
+  private
+
+  def confirmation_lead_hours_must_be_supported
+    return if confirmation_lead_hours.blank?
+    return if confirmation_lead_hours.all? { |value| value.is_a?(Integer) && value.between?(1, 168) }
+
+    errors.add(:confirmation_lead_hours, :inclusion, message: I18n.t("automation.errors.lead_hours_range"))
+  end
+
+  def confirmation_quiet_hours_must_be_paired
+    return if confirmation_quiet_hours_start.blank? == confirmation_quiet_hours_end.blank?
+
+    errors.add(:confirmation_quiet_hours_start, :blank) if confirmation_quiet_hours_start.blank?
+    errors.add(:confirmation_quiet_hours_end, :blank) if confirmation_quiet_hours_end.blank?
+  end
 end

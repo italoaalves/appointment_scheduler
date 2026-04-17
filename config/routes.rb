@@ -140,6 +140,7 @@ Rails.application.routes.draw do
       post :connect, on: :member
       delete :disconnect, on: :member
     end
+    resource :automation, only: [ :show, :update ], controller: "automation"
   end
 
   namespace :billing do
