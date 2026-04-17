@@ -160,9 +160,7 @@ class Scheduling::Commands::SuspendRemindersTest < ActiveSupport::TestCase
       end
     end
 
-    Object.const_set(:AppointmentReminder, fake_reminder_model)
-
-    begin
+    stub_const(Object, :AppointmentReminder, fake_reminder_model) do
       result = Scheduling::Commands::SuspendReminders.for_appointment(
         space: @space,
         appointment_id: appointment.id,
@@ -182,8 +180,6 @@ class Scheduling::Commands::SuspendRemindersTest < ActiveSupport::TestCase
 
       event = AppointmentEvent.find_by!(idempotency_key: "test-scheduling-suspend-reminders-reminder-scope:#{appointment.id}")
       assert_equal 3, event.metadata["superseded_count"]
-    ensure
-      Object.send(:remove_const, :AppointmentReminder)
     end
   end
 

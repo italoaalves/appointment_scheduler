@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_17_122000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_17_123000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -51,6 +51,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_122000) do
     t.index ["idempotency_key"], name: "index_appointment_events_on_idempotency_key", unique: true
     t.index ["space_id", "appointment_id", "created_at"], name: "idx_appt_events_space_appointment_created_at"
     t.index ["space_id"], name: "index_appointment_events_on_space_id"
+  end
+
+  create_table "appointment_reminders", force: :cascade do |t|
+    t.string "action_token_digest"
+    t.bigint "appointment_id", null: false
+    t.string "channel", default: "whatsapp", null: false
+    t.datetime "created_at", null: false
+    t.datetime "delivered_at"
+    t.datetime "fire_at", null: false
+    t.string "kind", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "sent_at"
+    t.bigint "space_id", null: false
+    t.integer "status", default: 0, null: false
+    t.string "template_name"
+    t.string "template_version"
+    t.datetime "updated_at", null: false
+    t.string "wamid"
+    t.index ["appointment_id", "kind"], name: "idx_reminders_one_live_per_kind", unique: true, where: "(status = ANY (ARRAY[0, 1, 2, 3]))"
+    t.index ["appointment_id"], name: "index_appointment_reminders_on_appointment_id"
+    t.index ["space_id"], name: "index_appointment_reminders_on_space_id"
+    t.index ["status", "fire_at"], name: "idx_reminders_dispatcher_scan"
+    t.index ["wamid"], name: "index_appointment_reminders_on_wamid", unique: true, where: "(wamid IS NOT NULL)"
   end
 
   create_table "appointments", force: :cascade do |t|
@@ -594,6 +617,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_122000) do
   add_foreign_key "account_deletion_requests", "users"
   add_foreign_key "appointment_events", "appointments"
   add_foreign_key "appointment_events", "spaces"
+  add_foreign_key "appointment_reminders", "appointments"
+  add_foreign_key "appointment_reminders", "spaces"
   add_foreign_key "appointments", "customers"
   add_foreign_key "appointments", "spaces"
   add_foreign_key "audit_logs", "spaces"
