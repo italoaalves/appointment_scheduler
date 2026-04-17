@@ -15,7 +15,9 @@ export default class extends Controller {
   }
 
   launch() {
-    FB.login((response) => {
+    if (!window.FB) return
+
+    FB.login(() => {
       // Session info is delivered via the message event listener;
       // FB.login callback alone does not carry phone number details.
     }, {
@@ -53,12 +55,7 @@ export default class extends Controller {
   }
 
   loadFacebookSDK() {
-    if (document.getElementById("facebook-jssdk")) return
-
-    const script = document.createElement("script")
-    script.id = "facebook-jssdk"
-    script.src = "https://connect.facebook.net/en_US/sdk.js"
-    script.onload = () => {
+    const init = () => {
       FB.init({
         appId: this.appIdValue,
         autoLogAppEvents: true,
@@ -66,6 +63,24 @@ export default class extends Controller {
         version: "v22.0"
       })
     }
+
+    if (window.FB) {
+      init()
+      return
+    }
+
+    if (document.getElementById("facebook-jssdk")) {
+      // Script is already loading; fbAsyncInit will fire when ready
+      window.fbAsyncInit = init
+      return
+    }
+
+    window.fbAsyncInit = init
+
+    const script = document.createElement("script")
+    script.id = "facebook-jssdk"
+    script.async = true
+    script.src = "https://connect.facebook.net/en_US/sdk.js"
     document.head.appendChild(script)
   }
 }
