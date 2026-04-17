@@ -16,23 +16,6 @@
                (@subscription&.plan&.feature?(:whatsapp_included_quota) ? settings_intro_status(t("billing.credits.show.monthly_quota"), (@credit&.monthly_quota_remaining || 0).to_s, tone: :neutral) : nil)
              ] %>
 
-  <%= render "shared/settings_panel",
-             title: t("billing.credits.show.balance_title"),
-             description: t("billing.credits.show.balance_hint") do %>
-    <div class="grid gap-4 lg:grid-cols-2">
-      <div class="settings-info-tile">
-        <p class="meta-label"><%= t("billing.credits.show.purchased_balance") %></p>
-        <p class="mt-1 text-2xl font-bold text-deep"><%= @credit&.balance || 0 %></p>
-      </div>
-      <% if @subscription&.plan&.feature?(:whatsapp_included_quota) %>
-        <div class="settings-info-tile">
-          <p class="meta-label"><%= t("billing.credits.show.monthly_quota") %></p>
-          <p class="mt-1 text-2xl font-bold text-deep"><%= @credit&.monthly_quota_remaining || 0 %></p>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
-
   <% if @pending_purchases.any? %>
     <%= render "shared/settings_panel",
                title: t("billing.credits.show.pending_purchases"),
