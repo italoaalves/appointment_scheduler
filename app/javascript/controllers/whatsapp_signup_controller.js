@@ -15,7 +15,7 @@ export default class extends Controller {
   }
 
   launch() {
-    if (!window.FB) return
+    if (!window.__fbInitialized) return
 
     FB.login(() => {
       // Session info is delivered via the message event listener;
@@ -62,7 +62,10 @@ export default class extends Controller {
         xfbml: true,
         version: "v22.0"
       })
+      window.__fbInitialized = true
     }
+
+    if (window.__fbInitialized) return
 
     if (window.FB) {
       init()
