@@ -119,6 +119,41 @@ class AppointmentTest < ActiveSupport::TestCase
     assert_equal @space.slot_duration_minutes, appointment.effective_duration_minutes
   end
 
+  test "confirmation state defaults to not applicable" do
+    appointment = Appointment.new
+
+    assert appointment.confirmation_not_applicable?
+  end
+
+  test "can transition confirmation state according to the transition table" do
+    appointment = Appointment.new(confirmation_state: :not_applicable)
+
+    assert appointment.can_transition_confirmation_to?(:awaiting_customer)
+    assert_not appointment.can_transition_confirmation_to?(:confirmed_by_customer)
+    assert_not appointment.can_transition_confirmation_to?(:declined_by_customer)
+    assert_not appointment.can_transition_confirmation_to?(:rescheduled_by_customer)
+    assert_not appointment.can_transition_confirmation_to?(:escalated_to_human)
+  end
+
+  test "awaiting customer can transition to customer decision states" do
+    appointment = Appointment.new(confirmation_state: :awaiting_customer)
+
+    assert appointment.can_transition_confirmation_to?(:confirmed_by_customer)
+    assert appointment.can_transition_confirmation_to?(:declined_by_customer)
+    assert appointment.can_transition_confirmation_to?(:rescheduled_by_customer)
+    assert appointment.can_transition_confirmation_to?(:escalated_to_human)
+    assert_not appointment.can_transition_confirmation_to?(:awaiting_customer)
+  end
+
+  test "any confirmation state can transition to not applicable" do
+    Appointment.confirmation_states.each_key do |state|
+      appointment = Appointment.new(confirmation_state: state)
+
+      assert appointment.can_transition_confirmation_to?(:not_applicable),
+             "#{state} should be able to transition to not_applicable"
+    end
+  end
+
   test "broadcasts booking slot updates after commit" do
     broadcast_space = nil
 

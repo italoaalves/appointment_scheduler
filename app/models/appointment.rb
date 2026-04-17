@@ -4,6 +4,20 @@ class Appointment < ApplicationRecord
   default_scope { where(discarded_at: nil) }
 
   SLOT_BLOCKING_STATUSES = %i[pending confirmed rescheduled].freeze
+  CONFIRMATION_TRANSITIONS = {
+    not_applicable: [ :not_applicable, :awaiting_customer ],
+    awaiting_customer: [
+      :not_applicable,
+      :confirmed_by_customer,
+      :declined_by_customer,
+      :rescheduled_by_customer,
+      :escalated_to_human
+    ],
+    confirmed_by_customer: [ :not_applicable ],
+    declined_by_customer: [ :not_applicable ],
+    rescheduled_by_customer: [ :not_applicable ],
+    escalated_to_human: [ :not_applicable ]
+  }.freeze
 
   belongs_to :space
   belongs_to :customer, optional: true
@@ -42,6 +56,27 @@ class Appointment < ApplicationRecord
     no_show: 4,
     finished: 5
   }
+
+  # Valid transitions:
+  # not_applicable -> awaiting_customer
+  # awaiting_customer -> confirmed_by_customer | declined_by_customer |
+  #                      rescheduled_by_customer | escalated_to_human
+  # any state -> not_applicable
+  enum :confirmation_state, {
+    not_applicable: 0,
+    awaiting_customer: 1,
+    confirmed_by_customer: 2,
+    declined_by_customer: 3,
+    rescheduled_by_customer: 4,
+    escalated_to_human: 5
+  }, prefix: :confirmation
+
+  def can_transition_confirmation_to?(new_state)
+    new_state = new_state.to_s
+    return false unless self.class.confirmation_states.key?(new_state)
+
+    CONFIRMATION_TRANSITIONS.fetch(confirmation_state.to_sym, []).include?(new_state.to_sym)
+  end
 
   private
 

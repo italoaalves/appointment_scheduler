@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_17_121500) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_17_122000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -54,6 +54,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_121500) do
   end
 
   create_table "appointments", force: :cascade do |t|
+    t.datetime "confirmation_decided_at"
+    t.string "confirmation_decided_via"
+    t.integer "confirmation_state", default: 0, null: false
     t.datetime "created_at", null: false
     t.bigint "customer_id"
     t.datetime "discarded_at"
@@ -68,6 +71,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_121500) do
     t.index ["customer_id", "scheduled_at"], name: "index_appointments_on_client_scheduled_at"
     t.index ["customer_id"], name: "index_appointments_on_customer_id"
     t.index ["discarded_at"], name: "index_appointments_on_discarded_at"
+    t.index ["space_id", "confirmation_state"], name: "index_appointments_on_space_id_and_confirmation_state"
     t.index ["space_id", "scheduled_at"], name: "index_appointments_unique_active_slot", unique: true, where: "((status = ANY (ARRAY[0, 1, 3])) AND (scheduled_at IS NOT NULL) AND (discarded_at IS NULL))"
     t.index ["space_id", "status", "scheduled_at"], name: "index_appointments_on_space_status_scheduled_at"
     t.index ["space_id"], name: "index_appointments_on_space_id"
