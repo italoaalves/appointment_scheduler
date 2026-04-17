@@ -35,6 +35,9 @@ module Scheduling
           acquire_advisory_lock!
 
           appointment = @space.appointments.find(@appointment_id)
+          replay = replay_result_for(appointment)
+          return replay if replay
+
           guard_result = guard(appointment)
           return guard_result if guard_result&.ok? == false
 
@@ -83,6 +86,18 @@ module Scheduling
 
       def broadcast(_appointment)
         DashboardCalendarBroadcaster.broadcast_for(space: @space)
+      end
+
+      def replay_result_for(appointment)
+        existing = AppointmentEvent.find_by(
+          space: @space,
+          appointment: appointment,
+          event_type: event_type,
+          idempotency_key: @idempotency_key
+        )
+        return unless existing
+
+        Result.ok(appointment: appointment, event_id: existing.id)
       end
 
       def acquire_advisory_lock!
